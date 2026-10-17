@@ -1,3 +1,5 @@
+#include "../motor/acciones/menu.hpp"
+#include "../motor/video/menu.hpp"
 #include "../motor/video/introduccion.hpp"
 #include "../motor/acciones/construir_tabla.hpp"
 #include "../motor/acciones/seleccionar_coincidencias.hpp"
@@ -561,4 +563,84 @@ extern "C" EXPORTAR int pagina_introduccion(const unsigned char *datos, unsigned
   for (unsigned int i = 0; i < 64000; ++i)
     salida[i] = imagen.indices[i];
   return 1;
+}
+
+// Expone las decisiones y escrituras del menú y la activación de acciones al comparador.
+extern "C" EXPORTAR int procesar_menu(unsigned int operacion, unsigned char *datos,
+                                      unsigned short parametro, unsigned short otro) {
+  if (operacion == 0) {
+    motor::abrir_menu(datos, parametro, otro);
+    return 0;
+  }
+  if (operacion == 1)
+    return static_cast<int>(motor::seleccionar_menu(datos, parametro));
+  if (operacion == 2)
+    return static_cast<int>(motor::ejecutar_interaccion_inicial(datos, parametro, otro));
+  if (operacion == 3)
+    return motor::avanzar_accion_pendiente(datos) ? 0 : 3;
+  return 3;
+}
+
+// Contrasta los iconos y las máscaras del panel con DEFB y las rutinas de sprites originales.
+extern "C" EXPORTAR int dibujar_menu(const unsigned char *datos, const unsigned char *fondo,
+                                     const unsigned char *iconos, unsigned int longitud,
+                                     unsigned char *destino) {
+  return motor::dibujar_menu(datos, fondo, iconos, longitud, destino) ? 1 : 0;
+}
+
+// Aporta servicios de bancos reales durante las secuencias iniciadas por las nuevas interacciones.
+extern "C" EXPORTAR int avanzar_menu(unsigned char *datos, unsigned short *palabras,
+                                     bool (*dimensiones)(void *, unsigned short, unsigned short,
+                                                         unsigned short &, unsigned short &),
+                                     bool (*modelo)(void *, const unsigned char *, unsigned short,
+                                                    unsigned short)) {
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const motor::RecursosSecuencias recursos{nullptr, dimensiones,          0x6000, 0x4000,
+                                           0x5000,  omitir_sonido_prueba, modelo};
+  if (!motor::avanzar_accion_pendiente(datos))
+    return -1;
+  const auto secuencias = motor::avanzar_secuencias(datos, estado, recursos);
+  if (secuencias != motor::EstadoSecuencias::correcto)
+    return -10 - static_cast<int>(secuencias);
+  // Los comportamientos de esta escena consultan el banco de escena mediante el mismo servicio.
+  // Reutiliza el servicio de dimensiones para el banco fijo de las entidades de escena.
+  const auto dimensiones_escena = [](void *contexto, unsigned short indice, unsigned short &ancho,
+                                     unsigned short &alto) {
+    const auto funcion = *static_cast<decltype(dimensiones) *>(contexto);
+    return funcion(nullptr, 0x4000, indice, ancho, alto);
+  };
+  const motor::RecursosEntidades entidades{&dimensiones, dimensiones_escena, 0x4000, nullptr};
+  if (!motor::actualizar_entidades(datos, estado, entidades))
+    return -20;
+  motor::actualizar_mazmorra(datos);
+  palabras[0] = estado.primera;
+  palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera;
+  palabras[3] = estado.cuarta;
+  return 1;
+}
+
+namespace {
+// Resuelve los tres bancos de la comparación de acciones, sin mezclar STD y el modelo sustituible.
+const unsigned char *banco_menu_prueba(void *contexto, unsigned short referencia,
+                                       unsigned int &longitud) {
+  const auto *bancos = static_cast<const BancoPrueba *>(contexto);
+  const int indice = referencia == 0x4000   ? 0
+                     : referencia == 0x5000 ? 1
+                     : referencia == 0x6000 ? 2
+                                            : -1;
+  if (indice < 0)
+    return nullptr;
+  longitud = bancos[indice].longitud;
+  return bancos[indice].datos;
+}
+} // namespace
+// Compone el resultado de una acción con modelo dinámico y banco estándar separados.
+extern "C" EXPORTAR int componer_menu_escena(unsigned char *datos, unsigned char *imagen,
+                                             const unsigned char *escena, unsigned int n_escena,
+                                             const unsigned char *modelo, unsigned int n_modelo,
+                                             const unsigned char *estandar,
+                                             unsigned int n_estandar) {
+  BancoPrueba bancos[] = {{escena, n_escena}, {modelo, n_modelo}, {estandar, n_estandar}};
+  return motor::dibujar_entidades(datos, {bancos, banco_menu_prueba, 0x4000}, imagen) ? 1 : 0;
 }

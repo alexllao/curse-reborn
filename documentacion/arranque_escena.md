@@ -30,7 +30,7 @@ pnpm ventana
 
 El recorrido disponible es **Core → título → introducción original → mazmorra con objetos y animaciones autónomas**. Una tecla o botón izquierdo inicia el fundido normal. En Core también comienza al acabar la espera máxima. F6 avanza directamente; F5 retrocede directamente. Los atajos cambian de vista directamente para acelerar las pruebas; al entrar en la introducción, esta comienza desde su fundido inicial. Se detienen en los extremos y vuelven a preparar el estado al entrar en la mazmorra; no escriben partidas. Escape cierra.
 
-Los bloques disponibles no representan una partida completa. Faltan la conexión del menú y las acciones, el control del personaje y las interacciones del puzle. Otras escenas usarán el mismo cargador, pero su conexión y lógica deben trasladarse y comprobarse antes de anunciarlas como funcionales.
+Los bloques disponibles no representan una partida completa. El [menú y las primeras interacciones](menu_e_interacciones.md) ya están conectados. Faltan las demás acciones, el movimiento libre y la resolución completa del puzle. Otras escenas usarán el mismo cargador, pero su conexión y lógica deben trasladarse y comprobarse antes de anunciarlas como funcionales.
 
 ## Comprobaciones
 

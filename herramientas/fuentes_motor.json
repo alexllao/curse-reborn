@@ -28,5 +28,7 @@
   "motor/video/orden.cpp",
   "motor/video/planos.cpp",
   "motor/video/sprites.cpp",
-  "motor/video/introduccion.cpp"
+  "motor/video/introduccion.cpp",
+  "motor/acciones/menu.cpp",
+  "motor/video/menu.cpp"
 ]

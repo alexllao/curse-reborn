@@ -1,4 +1,7 @@
 #include "mazmorra.hpp"
+#include "../../motor/acciones/menu.hpp"
+#include "../../motor/video/menu.hpp"
+#include "../../motor/recursos/rnc.hpp"
 #include <SDL3/SDL.h>
 #include "../../motor/estado/inicializar.hpp"
 #include "../../motor/estado/segmento.hpp"
@@ -12,6 +15,7 @@ namespace {
 constexpr unsigned short referencia_escena = 0x4000;
 constexpr unsigned short referencia_personaje = 0x4100;
 constexpr unsigned short referencia_modelo = 0x4200;
+constexpr unsigned short referencia_raton = 0x4300;
 } // namespace
 
 // Carga un banco en propiedad para que sus referencias sobrevivan a todos los pasos de escena.
@@ -36,6 +40,7 @@ const unsigned char *Mazmorra::banco(void *contexto, unsigned short referencia,
   const auto &estado = *static_cast<const Mazmorra *>(contexto);
   const auto *fuente = referencia == referencia_escena      ? &estado.escena
                        : referencia == referencia_personaje ? &estado.personaje
+                       : referencia == referencia_raton     ? &estado.raton
                        : referencia == referencia_modelo    ? &estado.modelo
                                                             : nullptr;
   if (!fuente || fuente->empty())
@@ -108,7 +113,8 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   }
   SDL_free(archivo);
   if (!valido || !cargar_banco("DUNGEON.SPR", escena) || !cargar_banco("STD.BRD", personaje) ||
-      !cargar_banco("MANA.BRD", modelo))
+      !cargar_banco("MANA.BRD", modelo) || !cargar_banco("ICONS.SPR", iconos) ||
+      !cargar_banco("MOUSE.SPR", raton))
     return false;
   unsigned short ancho = 0, alto = 0;
   if (!dimensiones(this, referencia_modelo, 0, ancho, alto))
@@ -118,6 +124,15 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
                                           parrafo_escena};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
     return false;
+  std::vector<unsigned char> menu_comprimido;
+  if (!cargar_banco("MENU.DAT", menu_comprimido))
+    return false;
+  const auto descomprimido = motor::descomprimir_rnc1(
+      menu_comprimido.data(), static_cast<unsigned int>(menu_comprimido.size()), fondo_menu, 10240);
+  if (descomprimido.estado != motor::EstadoRnc::correcto || descomprimido.escritos != 10240)
+    return false;
+  menu_visible = false;
+  motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
   return true;
 }
@@ -125,6 +140,10 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
 // 0A59 y 0BC1: avanza los canales y los comportamientos antes de la rutina particular de la
 // mazmorra.
 bool Mazmorra::avanzar() {
+  if (menu_visible)
+    return true;
+  if (!motor::avanzar_accion_pendiente(datos))
+    return false;
   const motor::RecursosSecuencias secuencias{
       this,          dimensiones,  referencia_personaje, referencia_escena, referencia_modelo,
       omitir_sonido, cargar_modelo};
@@ -140,7 +159,95 @@ bool Mazmorra::avanzar() {
 
 // Una imagen completa sustituye la restauración de rectángulos entre páginas VGA sin añadir
 // efectos.
-bool Mazmorra::dibujar(motor::ImagenIndexada &imagen) {
+bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
   imagen = fondo;
-  return motor::dibujar_entidades(datos, {this, banco, referencia_escena}, imagen.indices);
+  if (!motor::dibujar_entidades(datos, {this, banco, referencia_escena}, imagen.indices))
+    return false;
+  if (menu_visible) {
+    motor::componer_menu(datos, panel_menu, casilla_menu, imagen.indices);
+    // DB68–DB8D: la selección usa el color 255 de la tabla original de 24 colores.
+    const auto color = paso_menu % 24u;
+    for (unsigned int i = 0; i < 3; ++i)
+      imagen.paleta[765 + i] = datos[0xb63e + color * 3 + i];
+  }
+  return true;
+}
+
+// DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
+bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar) {
+  if (alternar) {
+    if (menu_visible) {
+      menu_visible = false;
+      return true;
+    }
+    if (datos[0x3595] == 0)
+      return true;
+    motor::abrir_menu(datos, x, y);
+    menu_visible = true;
+  }
+  if (!menu_visible)
+    return true;
+  casilla_menu = x < 320 ? x / 32 : 9;
+  motor::guardar(datos, 0xb60a, x);
+  if (seleccionar) {
+    const auto resultado = motor::seleccionar_menu(datos, casilla_menu);
+    if (resultado == motor::ResultadoMenu::error)
+      return false;
+    if (resultado == motor::ResultadoMenu::accion)
+      menu_visible = false;
+    if (resultado == motor::ResultadoMenu::pendiente)
+      SDL_Log("Esta acción todavía está pendiente de integrar.");
+  }
+  return motor::dibujar_menu(datos, fondo_menu, iconos.data(),
+                             static_cast<unsigned int>(iconos.size()), panel_menu);
+}
+
+// Representa cajas de entidades (verde), Brad (cian), disponibilidad (magenta) y límites
+// (amarillo).
+bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones,
+                       bool limites) const {
+  // Traza un rectángulo en coordenadas lógicas; el dibujante adapta escala y bandas negras.
+  const auto rectangulo = [&](int x, int y, int ancho, int alto, unsigned char r, unsigned char g,
+                              unsigned char b) {
+    const SDL_FRect caja{static_cast<float>(x), static_cast<float>(y), static_cast<float>(ancho),
+                         static_cast<float>(alto)};
+    return ancho <= 0 || alto <= 0 ||
+           (SDL_SetRenderDrawColor(dibujante, r, g, b, 255) && SDL_RenderRect(dibujante, &caja));
+  };
+  for (unsigned int i = 0; i < 69; ++i) {
+    const auto entidad = static_cast<unsigned short>(0x2c2b + i * 33);
+    if (!datos[entidad])
+      continue;
+    const int x = motor::con_signo(motor::palabra(datos, entidad + 2)),
+              y = motor::con_signo(motor::palabra(datos, entidad + 4));
+    const int ancho = motor::palabra(datos, entidad + 6), alto = motor::palabra(datos, entidad + 8);
+    if (objetos && !rectangulo(x, y, ancho, alto, i ? 40 : 0, i ? 255 : 220, i ? 80 : 255))
+      return false;
+    const auto tipo = motor::palabra(datos, entidad + 14);
+    if (interacciones && i && tipo < 0x400 && datos[0x524d + tipo * 2] &&
+        (!(datos[entidad] & 2) || (datos[entidad] & 4))) {
+      const auto margen = motor::palabra(datos, entidad + 12);
+      if (!rectangulo(x, y - margen, ancho, alto + margen * 2, 255, 60, 220))
+        return false;
+    }
+  }
+  if (interacciones) {
+    const int x = motor::con_signo(motor::palabra(datos, 0x2c2d)),
+              y = motor::con_signo(motor::palabra(datos, 0x2c2f));
+    if (!rectangulo(x - 5, y + motor::palabra(datos, 0x2c33) - 8,
+                    motor::palabra(datos, 0x2c31) + 10, 12, 255, 150, 0))
+      return false;
+  }
+  if (limites) {
+    if (!rectangulo(0, 0, 320, 200, 255, 255, 0))
+      return false;
+    for (const auto campo : {0x358d, 0x358f}) {
+      const auto x = static_cast<float>(
+          motor::con_signo(motor::palabra(datos, static_cast<unsigned short>(campo))));
+      if (!SDL_SetRenderDrawColor(dibujante, 255, 255, 0, 255) ||
+          !SDL_RenderLine(dibujante, x, 0, x, 199))
+        return false;
+    }
+  }
+  return true;
 }

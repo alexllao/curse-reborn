@@ -256,13 +256,24 @@ export async function gestionarSdl(accion, argumentos) {
     if (
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
-      accion === 'comprobar:introduccion'
+      accion === 'comprobar:introduccion' ||
+      accion === 'comprobar:menu'
     )
-      necesarios.push('DUNGEON.MAP', 'DUNGEON.SPR', 'MANA.BRD', 'STD.BRD', 'SPRITES.PAL');
+      necesarios.push(
+        'DUNGEON.MAP',
+        'DUNGEON.SPR',
+        'MANA.BRD',
+        'STD.BRD',
+        'SPRITES.PAL',
+        'MENU.DAT',
+        'ICONS.SPR',
+        'MOUSE.SPR',
+      );
     if (
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
-      accion === 'comprobar:introduccion'
+      accion === 'comprobar:introduccion' ||
+      accion === 'comprobar:menu'
     ) {
       necesarios.push('CAULDRN.PAL', 'BALCONY.PAL', 'BASEBALL.PAL', 'BASEBAT.DAT');
       for (let i = 1; i <= 4; ++i) necesarios.push(`CAULDRN${i}.DAT`);
@@ -275,7 +286,8 @@ export async function gestionarSdl(accion, argumentos) {
     if (
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
-      accion === 'comprobar:introduccion'
+      accion === 'comprobar:introduccion' ||
+      accion === 'comprobar:menu'
     ) {
       const ejecutable = join(datos, '..', 'CURSE.EXE');
       if (!existsSync(ejecutable))
@@ -296,9 +308,79 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción y mazmorra animada: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Menú y control del personaje todavía pendientes.',
+      'Core, título, introducción y mazmorra: F5/F6 recorren las vistas; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Movimiento libre y demás acciones pendientes.',
     );
     ejecutar(programa, [datos], process.env, false, false);
+    return;
+  }
+  if (accion === 'comprobar:menu') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:menu',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_menu_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['menu', 'menu_escena_cpp'],
+      ['orden', 'interaccion_32_cpp'],
+      ['depuracion', null],
+    ]) {
+      const ruta = join(carpeta, `${opcion}.bmp`);
+      ejecutar(programa, [datos, `--comprobar-${opcion}`, ruta], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      const observado = leerCaptura(ruta);
+      if (nombre) {
+        if (
+          !observado.equals(
+            leerReferencia(
+              false,
+              false,
+              join(raiz, 'trabajo', 'comparacion_menu', `${nombre}.png`),
+            ),
+          )
+        )
+          throw new Error(`La captura de ${opcion} no coincide con el original.`);
+      } else {
+        for (const color of [
+          [40, 255, 80],
+          [0, 220, 255],
+          [255, 60, 220],
+          [255, 150, 0],
+          [255, 255, 0],
+        ]) {
+          let presente = false;
+          for (let i = 0; i < observado.length; i += 3)
+            if (
+              observado[i] === color[0] &&
+              observado[i + 1] === color[1] &&
+              observado[i + 2] === color[2]
+            ) {
+              presente = true;
+              break;
+            }
+          if (!presente) throw new Error('Falta un color de las cajas de depuración.');
+        }
+      }
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 3,
+          menu_y_primera_orden: true,
+          cinco_colores_depuracion: true,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Menú SDL: coinciden el panel y la primera interacción; se ven las cinco categorías de depuración.',
+    );
     return;
   }
   if (accion === 'comprobar:introduccion') {

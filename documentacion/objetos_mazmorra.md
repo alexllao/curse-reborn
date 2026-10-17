@@ -63,4 +63,4 @@ Esta comprobación usa SDL con ventana oculta y dibujante de software: introduce
 
 ## Siguiente conexión
 
-El siguiente bloque es el menú original y sus manejadores: `DAE2` y los destinos de la tabla de acciones. La selección de proximidad ya está disponible, pero todavía no ejecuta órdenes de jugador. Debe conservarse la distinción entre objeto visible, objeto disponible para una acción y efecto real de esa acción sobre el estado del puzle.
+El [menú original y las primeras interacciones](menu_e_interacciones.md) ya conectan `DAE2` y varios destinos de la tabla de acciones. El siguiente bloque amplía los efectos específicos, las colisiones y el movimiento libre. Debe conservarse la distinción entre objeto visible, objeto disponible para una acción y efecto real de esa acción sobre el estado del puzle.

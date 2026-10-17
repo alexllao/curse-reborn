@@ -1,6 +1,6 @@
 # Presentación reconstruida en una ventana SDL
 
-La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Siguen pendientes menú, acciones de usuario, control y puzles. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
+La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Ya se conectan el menú y las primeras interacciones; siguen pendientes las demás acciones, movimiento libre y puzles completos. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
 
 ## Abrir la ventana
 
@@ -64,3 +64,5 @@ Esta comprobación verifica la ruta de software con ventana oculta y cierre por 
 La compilación WebAssembly y la adaptación del bucle de presentación al navegador siguen pendientes. El núcleo se conserva independiente de la ventana para poder realizar ese paso después.
 
 La [introducción original](introduccion_original.md) se intercala ahora entre título y mazmorra; también dispone de su comparación y capturas SDL específicas.
+
+El [menú y la depuración F7–F10](menu_e_interacciones.md) tienen comprobación SDL propia. Escape abre/cierra el menú dentro de la mazmorra; fuera mantiene el cierre de la ventana.

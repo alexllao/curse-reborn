@@ -145,9 +145,11 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
+  const bool comprobar_menu = opcion == "--comprobar-menu" || opcion == "--comprobar-orden" ||
+                              opcion == "--comprobar-depuracion";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
-  const bool comprobar_escena =
-      argc == 4 && (std::string(argv[2]) == "--comprobar-escena" || comprobar_animacion);
+  const bool comprobar_escena = argc == 4 && (std::string(argv[2]) == "--comprobar-escena" ||
+                                              comprobar_animacion || comprobar_menu);
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
@@ -192,8 +194,10 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido comprobar el avance con F6");
   }
   bool salir = false, capturada = false, fundiendo = false;
-  bool animacion_preparada = false, introduccion_comprobada = false;
+  bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false;
   bool entrada_introduccion = false;
+  bool depuracion = false, cajas_objetos = true, cajas_interaccion = true, cajas_limites = true;
+  unsigned short puntero_x = 152, puntero_y = 92;
   int pantalla = comprobar_introduccion                                  ? 2
                  : comprobar && !comprobar_core && !comprobar_transicion ? 1
                                                                          : 0;
@@ -204,9 +208,45 @@ int main(int argc, char *argv[]) {
     SDL_Event evento;
     while (SDL_PollEvent(&evento)) {
       if (evento.type == SDL_EVENT_QUIT ||
-          (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE))
+          (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
+           (pantalla != 3 || comprobar)))
         salir = true;
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
+        if (pantalla == 3) {
+          const auto tecla = evento.key.key;
+          if (tecla == SDLK_F7)
+            depuracion = !depuracion;
+          if (tecla == SDLK_F8) {
+            cajas_objetos = !cajas_objetos;
+            depuracion = true;
+          }
+          if (tecla == SDLK_F9) {
+            cajas_interaccion = !cajas_interaccion;
+            depuracion = true;
+          }
+          if (tecla == SDLK_F10) {
+            cajas_limites = !cajas_limites;
+            depuracion = true;
+          }
+          if (mazmorra.menu_abierto()) {
+            if (tecla == SDLK_LEFT)
+              puntero_x = puntero_x >= 32 ? puntero_x - 32 : 16;
+            if (tecla == SDLK_RIGHT)
+              puntero_x = puntero_x < 288 ? puntero_x + 32 : 304;
+          }
+          if (tecla == SDLK_ESCAPE || tecla == SDLK_RETURN || tecla == SDLK_LEFT ||
+              tecla == SDLK_RIGHT) {
+            if (!mazmorra.entrada_menu(puntero_x, puntero_y, tecla == SDLK_RETURN,
+                                       tecla == SDLK_ESCAPE) ||
+                !mazmorra.dibujar(imagen,
+                                  static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)))
+              return fallo("No se ha podido actualizar el menú");
+            for (unsigned int i = 0; i < 768; ++i)
+              paleta_visible[i] = imagen.paleta[i];
+            if (!actualizar_textura(presentacion.textura))
+              return fallo("No se ha podido dibujar el menú");
+          }
+        }
         const bool avanzar = pantalla < 3 && evento.key.key == SDLK_F6;
         const bool retroceder = pantalla > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
@@ -234,6 +274,29 @@ int main(int argc, char *argv[]) {
           fundiendo = true;
           paso_fundido = 0;
           inicio_fundido = SDL_GetTicksNS();
+        }
+      }
+      if (!salir && pantalla == 3 &&
+          (evento.type == SDL_EVENT_MOUSE_MOTION || evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN)) {
+        if (!SDL_ConvertEventToRenderCoordinates(presentacion.dibujante, &evento))
+          return fallo("No se ha podido adaptar el ratón a la ventana");
+        const float x = evento.type == SDL_EVENT_MOUSE_MOTION ? evento.motion.x : evento.button.x;
+        const float y = evento.type == SDL_EVENT_MOUSE_MOTION ? evento.motion.y : evento.button.y;
+        if (x >= 0 && x < 320 && y >= 0 && y < 200) {
+          puntero_x = static_cast<unsigned short>(x);
+          puntero_y = static_cast<unsigned short>(y);
+          if (!mazmorra.entrada_menu(puntero_x, puntero_y,
+                                     evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+                                         evento.button.button == SDL_BUTTON_LEFT,
+                                     evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+                                         evento.button.button == SDL_BUTTON_RIGHT) ||
+              !mazmorra.dibujar(imagen,
+                                static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)))
+            return fallo("No se ha podido procesar el menú con el ratón");
+          for (unsigned int i = 0; i < 768; ++i)
+            paleta_visible[i] = imagen.paleta[i];
+          if (!actualizar_textura(presentacion.textura))
+            return fallo("No se ha podido actualizar la selección");
         }
       }
       if (!salir && !fundiendo && pantalla < 3 && evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
@@ -281,9 +344,36 @@ int main(int argc, char *argv[]) {
       }
       introduccion_comprobada = true;
     }
+    if (comprobar_menu && pantalla == 3 && !menu_comprobado) {
+      if (!mazmorra.avanzar())
+        return fallo("No se ha podido habilitar el menú inicial");
+      if (opcion == "--comprobar-depuracion") {
+        depuracion = true;
+      } else {
+        if (!mazmorra.entrada_menu(152, 92, false, true) || !mazmorra.menu_abierto())
+          return fallo("No se ha abierto el menú");
+        if (opcion == "--comprobar-orden") {
+          if (!mazmorra.entrada_menu(144, 92, true, false) ||
+              !mazmorra.entrada_menu(48, 92, true, false) || mazmorra.menu_abierto())
+            return fallo("No se ha podido ejecutar la primera orden del menú");
+          for (unsigned int paso = 0; paso < 32; ++paso)
+            if (!mazmorra.avanzar())
+              return fallo("No se ha podido avanzar la interacción");
+        }
+      }
+      if (!mazmorra.dibujar(imagen))
+        return fallo("No se ha podido comprobar el menú");
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido presentar la interacción");
+      menu_comprobado = true;
+    }
     if (comprobar_animacion && pantalla == 3 && !animacion_preparada) {
       for (unsigned int paso = 0; paso < 32; ++paso) {
-        if (!mazmorra.avanzar() || !mazmorra.dibujar(imagen))
+        if (!mazmorra.avanzar() ||
+            !mazmorra.dibujar(imagen,
+                              static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)))
           return fallo("No se ha podido comprobar la animación de los objetos");
       }
       if (!actualizar_textura(presentacion.textura))
@@ -332,7 +422,9 @@ int main(int argc, char *argv[]) {
     // EAD5 espera cinco ticks del temporizador. Mantiene la referencia nominal de 70 Hz de esta
     // plataforma.
     if (!comprobar && pantalla == 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
-      if (!mazmorra.avanzar() || !mazmorra.dibujar(imagen) ||
+      if (!mazmorra.avanzar() ||
+          !mazmorra.dibujar(imagen,
+                            static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)) ||
           !actualizar_textura(presentacion.textura)) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");
         return 1;
@@ -344,6 +436,9 @@ int main(int argc, char *argv[]) {
         !SDL_RenderTexture(presentacion.dibujante, presentacion.textura, nullptr, nullptr)) {
       return fallo("No se ha podido dibujar el título");
     }
+    if (pantalla == 3 && depuracion &&
+        !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
+      return fallo("No se han podido dibujar las cajas de depuración");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       SDL_Surface *captura = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
       if (!captura)

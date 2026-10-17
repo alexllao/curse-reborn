@@ -46,7 +46,9 @@
     "comprobar:escena": "node herramientas/gestionar_proyecto.mjs comprobar:escena",
     "estado": "node herramientas/gestionar_proyecto.mjs estado",
     "comparar:introduccion": "node herramientas/gestionar_proyecto.mjs comparar:introduccion",
-    "comprobar:introduccion": "node herramientas/gestionar_proyecto.mjs comprobar:introduccion"
+    "comprobar:introduccion": "node herramientas/gestionar_proyecto.mjs comprobar:introduccion",
+    "comparar:menu": "node herramientas/gestionar_proyecto.mjs comparar:menu",
+    "comprobar:menu": "node herramientas/gestionar_proyecto.mjs comprobar:menu"
   },
   "repository": {
     "type": "git",

@@ -810,8 +810,8 @@
     },
     {
       "direccion": "0000:DE96",
-      "nombre": "Preparación de la lista inicial de acciones",
-      "comentario": "Prepara diez identificadores de cero a nueve y reconstruye la tabla. Puede sustituir después las casillas uno y dos."
+      "nombre": "Menú principal y bloqueo de acciones",
+      "comentario": "Llena B620 con 0..9 y construye DF15. Si 2C3B es distinto de cero, bloquea las entradas uno/dos con DE96 y superpone la máscara BC10."
     },
     {
       "direccion": "0000:DF15",
@@ -868,6 +868,36 @@
       "direccion": "0000:2F8E",
       "nombre": "Control de omisión de la introducción",
       "comentario": "Devuelve acarreo al detectar tecla o botón según la configuración. Los puntos de llamada se conservan en la secuencia C++; SDL adapta la entrada y Escape sigue reservado al cierre."
+    },
+    {
+      "direccion": "0000:DAE2",
+      "nombre": "Menú de acciones original",
+      "comentario": "Inicio del menú. motor/acciones/menu.cpp prepara listas y entradas; SDL conecta selección y panel. La apertura deslizante y el resto de manejadores específicos siguen pendientes."
+    },
+    {
+      "direccion": "0000:DEFB",
+      "nombre": "Composición del panel y los iconos",
+      "comentario": "320x32 desde MENU.DAT; DF15 construye manejadores; DF4E recorre iconos de ICONS.SPR o de DS:524E. Traslado motor/video/menu.cpp con referencias en párrafos y máscaras originales."
+    },
+    {
+      "direccion": "0000:E05B",
+      "nombre": "Selección de acción secundaria",
+      "comentario": "Guarda el ordinal de casilla en B634. Las acciones 1/3/4/5/6/7 empiezan por inventario; 0/2 por destinos. E07F prepara listas con 891E y manejador 3B53."
+    },
+    {
+      "direccion": "0000:32DE",
+      "nombre": "Temas de conversación y secuencia inicial",
+      "comentario": "32DE–337A trasladado para temas cero/uno de la escena cero, sin dispositivo de audio. Tema cero programa los canales y entra en 886B. Las demás escenas siguen pendientes."
+    },
+    {
+      "direccion": "0000:989E",
+      "nombre": "Combinación inicial de objetos cero y uno",
+      "comentario": "989E–98FF trasladado con inventario, guiones, puntuación y fases según orientación; ámbito de integración limitado a la mazmorra inicial."
+    },
+    {
+      "direccion": "0000:099A",
+      "nombre": "Activación de acciones tras alcanzar un nodo",
+      "comentario": "099A–0A58 consume nodos enlazados. Al terminar, coloca el personaje, copia los quince bytes de canales pendientes y consume hasta setenta registros de programación. Traslado en motor/acciones/menu.cpp."
     }
   ],
   "tablas": [

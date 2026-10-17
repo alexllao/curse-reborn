@@ -31,9 +31,9 @@ Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están tras
 
 El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++ y el propietario ha confirmado sus **142 casos** de comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior.
 
-**`pnpm ventana` recorre Core → título → introducción original → mazmorra inicial**. Los fundidos de salida conservan los 32 pasos de paleta del original. Una tecla o el botón izquierdo inicia el fundido; F6 avanza y F5 retrocede directamente entre estas vistas de desarrollo. Escape cierra. La imagen se ajusta al redimensionar o maximizar conservando sus proporciones, con bandas negras y vecino más próximo, sin filtros añadidos.
+**`pnpm ventana` recorre Core → título → introducción original → mazmorra inicial**. Los fundidos de salida conservan los 32 pasos de paleta del original. Una tecla o el botón izquierdo inicia el fundido; F6 avanza y F5 retrocede directamente entre estas vistas de desarrollo. Escape cierra fuera de la mazmorra; dentro abre/cierra el menú. La imagen se ajusta al redimensionar o maximizar conservando sus proporciones, con bandas negras y vecino más próximo, sin filtros añadidos.
 
-El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La nueva [carga, composición y selección de objetos](documentacion/objetos_mazmorra.md) tiene confirmados por el propietario sus **773 casos/pasos** de comparación amplia, incluidas 257 composiciones y 256 pasos persistentes. La comprobación SDL compara los **64.000 píxeles** del estado inicial y de los objetos tras 32 pasos. El menú, las acciones, el control del personaje y la resolución de puzles siguen pendientes. La cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual.
+El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La nueva [carga, composición y selección de objetos](documentacion/objetos_mazmorra.md) tiene confirmados por el propietario sus **773 casos/pasos** de comparación amplia, incluidas 257 composiciones y 256 pasos persistentes. La comprobación SDL compara los **64.000 píxeles** del estado inicial y de los objetos tras 32 pasos. Ya están conectados el [menú y las primeras interacciones](documentacion/menu_e_interacciones.md). Siguen pendientes las demás acciones, el movimiento libre y la resolución completa de puzles. La cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual.
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
@@ -43,7 +43,7 @@ Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 151 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 157 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -93,8 +93,10 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Cargar la lista original de entidades y superposiciones y conectarla a SDL.
 - [x] Integrar secuencias, comportamientos y rutina de mazmorra; comprobar 32 pasos y sus composiciones.
 - [x] Trasladar la selección de objetos por proximidad y compatibilidad de acción.
-- [ ] Confirmar la comparación amplia de objetos con el propietario.
-- [ ] Conectar el menú y los manejadores de acciones para completar la apertura y habilitar el control.
+- [x] Confirmar con el propietario los 773 casos/pasos y las animaciones de objetos.
+- [x] Conectar el menú original, las primeras interacciones y la depuración F7–F10; muestra de 91 casos/pasos.
+- [ ] Confirmar los 307 casos/pasos de menú y la prueba visible de sus controles.
+- [ ] Completar las acciones particulares, colisiones y movimiento libre.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
@@ -188,6 +190,14 @@ Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar 
 La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción y mazmorra como vistas de desarrollo. No hay audio todavía.
 
 `pnpm comparar:introduccion` contrasta el recorrido y las imágenes contra el ejecutable; `pnpm comprobar:introduccion` compara capturas SDL del caldero, balcón, béisbol y llegada a la mazmorra al terminar y al omitir. Las esperas usan retrazos nominales a 70 Hz; la duración de la E/S DOS y la sincronización física de monitor no se reproducen.
+
+### Menú y depuración
+
+En la mazmorra, Escape o botón derecho abre/cierra el menú. El ratón y el botón izquierdo seleccionan; izquierda/derecha y Enter también funcionan. Para poner en marcha la primera secuencia, elige el bocadillo de conversación (quinto icono) y la segunda casilla de su submenú. Se mantienen las condiciones originales de disponibilidad.
+
+**F7** activa/desactiva la depuración. **F8** alterna cajas de entidades; **F9**, zonas de interacción; **F10**, encuadre y umbrales. Verde: objetos; cian: Brad; magenta: zonas disponibles por afinidad; naranja: proximidad de los pies; amarillo: límites del encuadre. Son datos de diagnóstico, sin alterar la partida. Las colisiones y cajas de navegación de `BOXDET.DAT` aún no están representadas.
+
+`pnpm comparar:menu` agrupa las nuevas comparaciones; `pnpm comprobar:menu` verifica panel, primera interacción y colores de depuración en SDL. Consulta [rutinas, alcance y controles](documentacion/menu_e_interacciones.md).
 
 ### Dónde colocar el juego original
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <SDL3/SDL.h>
 #include <vector>
 #include "../../motor/aleatorio/generador.hpp"
 #include "../../motor/video/imagen.hpp"
@@ -13,14 +14,26 @@ public:
   // Avanza las secuencias, comportamientos y lógica particular sin ejecutar instrucciones DOS.
   bool avanzar();
   // Restaura el fondo y compone todas las entidades en el orden reconstruido.
-  bool dibujar(motor::ImagenIndexada &imagen);
+  bool dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu = 0);
+
+  // Abre/cierra el menú original y procesa sus casillas desde entrada SDL en coordenadas lógicas.
+  bool entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar);
+  // Consulta si las animaciones deben permanecer detenidas mientras se escoge una acción.
+  bool menu_abierto() const {
+    return menu_visible;
+  }
+  // Dibuja rectángulos de diagnóstico sin escribir en el estado ni en las imágenes originales.
+  bool depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones, bool limites) const;
 
 private:
   unsigned char datos[65536]{};
   motor::ImagenIndexada fondo{};
   motor::EstadoAleatorio aleatorio{};
   std::string carpeta;
-  std::vector<unsigned char> escena, personaje, modelo;
+  std::vector<unsigned char> escena, personaje, modelo, iconos, raton;
+  unsigned char fondo_menu[10240]{}, panel_menu[64000]{};
+  bool menu_visible = false;
+  unsigned short casilla_menu = 0;
 
   // Lee un banco local sin asumir que sus bytes estén alineados o terminen en cero.
   bool cargar_banco(const std::string &nombre, std::vector<unsigned char> &destino);
