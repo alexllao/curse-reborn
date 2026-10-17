@@ -21,6 +21,7 @@
     "comparar:entidades": "node herramientas/gestionar_proyecto.mjs comparar:entidades",
     "comparar:secuencias": "node herramientas/gestionar_proyecto.mjs comparar:secuencias",
     "comparar:operaciones": "node herramientas/gestionar_proyecto.mjs comparar:operaciones",
+    "comparar:altavoz": "node herramientas/gestionar_proyecto.mjs comparar:altavoz",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

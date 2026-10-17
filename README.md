@@ -23,13 +23,15 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
-El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. Pasa una muestra de **245 casos**; quedan **1.285 casos** preparados para la comparación amplia. La reproducción de audio y el acceso real a archivos aún deben integrarse.
+El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. El acceso real a archivos aún debe integrarse.
+
+El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. Pasa **310 casos de muestra**, con **3.312 casos** preparados para la comparación amplia. Aún no genera audio digital ni salida audible; tampoco hay una ventana o escena visible.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 103 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 113 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -64,7 +66,9 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar el avance de tres canales de secuencias, dimensiones y retirada; muestra de 462 casos coincidente.
 - [x] Confirmar con el propietario los 8.924 casos de secuencias.
 - [x] Trasladar selección de sonido y servicios opcionales de las secuencias; muestra de 245 casos coincidente.
-- [ ] Ejecutar los 1.285 casos de operaciones e integrar audio y acceso real a archivos.
+- [x] Confirmar con el propietario los 1.285 casos de operaciones.
+- [x] Trasladar arranque, parada y temporizador del altavoz del PC; muestra de 310 casos coincidente.
+- [ ] Ejecutar los 3.312 casos del altavoz e integrar síntesis de sonido y acceso real a archivos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -127,7 +131,8 @@ pnpm comprobar
 | `pnpm comparar:avance` | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos. |
 | `pnpm comparar:entidades` | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos. |
 | `pnpm comparar:secuencias` | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos. |
-| `pnpm comparar:operaciones` | Compara selección de sonido y servicios de modelos: 1.285 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 245 casos ya comprobados. |
+| `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos. |
+| `pnpm comparar:altavoz` | Compara arranque, parada, notas e integración: 3.312 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 310 casos ya comprobados. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 

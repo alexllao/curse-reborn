@@ -11,6 +11,7 @@
 #include "../motor/entidades/actualizar.hpp"
 #include "../motor/entidades/secuencias.hpp"
 #include "../motor/sonido/seleccionar.hpp"
+#include "../motor/sonido/altavoz.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -221,4 +222,46 @@ extern "C" EXPORTAR int ejecutar_operaciones_secuencia(unsigned char* datos, uns
   palabras[0] = estado.primera; palabras[1] = estado.segunda;
   palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
   return static_cast<int>(resultado) + 1;
+}
+
+namespace {
+void registrar_puerto(unsigned short* salida, unsigned short operacion, unsigned short puerto, unsigned char valor) {
+  const auto indice = salida[0]++;
+  if (indice < 10) {
+    salida[1 + indice * 3] = operacion; salida[2 + indice * 3] = puerto; salida[3 + indice * 3] = valor;
+  }
+}
+unsigned char leer_altavoz(void* contexto, unsigned short puerto) {
+  auto* salida = static_cast<unsigned short*>(contexto);
+  const auto valor = static_cast<unsigned char>(salida[31]);
+  registrar_puerto(salida, 0, puerto, valor); return valor;
+}
+void escribir_altavoz(void* contexto, unsigned short puerto, unsigned char valor) {
+  auto* salida = static_cast<unsigned short*>(contexto);
+  registrar_puerto(salida, 1, puerto, valor);
+  if (puerto == 0x61) salida[31] = valor;
+}
+bool sonido_altavoz(void* contexto, unsigned char* datos, unsigned short entidad, unsigned char id) {
+  auto& estado = *static_cast<motor::EstadoSonido*>(contexto);
+  return motor::atender_orden_altavoz(datos,
+    motor::seleccionar_sonido(datos, estado, {nullptr, nullptr}, entidad, id));
+}
+}
+
+extern "C" EXPORTAR int procesar_altavoz(unsigned int operacion, unsigned char* datos,
+    unsigned short posicion, unsigned short* prioridad, unsigned short* puertos) {
+  const motor::PuertosAltavoz servicio{puertos, leer_altavoz, escribir_altavoz};
+  if (operacion == 0) { motor::iniciar_altavoz(datos, posicion); return 1; }
+  if (operacion == 1) return motor::detener_altavoz(datos, servicio) ? 1 : 0;
+  if (operacion == 2) return motor::avanzar_altavoz(datos, servicio) ? 1 : 0;
+  motor::EstadoSonido estado{static_cast<unsigned char>(*prioridad), 0, 0, 0, 0, 0x0f31};
+  bool valido = true;
+  if (operacion == 3) valido = sonido_altavoz(&estado, datos, 0x2c4c, static_cast<unsigned char>(posicion));
+  else {
+    const motor::RecursosSecuencias recursos{&estado, nullptr, 0, 0, 0, sonido_altavoz, nullptr};
+    motor::EstadoAleatorio aleatorio{0, 0, 0, 0};
+    valido = motor::avanzar_secuencias_entidad(datos, aleatorio, recursos, 0x2c4c) == motor::EstadoSecuencias::correcto;
+  }
+  *prioridad = estado.prioridad_secuencia;
+  return valido ? 1 : 0;
 }

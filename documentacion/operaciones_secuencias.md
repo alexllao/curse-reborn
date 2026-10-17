@@ -1,6 +1,6 @@
 # Sonido y carga de modelos desde las secuencias
 
-Este traslado añade la selección de sonido de `0000:5288`–`0000:53B2` y permite atender las operaciones `FBh` y `F8h` mediante servicios explícitos. La muestra de **245 casos** coincide con el original. Hay **1.285 casos** preparados para la comparación amplia.
+Este traslado añade la selección de sonido de `0000:5288`–`0000:53B2` y permite atender las operaciones `FBh` y `F8h` mediante servicios explícitos. La muestra de **245 casos** coincide con el original. El propietario ha confirmado la coincidencia de los **1.285 casos** de la comparación amplia.
 
 ## Selección de sonido
 
@@ -8,7 +8,7 @@ Este traslado añade la selección de sonido de `0000:5288`–`0000:53B2` y perm
 
 La entrada original recibe SI como registro de entidad y AL como identificador. Primero descarta entidades cuyo X es mayor que 319, cuya suma X más ancho es menor o igual a cero, cuyo Y es mayor que 199 o cuya suma Y más alto es menor o igual a cero. Las sumas seguidas inmediatamente de `JLE` se interpretan usando el resultado y el desbordamiento con signo, sin confundirlos con una simple comprobación del bit alto del resultado envuelto.
 
-`DS:0AD4` selecciona cinco modalidades observadas. Sus nombres de dispositivo todavía deben confirmarse siguiendo las rutinas inferiores.
+`DS:0AD4` selecciona cinco modalidades observadas. La modalidad uno se ha identificado como altavoz del PC siguiendo las rutinas inferiores. Los otros dispositivos todavía deben estudiarse.
 
 | Modalidad | Código de selección | Comportamiento antes del dispositivo |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ Para un modelo no residente, se mantiene el orden original: se escriben modelo e
 
 El bloque DOS `8574`–`859D` abre en lectura, solicita **64.000 bytes** a partir del inicio del segmento de modelos y cierra el identificador obtenido. Las lecturas cortas conservan el resto del búfer. El servicio portable debe mantener ese comportamiento; no debe rellenar con ceros lo que el original no escribe.
 
-La implementación de acceso real al sistema de archivos y a audio sigue pendiente. Los casos de comparación aportan un servicio sintético. Los fallos de apertura o lectura DOS no se han trasladado ni comparado: el original no comprueba explícitamente sus acarreos en este bloque. Una respuesta `false` es una parada del contrato nuevo, no una recuperación atribuida al original; puede haber escrituras anteriores y todavía no existe un contrato de reanudación después de un fallo.
+El [reproductor del altavoz](altavoz_pc.md) amplía la modalidad uno con arranque, parada y temporizador. El acceso real al sistema de archivos y la síntesis audible siguen pendientes. Los casos de comparación aportan un servicio sintético. Los fallos de apertura o lectura DOS no se han trasladado ni comparado: el original no comprueba explícitamente sus acarreos en este bloque. Una respuesta `false` es una parada del contrato nuevo, no una recuperación atribuida al original; puede haber escrituras anteriores y todavía no existe un contrato de reanudación después de un fallo.
 
 ## Comparación agrupada
 
@@ -46,7 +46,7 @@ La implementación de acceso real al sistema de archivos y a audio sigue pendien
 pnpm comparar:operaciones
 ```
 
-| Grupo | Comparación amplia preparada | Muestra comprobada |
+| Grupo | Comparación amplia confirmada | Muestra comprobada |
 | --- | ---: | ---: |
 | Cinco modalidades, tablas, prioridades y omisiones | 600 | 120 |
 | Fronteras de visibilidad | 45 | 45 |
