@@ -1,0 +1,25 @@
+# Recursos originales y resultados locales de investigación
+/datos_originales/
+/recursos_extraidos/
+/trabajo/
+*.zip
+*.exe
+*.com
+*.sav
+
+# Resultados de compilación
+/compilacion/
+/build/
+/cmake-build-*/
+*.obj
+*.o
+*.pdb
+*.ilk
+
+# Archivos locales de editores y del sistema
+/.vs/
+/.vscode/
+__pycache__/
+*.pyc
+Thumbs.db
+.DS_Store
