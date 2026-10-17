@@ -2,6 +2,10 @@
   "name": "curse-reborn",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Àlex Llaó",
+    "email": "alexllao@me.com"
+  },
   "description": "Reconstrucción de Curse of Enchantia desde su ejecutable DOS y futura remasterización con SDL.",
   "type": "module",
   "packageManager": "pnpm@11.18.0",
@@ -22,6 +26,7 @@
     "comparar:secuencias": "node herramientas/gestionar_proyecto.mjs comparar:secuencias",
     "comparar:operaciones": "node herramientas/gestionar_proyecto.mjs comparar:operaciones",
     "comparar:altavoz": "node herramientas/gestionar_proyecto.mjs comparar:altavoz",
+    "comparar:video": "node herramientas/gestionar_proyecto.mjs comparar:video",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

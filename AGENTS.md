@@ -8,7 +8,7 @@
 
 ## Propósito
 
-Curse Reborn reconstruye primero el funcionamiento de Curse of Enchantia para DOS en C++ con SDL. La futura remasterización se apoyará en esa base. El juego original fue el primer juego de ordenador del creador del proyecto; preservar su identidad forma parte del objetivo.
+Curse Reborn reconstruye primero el funcionamiento de Curse of Enchantia para DOS en C++ con SDL. La futura remasterización se apoyará en esa base. El creador del port es Àlex Llaó (alexllao@me.com). Curse of Enchantia fue el primer juego al que jugó en un PC 286; preservar su identidad forma parte del objetivo. Conservar la grafía «Àlex Llaó» y distinguir su autoría del port de la autoría del juego original, de Core Design.
 
 La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y documentar las rutinas originales antes de trasladarlas a C++ y sustituir el acceso a DOS y al hardware por SDL. Investigar los recursos a través de las rutinas originales que los leen. Cada rutina trasladada debe indicar su dirección original, las evidencias y las comprobaciones realizadas.
 

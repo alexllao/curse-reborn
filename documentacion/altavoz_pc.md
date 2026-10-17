@@ -2,7 +2,7 @@
 
 El código de [altavoz.cpp](../motor/sonido/altavoz.cpp) traslada tres rutinas del reproductor seleccionado por la modalidad uno. Su escritura de `B6h` en `43h`, los dos bytes del divisor en `42h` y el control de `61h` identifican la ruta del temporizador y el altavoz del PC.
 
-Se han compilado los bloques con avisos tratados como errores. Una muestra de **310 casos** coincide con el original en memoria y en cada operación de puerto. La comparación amplia de **3.312 casos** queda preparada para el propietario.
+Se han compilado los bloques con avisos tratados como errores. Una muestra de **310 casos** coincide con el original en memoria y en cada operación de puerto. El propietario ha confirmado también la coincidencia de los **3.312 casos** de la comparación amplia.
 
 ## Tramos trasladados
 
@@ -45,7 +45,7 @@ El llamador debe aportar un segmento de 65.536 bytes y servicios de puerto váli
 pnpm comparar:altavoz
 ```
 
-| Grupo | Comparación amplia preparada | Muestra comprobada |
+| Grupo | Comparación amplia confirmada | Muestra comprobada |
 | --- | ---: | ---: |
 | Arranque | 80 | 10 |
 | Parada y 256 valores del puerto de control | 512 | 16 |
@@ -58,4 +58,4 @@ pnpm comparar:altavoz
 
 Unicorn ejecuta las instrucciones originales. Sus entradas y salidas de puerto se registran y reciben el mismo valor inicial de control que las funciones nativas. Se compara la traza completa en orden, el control final, DS completo, la prioridad guardada en CS, la pila y SI donde se declara conservado. No se compara una grabación de audio ni la temporización del hardware.
 
-Los informes separados se guardan en `trabajo/comparacion_altavoz/muestra.json` y `resultado.json`, con huellas de ejecutable y biblioteca y direcciones visitadas. La muestra se ejecuta añadiendo `--muestra` al comando. La comparación amplia aún no se ha ejecutado aquí.
+Los informes separados se guardan en `trabajo/comparacion_altavoz/muestra.json` y `resultado.json`, con huellas de ejecutable y biblioteca y direcciones visitadas. La muestra se ejecuta añadiendo `--muestra` al comando. La comparación amplia fue ejecutada y confirmada por el propietario.

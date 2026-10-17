@@ -12,6 +12,7 @@
 #include "../motor/entidades/secuencias.hpp"
 #include "../motor/sonido/seleccionar.hpp"
 #include "../motor/sonido/altavoz.hpp"
+#include "../motor/video/planos.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -264,4 +265,33 @@ extern "C" EXPORTAR int procesar_altavoz(unsigned int operacion, unsigned char* 
   }
   *prioridad = estado.prioridad_secuencia;
   return valido ? 1 : 0;
+}
+
+namespace {
+struct ContextoVideo { unsigned int* traza; unsigned char control; };
+unsigned char leer_video(void* contexto, unsigned short puerto) {
+  auto& c = *static_cast<ContextoVideo*>(contexto);
+  const auto indice = c.traza[0]++;
+  c.traza[1 + indice * 4] = 0; c.traza[2 + indice * 4] = puerto;
+  c.traza[3 + indice * 4] = c.control; c.traza[4 + indice * 4] = 1;
+  return c.control;
+}
+void escribir_video(void* contexto, unsigned short puerto, unsigned short valor, unsigned char tamano) {
+  auto& c = *static_cast<ContextoVideo*>(contexto);
+  const auto indice = c.traza[0]++;
+  c.traza[1 + indice * 4] = 1; c.traza[2 + indice * 4] = puerto;
+  c.traza[3 + indice * 4] = valor; c.traza[4 + indice * 4] = tamano;
+  if (puerto == 0x3cf) c.control = static_cast<unsigned char>(valor);
+}
+}
+
+extern "C" EXPORTAR int procesar_video(unsigned int operacion, unsigned char* datos,
+    unsigned char* planos, const unsigned short* parametros, unsigned int* traza) {
+  ContextoVideo contexto{traza, static_cast<unsigned char>(parametros[6])};
+  const motor::PuertosVideo puertos{&contexto, leer_video, escribir_video};
+  const auto ancho = parametros[0], alto = parametros[1], paso = parametros[2];
+  if (operacion == 0) return motor::subir_imagen(datos, planos, puertos, ancho, alto, paso, parametros[4]) ? 1 : 0;
+  if (operacion == 1) return motor::recuperar_imagen(planos, datos, puertos, ancho, alto, paso, parametros[3]) ? 1 : 0;
+  if (operacion == 2) return motor::copiar_planos(planos, puertos, ancho, alto, paso, parametros[5], parametros[3], parametros[4]) ? 1 : 0;
+  return motor::enviar_paleta(datos, puertos, parametros[3], static_cast<unsigned char>(parametros[4]), ancho) ? 1 : 0;
 }

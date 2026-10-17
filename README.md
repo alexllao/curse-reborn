@@ -2,7 +2,7 @@
 
 **Volver a Enchantia. Recuperar el juego original. Darle una nueva vida.**
 
-Curse Reborn nace de un recuerdo muy concreto: *Curse of Enchantia* fue el primer juego al que su creador jugó en un ordenador. Este proyecto es una forma de regresar a aquella aventura, entender cómo funcionaba y construir una base que permita disfrutarla y remasterizarla con cuidado.
+Curse Reborn es un port creado por **Àlex Llaó**. Nace de un recuerdo muy concreto: *Curse of Enchantia* fue el primer juego al que jugó en un **PC 286**. Este proyecto es una forma de regresar a aquella aventura, entender cómo funcionaba y construir una base que permita disfrutarla y remasterizarla con cuidado.
 
 La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar su lógica a C++ con SDL**. Los recursos originales acompañarán esa reconstrucción. Sobre esa base queremos desarrollar una remasterización que conserve su identidad y abra la puerta a mejoras gráficas, sonoras y de uso.
 
@@ -25,13 +25,15 @@ El propietario ha confirmado el [generador de valores acotados](documentacion/ge
 
 El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. El acceso real a archivos aún debe integrarse.
 
-El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. Pasa **310 casos de muestra**, con **3.312 casos** preparados para la comparación amplia. Aún no genera audio digital ni salida audible; tampoco hay una ventana o escena visible.
+El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Aún no genera audio digital ni salida audible.
+
+Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++, con **83 casos de muestra** coincidentes y **1.183 casos** preparados para la comparación amplia. Se ha obtenido la primera imagen de diagnóstico: el título original, descomprimido por el ejecutable en Unicorn y copiado por las rutinas C++. Todavía no existe una ventana SDL ni una versión jugable; el descompresor C++ sigue pendiente.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 113 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 125 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -41,7 +43,7 @@ Se ha realizado una primera inspección estática de una copia para DOS:
 | Ejecutable principal | `CURSE.EXE`, formato DOS MZ de 16 bits, 111.606 bytes |
 | Recursos separados | Archivos `.MAP`, `.SPR`, `.BRD`, `.DAT`, `.PAL` y `.SFX`, entre otros |
 | Compresión identificada | Tres archivos con cabecera RNC de método 1 |
-| Pantalla de título | `TITLE.DAT` declara 64.000 bytes descomprimidos; su imagen aún no se ha recuperado |
+| Pantalla de título | Imagen de 320 × 200 recuperada como referencia mediante el descompresor original; subida, recuperación y paleta contrastadas con C++ |
 
 Estas observaciones permiten comenzar el trabajo, pero todavía falta determinar la estructura de buena parte de los recursos y reconstruir las rutinas del juego. Las extensiones y los nombres de archivo son pistas; su significado debe confirmarse mediante análisis.
 
@@ -68,7 +70,9 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar selección de sonido y servicios opcionales de las secuencias; muestra de 245 casos coincidente.
 - [x] Confirmar con el propietario los 1.285 casos de operaciones.
 - [x] Trasladar arranque, parada y temporizador del altavoz del PC; muestra de 310 casos coincidente.
-- [ ] Ejecutar los 3.312 casos del altavoz e integrar síntesis de sonido y acceso real a archivos.
+- [x] Confirmar con el propietario los 3.312 casos del altavoz.
+- [x] Trasladar copias por planos y envío de paleta; muestra de 83 casos y referencia visual del título comprobadas.
+- [ ] Ejecutar los 1.183 casos de vídeo, trasladar el descompresor y conectar la primera pantalla con SDL.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -81,7 +85,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** estudiar las rutinas de dispositivo de sonido y la carga real de recursos para conectarlas a la plataforma y a la presentación.
+**Siguiente hito de reconstrucción:** trasladar el descompresor de `0000:64E0` a C++ y conectar la primera pantalla a SDL, manteniendo las comparaciones con el original.
 
 ## Organización del repositorio
 
@@ -132,7 +136,8 @@ pnpm comprobar
 | `pnpm comparar:entidades` | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos. |
 | `pnpm comparar:secuencias` | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos. |
 | `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos. |
-| `pnpm comparar:altavoz` | Compara arranque, parada, notas e integración: 3.312 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 310 casos ya comprobados. |
+| `pnpm comparar:altavoz` | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos. |
+| `pnpm comparar:video` | Compara copias por planos y paleta: 1.183 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 83 casos ya comprobados. Genera `trabajo/vista_titulo/titulo.png` usando la descompresión original como referencia. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
@@ -170,6 +175,8 @@ La documentación, los comentarios del código, los textos propios de las herram
 Los avances se documentarán con claridad: qué se ha comprobado, qué sigue siendo una hipótesis y qué puede ejecutarse realmente. Cada función reconstruida deberá poder contrastarse con el original; las mejoras de la remasterización se identificarán como tales.
 
 ## Recursos originales y autoría
+
+El creador del port **Curse Reborn** es **Àlex Llaó**. Contacto: [alexllao@me.com](mailto:alexllao@me.com).
 
 *Curse of Enchantia* es una obra de Core Design. Curse Reborn es un proyecto independiente y no oficial, y reconoce el trabajo de quienes crearon el juego original.
 
