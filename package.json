@@ -18,6 +18,7 @@
     "comparar:aleatorio": "node herramientas/gestionar_proyecto.mjs comparar:aleatorio",
     "comparar:resultados": "node herramientas/gestionar_proyecto.mjs comparar:resultados",
     "comparar:avance": "node herramientas/gestionar_proyecto.mjs comparar:avance",
+    "comparar:entidades": "node herramientas/gestionar_proyecto.mjs comparar:entidades",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

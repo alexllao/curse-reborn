@@ -2,7 +2,7 @@
 
 Esta entrega amplía el C++ hasta el retorno de la acción que empieza en `0000:B740`, incluyendo su salto común a `886B` y las dependencias numéricas. No dibuja todavía una escena ni ejecuta una partida.
 
-Se ha compilado y enlazado la biblioteca. La muestra de **421 casos** coincide con las instrucciones originales. La comparación amplia de **10.930 casos preparados** queda pendiente de ejecución en el equipo del propietario.
+Se ha compilado y enlazado la biblioteca. La muestra de **421 casos** coincide con las instrucciones originales. El propietario ha confirmado también la coincidencia de los **10.930 casos** de la comparación amplia en su equipo.
 
 ## Código trasladado
 
@@ -38,7 +38,7 @@ La planificación devuelve el AX observado: el contador de movimiento, con míni
 
 Las funciones de entrada de acción devuelven AX por parámetro. Un resultado `true` de la API indica que la ejecución trasladada es válida; el acarreo original en el retorno normal de `886B` está activo. No se confunde ese estado con el indicador físico de la CPU que ejecuta C++.
 
-Los bloques que actualizan memoria no prometen reproducir todos los registros o indicadores del procesador. La comparación comprueba DS completo, los retornos declarados, el estado aleatorio en la acción completa y el equilibrio de la pila original. La animación por fotogramas de `10EC` y la presentación continúan pendientes.
+Los bloques que actualizan memoria no prometen reproducir todos los registros o indicadores del procesador. La comparación comprueba DS completo, los retornos declarados, el estado aleatorio en la acción completa y el equilibrio de la pila original. La actualización de entidades de `10EC` se amplía en el [traslado siguiente](entidades.md); la presentación y el avance temporal general de fotogramas continúan pendientes.
 
 ## Un comando para el conjunto
 
@@ -62,4 +62,4 @@ Unicorn recorre el código original y sus llamadas reales. No se sustituyen los 
 
 ## Continuación
 
-El siguiente grupo de trabajo es la actualización de secuencias y entidades de `0000:10EC`: el estado ya se prepara y avanza en C++, pero todavía hay que trasladar el consumo de esos registros durante cada iteración del juego.
+La [creación y actualización de entidades](entidades.md) amplía este conjunto con las dependencias utilizadas por `0000:10EC`. El siguiente trabajo sigue el avance temporal de las secuencias y su relación con la presentación y los recursos reales.

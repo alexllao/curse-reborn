@@ -8,6 +8,7 @@
 #include "../motor/movimiento/direccion.hpp"
 #include "../motor/movimiento/planificar.hpp"
 #include "../motor/movimiento/avanzar.hpp"
+#include "../motor/entidades/actualizar.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -90,4 +91,37 @@ extern "C" EXPORTAR int ejecutar_accion_resultados(unsigned char* datos, unsigne
 
 extern "C" EXPORTAR int avanzar_movimiento(unsigned char* datos) {
   return motor::avanzar_movimiento(datos) ? 1 : 0;
+}
+
+namespace {
+bool dimensiones_entidad(void* contexto, unsigned short indice, unsigned short& ancho,
+                         unsigned short& alto) {
+  if (indice >= 128) return false;
+  const auto* dimensiones = static_cast<const unsigned short*>(contexto);
+  ancho = dimensiones[indice * 2]; alto = dimensiones[indice * 2 + 1];
+  return true;
+}
+}
+
+// Recursos sintéticos de prueba: las cabeceras originales se preparan en 4000h.
+extern "C" EXPORTAR int procesar_entidades(unsigned int operacion, unsigned char* datos,
+    unsigned short* palabras, unsigned short* dimensiones, unsigned short posicion,
+    unsigned short* salida) {
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const motor::RecursosEntidades recursos{dimensiones, dimensiones_entidad, 0x4000};
+  bool valido = true;
+  if (operacion == 0) {
+    const auto creacion = motor::crear_entidad(datos, estado, recursos, posicion);
+    valido = creacion.valido;
+    salida[0] = creacion.creada ? 1 : 0; salida[1] = creacion.posicion;
+  } else if (operacion == 1) {
+    valido = motor::actualizar_entidad(datos, estado, recursos, posicion);
+  } else if (operacion == 2) {
+    valido = motor::actualizar_entidades(datos, estado, recursos);
+  } else {
+    motor::activar_transicion_entidad(datos);
+  }
+  palabras[0] = estado.primera; palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
+  return valido ? 1 : 0;
 }
