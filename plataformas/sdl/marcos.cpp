@@ -22,19 +22,26 @@ const DefinicionMarco *elegir_marco(const char *pantalla) {
 // Conserva el remate interior completo, incluido su relieve transparente sobre el juego.
 bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMarco &panel,
                    const SDL_Rect &banda, const SDL_FRect &juego, bool derecha, bool cubrir,
-                   bool reflejar, float solape, bool horizontal = false) {
+                   bool reflejar, float solape, float zoom, bool horizontal = false) {
   if (banda.w <= 0 || banda.h <= 0)
     return true;
   const float cuerpo = panel.ancho - panel.margen;
-  const float escala = horizontal
-                           ? std::max(banda.w / panel.ancho, banda.h / panel.alto)
-                           : std::max(juego.h / panel.alto, cubrir ? banda.w / cuerpo : 0.0f);
-  const SDL_FRect destino{horizontal ? banda.x + (banda.w - panel.ancho * escala) / 2.0f
-                          : derecha  ? juego.x + juego.w - solape - panel.margen * escala
-                                     : juego.x + solape - cuerpo * escala,
-                          horizontal ? banda.y + (banda.h - panel.alto * escala) / 2.0f
-                                     : juego.y + (juego.h - panel.alto * escala) / 2.0f,
-                          panel.ancho * escala, panel.alto * escala};
+  float escala = horizontal ? std::max(banda.w / panel.ancho, banda.h / panel.alto)
+                            : std::max(juego.h / panel.alto, cubrir ? banda.w / cuerpo : 0.0f);
+  SDL_FRect destino{horizontal ? banda.x + (banda.w - panel.ancho * escala) / 2.0f
+                    : derecha  ? juego.x + juego.w - solape - panel.margen * escala
+                               : juego.x + solape - cuerpo * escala,
+                    horizontal ? banda.y + (banda.h - panel.alto * escala) / 2.0f
+                               : juego.y + (juego.h - panel.alto * escala) / 2.0f,
+                    panel.ancho * escala, panel.alto * escala};
+  // La mirilla se aproxima al centro de la ventana; solo se transforma el marco.
+  const float centro_x = juego.x + juego.w / 2.0f;
+  const float centro_y = juego.y + juego.h / 2.0f;
+  destino.x = centro_x + (destino.x - centro_x) * zoom;
+  destino.y = centro_y + (destino.y - centro_y) * zoom;
+  destino.w *= zoom;
+  destino.h *= zoom;
+  escala *= zoom;
   // Solo limita el exterior a la ventana: el margen artístico interior nunca se usa como tijera.
   const float limite_x = !horizontal && derecha ? destino.x : float(banda.x);
   const float limite_derecho =
@@ -55,9 +62,21 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
 } // namespace
 
 // Conserva la preferencia durante los cambios de escena y los de modo de ventana.
-void MarcosPantalla::alternar() {
+void MarcosPantalla::alternar(Uint64 ahora) {
+  origen_animacion = nivel_animacion(ahora);
   visible = !visible;
-  registrar_accion("Marcos: %s", visible ? "activados" : "desactivados");
+  inicio_animacion = ahora;
+  registrar_accion("Marcos: %s (zoom y fundido)", visible ? "activados" : "desactivados");
+}
+
+// Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
+float MarcosPantalla::nivel_animacion(Uint64 ahora) const {
+  if (!inicio_animacion)
+    return visible ? 1.0f : 0.0f;
+  const float tiempo = std::min(
+      float(ahora >= inicio_animacion ? ahora - inicio_animacion : 0) / 250000000.0f, 1.0f);
+  const float suavizado = tiempo * tiempo * (3.0f - 2.0f * tiempo);
+  return origen_animacion + ((visible ? 1.0f : 0.0f) - origen_animacion) * suavizado;
 }
 
 // La propiedad de la imagen queda en la plataforma; no alcanza los recursos originales.
@@ -69,8 +88,9 @@ void MarcosPantalla::cerrar() {
 }
 
 // Dibuja las bandas y el solape autorizado; los filtros siguen actuando solo sobre el juego.
-bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla) {
-  if (!visible)
+bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora) {
+  const float nivel = nivel_animacion(ahora);
+  if (nivel <= 0.0f && !visible)
     return true;
   const auto *seleccion = elegir_marco(pantalla);
   if (!seleccion)
@@ -86,6 +106,8 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla) {
     }
     if (!textura) {
       visible = false;
+      inicio_animacion = 0;
+      origen_animacion = 0;
       registrar_accion("Marcos desactivados: no se puede cargar %s (%s)", seleccion->archivo,
                        SDL_GetError());
       return true;
@@ -111,16 +133,20 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla) {
   const int derecha = static_cast<int>(std::ceil(juego.x + juego.w - solape_x));
   const int arriba = static_cast<int>(std::floor(juego.y + solape_y));
   const int abajo = static_cast<int>(std::ceil(juego.y + juego.h - solape_y));
+  const float zoom = 1.0f + 0.10f * (1.0f - nivel);
+  const bool opacidad = SDL_SetTextureAlphaMod(textura, static_cast<Uint8>(nivel * 255.0f + 0.5f));
   const bool dibujado =
+      opacidad &&
       dibujar_panel(dibujante, textura, actual->izquierda, {0, 0, izquierda, alto}, juego, false,
-                    actual->cubrir, false, solape_x) &&
+                    actual->cubrir, false, solape_x, zoom) &&
       dibujar_panel(dibujante, textura, actual->derecha, {derecha, 0, ancho - derecha, alto}, juego,
-                    true, actual->cubrir, actual->reflejar_derecha, solape_x) &&
+                    true, actual->cubrir, actual->reflejar_derecha, solape_x, zoom) &&
       dibujar_panel(dibujante, textura, actual->izquierda, {0, 0, ancho, arriba}, juego, false,
-                    true, false, solape_y, true) &&
+                    true, false, solape_y, zoom, true) &&
       dibujar_panel(dibujante, textura, actual->derecha, {0, abajo, ancho, alto - abajo}, juego,
-                    false, true, false, solape_y, true);
+                    false, true, false, solape_y, zoom, true);
+  const bool opacidad_restaurada = SDL_SetTextureAlphaMod(textura, 255);
   const bool restaurado =
       SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
-  return dibujado && restaurado;
+  return dibujado && opacidad_restaurada && restaurado;
 }

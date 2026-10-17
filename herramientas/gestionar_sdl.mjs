@@ -782,12 +782,40 @@ export async function gestionarSdl(accion, argumentos) {
         `${opcion}: F1 reversible; ${modificados} píxeles decorados y ${relieve} de relieve interior conservados.`,
       );
     }
+    const animacion = join(carpeta, 'animacion');
+    ejecutar(programa, [datos, '--comprobar-marcos-animacion', animacion], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    const fases = [0, 1, 2, 3, 4].map((i) => leerCaptura(`${animacion}.${i}.bmp`, 1280, 720));
+    if (
+      !fases[0].equals(fases[4]) ||
+      !fases[1].equals(fases[3]) ||
+      fases[1].equals(fases[0]) ||
+      fases[1].equals(fases[2])
+    )
+      throw new Error(
+        'El zoom y fundido de F1 no conservan las fases intermedias y su recorrido inverso.',
+      );
+    for (const fase of fases)
+      for (let y = 0; y < 720; y++)
+        if (
+          !fase
+            .subarray((y * 1280 + 128) * 3, (y * 1280 + 1152) * 3)
+            .equals(fases[0].subarray((y * 1280 + 128) * 3, (y * 1280 + 1152) * 3))
+        )
+          throw new Error('La animación del marco cambia el interior del juego.');
+    console.log(
+      'Animación F1: zoom y fundido de 250 ms, fases intermedias simétricas y juego conservado.',
+    );
     writeFileSync(
       join(carpeta, 'resultado.json'),
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 24,
+          capturas: 29,
+          animacion_ms: 250,
+          zoom_inicial: 1.1,
           formatos: [
             'apaisado',
             'vertical',

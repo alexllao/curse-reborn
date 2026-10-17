@@ -240,11 +240,13 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-salto-intro";
   const bool comprobar_fps = opcion == "--comprobar-fps";
   const bool comprobar_filtros = opcion == "--comprobar-filtros";
+  const bool comprobar_animacion_marcos = opcion == "--comprobar-marcos-animacion";
   const bool comprobar_marcos =
-      opcion == "--comprobar-marcos" || opcion == "--comprobar-marcos-vertical" ||
-      opcion == "--comprobar-marcos-ajustado" || opcion == "--comprobar-marcos-impar" ||
-      opcion == "--comprobar-marcos-filtro" || opcion == "--comprobar-marcos-corredor" ||
-      opcion == "--comprobar-marcos-lago" || opcion == "--comprobar-marcos-mazmorra";
+      comprobar_animacion_marcos || opcion == "--comprobar-marcos" ||
+      opcion == "--comprobar-marcos-vertical" || opcion == "--comprobar-marcos-ajustado" ||
+      opcion == "--comprobar-marcos-impar" || opcion == "--comprobar-marcos-filtro" ||
+      opcion == "--comprobar-marcos-corredor" || opcion == "--comprobar-marcos-lago" ||
+      opcion == "--comprobar-marcos-mazmorra";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
@@ -379,6 +381,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido preparar xBRZ con el marco");
   }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
+  Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
       return fallo("No se ha podido actualizar el audio del juego");
@@ -400,7 +403,7 @@ int main(int argc, char *argv[]) {
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
         if (evento.key.key == SDLK_F1) {
-          presentacion.marcos.alternar();
+          presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
           continue;
         }
         if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
@@ -1146,7 +1149,10 @@ int main(int argc, char *argv[]) {
                                        : pantalla == 2
                                            ? "introduccion"
                                            : "escena_" + std::to_string(mazmorra.escena_actual());
-    if (!presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str()))
+    if (comprobar_marcos && (!comprobar_animacion_marcos || paso_aspecto > 0))
+      reloj_marcos_prueba += comprobar_animacion_marcos ? 125000000ull : 300000000ull;
+    if (!presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
+                                     comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido dibujar el marco de pantalla");
     if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
@@ -1183,12 +1189,15 @@ int main(int argc, char *argv[]) {
       if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
         return fallo("No se ha podido guardar el estado diagnóstico de la captura");
       if ((comprobar_filtros && paso_aspecto < 6) ||
-          ((comprobar_fps || comprobar_marcos) && paso_aspecto < 2)) {
+          (comprobar_animacion_marcos && paso_aspecto < 4) ||
+          ((comprobar_fps || (comprobar_marcos && !comprobar_animacion_marcos)) &&
+           paso_aspecto < 2)) {
+        const bool pulsar = !comprobar_animacion_marcos || paso_aspecto == 0 || paso_aspecto == 2;
         ++paso_aspecto;
         SDL_Event filtro{};
         filtro.type = SDL_EVENT_KEY_DOWN;
         filtro.key.key = comprobar_marcos ? SDLK_F1 : comprobar_fps ? SDLK_F12 : SDLK_F11;
-        if (!SDL_PushEvent(&filtro))
+        if (pulsar && !SDL_PushEvent(&filtro))
           return fallo("No se ha podido comprobar el atajo de presentación");
       } else {
         capturada = true;

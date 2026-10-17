@@ -25,14 +25,18 @@ public:
     cerrar();
   }
   // F1 muestra u oculta los marcos sin avanzar las introducciones ni alterar la partida.
-  void alternar();
+  void alternar(Uint64 ahora = SDL_GetTicksNS());
   // Rellena el espacio sobrante y restaura las coordenadas lógicas usadas por ratón y juego.
-  bool dibujar(SDL_Renderer *dibujante, const char *pantalla);
+  bool dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora = SDL_GetTicksNS());
   // Permite cerrar la capa antes de SDL_Quit; admite llamadas repetidas.
   void cerrar();
 
 private:
   bool visible = false;
+  float origen_animacion = 0.0f;
+  Uint64 inicio_animacion = 0;
+  // Interpola desde el nivel actual para que otra pulsación invierta el recorrido sin saltos.
+  float nivel_animacion(Uint64 ahora) const;
   SDL_Texture *textura = nullptr;
   const DefinicionMarco *actual = nullptr;
 };
