@@ -23,8 +23,7 @@
 #include "contador_fps.hpp"
 
 namespace {
-// Límite de presentación independiente del reloj lógico; permite desactivarlo en el futuro.
-constexpr bool limitar_presentacion = true;
+// Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
 constexpr Uint64 intervalo_presentacion_ns = 1000000000ull / 70u;
 
 // Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
@@ -327,6 +326,7 @@ int main(int argc, char *argv[]) {
   Uint64 inicio_pantalla = SDL_GetTicksNS(), inicio_fundido = 0;
   Uint64 ultimo_paso_escena = inicio_pantalla;
   Uint64 siguiente_presentacion = inicio_pantalla;
+  bool limitar_presentacion = true;
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
@@ -354,6 +354,13 @@ int main(int argc, char *argv[]) {
           const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
+          continue;
+        }
+        if (evento.key.key == SDLK_F2) {
+          limitar_presentacion = !limitar_presentacion;
+          siguiente_presentacion = SDL_GetTicksNS();
+          registrar_accion("Presentación: %s",
+                           limitar_presentacion ? "límite de 70 FPS" : "sin límite de FPS");
           continue;
         }
         if (evento.key.key == SDLK_F12) {

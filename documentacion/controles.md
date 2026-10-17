@@ -26,6 +26,8 @@ El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa 
 
 Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no está implementado: actualmente esa información se registra en consola.
 
+**F2** alterna entre el límite de 70 FPS y la presentación sin límite, con aviso en consola. Arranca limitado y conserva la opción al cambiar de escena durante la misma ejecución. No acelera la lógica ni el audio, no avanza las introducciones y no se repite al mantener la tecla pulsada.
+
 ## Jugar
 
 | Control                                              | Función                                                            |
@@ -37,7 +39,7 @@ Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no est
 | **← / →**, con el menú abierto                       | Cambiar de casilla.                                                |
 | **Intro**, con el menú abierto                       | Confirmar la casilla seleccionada.                                 |
 
-En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido, F11 y F12 funcionan sin avanzar la presentación.
+En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido, F2, F11 y F12 funcionan sin avanzar la presentación.
 
 **Escape cierra el programa en Core, título e introducción.** Dentro de una escena jugable abre o cierra el menú. El botón de cierre de la ventana termina el programa desde cualquier vista.
 
