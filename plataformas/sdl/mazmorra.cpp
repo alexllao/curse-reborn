@@ -163,7 +163,7 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
   registro_preparado = false;
-  registrar_accion("Inicio de sesión nueva: mazmorra");
+  registrar_accion("Inicio de sesión nueva: %s", nombre_escena(0));
   registrar_estado();
   return true;
 }
@@ -515,7 +515,8 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   solicitud_partidas = 0;
   if (!audio.conectar(datos) || !audio.cambiar_escena(escena_guardada))
     registrar_accion("Partida recuperada; no se ha podido restablecer el audio");
-  registrar_accion("Partida cargada: ranura %u, escena %u", ranura + 1, escena_guardada);
+  registrar_accion("Partida cargada: ranura %u, %s (escena %u)", ranura + 1,
+                   nombre_escena(escena_guardada), escena_guardada);
   registrar_estado();
   return true;
 }
@@ -642,7 +643,8 @@ bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_s
   motor::guardar(datos, 0x0616, 0);
   menu_visible = false;
   direccion = 0xffff;
-  registrar_accion("Escena cargada: %s (índice %u, salida %u)", nombre_banco, actual, salida);
+  registrar_accion("Escena cargada: %s (índice %u, recurso %s, salida %u)", nombre_escena(actual),
+                   actual, nombre_banco, salida);
   registrar_estado();
   return true;
 }

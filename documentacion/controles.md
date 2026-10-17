@@ -56,7 +56,7 @@ En Core y título, una tecla o un clic izquierdo permite avanzar. En la introduc
 | **F5** | Ir directamente a la vista anterior.  |
 | **F6** | Ir directamente a la vista siguiente. |
 
-Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → primer corredor de las cuevas → segundo corredor → tercer corredor → pozo → picapedrero → cuarto corredor → catapulta → cueva del monitor → cuatro agujeros → cubo**. En los extremos no hay otra vista a la que saltar. La ruta normal permite recoger doce piedras y entregarlas al picapedrero para obtener la cuerda. La ruta normal continúa por catapulta, alambre, barro, pozo, casco y máscara hasta salir del cubo.
+El orden completo y los nombres están en el [catálogo de pantallas](pantallas.md): Core → título → introducción → las dieciséis vistas jugables, desde **La mazmorra** hasta **La salida al campo**. En los extremos no hay otra vista a la que saltar. Los nombres también se muestran en consola y en el título de la ventana. La ruta normal conserva el inventario y continúa por los puzles de las cuevas hasta salir del cubo y recorrer el campo.
 
 **Al entrar en una vista jugable mediante F5/F6 se prepara una sesión nueva.** Estos saltos sirven para probar pantallas: no conservan el progreso ni resuelven los puzles anteriores. Para continuar la misma partida, utiliza las salidas normales del escenario.
 

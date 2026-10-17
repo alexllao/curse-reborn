@@ -318,3 +318,5 @@ La [música MT-32](documentacion/musica_mt32.md) reproduce los cinco bancos CURS
 El último icono del menú de acciones muestra las cuatro fichas originales de información, puntuación y créditos con FONT.SPR. Clic izquierdo o Intro pasan de página; Escape cierra. Comprobación específica: `pnpm comprobar:informacion`. Consulta [partidas e información](documentacion/partidas.md).
 
 La pantalla dieciséis, [salida al campo](documentacion/salida_al_campo.md), reproduce el izado por el monstruo, la caída de la máscara y el sendero hacia la población. `pnpm comprobar:campo` contrasta 722 casos/pasos y nueve capturas SDL. Los puzles de la zona siguiente, COUNTRY2, todavía están pendientes.
+
+Cada escena tiene un nombre en castellano compartido por la consola, el título de ventana y F5/F6. Consulta el [catálogo de las dieciséis pantallas](documentacion/pantallas.md), que distingue el orden de navegación del índice original DOS.

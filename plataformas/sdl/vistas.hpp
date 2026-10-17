@@ -10,22 +10,30 @@ struct VistaDesarrollo {
 };
 
 inline constexpr VistaDesarrollo vistas_desarrollo[] = {
-    {0, 0, 0xffff, "mazmorra", "DUNGEON"},
-    {1, 0, 0, "corredor", "CORRIDOR"},
-    {2, 1, 1, "caída", "DROP"},
-    {3, 2, 3, "lago", "LAKEBED"},
-    {8, 3, 4, "poza de las cuevas", "POOL"},
-    {4, 8, 17, "primer corredor de las cuevas", "CAVECOR"},
-    {5, 4, 5, "segundo corredor de las cuevas", "CAVECOR"},
-    {6, 5, 7, "tercer corredor de las cuevas", "CAVECOR"},
-    {9, 4, 6, "pozo", "WELL"},
-    {10, 5, 9, "picapedrero", "CAVERBMI"},
-    {7, 6, 11, "cuarto corredor de las cuevas", "CAVECOR"},
-    {11, 6, 12, "tablón y catapulta", "SEESAW"},
-    {13, 7, 15, "cueva del monitor", "CAVE"},
-    {14, 7, 16, "cueva de los cuatro agujeros", "CAVE"},
-    {12, 6, 13, "pozo de extracción y cubo", "SHAFT"},
-    {15, 12, 24, "salida al campo", "COUNTRY1"},
+    {0, 0, 0xffff, "La mazmorra", "DUNGEON"},
+    {1, 0, 0, "El corredor de las estatuas", "CORRIDOR"},
+    {2, 1, 1, "La caída al lago", "DROP"},
+    {3, 2, 3, "El fondo del lago", "LAKEBED"},
+    {8, 3, 4, "La poza de las cuevas", "POOL"},
+    {4, 8, 17, "Primer corredor de las cuevas", "CAVECOR"},
+    {5, 4, 5, "Segundo corredor de las cuevas", "CAVECOR"},
+    {6, 5, 7, "Tercer corredor de las cuevas", "CAVECOR"},
+    {9, 4, 6, "El pozo de los deseos", "WELL"},
+    {10, 5, 9, "La cueva del picapedrero", "CAVERBMI"},
+    {7, 6, 11, "Cuarto corredor de las cuevas", "CAVECOR"},
+    {11, 6, 12, "La cueva de la catapulta", "SEESAW"},
+    {13, 7, 15, "La cueva del monitor", "CAVE"},
+    {14, 7, 16, "La cueva de los cuatro agujeros", "CAVE"},
+    {12, 6, 13, "El pozo del cubo", "SHAFT"},
+    {15, 12, 24, "La salida al campo", "COUNTRY1"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
+
+// Comparte los nombres entre navegación, consola y título sin confundir el índice DOS con F5/F6.
+inline const char *nombre_escena(unsigned short escena) {
+  for (const auto &vista : vistas_desarrollo)
+    if (vista.escena == escena)
+      return vista.nombre;
+  return escena == 16 ? "El camino del asaltante (pendiente)" : "Escena pendiente";
+}

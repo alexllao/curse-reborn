@@ -391,6 +391,7 @@ int main(int argc, char *argv[]) {
   }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   PartidasSDL partidas;
+  unsigned short escena_titulada = 0xffff;
   // Libera las flechas antes de pausar para que el personaje no siga caminando al cerrar el panel.
   const auto abrir_partidas = [&](unsigned int modo) {
     for (const auto bit : {1, 2, 4, 8})
@@ -1194,6 +1195,17 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido actualizar la paleta de la escena");
       ultimo_paso_escena = ahora;
     }
+    // Refleja también las salidas normales y las cargas, sin consultar la vista F5/F6 anterior.
+    if (pantalla >= 3) {
+      const auto actual = mazmorra.escena_actual();
+      if (actual != escena_titulada) {
+        const std::string titulo = std::string("Curse Reborn — ") + nombre_escena(actual);
+        if (!SDL_SetWindowTitle(presentacion.ventana, titulo.c_str()))
+          return fallo("No se ha podido mostrar el nombre de la escena");
+        escena_titulada = actual;
+      }
+    } else
+      escena_titulada = 0xffff;
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
         !SDL_RenderTexture(presentacion.dibujante,
