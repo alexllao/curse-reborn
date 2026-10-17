@@ -70,7 +70,13 @@ EstadoSecuencias avanzar_secuencias_entidad(unsigned char* datos, EstadoAleatori
         }
         if (valor == 0xfd) { datos[0x3594] = datos[0x3595] = datos[0x3596] = 1; continue; }
         if (valor == 0xfc) { datos[0x3595] = 1; continue; }
-        if (valor == 0xfb) return EstadoSecuencias::sonido_pendiente;
+        if (valor == 0xfb) {
+          const auto identificador = datos[static_cast<Palabra>(referencia + indice)];
+          if (!recursos.sonido || !recursos.sonido(recursos.contexto, datos, posicion, identificador)) {
+            return EstadoSecuencias::sonido_pendiente;
+          }
+          indice = static_cast<unsigned char>(indice + 1); continue;
+        }
         if (valor == 0xfa || valor == 0xf9) { datos[0x0def] = valor == 0xfa ? 1 : 0; continue; }
         if (valor == 0xf8) {
           const auto modelo = tomar(); datos[0x358c] = modelo;
@@ -81,7 +87,10 @@ EstadoSecuencias avanzar_secuencias_entidad(unsigned char* datos, EstadoAleatori
           else if (modelo != 0xff) {
             if (datos[0x9974] != modelo) {
               datos[0x9974] = modelo;
-              return EstadoSecuencias::recurso_pendiente;
+              const auto nombre = palabra(datos, static_cast<Palabra>(0x0918 + modelo * 2));
+              if (!recursos.cargar_modelo || !recursos.cargar_modelo(recursos.contexto, datos, nombre, 64000)) {
+                return EstadoSecuencias::recurso_pendiente;
+              }
             }
             recurso = recursos.modelo;
           }

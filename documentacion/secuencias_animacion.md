@@ -1,6 +1,6 @@
 # Avance de secuencias de animación
 
-El C++ de [secuencias.cpp](../motor/entidades/secuencias.cpp) traslada el recorrido de `0000:83DE`–`0000:8821` dentro del dominio descrito aquí. Avanza tres canales por registro, consulta dimensiones y retira entidades fuera de los límites. La muestra de **462 casos** coincide con las instrucciones originales. La comparación amplia de **8.924 casos** queda preparada para ejecutarla en el equipo del propietario.
+El C++ de [secuencias.cpp](../motor/entidades/secuencias.cpp) traslada el recorrido de `0000:83DE`–`0000:8821` dentro del dominio descrito aquí. Avanza tres canales por registro, consulta dimensiones y retira entidades fuera de los límites. La muestra de **462 casos** coincide con las instrucciones originales. El propietario ha confirmado también la coincidencia de los **8.924 casos** de la comparación amplia.
 
 ## Recorrido original
 
@@ -49,7 +49,7 @@ En el canal de imagen, un byte ordinario escribe la imagen y consulta las dimens
 | `F7` | Elige una imagen aleatoria distinta de la actual, repitiendo el generador cuando sea necesario. |
 | `F6` | Consume un valor, lo escribe en `DS:9975` y lo utiliza también como imagen. |
 
-Para `F8`, `FFh` selecciona el recurso del personaje y un intervalo uno; `FEh` selecciona el recurso de escena y un intervalo dos. Los demás modelos usan el recurso de modelos si el valor coincide con la caché `DS:9974`. Una diferencia exige estudiar e integrar la apertura, lectura y cierre DOS de `8574`–`859D`.
+Para `F8`, `FFh` selecciona el recurso del personaje y un intervalo uno; `FEh` selecciona el recurso de escena y un intervalo dos. Los demás modelos usan el recurso de modelos si el valor coincide con la caché `DS:9974`. La diferencia se atiende mediante el servicio opcional que traslada la petición de apertura, lectura y cierre de `8574`–`859D`; sin servicio se conserva la parada pendiente. Su comparación está en [operaciones_secuencias.md](operaciones_secuencias.md).
 
 ## Retirada y comparaciones conservadas
 
@@ -59,7 +59,7 @@ Dentro del avance vertical existe además una condición peculiar: solo comprueb
 
 ## Operaciones pendientes y dominio
 
-`EstadoSecuencias` distingue ejecución correcta, entrada inválida, sonido pendiente y recurso pendiente. Las dos operaciones pendientes detienen la función; **no se consideran una animación completada ni se omiten silenciosamente**. Se pueden haber realizado escrituras anteriores. Esta API todavía no ofrece reanudación de esas operaciones: hace falta integrar sus rutinas y definir ese contrato antes de usarla como motor de una partida.
+`EstadoSecuencias` distingue ejecución correcta, entrada inválida, sonido pendiente y recurso pendiente. Sin servicio o cuando este no termina, las dos operaciones pendientes detienen la función; **no se consideran una animación completada ni se omiten silenciosamente**. Se pueden haber realizado escrituras anteriores. Los [servicios opcionales de sonido y modelos](operaciones_secuencias.md) permiten continuar cuando la operación se atiende dentro de la llamada. La API todavía no ofrece reanudación después de una parada pendiente ni ejecuta por sí misma los dispositivos de audio.
 
 El lector de dimensiones debe aportar valores para las referencias solicitadas. Se requiere un segmento de 65.536 bytes, referencias y operandos válidos y menos de 70 posiciones reservadas. Para evitar bloqueos con secuencias cíclicas o una imagen aleatoria imposible, la API admite hasta 4.096 órdenes por canal y 4.096 intentos de elección. El original no tiene esos límites; las comparaciones preparadas usan secuencias que terminan y divisores distintos de cero.
 
@@ -69,7 +69,7 @@ El lector de dimensiones debe aportar valores para las referencias solicitadas. 
 pnpm comparar:secuencias
 ```
 
-| Grupo | Comparación amplia preparada | Muestra comprobada |
+| Grupo | Comparación amplia confirmada | Muestra comprobada |
 | --- | ---: | ---: |
 | Órdenes de los tres canales y contadores | 2.112 | 264 |
 | Esperas compartidas | 128 | 12 |
@@ -85,4 +85,4 @@ Unicorn ejecuta las instrucciones originales y el generador real; las dimensione
 
 El informe registra las direcciones originales visitadas y las huellas del ejecutable y de la biblioteca. La instrumentación permanece activa al alternar retornos y paradas de bloque. Los informes se guardan en `trabajo/comparacion_secuencias/muestra.json` y `resultado.json`; para la muestra se añade `--muestra` al comando.
 
-Esta comprobación no incluye sonido, lectura de archivos reales, temporización de plataforma, dibujo ni una partida completa. El siguiente trabajo es seguir las operaciones externas de las secuencias y la selección de recursos que utiliza la presentación.
+Esta comprobación no incluye reproducción de sonido, lectura de archivos reales, temporización de plataforma, dibujo ni una partida completa. El [traslado siguiente](operaciones_secuencias.md) continúa con la selección de sonido y los servicios externos de las secuencias.

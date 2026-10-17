@@ -10,6 +10,7 @@
 #include "../motor/movimiento/avanzar.hpp"
 #include "../motor/entidades/actualizar.hpp"
 #include "../motor/entidades/secuencias.hpp"
+#include "../motor/sonido/seleccionar.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -144,6 +145,79 @@ extern "C" EXPORTAR int procesar_secuencias(unsigned int operacion, unsigned cha
   if (operacion == 0) resultado = motor::avanzar_secuencias_entidad(datos, estado, recursos, posicion);
   else if (operacion == 1) motor::retirar_entidad_fuera_de_limites(datos, posicion);
   else resultado = motor::avanzar_secuencias(datos, estado, recursos);
+  palabras[0] = estado.primera; palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
+  return static_cast<int>(resultado) + 1;
+}
+
+namespace {
+struct ContextoOperaciones {
+  unsigned char* modelo;
+  const unsigned char* fuente;
+  unsigned int longitud;
+  unsigned short* bitacora;
+};
+
+unsigned short leer_palabra_prueba(const unsigned char* datos, unsigned short posicion) {
+  return static_cast<unsigned short>(datos[posicion] | (datos[static_cast<unsigned short>(posicion + 1)] << 8));
+}
+
+bool leer_muestra(void*, unsigned short recurso, unsigned short posicion, unsigned short& valor) {
+  if (recurso != 0x5000 && recurso != 0x5100) return false;
+  // Tabla y cabeceras sintéticas que el comparador dispone también para el original.
+  if (posicion < 512 && (posicion & 1) == 0) valor = static_cast<unsigned short>(0x3000 + posicion * 2);
+  else if (posicion >= 0x3000 && posicion < 0x3400 && (posicion & 3) == 0) {
+    valor = static_cast<unsigned short>(1000 + posicion - 0x3000 + (recurso == 0x5100 ? 7 : 0));
+  } else return false;
+  return true;
+}
+
+bool cargar_modelo_prueba(void* contexto, const unsigned char*, unsigned short nombre, unsigned short capacidad) {
+  auto& prueba = *static_cast<ContextoOperaciones*>(contexto);
+  ++prueba.bitacora[0]; prueba.bitacora[1] = nombre; prueba.bitacora[2] = capacidad;
+  const auto cantidad = prueba.longitud < capacidad ? prueba.longitud : capacidad;
+  for (unsigned int i = 0; i < cantidad; ++i) prueba.modelo[i] = prueba.fuente[i];
+  return true;
+}
+
+bool dimensiones_modelo(void* contexto, unsigned short recurso, unsigned short imagen,
+                       unsigned short& ancho, unsigned short& alto) {
+  const auto& prueba = *static_cast<ContextoOperaciones*>(contexto);
+  if (recurso != 0x4200 || imagen >= 128) return false;
+  const auto parrafo = leer_palabra_prueba(prueba.modelo, static_cast<unsigned short>(imagen * 2));
+  const unsigned int posicion = parrafo * 16u;
+  if (posicion > 65532) return false;
+  ancho = leer_palabra_prueba(prueba.modelo, static_cast<unsigned short>(posicion));
+  alto = leer_palabra_prueba(prueba.modelo, static_cast<unsigned short>(posicion + 2));
+  return true;
+}
+
+bool sonido_sin_dispositivo(void*, unsigned char* datos, unsigned short entidad, unsigned char id) {
+  motor::EstadoSonido estado{0, 0, 0, 0, 0, 0x0f31};
+  const auto orden = motor::seleccionar_sonido(datos, estado, {nullptr, nullptr}, entidad, id);
+  return orden.valida && orden.rutina == 0;
+}
+}
+
+extern "C" EXPORTAR int seleccionar_sonido(unsigned char* datos, unsigned short* palabras,
+    unsigned short entidad, unsigned char identificador, unsigned short* salida) {
+  motor::EstadoSonido estado{static_cast<unsigned char>(palabras[0]), static_cast<unsigned char>(palabras[1]),
+    static_cast<unsigned char>(palabras[2]), palabras[3], palabras[4], palabras[5]};
+  const auto orden = motor::seleccionar_sonido(datos, estado, {nullptr, leer_muestra}, entidad, identificador);
+  palabras[0] = estado.prioridad_secuencia; palabras[1] = estado.prioridad_muestra;
+  salida[0] = orden.rutina; salida[1] = orden.referencia; salida[2] = orden.posicion;
+  salida[3] = orden.longitud; salida[4] = orden.canal;
+  return orden.valida ? 1 : 0;
+}
+
+extern "C" EXPORTAR int ejecutar_operaciones_secuencia(unsigned char* datos, unsigned short* palabras,
+    unsigned char* modelo, const unsigned char* fuente, unsigned int longitud, unsigned short* bitacora,
+    unsigned short posicion) {
+  ContextoOperaciones contexto{modelo, fuente, longitud, bitacora};
+  const motor::RecursosSecuencias recursos{&contexto, dimensiones_modelo, 0x4100, 0x4000, 0x4200,
+                                          sonido_sin_dispositivo, cargar_modelo_prueba};
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const auto resultado = motor::avanzar_secuencias_entidad(datos, estado, recursos, posicion);
   palabras[0] = estado.primera; palabras[1] = estado.segunda;
   palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
   return static_cast<int>(resultado) + 1;

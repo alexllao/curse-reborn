@@ -20,6 +20,7 @@
     "comparar:avance": "node herramientas/gestionar_proyecto.mjs comparar:avance",
     "comparar:entidades": "node herramientas/gestionar_proyecto.mjs comparar:entidades",
     "comparar:secuencias": "node herramientas/gestionar_proyecto.mjs comparar:secuencias",
+    "comparar:operaciones": "node herramientas/gestionar_proyecto.mjs comparar:operaciones",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {
