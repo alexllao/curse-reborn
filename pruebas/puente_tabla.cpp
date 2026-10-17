@@ -18,6 +18,7 @@
 #include "../motor/entidades/secuencias.hpp"
 #include "../motor/sonido/seleccionar.hpp"
 #include "../motor/sonido/altavoz.hpp"
+#include "../motor/sonido/pcm.hpp"
 #include "../motor/video/planos.hpp"
 #include "../motor/recursos/rnc.hpp"
 #include "../motor/recursos/escena.hpp"
@@ -35,6 +36,39 @@
 #else
 #define EXPORTAR __attribute__((visibility("default")))
 #endif
+
+namespace {
+motor::AltavozPcm altavoz_pcm;
+// Permite contrastar las respuestas de menú con el mismo selector que la salida PCM.
+bool sonido_pcm(void *, unsigned char *datos, unsigned short entidad, unsigned char identificador) {
+  return altavoz_pcm.reproducir(datos, entidad, identificador);
+}
+} // namespace
+
+// Expone el reloj PCM por bloques y escrituras de puerto para pruebas contra IRQ originales.
+extern "C" EXPORTAR int procesar_pcm(unsigned int operacion, unsigned char *datos,
+                                     unsigned short primero, unsigned short segundo, short *salida,
+                                     unsigned int cantidad) {
+  if (operacion == 0) {
+    altavoz_pcm.reiniciar();
+    return 1;
+  }
+  if (operacion == 1)
+    return altavoz_pcm.reproducir(datos, primero, static_cast<unsigned char>(segundo));
+  if (operacion == 2)
+    return altavoz_pcm.generar(datos, salida, cantidad);
+  if (operacion == 3) {
+    altavoz_pcm.escribir(primero, static_cast<unsigned char>(segundo));
+    return 1;
+  }
+  if (operacion == 4)
+    return altavoz_pcm.detener(datos);
+  if (operacion == 5)
+    return static_cast<int>(motor::ejecutar_interaccion_inicial(datos, primero, segundo,
+                                                                {nullptr, sonido_pcm})) ==
+           static_cast<int>(motor::ResultadoMenu::accion);
+  return 0;
+}
 
 // Interfaz de prueba para llamar al bloque C++ desde el comparador de memoria.
 extern "C" EXPORTAR void reconstruir_tabla(unsigned char *datos) {

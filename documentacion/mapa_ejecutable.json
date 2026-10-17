@@ -30,7 +30,7 @@
     {
       "direccion": "0000:0238",
       "nombre": "Manejador del temporizador",
-      "comentario": "Actualiza contadores y rutas condicionadas por configuración; puede encadenar el vector DOS anterior."
+      "comentario": "Actualiza contadores y rutas condicionadas por configuración; puede encadenar el vector DOS anterior. 0240–0247 atiende 7AC6 en modalidad uno; 01A8–01B9 programa el canal cero con divisor 4250h. El reloj PCM mantiene esta división, independiente del reloj gráfico nominal."
     },
     {
       "direccion": "0000:0276",
@@ -993,8 +993,14 @@
     {
       "direccion": "0000:BEFD",
       "nombre": "Rutina específica del fondo del lago",
-      "comentario": "BEFD–C092. Límites, contador, burbujas y entidades; utiliza el generador y el creador originales reconstruidos. Comparada durante la inmersión de PLUNGE.",
+      "comentario": "BEFD–C092. Límites, contador, burbujas y entidades; utiliza el generador y el creador originales reconstruidos. Comparada durante la inmersión de PLUNGE. BF3C–BF41 emite el identificador 11h para Brad mediante el servicio de sonido común; no cambia los consumos de azar.",
       "traslado": "motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:3545",
+      "nombre": "Respuesta sonora de conversación sin animación",
+      "comentario": "3545–354A emite cero desde Brad al repetir la llamada; 37FF–3804 emite uno para el otro tema en la mazmorra. Servicio 5288 compartido con secuencias y lago, contrastado en modalidades cero y uno, con visibilidad.",
+      "traslado": "motor/acciones/menu.cpp"
     }
   ],
   "tablas": [

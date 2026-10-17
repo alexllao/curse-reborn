@@ -56,7 +56,10 @@
     "comparar:corredor": "node herramientas/gestionar_proyecto.mjs comparar:corredor",
     "comprobar:corredor": "node herramientas/gestionar_proyecto.mjs comprobar:corredor",
     "comparar:caida": "node herramientas/gestionar_proyecto.mjs comparar:caida",
-    "comprobar:caida": "node herramientas/gestionar_proyecto.mjs comprobar:caida"
+    "comprobar:caida": "node herramientas/gestionar_proyecto.mjs comprobar:caida",
+    "comparar:audio": "node herramientas/gestionar_proyecto.mjs comparar:audio",
+    "comprobar:audio": "node herramientas/gestionar_proyecto.mjs comprobar:audio",
+    "comprobar:vistas": "node herramientas/gestionar_proyecto.mjs comprobar:vistas"
   },
   "repository": {
     "type": "git",

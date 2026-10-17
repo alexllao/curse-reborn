@@ -7,9 +7,9 @@ No hay que elegir acciones durante la caída.
 
 PARA VERLA SIN RESOLVER EL CORREDOR
 1. Abrir el juego con pnpm ventana.
-2. Llegar a la vista de mazmorra y pulsar F6.
+2. Desde la mazmorra, F6 abre el corredor; otro F6 abre la caída.
 3. Esperar: se reproduce la caída y después la entrada sumergida en el lago.
-4. F5 vuelve a una sesión nueva de la mazmorra.
+4. F5 retrocede por lago, caída, corredor y mazmorra según la escena visible.
 
 F5/F6 son vistas de desarrollo que reinician la sesión. No resuelven el
 puzle del corredor ni conservan el inventario de la partida anterior.
@@ -24,5 +24,5 @@ Se comparan dos fases de DROP, la salida automática y la entrada al agua,
 incluidos memoria, azar, modelos, burbujas y composición. Según la guía,
 al llegar hay que ponerse la pecera. Esa acción y el resto del puzle del lago todavía no están integrados.
 
-Después de este bloque, la prioridad acordada es el audio compartido:
-PC Speaker, AdLib y MT-32, con música y efectos según los recursos del juego.
+Los efectos PC Speaker ya utilizan una salida compartida entre escenas.
+M alterna el silencio. La música, AdLib y MT-32 siguen pendientes.

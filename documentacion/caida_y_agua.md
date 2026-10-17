@@ -18,6 +18,6 @@ Los bancos de referencia se separan más para admitir los **75.424 bytes de LAKE
 
 `pnpm comprobar:caida` ha verificado tres capturas SDL RGB de 64.000 píxeles: DROP tras 16 y 32 pasos y LAKEBED tras 24 pasos de entrada. Esta prueba recorre la vista con F6, mantiene la salida automática y acelera exclusivamente las esperas de presentación para la captura.
 
-En uso normal, F6 desde la mazmorra abre la vista nueva de caída, y F5 vuelve a una sesión nueva de la mazmorra. Las vistas conservan el ajuste proporcional y vecino más próximo. La entrada al agua y sus entidades autónomas están integradas; las demás acciones y el puzle del lago todavía no están completos.
+En uso normal, F6 desde la mazmorra abre el corredor; otro F6 abre la caída y el siguiente, el lago. F5 retrocede desde la escena visible. Cada salto prepara una sesión nueva. Las vistas conservan el ajuste proporcional y vecino más próximo. La entrada al agua y sus entidades autónomas están integradas; las demás acciones y el puzle del lago todavía no están completos.
 
 [Guía en texto](recorridos/02_caida.txt). La prioridad posterior solicitada es el audio compartido: PC Speaker primero, después AdLib y MT-32. No se ha añadido audio en este bloque.

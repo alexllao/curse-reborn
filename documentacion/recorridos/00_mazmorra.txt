@@ -17,7 +17,8 @@ CONTROLES
 - Flechas: caminar cuando el guion devuelve el control a Brad.
 - Esperar a que termine cada acción antes de empezar la siguiente.
 - F7: depuración; F8: entidades; F9: proximidad; F10: paredes/salidas.
-- F5/F6 cambian vistas de desarrollo y reinician la mazmorra: no usarlos
+- M: silenciar o reactivar los efectos PC Speaker.
+- F5/F6 cambian vistas de desarrollo y abren sesiones nuevas: no usarlos
   durante la comprobación de una partida persistente.
 
 1. LLAMAR AL GUARDIA

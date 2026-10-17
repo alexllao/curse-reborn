@@ -79,9 +79,10 @@ bool Mazmorra::parrafo_escena(void *contexto, unsigned short imagen, unsigned sh
   return fuente && motor::consultar_fotograma(fuente, longitud, imagen, referencia, ancho, alto);
 }
 
-// Modalidad cero: el sonido no bloquea los guiones aunque no haya un dispositivo abierto.
-bool Mazmorra::omitir_sonido(void *, unsigned char *datos, unsigned short, unsigned char) {
-  return datos[0x0ad4] == 0;
+// 5288: sirve a las secuencias FB, respuestas del menú y rutina del lago con el mismo selector.
+bool Mazmorra::reproducir_sonido(void *contexto, unsigned char *datos, unsigned short entidad,
+                                 unsigned char identificador) {
+  return static_cast<Mazmorra *>(contexto)->audio.reproducir(datos, entidad, identificador);
 }
 
 // Lee únicamente nombres DOS de recurso, sin permitir rutas tomadas del contenido del EXE.
@@ -127,8 +128,8 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   if (!dimensiones(this, referencia_modelo, 0, ancho, alto))
     return false;
   motor::preparar_entrada_mazmorra(datos, referencia_modelo, ancho, alto);
-  const motor::RecursosEntidades recursos{this, dimensiones_escena, referencia_escena,
-                                          parrafo_escena};
+  const motor::RecursosEntidades recursos{
+      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
     return false;
   std::vector<unsigned char> menu_comprimido;
@@ -154,7 +155,7 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
     return false;
   motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
-  return true;
+  return audio.conectar(datos);
 }
 
 // 06E8–0BC1: integra entrada, guiones, paredes e historial antes del despacho de la escena.
@@ -175,11 +176,15 @@ bool Mazmorra::avanzar() {
   // EAD5 presenta la posición anterior al paso que detectará la salida.
   if (!dibujar(imagen_anterior))
     return false;
-  const motor::RecursosSecuencias secuencias{
-      this,          dimensiones,  referencia_personaje, referencia_escena, referencia_modelo,
-      omitir_sonido, cargar_modelo};
-  const motor::RecursosEntidades entidades{this, dimensiones_escena, referencia_escena,
-                                           parrafo_escena};
+  const motor::RecursosSecuencias secuencias{this,
+                                             dimensiones,
+                                             referencia_personaje,
+                                             referencia_escena,
+                                             referencia_modelo,
+                                             reproducir_sonido,
+                                             cargar_modelo};
+  const motor::RecursosEntidades entidades{
+      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
   const auto resultado =
       motor::avanzar_escena(datos, aleatorio, secuencias, entidades, geometria.data(),
                             static_cast<unsigned int>(geometria.size()), direccion);
@@ -255,7 +260,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
   casilla_menu = x < 320 ? x / 32 : 9;
   motor::guardar(datos, 0xb60a, x);
   if (seleccionar) {
-    const auto resultado = motor::seleccionar_menu(datos, casilla_menu);
+    const auto resultado = motor::seleccionar_menu(datos, casilla_menu, {this, reproducir_sonido});
     if (resultado == motor::ResultadoMenu::error)
       return false;
     if (resultado == motor::ResultadoMenu::accion)
@@ -409,8 +414,8 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   geometria.assign(boxdet.begin() + inicio, boxdet.begin() + inicio + cantidad * 10u);
   motor::guardar(datos, 0x0df0, static_cast<unsigned short>(cantidad));
   motor::guardar(datos, 0x0df2, 0);
-  const motor::RecursosEntidades recursos{this, dimensiones_escena, referencia_escena,
-                                          parrafo_escena};
+  const motor::RecursosEntidades recursos{
+      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
     return false;
   motor::guardar(datos, 0x0358, 0);
@@ -439,8 +444,19 @@ bool Mazmorra::avanzar_presentacion(unsigned long long tick) {
 // Dispone exclusivamente la vista de desarrollo; nunca transforma una partida iniciada en otra
 // escena.
 bool Mazmorra::iniciar_caida(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo) {
-  if (!iniciar(ruta, imagen_fondo))
+  return iniciar_vista(ruta, imagen_fondo, 2);
+}
+
+// Carga entradas originales a corredor, caída o lago; la navegación de prueba no altera una
+// partida.
+bool Mazmorra::iniciar_vista(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo,
+                             unsigned short escena_vista) {
+  if (escena_vista > 3 || !iniciar(ruta, imagen_fondo))
     return false;
-  motor::guardar(datos, 0x8082, 1);
-  return cambiar_habitacion(1);
+  if (!escena_vista)
+    return true;
+  if (escena_vista == 1)
+    return cambiar_habitacion(0);
+  motor::guardar(datos, 0x8082, escena_vista == 2 ? 1 : 2);
+  return cambiar_habitacion(escena_vista == 2 ? 1 : 3);
 }

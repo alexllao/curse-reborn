@@ -82,8 +82,8 @@ bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
         return false;
       d[0xadce] = static_cast<unsigned char>(valor + 1);
       emitir = true;
-      // 5288 en modalidad cero no altera DS ni el azar.
-      if (d[0x0ad4] != 0)
+      // BF3C–BF41: burbujeo de Brad mediante el selector común, sin consumir azar.
+      if (!emitir_sonido(recursos.sonido, d, 0x2c2b, 0x11))
         return false;
     }
   }

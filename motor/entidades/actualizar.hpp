@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../aleatorio/generador.hpp"
+#include "../sonido/servicio.hpp"
 
 namespace motor {
 
@@ -12,6 +13,7 @@ struct RecursosEntidades {
   unsigned short segmento_original;
   // Solo la carga de superposiciones necesita la referencia de párrafos del fotograma.
   bool (*parrafo)(void *contexto, unsigned short indice, unsigned short &referencia) = nullptr;
+  ServicioSonido sonido{};
 };
 
 // 8B6F–8C25. valido=false identifica recursos o entradas fuera del dominio definido.

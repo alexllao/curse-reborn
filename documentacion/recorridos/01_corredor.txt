@@ -42,7 +42,7 @@ pnpm comparar:corredor
 pnpm comprobar:corredor
 
 CAÍDA COMO VISTA DE DESARROLLO
-Desde la mazmorra, F6 reinicia la sesión y muestra DROP. Véase 02_caida.txt.
+Desde la mazmorra, F6 abre el corredor; otro F6 reinicia la sesión y muestra DROP. Véase 02_caida.txt.
 Este atajo no resuelve el corredor ni conserva la partida que había antes.
 
 Referencia: walkthrough de Sophie Cheshire (falsehead), 28/03/2003,

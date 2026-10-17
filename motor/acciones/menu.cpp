@@ -68,7 +68,7 @@ void abrir_menu(unsigned char *d, unsigned short x, unsigned short y) {
 
 // El ámbito explícito impide ejecutar una aproximación del mismo verbo en otras escenas.
 ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short manejador,
-                                           unsigned short id) {
+                                           unsigned short id, const ServicioSonido &sonido) {
   if (palabra(d, 0x8082) == 1 && manejador == 0x384a && id == 8) {
     // 3858–389E: acciona el mecanismo del corredor y programa sus dos entidades al llegar.
     guardar(d, 0x1a38, palabra(d, 0x2c90));
@@ -88,10 +88,11 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
   if (palabra(d, 0x8082) != 0)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1) {
-    if (d[0x0ad4] != 0)
-      return ResultadoMenu::pendiente;
+    // 3545 y 37FF: las respuestas sin animación emiten los identificadores cero y uno.
     if (id == 1 || d[0x3607] == 0)
-      return ResultadoMenu::accion;
+      return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id))
+                 ? ResultadoMenu::accion
+                 : ResultadoMenu::pendiente;
     guardar(d, 0x2c3b, 0x241a);
     guardar(d, 0x2d22, 0x2495);
     d[0x2d24] = 0;
@@ -226,7 +227,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
 }
 
 // Conserva los destinos originales como etiquetas; nunca salta a direcciones de código DOS.
-ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla) {
+ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
+                               const ServicioSonido &sonido) {
   if (casilla >= 10)
     return ResultadoMenu::error;
   const auto manejador = palabra(d, static_cast<Palabra>(0xb60c + casilla * 2));
@@ -277,12 +279,12 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla) {
         return preparar_destinos(d) ? ResultadoMenu::actualizado : ResultadoMenu::error;
       }
       if (accion == 2 && objeto == 2)
-        return ejecutar_interaccion_inicial(d, 0x9900, objeto);
+        return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
-        return ejecutar_interaccion_inicial(d, 0x989e, objeto);
+        return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);
       if ((objeto == 3 && previo == 4) || (objeto == 4 && previo == 3))
-        return ejecutar_interaccion_inicial(d, 0x9954, objeto);
+        return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido);
     }
     if (palabra(d, 0x8082) == 0 && objeto <= 5 && (previo == 0xffff || previo <= 5)) {
       marcar_accion_rechazada(d);
@@ -292,7 +294,7 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla) {
   } else if (manejador == 0x32de || manejador == 0x563a || manejador == 0x2fca ||
              manejador == 0x3143 || manejador == 0x384a)
     return ejecutar_interaccion_inicial(
-        d, manejador, static_cast<Palabra>(id - (manejador == 0x32de ? 0x17 : 0x1a)));
+        d, manejador, static_cast<Palabra>(id - (manejador == 0x32de ? 0x17 : 0x1a)), sonido);
   else
     return ResultadoMenu::pendiente;
   construir_tabla_acciones(d);

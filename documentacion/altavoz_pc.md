@@ -29,13 +29,13 @@ Cada nota contiene una palabra de duración y otra de divisor. La duración cero
 
 Los demás bits leídos de `61h` se conservan. No se ha añadido una interpretación especial para un divisor cero: se conservan los bytes enviados por el original. La comparación incluye ese valor y `FFFFh`.
 
-`PuertosAltavoz` recibe funciones explícitas de lectura y escritura. El C++ no ejecuta instrucciones privilegiadas ni toca puertos del ordenador anfitrión. La futura plataforma podrá traducir estas operaciones a un estado de temporizador y generar sonido para SDL.
+`PuertosAltavoz` recibe funciones explícitas de lectura y escritura. El C++ no ejecuta instrucciones privilegiadas ni toca puertos del ordenador anfitrión. El generador PCM traduce estas operaciones a un estado de temporizador y la plataforma lo envía a SDL.
 
 ## Integración y límites
 
 El selector y el reproductor pueden atender la modalidad uno dentro del servicio `sonido` de las secuencias. Los casos integrados ejecutan las instrucciones originales de animación, selector y arranque, sin sustituir esos bloques por auxiliares falsas. Las modalidades cero y dos siguen retornando sin emitir órdenes.
 
-El avance por temporizador se expone como una llamada explícita. Aún falta determinar e integrar la cadencia de llamadas del juego y convertir el divisor en audio digital. **Todavía no se genera PCM, no hay salida audible y no existe una ventana SDL.** Tampoco se ha trasladado la reproducción de muestras ni el otro dispositivo de órdenes de bytes.
+El avance por temporizador conserva su llamada explícita y ahora se integra con el reloj PCM y la salida SDL descritos más abajo. La reproducción de muestras y los demás dispositivos siguen pendientes.
 
 El llamador debe aportar un segmento de 65.536 bytes y servicios de puerto válidos y serializar las llamadas al estado compartido. El original protege el arranque con `CLI/STI`; el C++ no cambia las interrupciones del sistema anfitrión ni ofrece sincronización entre hilos. Las lecturas de palabras de prueba se mantienen alineadas, incluyendo una nota que comienza en `FFFEh` y cuyo divisor se lee desde cero tras avanzar la referencia.
 
@@ -59,3 +59,19 @@ pnpm comparar:altavoz
 Unicorn ejecuta las instrucciones originales. Sus entradas y salidas de puerto se registran y reciben el mismo valor inicial de control que las funciones nativas. Se compara la traza completa en orden, el control final, DS completo, la prioridad guardada en CS, la pila y SI donde se declara conservado. No se compara una grabación de audio ni la temporización del hardware.
 
 Los informes separados se guardan en `trabajo/comparacion_altavoz/muestra.json` y `resultado.json`, con huellas de ejecutable y biblioteca y direcciones visitadas. La muestra se ejecuta añadiendo `--muestra` al comando. La comparación amplia fue ejecutada y confirmada por el propietario.
+
+## Salida audible común
+
+`motor/sonido/pcm.cpp` convierte las escrituras de las rutinas originales a PCM mono de 16 bits a 48.000 Hz. El modelo digital usa un reloj nominal de 14.318.180/12 Hz, el contador de modo tres, byte bajo/alto, compuerta 61h y divisor cero equivalente a 65.536. Integra la onda lógica por muestra y conserva su fase entre bloques. No pretende reproducir la respuesta acústica de una caja o un altavoz físico; los contadores extremos se contrastan contra este modelo digital, no contra una medición de hardware.
+
+La inicialización original 01A8–01B9 programa 4250h en el canal cero y la IRQ 0240–0247 llama a 7AC6 cuando 0AD4 es uno. El generador reproduce esa división sin redondear a 70 llamadas por segundo. La lógica y los fundidos de plataforma todavía utilizan su referencia nominal de 70 Hz; no se afirma sincronización global exacta de toda la partida.
+
+La plataforma `plataformas/sdl/audio.cpp` mantiene una salida compartida y procesa las secuencias en el hilo principal. SDL recibe únicamente muestras; su hilo de dispositivo nunca escribe DS. Cambiar de habitación conserva dispositivo y prioridad; abrir otra vista de desarrollo limpia los efectos de la sesión anterior. El menú pausa la lógica, pero no la IRQ de sonido. La tecla M silencia las muestras sin cambiar el modo del juego. Tras una suspensión superior a cinco segundos se descarta el efecto interrumpido; los cuadros lentos descartan audio atrasado para limitar la latencia.
+
+Los servicios FB, las respuestas de menú de 3545/37FF y el burbujeo BF3C–BF41 del lago utilizan el mismo selector 5288. No se añaden pitidos de prueba a las acciones del juego. La música tiene su propia modalidad 0AD3 y sigue pendiente, al igual que AdLib, MT-32 y el audio de la presentación.
+
+## Comprobación de PCM y SDL
+
+`pnpm comprobar:audio --muestra` ejecuta los 310 casos del reproductor original y contrasta 16 selecciones de efecto en las cuatro escenas integradas, 24 límites de contador/compuerta y 8 respuestas de menú. Los casos del menú comprueban las modalidades cero/uno y la visibilidad. Se comparan DS completo y PCM con las escrituras DOS ejecutadas por Unicorn en los instantes de IRQ; la referencia integra tramos analíticamente, de forma distinta al generador C++. También se exige que dividir las muestras en bloques produzca exactamente la misma señal y estado.
+
+Después, SDL carga el WAV generado, acepta las muestras y arranca un dispositivo de prueba `dummy`. Esto comprueba formato y alimentación de la salida, no que un altavoz real se oiga. El resultado y el WAV quedan en `trabajo/comparacion_audio/`. La comparación amplia se solicita con `pnpm comparar:audio`; se registra por separado de la muestra.

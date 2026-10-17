@@ -156,6 +156,7 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
@@ -245,10 +246,35 @@ function leerCaptura(archivo) {
 
 // Prepara la dependencia, compila y abre o comprueba la presentación nativa solicitada.
 export async function gestionarSdl(accion, argumentos) {
-  if (argumentos.length)
-    throw new Error('Estos comandos todavía no admiten argumentos adicionales.');
+  const sinSonido =
+    accion === 'ventana' && argumentos.length === 1 && argumentos[0] === '--sin-sonido';
+  if (argumentos.length && !sinSonido)
+    throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
     if (await preparar()) console.log('Dependencia SDL preparada.');
+    return;
+  }
+  if (accion === 'comprobar:vistas') {
+    const programa = await compilar();
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_vistas');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'ultimo_fotograma.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    return;
+  }
+  if (accion === 'comprobar:audio') {
+    const programa = await compilar();
+    ejecutar(
+      programa,
+      [
+        datos,
+        '--comprobar-audio',
+        join(raiz, 'trabajo', 'comparacion_audio', 'efecto_original.wav'),
+      ],
+      { ...process.env, SDL_AUDIO_DRIVER: 'dummy' },
+    );
     return;
   }
   if (accion !== 'sdl:compilar') {
@@ -335,7 +361,7 @@ export async function gestionarSdl(accion, argumentos) {
     console.log(
       'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra inicia una vista nueva de la caída; faltan los demás puzles.',
     );
-    ejecutar(programa, [datos], process.env, false, false);
+    ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
     return;
   }
   if (accion === 'comprobar:caida') {

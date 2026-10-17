@@ -70,3 +70,5 @@ El [menú y la depuración F7–F10](menu_e_interacciones.md) tienen comprobaci�
 El [movimiento con colisiones y la corrección de la puerta](movimiento_y_colisiones.md) disponen de comparación del bucle completo y capturas SDL propias.
 
 `pnpm comprobar:corredor` verifica la entrada, el mecanismo y el regreso en tres capturas; [el alcance de cámara y las barreras originales](corredor_y_camara.md) distingue la partida de sus estados de prueba. `pnpm comprobar:caida` verifica DROP tras 16/32 pasos y la entrada a LAKEBED tras 24 pasos. La [guía de caída](recorridos/02_caida.txt) explica F5/F6 y sus reinicios. La llegada al agua no implica que estén resueltas las interacciones del lago.
+
+`pnpm comprobar:vistas` valida ocho cambios con eventos F5/F6: mazmorra, corredor, caída y lago, con regresos intercalados. El salto desde mazmorra ya pasa por el corredor. Los efectos PC Speaker y sus comprobaciones se describen en [altavoz del PC](altavoz_pc.md); M permite silenciarlos.

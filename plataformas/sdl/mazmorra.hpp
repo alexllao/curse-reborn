@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL3/SDL.h>
 #include <vector>
+#include "audio.hpp"
 #include "../../motor/aleatorio/generador.hpp"
 #include "../../motor/video/imagen.hpp"
 
@@ -14,6 +15,9 @@ public:
   // Vista de desarrollo: reinicia la sesión y dispone la entrada original a DROP sin resolver
   // puzles.
   bool iniciar_caida(const std::string &carpeta, const motor::ImagenIndexada &fondo);
+  // Abre una escena integrada como sesión independiente; no resuelve ni conserva puzles.
+  bool iniciar_vista(const std::string &carpeta, const motor::ImagenIndexada &fondo,
+                     unsigned short escena);
   // Avanza las secuencias, comportamientos y lógica particular sin ejecutar instrucciones DOS.
   bool avanzar();
   // Avanza los 32 retrazos de fundido o los ocho de cámara sin consumir pasos de juego.
@@ -44,7 +48,29 @@ public:
   // Dibuja rectángulos de diagnóstico sin escribir en el estado ni en las imágenes originales.
   bool depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones, bool limites) const;
 
+  // Abre la salida común antes de cargar una partida; un fallo de dispositivo no altera los datos.
+  bool abrir_audio() {
+    return audio.abrir();
+  }
+  // Libera el dispositivo antes de cerrar SDL.
+  void cerrar_audio() {
+    audio.cerrar();
+  }
+  // Apaga efectos al volver a Core, título o introducción.
+  void desconectar_audio() {
+    audio.desconectar();
+  }
+  // Mantiene el temporizador audible mientras la lógica está pausada por menús o fundidos.
+  bool actualizar_audio() {
+    return audio.actualizar();
+  }
+  // Alterna el silencio de plataforma con la tecla M.
+  bool alternar_silencio() {
+    return audio.alternar_silencio();
+  }
+
 private:
+  Audio audio;
   unsigned char datos[65536]{};
   motor::ImagenIndexada fondo{}, imagen_anterior{}, imagen_destino{};
   unsigned char planos_fondo[262144]{}, tira_fondo[6400]{};
@@ -78,8 +104,8 @@ private:
                                  unsigned short &alto);
   // Proporciona la referencia de una superposición leída de la tabla original del banco.
   static bool parrafo_escena(void *contexto, unsigned short imagen, unsigned short &referencia);
-  // Consume una orden únicamente bajo la modalidad original sin dispositivo de sonido.
-  static bool omitir_sonido(void *, unsigned char *datos, unsigned short, unsigned char);
+  // Dirige los identificadores originales al dispositivo compartido de la partida.
+  static bool reproducir_sonido(void *, unsigned char *datos, unsigned short, unsigned char);
   // Atiende F8 leyendo el nombre acotado de la tabla original y reemplazando el banco de modelo.
   static bool cargar_modelo(void *contexto, const unsigned char *datos, unsigned short nombre,
                             unsigned short capacidad);
