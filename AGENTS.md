@@ -24,6 +24,7 @@ El entregable principal es código C/C++ portable. Conservar el ensamblador come
 - Priorizar el mapa de código, las referencias y el flujo de control del ejecutable. La extracción de recursos por sí sola no constituye la reconstrucción del motor solicitada.
 - Guardar los desensamblados completos y otros resultados derivados del binario en `trabajo/`; versionar las herramientas propias y la documentación del análisis.
 - Verificar cada cambio de forma proporcionada y explicar los límites de la comprobación.
+- Preferir comprobaciones selectivas para ahorrar ejecuciones y contexto, según la preferencia del propietario. Indicar explícitamente las comparaciones preparadas que aún no se hayan ejecutado y facilitar su comando.
 - Mantener actualizados el estado y la hoja de ruta del README cuando cambien las capacidades reales.
 - Mantener la organización de monorepositorio: `motor/`, `herramientas/`, `documentacion/` y `pruebas/` comparten este repositorio y su historial.
 

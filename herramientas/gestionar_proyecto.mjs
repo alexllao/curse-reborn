@@ -70,7 +70,7 @@ function preparar() {
   console.log('Preparación completada. Puedes ejecutar «pnpm analizar» y «pnpm comprobar».');
 }
 
-function compararAcciones() {
+function compararAcciones(soloAleatorio = false) {
   comprobarEntorno(true);
   if (process.platform === 'win32' && process.arch !== 'x64') {
     throw new Error('La compilación de esta comparación en Windows requiere Node y Python de 64 bits.');
@@ -88,12 +88,13 @@ function compararAcciones() {
   } else {
     opciones.push('-shared', '-fPIC');
   }
-  console.log('Compilando los bloques C++ de acciones…');
+  console.log('Compilando los bloques C++ reconstruidos…');
   ejecutar(compilador, [...opciones, join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
     join(raiz, 'motor', 'acciones', 'seleccionar_coincidencias.cpp'),
     join(raiz, 'motor', 'acciones', 'retorno_accion.cpp'),
+    join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
-  ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_acciones.py'), '--biblioteca', biblioteca]);
+  ejecutar(pythonLocal, [join(raiz, 'pruebas', soloAleatorio ? 'comparar_aleatorio.py' : 'comparar_acciones.py'), '--biblioteca', biblioteca]);
 }
 
 const [accion, ...argumentos] = process.argv.slice(2);
@@ -114,6 +115,9 @@ try {
     case 'comparar:acciones':
       compararAcciones();
       break;
+    case 'comparar:aleatorio':
+      compararAcciones(true);
+      break;
     case 'estado':
       console.log(`Node: ${process.version}`);
       console.log(`Carpeta del proyecto: ${raiz}`);
@@ -124,7 +128,7 @@ try {
       console.log('Dependencias de análisis: preparadas.');
       break;
     default:
-      throw new Error('Acción desconocida. Usa «pnpm preparar», «pnpm analizar», «pnpm comprobar», «pnpm comparar:acciones» o «pnpm estado».');
+      throw new Error('Acción desconocida. Usa «pnpm preparar», «pnpm analizar», «pnpm comprobar», «pnpm comparar:acciones», «pnpm comparar:aleatorio» o «pnpm estado».');
   }
 } catch (error) {
   console.error(`Error: ${error.message}`);

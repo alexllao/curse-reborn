@@ -21,11 +21,13 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 **Desensamblado y tres bloques C++ contrastados con el original. Todavía no hay una versión jugable ni integración con SDL.**
 
+Hay además un cuarto bloque C++, el [generador de valores acotados](documentacion/generador_aleatorio.md), con su comparación preparada. **Su validación contra el original está pendiente**; se ejecuta por separado con `pnpm comparar:aleatorio`.
+
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El C++ reconstruido incluye el constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md): pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **24 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 37 anotaciones propias y enlaces a los bloques trasladados.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 40 anotaciones propias y enlaces a los bloques trasladados.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -65,7 +67,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** trasladar el generador de `0000:788E` con su estado y sus límites, y seguir ampliando los manejadores de acciones en C++ con comprobaciones contra el original.
+**Siguiente hito de reconstrucción:** validar el generador ya trasladado de `0000:788E` y conectarlo con la selección de coincidencias para seguir ampliando las rutinas C++.
 
 ## Organización del repositorio
 
@@ -109,7 +111,8 @@ pnpm comprobar
 | `pnpm analizar` | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
 | `pnpm ensamblador` | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa. |
 | `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
-| `pnpm comparar:acciones` | Compila los tres bloques C++ y compara sus escrituras o decisiones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
+| `pnpm comparar:acciones` | Compila la biblioteca C++ y compara tres bloques de acciones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
+| `pnpm comparar:aleatorio` | Ejecuta solo la comparación del nuevo generador: 18.816 llamadas previstas. Esta validación está pendiente de ejecución. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 

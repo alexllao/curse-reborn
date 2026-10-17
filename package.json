@@ -15,6 +15,7 @@
     "ensamblador": "node herramientas/gestionar_proyecto.mjs analizar",
     "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar",
     "comparar:acciones": "node herramientas/gestionar_proyecto.mjs comparar:acciones",
+    "comparar:aleatorio": "node herramientas/gestionar_proyecto.mjs comparar:aleatorio",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {
