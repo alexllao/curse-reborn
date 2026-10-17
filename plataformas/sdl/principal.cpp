@@ -233,8 +233,8 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-lago-concha" || opcion == "--comprobar-lago-viaje" ||
       opcion == "--comprobar-lago-tortuga" || opcion == "--comprobar-lago-picana" ||
       opcion == "--comprobar-lago-tiburon";
-  const bool comprobar_lago =
-      opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera" || lago_segunda_parte;
+  const bool comprobar_lago = opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera" ||
+                              opcion == "--comprobar-lago-hablar" || lago_segunda_parte;
   const bool corredor_con_audio = opcion == "--comprobar-corredor-audio";
   const bool corredor_completo =
       opcion == "--comprobar-corredor-pecera" || opcion == "--comprobar-corredor-golpe" ||
@@ -693,8 +693,13 @@ int main(int argc, char *argv[]) {
                 !acercar(16, 4, 0, false) || !abrir() || !elegir(3) || !objeto(16) ||
                 !avanzar(96) || !acercar(17, 5, -2, true) || !abrir() || !elegir(1) ||
                 !objeto(17) || !avanzar(96) || !mazmorra.conserva_objeto(17) ||
-                !acercar(20, 12, 52, false) || !abrir() || !elegir(2) || !elegir(6) ||
-                !objeto(17) || !objeto(20) || !avanzar(192) || mazmorra.conserva_objeto(17))
+                !acercar(20, 12, 52, false))
+              return fallo("No se ha podido llegar a la tienda con el gusano");
+            if (opcion == "--comprobar-lago-hablar") {
+              if (!abrir() || !elegir(4) || !elegir(0) || !avanzar(8))
+                return fallo("No se ha podido hablar con Mr. Fish desde su tema original");
+            } else if (!abrir() || !elegir(2) || !elegir(6) || !objeto(17) || !objeto(20) ||
+                       !avanzar(192) || mazmorra.conserva_objeto(17))
               return fallo("No se ha podido entregar el gusano a Mr. Fish");
           }
         }

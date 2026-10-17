@@ -29,6 +29,7 @@ class ComparacionLago(ComparacionCorredor):
             self.paso(datos, semilla)
         if palabra(datos, 0x2C3B):
             raise ErrorAnalisis('La inmersión no termina su secuencia original.')
+        self.opciones_lago(datos)
         self.interacciones_lago(datos)
         self.menu(datos, (2, 4))
         objetos = [palabra(datos, 0xB620 + i * 2) for i in range(10)]
@@ -76,6 +77,16 @@ class ComparacionLago(ComparacionCorredor):
             raise ErrorAnalisis('El gusano no se incorpora al inventario.')
         self.captura(datos, carpeta, 'lago_gusano_recogido')
         self.acercar(datos, semilla, 0x2CF1, 12, 52)
+        copia = bytearray(datos)
+        copia_semilla = list(semilla)
+        self.menu(datos, (4, 0))
+        if palabra(datos, 0x2DC7) != 0x1A2F:
+            raise ErrorAnalisis('Hablar junto a Mr. Fish no inicia su reacción original.')
+        self.esperar(datos, semilla, 8)
+        self.captura(datos, carpeta, 'lago_hablar')
+        datos[:] = copia
+        semilla[:] = copia_semilla
+        self.retomar_recursos(datos)
         self.elegir_objeto(datos, (2, 6), 17)
         self.elegir_objeto(datos, (), 20)
         self.esperar(datos, semilla, 192)
@@ -171,6 +182,22 @@ class ComparacionLago(ComparacionCorredor):
             guardar(d, 0xB634, 6)
             guardar(d, 0xB638, 18)
             self.seleccionar(d, 0)
+
+    # Cubre hablar cerca y lejos de la tienda y los retornos comunes de examinar, usar y atacar.
+    def opciones_lago(self, base):
+        for tema in (0, 1):
+            for distancia in (-65, -64, -63, 0, 63, 64, 65, 32768):
+                d = bytearray(base)
+                guardar(d, 0x2C2D, (palabra(d, 0x2CF3) + distancia) & 0xFFFF)
+                guardar(d, 0xB60C, 0x32DE)
+                guardar(d, 0xB620, tema + 0x17)
+                self.seleccionar(d, 0)
+        for manejador in (0x384A, 0x2FCA, 0x3143):
+            for objeto in (3, 6, 7, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26):
+                d = bytearray(base)
+                guardar(d, 0xB60C, manejador)
+                guardar(d, 0xB620, objeto + 0x1A)
+                self.seleccionar(d, 0)
 
     # Contrasta ramas aisladas sobre copias del estado real: capacidad, puntuación y concha en movimiento.
     def interacciones_lago(self, base):

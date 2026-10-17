@@ -76,7 +76,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ResultadoMenu::accion;
   }
   if (palabra(d, 0x8082) == 3)
-    return ejecutar_interaccion_lago(d, manejador, id);
+    return ejecutar_interaccion_lago(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 1)
     return ejecutar_interaccion_corredor(d, manejador, id, sonido);
   if (palabra(d, 0x8082) != 0)

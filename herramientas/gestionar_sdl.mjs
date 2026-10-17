@@ -1,6 +1,6 @@
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 import { prepararMt32 } from './gestionar_mt32.mjs';
-/** Compilación y comprobación de la presentación SDL y la mazmorra, sin ejecutar código DOS. */
+/** Compilación y comprobación de Curse Reborn con SDL, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -149,7 +149,7 @@ async function compilar() {
   const sdl = await preparar();
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
-  console.log('Compilando la presentación SDL y la mazmorra…');
+  console.log('Compilando Curse Reborn con SDL…');
   ejecutar(
     process.env.CXX || 'clang++',
     [
@@ -606,6 +606,7 @@ export async function gestionarSdl(accion, argumentos) {
     for (const [opcion, nombre] of [
       ['--comprobar-lago-pecera', 'lago_pecera_128'],
       ['--comprobar-lago', 'lago_oxigeno'],
+      ['--comprobar-lago-hablar', 'lago_hablar'],
       ['--comprobar-lago-concha', 'lago_concha'],
       ['--comprobar-lago-viaje', 'lago_tortuga_viaje'],
       ['--comprobar-lago-tortuga', 'lago_tortuga'],
@@ -633,7 +634,7 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 7,
+          capturas: 8,
           pixeles_por_captura: 64000,
           limite: 'Recorrido hasta aturdir al tiburón; almeja y salida pendientes.',
         },
@@ -642,7 +643,7 @@ export async function gestionarSdl(accion, argumentos) {
       ) + '\n',
     );
     console.log(
-      'Lago SDL: coinciden siete capturas hasta la concha, el transporte sobre las anguilas, la picana y el tiburón aturdido.',
+      'Lago SDL: coinciden ocho capturas, incluida la reacción de Mr. Fish al hablar, hasta la concha, el transporte sobre las anguilas, la picana y el tiburón aturdido.',
     );
     return;
   }

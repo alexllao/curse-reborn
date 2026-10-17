@@ -35,6 +35,7 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La capa de platafo
 - Trabajar en `development`, salvo indicación expresa del propietario.
 - Usar pnpm para la gestión del proyecto y Node para las herramientas generales. Mantener `package.json` y `pnpm-lock.yaml`; no generar archivos de bloqueo de npm o Yarn. Python se permite para el análisis del ejecutable y se invoca a través de los comandos de pnpm.
 - Revisar el estado del repositorio antes de modificar archivos y respetar el trabajo existente.
+- Antes de dar una pantalla por terminada, revisar todos sus personajes y objetos con las opciones de inventario, hablar, examinar, recoger, usar, manipular y saltar, sus respuestas negativas y sus salidas. Contrastar los manejadores del EXE y sus condiciones antes y después de cada cambio persistente. La solución del puzle por sí sola no valida todas las interacciones. Registrar explícitamente los manejadores pendientes y no marcar como completa una escena que los necesite.
 - Distinguir hechos comprobados, hipótesis y funcionalidades pendientes. No presentar un visor o una demostración como un juego completo.
 - Documentar los formatos y las rutinas a partir de evidencias reproducibles. Comparar el comportamiento reconstruido con el original cuando sea posible.
 - Priorizar el mapa de código, las referencias y el flujo de control del ejecutable. La extracción de recursos por sí sola no constituye la reconstrucción del motor solicitada.

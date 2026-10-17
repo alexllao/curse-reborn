@@ -28,6 +28,8 @@ Las casillas se cuentan desde uno y las coordenadas usan 320 x 200.
 
 5. ENTREGAR EL GUSANO
    Seguir hacia la izquierda hasta Mr. Fish, reconocible por su puesto.
+   Opcional: acercarse y elegir hablar (5), primer tema. Se activa su
+   reacción original a menos de 64 píxeles; desde lejos no responde.
    Manipular objetos (3), dar (7), elegir el gusano y después Mr. Fish.
    Esperar su respuesta y la animación original.
 

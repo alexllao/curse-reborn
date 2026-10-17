@@ -39,9 +39,24 @@ ResultadoMenu recoger(unsigned char *d, Palabra entidad) {
 
 // Conserva las escrituras originales; las acciones submarinas posteriores siguen pendientes.
 ResultadoMenu ejecutar_interaccion_lago(unsigned char *d, unsigned short manejador,
-                                        unsigned short id) {
+                                        unsigned short id, const ServicioSonido &sonido) {
   if (palabra(d, 0x8082) != 3)
     return ResultadoMenu::pendiente;
+  if (manejador == 0x32de && id <= 1) {
+    // 3558–3587: el tema uno activa la reacción de la tienda únicamente a menos de 64 píxeles.
+    auto distancia = static_cast<Palabra>(palabra(d, 0x2c2d) - palabra(d, 0x2cf3));
+    if (con_signo(distancia) < 0)
+      distancia = static_cast<Palabra>(0 - distancia);
+    if (id == 1 && con_signo(distancia) < 64) {
+      guardar(d, 0x2dc7, 0x1a2f);
+      d[0x2dc9] = 0;
+      d[0x2dca] = 1;
+      d[0x2dcb] = 40;
+    }
+    // 3545/37FF: los temas cero y uno mantienen sus efectos mediante el servicio común.
+    return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
+                                                                            : ResultadoMenu::error;
+  }
   if (manejador == 0x9994) {
     // 999E–9A47: consumir pecera y agua, animar su colocación y sumar cinco puntos.
     retirar_identificador(d, 6);
@@ -155,6 +170,15 @@ ResultadoMenu ejecutar_interaccion_lago(unsigned char *d, unsigned short manejad
       return ResultadoMenu::accion;
     }
     return recoger(d, id == 17 ? 0x2caf : id == 18 ? 0x2cd0 : id == 23 ? 0x2dd8 : 0x2d75);
+  }
+  if ((manejador == 0x2fca && id <= 26) || (manejador == 0x3143 && id <= 26 && id != 24)) {
+    // 313E/32D9: rechazos originales; el ataque de la almeja se mantiene pendiente de traslado.
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
+  }
+  if (manejador == 0x384a && id <= 26 && id != 8) {
+    // 3B4F: examinar sin una rama especial conserva el menú y retorna sin acarreo.
+    return ResultadoMenu::actualizado;
   }
   return ResultadoMenu::pendiente;
 }

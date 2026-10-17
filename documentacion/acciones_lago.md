@@ -4,6 +4,7 @@ La ruta continúa la partida real desde la mazmorra y el corredor. No crea objet
 
 | Original DOS               | Acción reconstruida                                                                                                                                   |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3558–3587, 3545/37FF       | Hablar: reacción de Mr. Fish con el tema uno a menos de 64 píxeles; ambos temas conservan su efecto de sonido                                         |
 | 3CC0–3CCC, 9994–9A47       | Ponerse la pecera: retira pecera y agua del inventario, activa sus seis canales y los de Brad; suma cinco puntos                                      |
 | 3B93–3BA0, 9A48–9AA7       | Empujar los barrotes: exige que sigan activos, prepara aproximación, animación y liberación; suma cinco puntos                                        |
 | 38A4–38D2                  | Examinar la arena: prepara la búsqueda y la aparición del gusano                                                                                      |
@@ -18,14 +19,20 @@ Fuentes: `motor/acciones/lago.cpp`, despacho compartido en `motor/acciones/menu.
 
 `pnpm comparar:lago --muestra` ejecuta la partida previa, compara cada selección y paso con el EXE mediante Unicorn y contrasta DS completo y generador. Incluye la recogida de la concha, su entrega al acercarse la tortuga, 192 pasos de transporte y descenso, la picana y una descarga que alcanza el intervalo original del tiburón. Añade ramas aisladas sobre copias de una llegada real: inventarios vacíos, parciales y llenos, puntuación desbordada y concha animada o quieta, tiburón ausente o activo y orientaciones de Brad. Guarda imágenes en `trabajo/comparacion_lago/`.
 
-`pnpm comprobar:lago` añade siete capturas SDL: pecera colocada, entrega del gusano, concha recogida, viaje sobre la tortuga, descenso, picana recogida y tiburón aturdido. Cada captura se compara por sus 64.000 píxeles con la composición del mismo recorrido. La prueba omite las esperas físicas del monitor y no valida por sí sola la equivalencia acústica.
+`pnpm comprobar:lago` añade ocho capturas SDL: pecera colocada, entrega del gusano, reacción al hablar, concha recogida, viaje sobre la tortuga, descenso, picana recogida y tiburón aturdido. Cada captura se compara por sus 64.000 píxeles con la composición del mismo recorrido. La prueba omite las esperas físicas del monitor y no valida por sí sola la equivalencia acústica.
 
 Las comprobaciones conservan también un volcado local de DS junto a cada captura (`.ds.bin`) para localizar divergencias; no es un formato de partida guardada. SDL respeta un desplazamiento de cámara por ciclo antes de continuar la lógica, como EAD5, incluido el transporte rápido.
 
-La muestra ejecutada coincide en **6.291 comprobaciones**. Las **siete capturas SDL** nuevas y las **ocho capturas anteriores del corredor** coinciden en sus 64.000 píxeles. También pasan el formato, ESLint y Ruff.
+La muestra ejecutada coincide en **6.358 comprobaciones**. Las **ocho capturas SDL**, incluida la reacción de Mr. Fish al hablar, y las **ocho capturas anteriores del corredor** coinciden en sus 64.000 píxeles. También pasan el formato, ESLint y Ruff.
 
 La ruta comprobada llega hasta el primer tiburón aturdido. Las capturas del transporte muestran a Brad sobre la tortuga antes de devolverle el control. La descarga conserva la condición de modelo y fotograma del ejecutable: pulsar demasiado pronto o tarde puede fallar; no se sustituye por un impacto garantizado.
 
 Quedan por comprobar el resto del recorrido de tiburones, el salto de la almeja y la salida por el tapón. La supervivencia completa con el temporizador de oxígeno requiere su propia validación del bucle y del reloj originales.
 
 [Recorrido de prueba](recorridos/03_lago.txt). F5/F6 permiten cambiar entre las vistas disponibles y reinician la sesión; para conservar la pecera hay que llegar por las salidas normales.
+
+## Revisión de opciones del menú
+
+La reacción al hablar de la tienda estaba desensamblada y faltaba en el despacho C++. La corrección compara los dos temas a ambos lados del límite de proximidad (63, 64 y 65 píxeles), cerca y lejos, y conserva la aritmética de 16 bits. Añade una rama desde la llegada real a Mr. Fish con su imagen tras ocho pasos; el recorrido del gusano continúa desde una copia anterior a esa conversación opcional.
+
+Se contrastan también los retornos comunes de examinar sin una respuesta especial y los rechazos de usar o atacar objetos sin una acción aplicable. El ataque específico de la almeja, los saltos y la interacción con el tapón siguen pendientes: esta revisión no permite dar el lago completo por terminado.
