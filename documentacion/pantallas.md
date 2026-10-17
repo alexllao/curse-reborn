@@ -28,3 +28,5 @@ Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVEC
 La entrada siguiente, COUNTRY2 (escena 16), se identifica como **El camino del asaltante (pendiente)**. Sus puzles no están terminados y no se cuenta como otra pantalla completada.
 
 El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
+
+Cuando exista el HUD propio, mostrará brevemente el nombre de la pantalla cada vez que se acceda a ella, también al regresar a una ya visitada. Reutilizará este catálogo. La duración y el aspecto quedan pendientes de decidir; este aviso todavía no está implementado.
