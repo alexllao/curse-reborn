@@ -30,7 +30,7 @@ El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa 
 
 **F12** muestra u oculta el contador de FPS y registra el cambio en consola. Arranca visible, en una placa pequeña en la esquina superior derecha, con tamaño fijo en píxeles de ventana. Se coloca sobre la banda negra si la hay. Actualiza el valor cada medio segundo y mide el dibujo de fotogramas, independiente del reloj del juego. La ventana tiene un máximo nominal de 70 FPS; puede rendir menos según el equipo o durante una carga. En las capturas de referencia queda oculto salvo al comprobar expresamente F12.
 
-Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no está implementado: actualmente esa información se registra en consola.
+Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no está implementado: actualmente esa información se registra en consola. El HUD y las futuras opciones dentro del juego compartirán el estilo de la interfaz original: bordes metálicos con relieve, tonos grises y detalles rojizos. La muestra del aviso de pantalla es una propuesta visual; los paneles de opciones quedan pendientes de diseñar e implementar.
 
 **F2** alterna entre el límite de 70 FPS y la presentación sin límite, con aviso en consola. Arranca limitado y conserva la opción al cambiar de escena durante la misma ejecución. No acelera la lógica ni el audio, no avanza las introducciones y no se repite al mantener la tecla pulsada.
 

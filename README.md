@@ -120,6 +120,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 - [ ] Al crear el HUD propio, mostrar brevemente el nombre de la pantalla cada vez que se acceda a ella, incluidos los regresos. Usar los nombres del catálogo de pantallas; duración y presentación visual pendientes de decidir.
+- [ ] Reutilizar el estilo del HUD propio en las opciones dentro del juego: placas y botones con bordes metálicos, relieve, grises y detalles rojizos, acordes con la interfaz original. Compartir el estilo con los avisos de entrada a pantalla; distribución y comportamiento de las opciones pendientes de diseñar.
 - [ ] Diseñar una ayuda opcional con pistas progresivas por pantalla: orientación, pista concreta y solución bajo petición. Consultar el estado de los puzles y el inventario para evitar pistas ya resueltas; basarse en la guía aportada y contrastarla con la lógica original. Pendiente de definir su acceso y aspecto dentro del juego; todavía sin implementar.
 
 **Siguiente hito de reconstrucción:** conectar el menú original y los efectos de sus acciones sobre objetos y personaje, conservando las condiciones del puzle para pasar de la escena animada a una mazmorra jugable.
