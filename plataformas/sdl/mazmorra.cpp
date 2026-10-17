@@ -530,7 +530,14 @@ void Mazmorra::registrar_estado() {
       if (!lista.empty())
         lista += ", ";
       const auto id = inventario_registrado[i];
-      lista += id == 1 ? "llave" : id == 3 ? "clip" : "objeto";
+      lista += id == 1    ? "llave"
+               : id == 3  ? "clip"
+               : id == 6  ? "pecera"
+               : id == 7  ? "agua"
+               : id == 17 ? "gusano"
+               : id == 18 ? "concha"
+               : id == 23 ? "picana"
+                          : "objeto";
       lista += " [" + std::to_string(id) + "]";
     }
     registrar_accion("Inventario: %s", lista.empty() ? "vacío" : lista.c_str());
@@ -540,6 +547,32 @@ void Mazmorra::registrar_estado() {
                      datos[0x3594] ? "habilitado" : "bloqueado por el guion");
   control_registrado = datos[0x3594];
   registro_preparado = true;
+}
+
+// Lee el canal principal de Brad; no altera sus controles ni sus contadores.
+bool Mazmorra::secuencia_personaje_activa() const {
+  return motor::palabra(datos, 0x2c3b) != 0;
+}
+// Conserva los valores de 16 bits de los objetos, incluidas sus posiciones fuera de pantalla.
+bool Mazmorra::posicion_objeto(unsigned short id, unsigned short &x, unsigned short &y,
+                               unsigned short &alto) const {
+  for (unsigned short p = id == 0 ? 0x2c2b : 0x2c4c; p < 0x3500;
+       p = static_cast<unsigned short>(p + 33)) {
+    if (datos[p] && motor::palabra(datos, p + 14) == id) {
+      x = motor::palabra(datos, p + 2);
+      y = motor::palabra(datos, p + 4);
+      alto = motor::palabra(datos, p + 8);
+      return true;
+    }
+  }
+  return false;
+}
+// Busca en las diez entradas originales sin introducir una selección alternativa.
+int Mazmorra::casilla_objeto(unsigned short id) const {
+  for (unsigned short i = 0; i < 10; ++i)
+    if (motor::palabra(datos, 0xb620 + i * 2) == id + 0x1a)
+      return i;
+  return -1;
 }
 
 // 88BC: consulta de diez identificadores; conserva orden, contenido y resto del segmento.

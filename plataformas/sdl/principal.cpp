@@ -225,11 +225,12 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
+  const bool comprobar_lago = opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera";
   const bool corredor_con_audio = opcion == "--comprobar-corredor-audio";
-  const bool corredor_completo = opcion == "--comprobar-corredor-pecera" ||
-                                 opcion == "--comprobar-corredor-golpe" ||
-                                 opcion == "--comprobar-corredor-caida" ||
-                                 opcion == "--comprobar-corredor-agua" || corredor_con_audio;
+  const bool corredor_completo =
+      opcion == "--comprobar-corredor-pecera" || opcion == "--comprobar-corredor-golpe" ||
+      opcion == "--comprobar-corredor-caida" || opcion == "--comprobar-corredor-agua" ||
+      corredor_con_audio || comprobar_lago;
   const bool comprobar_corredor = opcion == "--comprobar-corredor-entrada" ||
                                   opcion == "--comprobar-corredor-mecanismo" ||
                                   opcion == "--comprobar-corredor-regreso" || corredor_completo;
@@ -529,11 +530,19 @@ int main(int argc, char *argv[]) {
                                      false);
       };
       // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
-      const auto avanzar = [](unsigned int cantidad) {
-        for (unsigned int i = 0; i < cantidad; ++i)
-          if (!mazmorra.actualizar_audio() || !mazmorra.avanzar() ||
-              !mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
+      const auto avanzar = [comprobar_lago](unsigned int cantidad) {
+        for (unsigned int i = 0; i < cantidad; ++i) {
+          if (!mazmorra.actualizar_audio() || !mazmorra.avanzar())
             return false;
+          const bool camara =
+              comprobar_lago && mazmorra.escena_actual() == 3 && mazmorra.camara_en_presentacion();
+          if (!mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
+            return false;
+          // EAD5 termina el desplazamiento antes de ejecutar la iteración lógica del mismo ciclo.
+          if (camara && (!mazmorra.avanzar() || !mazmorra.avanzar_presentacion(
+                                                    SDL_GetTicksNS() * 70u / 1000000000u + 100u)))
+            return false;
+        }
         return true;
       };
       if (!avanzar(1) || !mazmorra.entrada_menu(152, 92, false, true) || !elegir(4) || !elegir(1) ||
@@ -617,6 +626,60 @@ int main(int argc, char *argv[]) {
                       "La llegada al agua no conserva el inventario original del corredor");
               }
             }
+          }
+        }
+        if (comprobar_lago) {
+          for (unsigned int i = 0; i < 128 && mazmorra.secuencia_personaje_activa(); ++i)
+            if (!avanzar(1))
+              return fallo("No se ha podido terminar la inmersión");
+          // Selecciona un identificador en el menú real y conserva sus submenús originales.
+          const auto objeto = [&](unsigned short id) {
+            const int casilla = mazmorra.casilla_objeto(id);
+            return casilla >= 0 && elegir(static_cast<unsigned int>(casilla));
+          };
+          // Abre el menú común antes de cada acción del recorrido automático.
+          const auto abrir = [&]() { return mazmorra.entrada_menu(152, 92, false, true); };
+          // Busca el objeto por la misma cámara y los mismos controles de la partida normal.
+          const auto acercar = [&](unsigned short id, short dx, short dy, bool suelo) {
+            unsigned short x = 0, y = 0, alto = 0;
+            bool visible = false;
+            for (unsigned int i = 0; i < 400; ++i) {
+              if (!mazmorra.posicion_objeto(id, x, y, alto))
+                return false;
+              if (x >= 40 && x <= 240) {
+                visible = true;
+                break;
+              }
+              const unsigned short direccion = x >= 32768 || x < 40 ? 8 : 4;
+              mazmorra.tecla_direccion(direccion, true);
+              const bool correcto = avanzar(1);
+              mazmorra.tecla_direccion(direccion, false);
+              if (!correcto || mazmorra.escena_actual() != 3)
+                return false;
+            }
+            return visible &&
+                   mazmorra.mover_a(static_cast<unsigned short>(x + dx),
+                                    static_cast<unsigned short>(y + dy + (suelo ? alto : 0))) &&
+                   avanzar(96);
+          };
+          if (mazmorra.secuencia_personaje_activa() || !abrir() || !elegir(2) || !elegir(4) ||
+              !objeto(6) || !avanzar(128) || mazmorra.conserva_objeto(6) ||
+              mazmorra.conserva_objeto(7))
+            return fallo("No se ha podido poner la pecera desde el inventario");
+          if (opcion != "--comprobar-lago-pecera") {
+            if (!acercar(15, -16, 24, false) || !abrir() || !elegir(2) || !elegir(2) ||
+                !objeto(15) || !avanzar(96) || !acercar(26, 5, -2, true) || !abrir() ||
+                !elegir(1) || !objeto(26) || !avanzar(96))
+              return fallo("No se ha podido liberar al pez y recoger la moneda");
+            unsigned short x = 0, y = 0, alto = 0;
+            if (!mazmorra.posicion_objeto(0, x, y, alto) ||
+                !mazmorra.mover_a(static_cast<unsigned short>(x + 16), 177) || !avanzar(96) ||
+                !acercar(16, 4, 0, false) || !abrir() || !elegir(3) || !objeto(16) ||
+                !avanzar(96) || !acercar(17, 5, -2, true) || !abrir() || !elegir(1) ||
+                !objeto(17) || !avanzar(96) || !mazmorra.conserva_objeto(17) ||
+                !acercar(20, 12, 52, false) || !abrir() || !elegir(2) || !elegir(6) ||
+                !objeto(17) || !objeto(20) || !avanzar(192) || mazmorra.conserva_objeto(17))
+              return fallo("No se ha podido entregar el gusano a Mr. Fish");
           }
         }
         if (!corredor_completo && opcion != "--comprobar-corredor-entrada") {

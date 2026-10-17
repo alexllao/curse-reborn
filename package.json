@@ -68,7 +68,9 @@
     "comparar:digital": "node herramientas/gestionar_proyecto.mjs comparar:digital",
     "comprobar:digital": "node herramientas/gestionar_proyecto.mjs comprobar:digital",
     "exportar:musica": "node herramientas/gestionar_proyecto.mjs exportar:musica",
-    "exportar:midi": "node herramientas/exportar_midi.mjs"
+    "exportar:midi": "node herramientas/exportar_midi.mjs",
+    "comparar:lago": "node herramientas/gestionar_proyecto.mjs comparar:lago",
+    "comprobar:lago": "node herramientas/gestionar_proyecto.mjs comprobar:lago"
   },
   "repository": {
     "type": "git",

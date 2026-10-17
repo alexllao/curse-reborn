@@ -29,6 +29,17 @@ public:
   // Consulta la escena y ventana reconstruidas para verificar recorridos sin alterar la partida.
   unsigned short escena_actual() const;
   // Consulta el inventario persistente para comprobar recogidas y transiciones sin alterar la
+  // Consulta el bloqueo de animación para contrastar el final de la inmersión.
+  bool secuencia_personaje_activa() const;
+  // Distingue un retrazo de cámara de un paso lógico durante las comprobaciones deterministas.
+  bool camara_en_presentacion() const {
+    return animacion == 2;
+  }
+  // Recupera la posición de una entidad para automatizar clics sin modificar la partida.
+  bool posicion_objeto(unsigned short id, unsigned short &x, unsigned short &y,
+                       unsigned short &alto) const;
+  // Localiza una casilla por su identificador original en el menú que se está mostrando.
+  int casilla_objeto(unsigned short id) const;
   // partida.
   bool conserva_objeto(unsigned short identificador) const;
   // El guion 0F94 es el golpe de las estatuas; permite detener una captura en esa fase real.

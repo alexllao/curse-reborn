@@ -420,13 +420,17 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
+      accion === 'comprobar:lago' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
       necesarios.push(
         'DUNGEON.MAP',
         'DUNGEON.SPR',
-        ...(accion === 'ventana' || accion === 'comprobar:caida' || accion === 'comprobar:corredor'
+        ...(accion === 'ventana' ||
+        accion === 'comprobar:caida' ||
+        accion === 'comprobar:corredor' ||
+        accion === 'comprobar:lago'
           ? ['CORRIDOR.MAP', 'CORRIDOR.SPR']
           : []),
         'MANA.BRD',
@@ -444,6 +448,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
+      accion === 'comprobar:lago' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -452,7 +457,12 @@ export async function gestionarSdl(accion, argumentos) {
       for (let i = 1; i <= 5; ++i) necesarios.push(`BALCONY${i}.DAT`);
       for (let i = 1; i <= 6; ++i) necesarios.push(`BASEBAL${i}.DAT`);
     }
-    if (accion === 'ventana' || accion === 'comprobar:caida')
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:caida' ||
+      accion === 'comprobar:corredor' ||
+      accion === 'comprobar:lago'
+    )
       necesarios.push(
         'DROP.MAP',
         'DROP.SPR',
@@ -471,6 +481,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
+      accion === 'comprobar:lago' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -533,6 +544,52 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:lago') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:lago',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_lago_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['--comprobar-lago-pecera', 'lago_pecera_128'],
+      ['--comprobar-lago', 'lago_oxigeno'],
+    ]) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, opcion, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_lago', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la partida original.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 2,
+          pixeles_por_captura: 64000,
+          limite: 'Primera parte del lago hasta entregar el gusano; resto de la escena pendiente.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Lago SDL: coinciden la pecera colocada y el recorrido hasta entregar el gusano a Mr. Fish.',
+    );
     return;
   }
   if (accion === 'comprobar:corredor') {

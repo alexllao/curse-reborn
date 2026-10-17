@@ -480,7 +480,12 @@ class ComparacionCorredor(ComparacionPuzle):
             raise ErrorAnalisis(
                 'La llegada al agua altera la pecera o conserva la llave que retira BEA8.'
             )
+        self.despues_corredor(datos, semilla, carpeta)
         self.resumen['recorridos_completos'] = self.resumen.get('recorridos_completos', 0) + 1
+
+    # Permite prolongar la llegada real al lago sin inventar inventario ni saltar las escenas previas.
+    def despues_corredor(self, datos, semilla, carpeta):
+        pass
 
     # Cruza la salida original, prueba las dos direcciones de cámara y vuelve por la salida dos.
     def despues_puerta(self, datos, semilla, carpeta):

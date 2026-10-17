@@ -14,7 +14,7 @@ PARA VERLA SIN RESOLVER EL CORREDOR
 F5/F6 son vistas de desarrollo que reinician la sesión. No resuelven el
 puzle del corredor ni conservan el inventario de la partida anterior.
 El enlace normal a DROP también está conectado a la salida uno del
-corredor; todavía faltan acciones para completar el recorrido real hasta ella.
+corredor; la ruta real desde el corredor está reconstruida y comparada.
 
 VALIDACIÓN
 pnpm comparar:caida
@@ -22,8 +22,8 @@ pnpm comprobar:caida
 
 Se comparan dos fases de DROP, la salida automática y la entrada al agua,
 incluidos memoria, azar, modelos, burbujas y composición. Según la guía,
-al llegar hay que ponerse la pecera. Esa acción y el resto del puzle del lago todavía no están integrados.
+al llegar hay que ponerse la pecera. La ruta hasta entregar el gusano ya está integrada; véase 03_lago.txt.
 
 Los efectos PC Speaker ya utilizan una salida compartida entre escenas.
 La música MT-32 sigue las tablas originales de cada escena. F4 cambia la opción y M alterna
-el silencio. La música MT-32 por zona ya está integrada; SB16 digital sigue pendiente.
+el silencio. La música MT-32 por zona ya está integrada; los efectos digitales Sound Blaster están integrados.

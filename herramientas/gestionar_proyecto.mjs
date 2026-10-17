@@ -152,6 +152,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     puzle: 'comparar_puzle.py',
     corredor: 'comparar_corredor.py',
     caida: 'comparar_caida.py',
+    lago: 'comparar_lago.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -186,6 +187,7 @@ try {
     case 'ventana':
     case 'comprobar:vistas':
     case 'comprobar:caida':
+    case 'comprobar:lago':
     case 'comprobar:corredor':
     case 'comprobar:puzle':
     case 'comprobar:jugabilidad':
@@ -284,6 +286,9 @@ try {
       break;
     case 'comparar:escena':
       compararAcciones('escena', argumentos);
+      break;
+    case 'comparar:lago':
+      compararAcciones('lago', argumentos);
       break;
     case 'comparar:caida':
       compararAcciones('caida', argumentos);

@@ -1,4 +1,5 @@
 #include "corredor.hpp"
+#include "lago.hpp"
 #include "menu.hpp"
 #include "construir_tabla.hpp"
 #include "objetos_cercanos.hpp"
@@ -70,6 +71,12 @@ void abrir_menu(unsigned char *d, unsigned short x, unsigned short y) {
 // El ámbito explícito impide ejecutar una aproximación del mismo verbo en otras escenas.
 ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short manejador,
                                            unsigned short id, const ServicioSonido &sonido) {
+  if (manejador == 0x9994 && palabra(d, 0x8082) != 3) {
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
+  }
+  if (palabra(d, 0x8082) == 3)
+    return ejecutar_interaccion_lago(d, manejador, id);
   if (palabra(d, 0x8082) == 1)
     return ejecutar_interaccion_corredor(d, manejador, id, sonido);
   if (palabra(d, 0x8082) != 0)
@@ -265,8 +272,14 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         guardar(d, 0xb638, objeto);
         return preparar_destinos(d) ? ResultadoMenu::actualizado : ResultadoMenu::error;
       }
+      if (accion == 4 && objeto == 6)
+        return ejecutar_interaccion_inicial(d, 0x9994, objeto, sonido);
+      if (accion == 2 && objeto == 15)
+        return ejecutar_interaccion_inicial(d, 0x9a48, objeto, sonido);
       if (accion == 2 && objeto == 2)
         return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido);
+    } else if (palabra(d, 0xb634) == 6 && objeto == 20 && previo == 17) {
+      return ejecutar_interaccion_inicial(d, 0x9aa8, objeto, sonido);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
         return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);

@@ -6,7 +6,7 @@ La guía corresponde a Amiga; su autora indica que también sirve para DOS, salv
 
 ## Orden de trabajo
 
-La prioridad acordada sigue siendo el audio compartido: primero PC Speaker y después AdLib y MT-32. Al retomar la jugabilidad, completar el lago siguiendo esta referencia, antes de avanzar por los demás capítulos.
+El audio común ya está integrado. La prioridad actual es completar la jugabilidad pantalla por pantalla, contrastar cada tramo y subir los cambios comprobados a development. Seguir el lago antes de avanzar por los demás capítulos.
 
 | Tramo de la referencia | Estado del port                                                                             |
 | ---------------------- | ------------------------------------------------------------------------------------------- |
@@ -14,7 +14,7 @@ La prioridad acordada sigue siendo el audio compartido: primero PC Speaker y des
 | Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
 | Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
 | Caída                  | Animación y enlace automático con el lago comparados                                        |
-| Aventura submarina     | Entrada y entidades parciales; acciones y puzles pendientes                                 |
+| Aventura submarina     | Ruta hasta la entrega del gusano comparada; concha, tortuga y segunda parte pendientes      |
 | Cuevas                 | Pendiente                                                                                   |
 | Paso del dragón        | Pendiente                                                                                   |
 | Confín del mundo       | Pendiente                                                                                   |

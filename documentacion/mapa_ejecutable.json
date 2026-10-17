@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:9994",
+      "nombre": "Colocación de la pecera en el lago",
+      "comentario": "9994–9A47: exige escena tres, retira los identificadores seis y siete, dispone seis canales auxiliares y dos de Brad y suma cinco puntos. Traslado: motor/acciones/lago.cpp. Comparación desde la partida persistente de mazmorra y corredor."
+    },
+    {
+      "direccion": "0000:9A48",
+      "nombre": "Liberación del pez azul tras los barrotes",
+      "comentario": "9A48–9AA7: rechaza si la entidad 2C6D está desactivada; aproxima a Brad y programa los canales originales de retirada. Traslado: motor/acciones/lago.cpp; no confundir con la búsqueda del gusano."
+    },
+    {
+      "direccion": "0000:38A4",
+      "nombre": "Búsqueda del gusano en la arena",
+      "comentario": "38A4–38D2: identificador 10h del menú de examinar. Prepara Brad y el canal 1BFA de la entidad 2CAF. Reconstruido y comparado en motor/acciones/lago.cpp."
+    },
+    {
+      "direccion": "0000:9AA8",
+      "nombre": "Entrega del gusano a Mr. Fish",
+      "comentario": "9AA8–9B85: dar el identificador 11h al 14h retira el gusano, programa las entidades y aproximación y suma cinco puntos. Ruta comparada con memoria y azar persistentes; resto del lago pendiente."
+    },
+    {
       "direccion": "0000:001A",
       "nombre": "Entrada del programa DOS",
       "comentario": "Ajusta la memoria reservada y prepara las referencias a los segmentos. No trasladado todavía."

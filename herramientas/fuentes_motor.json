@@ -38,5 +38,6 @@
   "motor/sonido/musica.cpp",
   "motor/sonido/musica_rs.cpp",
   "motor/sonido/digital.cpp",
+  "motor/acciones/lago.cpp",
   "motor/acciones/corredor.cpp"
 ]

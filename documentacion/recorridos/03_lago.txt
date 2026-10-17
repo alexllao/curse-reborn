@@ -1,0 +1,43 @@
+CURSE REBORN — PRIMERA PARTE DEL LAGO
+Autor del port: Àlex Llaó
+
+Llegar desde la mazmorra y el corredor con pecera y agua en el inventario.
+F6 abre una vista nueva del lago; no proporciona los objetos de la partida.
+Las casillas se cuentan desde uno y las coordenadas usan 320 x 200.
+
+1. PONERSE LA PECERA
+   Esperar a que termine la inmersión y se habilite el menú de acciones.
+   Abrir manipular objetos (3), ponerse (5) y elegir la pecera.
+   Esperar la animación. Pecera y agua dejan de aparecer en el inventario.
+
+2. LIBERAR AL PEZ AZUL
+   Acercarse a los barrotes que se ven a la derecha de la llegada.
+   En la prueba se camina aproximadamente a (174, 167).
+   Elegir manipular objetos (3), empujar o tirar (3) y los barrotes.
+   Su movimiento posterior procede de la animación del EXE original.
+
+3. RECOGER LA MONEDA
+   Caminar hacia (222, 193), junto a la roca de la esquina inferior derecha.
+   Recoger la moneda: suma un punto y desaparece del suelo.
+   Volver hacia el suelo transitable, con los pies próximos a y=177.
+
+4. BUSCAR Y RECOGER EL GUSANO
+   En nuestra versión DOS hay que desplazarse hacia la izquierda.
+   Cuando se vea la zona de arena, acercarse y examinarla.
+   Esperar la animación de búsqueda y recoger el gusano que aparece.
+
+5. ENTREGAR EL GUSANO
+   Seguir hacia la izquierda hasta Mr. Fish, reconocible por su puesto.
+   Manipular objetos (3), dar (7), elegir el gusano y después Mr. Fish.
+   Esperar su respuesta y la animación original.
+
+PENDIENTE
+La ruta posterior de concha, tortuga, anguilas, picana, tiburones,
+almeja y tapón todavía no está completada en el port.
+
+COMPROBACIONES
+pnpm comparar:lago --muestra
+pnpm comprobar:lago
+
+Redacción propia a partir de la guía de Sophie Cheshire (falsehead),
+28/03/2003, aportada por Àlex y contrastada con nuestro ejecutable DOS.

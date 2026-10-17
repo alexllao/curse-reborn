@@ -21,7 +21,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Core, título, introducción, mazmorra con su ruta inicial, corredor con su ruta hasta la salida izquierda y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos digitales Sound Blaster y PC Speaker tienen salida audible, con música AdLib o MT-32. Los demás puzles y el juego completo siguen pendientes.**
+**Core, título, introducción, mazmorra con su ruta inicial, corredor, caída y primeras acciones del lago, reconstruidos en C++ y mostrados en SDL. Los efectos digitales Sound Blaster y PC Speaker tienen salida audible, con música AdLib o MT-32. Los demás puzles y el juego completo siguen pendientes.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
@@ -39,7 +39,7 @@ El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
-La prioridad de jugabilidad es completar las acciones del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. Más adelante se estudiarán marcos y filtros visuales.
+La primera parte del lago permite ponerse la pecera, liberar al pez, recoger la moneda y entregar el gusano a Mr. Fish. La prioridad de jugabilidad es completar el resto del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
@@ -249,6 +249,8 @@ Los avances se documentarán con claridad: qué se ha comprobado, qué sigue sie
 ## Corredor, caída y siguiente bloque
 
 `pnpm comprobar:corredor` compara ocho capturas SDL: entrada, mecanismo, regreso, pecera, golpe de estatua, caída y llegada al agua, también con audio activo en un dispositivo de prueba. Contrasta el recorrido con el ejecutable original, incluidos los golpes, la recuperación del control y el inventario persistente; conserva además las pruebas de cámara y sus 18 posiciones gráficas originales.
+
+`pnpm comprobar:lago` prolonga la partida desde la mazmorra hasta ponerse la pecera, liberar al pez azul, recoger la moneda, descubrir y recoger el gusano y entregarlo a Mr. Fish. Contrasta memoria y guiones con el EXE y dos capturas SDL de 64.000 píxeles. `pnpm comparar:lago` amplía las ramas heredadas del corredor. Véanse [rutinas y límites del lago](documentacion/acciones_lago.md) y [recorrido](documentacion/recorridos/03_lago.txt). La segunda parte de la escena sigue pendiente.
 
 `pnpm comprobar:caida` compara dos momentos de `DROP` y la entrada sumergida en `LAKEBED`. Desde la mazmorra, **F6 abre el corredor** y otro F6 abre la caída; F5 retrocede por las escenas integradas. Cada salto prepara una sesión nueva. La caída avanza sola hasta el agua. Estos atajos no resuelven puzles de una partida ni conservan la sesión anterior.
 
