@@ -11,7 +11,7 @@ public:
   }
   // Cierra la salida auxiliar de forma idempotente.
   void cerrar();
-  // F11 recorre original, suavizado, líneas de escaneo y CRT suave.
+  // F11 recorre original, suavizado, líneas de escaneo, CRT suave, xBRZ 2x y 2xSaI.
   bool alternar(SDL_Renderer *dibujante, SDL_Texture *original, const unsigned char *rgba);
   // Actualiza la textura original y, cuando corresponde, la imagen auxiliar de 640 por 400.
   bool actualizar(SDL_Texture *original, const unsigned char *rgba);

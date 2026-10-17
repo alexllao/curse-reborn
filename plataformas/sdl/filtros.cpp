@@ -1,5 +1,6 @@
 #include "filtros.hpp"
 #include "registro.hpp"
+#include "escaladores_pixel.hpp"
 
 // La propiedad de la textura queda en la plataforma y nunca alcanza los recursos originales.
 void FiltrosPantalla::cerrar() {
@@ -11,7 +12,7 @@ void FiltrosPantalla::cerrar() {
 // Cambia el aspecto sin reiniciar música, animaciones, menús ni partida.
 bool FiltrosPantalla::alternar(SDL_Renderer *dibujante, SDL_Texture *original,
                                const unsigned char *rgba) {
-  const unsigned int siguiente = (modo + 1) % 4;
+  const unsigned int siguiente = (modo + 1) % 6;
   if (siguiente >= 2 && !textura) {
     textura =
         SDL_CreateTexture(dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 640, 400);
@@ -28,8 +29,8 @@ bool FiltrosPantalla::alternar(SDL_Renderer *dibujante, SDL_Texture *original,
   modo = siguiente;
   if (!actualizar(original, rgba))
     return false;
-  constexpr const char *nombres[] = {"original (sin filtro)", "suavizado", "líneas de escaneo",
-                                     "CRT suave"};
+  constexpr const char *nombres[] = {
+      "original (sin filtro)", "suavizado", "líneas de escaneo", "CRT suave", "xBRZ 2x", "2xSaI"};
   registrar_accion("Filtro de pantalla: %s", nombres[modo]);
   return true;
 }
@@ -40,6 +41,13 @@ bool FiltrosPantalla::actualizar(SDL_Texture *original, const unsigned char *rgb
     return false;
   if (modo < 2)
     return true;
+  if (modo >= 4) {
+    if (modo == 4)
+      escaladores_pixel::xbrz(rgba, pixeles.data(), 320, 200);
+    else
+      escaladores_pixel::sai(rgba, pixeles.data(), 320, 200);
+    return SDL_UpdateTexture(textura, nullptr, pixeles.data(), 640 * 4);
+  }
   for (int y = 0; y < 400; ++y) {
     const unsigned int linea = (y & 1) ? 178u : 256u;
     const int dy = 2 * y - 399;

@@ -18,9 +18,13 @@ El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificació
 
 ## Aspecto de pantalla
 
-**F11** recorre **original → suavizado → líneas de escaneo → CRT suave → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
+**F11** recorre **original → suavizado → líneas de escaneo → CRT suave → xBRZ 2x → 2xSaI → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
 
 El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.
+
+**xBRZ 2x** reconstruye diagonales y redondea contornos mediante diferencias perceptuales de color. **2xSaI** interpola diagonales con un aspecto más suave, similar al de emuladores clásicos. Ambos amplían la imagen compuesta de 320 × 200 a 640 × 400 antes de ajustarla a la ventana; también afectan al menú original. Son opciones visuales para probar, independientes de la reconstrucción del motor. Detalles y comprobaciones en [Filtros de píxeles](filtros_pixeles.md).
+
+**Alt + Enter** alterna entre ventana y pantalla completa sin bordes en el monitor actual. También funciona con Intro del teclado numérico. Conserva las proporciones, las bandas negras, el filtro y la partida, sin avanzar las introducciones. Al volver se recupera la ventana anterior. El arranque sigue siendo en ventana.
 
 **F12** muestra u oculta el contador de FPS y registra el cambio en consola. Arranca visible, en una placa pequeña en la esquina superior derecha, con tamaño fijo en píxeles de ventana. Se coloca sobre la banda negra si la hay. Actualiza el valor cada medio segundo y mide el dibujo de fotogramas, independiente del reloj del juego. La ventana tiene un máximo nominal de 70 FPS; puede rendir menos según el equipo o durante una carga. En las capturas de referencia queda oculto salvo al comprobar expresamente F12.
 

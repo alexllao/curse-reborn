@@ -348,6 +348,15 @@ int main(int argc, char *argv[]) {
   Uint64 ultimo_paso_escena = inicio_pantalla;
   Uint64 siguiente_presentacion = inicio_pantalla;
   bool limitar_presentacion = true;
+  bool pantalla_completa = false;
+  if (comprobar_filtros) {
+    SDL_Event alternar{};
+    alternar.type = SDL_EVENT_KEY_DOWN;
+    alternar.key.key = SDLK_RETURN;
+    alternar.key.mod = SDL_KMOD_ALT;
+    if (!SDL_PushEvent(&alternar) || !SDL_PushEvent(&alternar))
+      return fallo("No se ha podido preparar Alt + Enter");
+  }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
@@ -369,6 +378,20 @@ int main(int argc, char *argv[]) {
           mazmorra.tecla_direccion(bit, evento.type == SDL_EVENT_KEY_DOWN);
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
+        if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
+            (evento.key.mod & SDL_KMOD_ALT)) {
+          const bool siguiente = !pantalla_completa;
+          if (!SDL_SetWindowFullscreen(presentacion.ventana, siguiente))
+            return fallo("No se ha podido alternar la pantalla completa");
+          if (comprobar_filtros && (!SDL_SyncWindow(presentacion.ventana) ||
+                                    bool(SDL_GetWindowFlags(presentacion.ventana) &
+                                         SDL_WINDOW_FULLSCREEN) != siguiente ||
+                                    SDL_GetWindowFullscreenMode(presentacion.ventana) != nullptr))
+            return fallo("No coincide el cambio de pantalla completa sin bordes");
+          pantalla_completa = siguiente;
+          registrar_accion("Pantalla: %s", pantalla_completa ? "completa sin bordes" : "ventana");
+          continue;
+        }
         if (evento.key.key == SDLK_PLUS || evento.key.key == SDLK_EQUALS ||
             evento.key.key == SDLK_KP_PLUS || evento.key.key == SDLK_MINUS ||
             evento.key.key == SDLK_KP_MINUS) {
@@ -1106,7 +1129,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido guardar el fotograma");
       if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
         return fallo("No se ha podido guardar el estado diagnóstico de la captura");
-      if ((comprobar_filtros && paso_aspecto < 4) || (comprobar_fps && paso_aspecto < 2)) {
+      if ((comprobar_filtros && paso_aspecto < 6) || (comprobar_fps && paso_aspecto < 2)) {
         ++paso_aspecto;
         SDL_Event filtro{};
         filtro.type = SDL_EVENT_KEY_DOWN;

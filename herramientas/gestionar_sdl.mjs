@@ -603,6 +603,25 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:filtros') {
+    const prueba = join(
+      aplicacion,
+      process.platform === 'win32' ? 'escaladores.exe' : 'escaladores',
+    );
+    ejecutar(
+      process.env.CXX || 'clang++',
+      [
+        '-std=c++17',
+        '-O2',
+        '-Wall',
+        '-Wextra',
+        '-Werror',
+        join(raiz, 'pruebas', 'comparar_escaladores.cpp'),
+        '-o',
+        prueba,
+      ],
+      process.platform === 'win32' ? entornoCompilador() : process.env,
+    );
+    ejecutar(prueba, []);
     ejecutar(process.execPath, [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'titulo']);
     const carpeta = join(raiz, 'trabajo', 'comprobacion_filtros');
     mkdirSync(carpeta, { recursive: true });
@@ -611,16 +630,16 @@ export async function gestionarSdl(accion, argumentos) {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
     });
-    const capturas = Array.from({ length: 5 }, (_, i) =>
+    const capturas = Array.from({ length: 7 }, (_, i) =>
       leerCaptura(`${prefijo}.${i}.bmp`, 960, 600),
     );
-    if (!capturas[0].equals(capturas[4]))
+    if (!capturas[0].equals(capturas[6]))
       throw new Error('El ciclo F11 no recupera la imagen original.');
     if (
-      new Set(capturas.slice(0, 4).map((rgb) => createHash('sha256').update(rgb).digest('hex')))
-        .size !== 4
+      new Set(capturas.slice(0, 6).map((rgb) => createHash('sha256').update(rgb).digest('hex')))
+        .size !== 6
     )
-      throw new Error('Los cuatro modos de pantalla no producen imágenes diferentes.');
+      throw new Error('Los seis modos de pantalla no producen imágenes diferentes.');
     const original = Buffer.alloc(64000 * 3);
     for (let y = 0; y < 200; y++)
       for (let x = 0; x < 320; x++) {
@@ -635,18 +654,20 @@ export async function gestionarSdl(accion, argumentos) {
         {
           resultado: 'coinciden',
           tecla: 'F11',
-          modos: ['original', 'suavizado', 'líneas de escaneo', 'CRT suave'],
-          capturas: 5,
+          modos: ['original', 'suavizado', 'líneas de escaneo', 'CRT suave', 'xBRZ 2x', '2xSaI'],
+          capturas: 7,
           resolucion: [960, 600],
           original_conservado: true,
           ciclo_reversible: true,
+          pantalla_completa_sin_bordes: true,
+          regreso_a_ventana: true,
         },
         null,
         2,
       ) + '\n',
     );
     console.log(
-      'Filtros SDL: cuatro modos diferentes, ciclo F11 reversible y 64.000 píxeles originales conservados.',
+      'Filtros SDL: seis modos diferentes, ciclo F11 reversible y 64.000 píxeles originales conservados.',
     );
     return;
   }
