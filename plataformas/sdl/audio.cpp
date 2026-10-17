@@ -384,14 +384,20 @@ bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
       sintetizador.cerrar();
       return false;
     }
-    unsigned int audibles = 0;
-    for (const auto valor : muestras)
+    unsigned int audibles = 0, limitadas = 0, pico = 0;
+    for (const auto valor : muestras) {
       audibles += valor > 64 || valor < -64 ? 1u : 0u;
+      const auto amplitud = static_cast<unsigned int>(valor < 0 ? -static_cast<int>(valor) : valor);
+      if (amplitud > pico)
+        pico = amplitud;
+      limitadas += amplitud == 28000 ? 1u : 0u;
+    }
     if (audibles < 100) {
       sintetizador.cerrar();
       return false;
     }
-    std::printf("MT-32: CURSE.RS%u genera %u muestras con señal.\n", banco + 1, audibles);
+    std::printf("MT-32: CURSE.RS%u genera %u muestras con señal; pico %u; muestras limitadas %u.\n",
+                banco + 1, audibles, pico, limitadas);
     if (banco == 0) {
       if (!sintetizador.cambiar_escena(1) || sintetizador.banco() != 0 ||
           !sintetizador.cambiar_escena(2) || sintetizador.banco() != 0) {

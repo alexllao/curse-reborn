@@ -19,6 +19,8 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La capa de platafo
 
 ## Forma de trabajar
 
+- Mantener `documentacion/controles.md` como referencia común de todos los controles y atajos. Actualizarla al añadir o cambiar una tecla y conservar su enlace visible en el README.
+
 - Registrar por consola las acciones del jugador, selecciones, cambios de inventario y escena y opciones de audio/depuración. No registrar cada fotograma ni el movimiento continuo del puntero. Informar de opciones de sonido pendientes sin simular que funcionan. Las ROM locales MT32_CONTROL.ROM y MT32_PCM.ROM han sido reconocidas por Munt y se han generado muestras de los cinco bancos. Mantenerlas excluidas de Git; esto no acredita equivalencia acústica con el hardware físico.
 
 - Seguir la guía aportada por Àlex según `documentacion/referencia_solucion.md`; la copia íntegra está en `trabajo/referencias/guia_sophie_cheshire_2003.txt`. Conservar su atribución y no publicarla íntegra. No confundir la solución narrada con pasos ya implementados o comprobados.

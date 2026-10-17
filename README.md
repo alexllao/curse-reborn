@@ -6,6 +6,8 @@ Curse Reborn es un port creado por **Àlex Llaó**. Nace de un recuerdo muy conc
 
 La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar su lógica a C++ con SDL**. Los recursos originales acompañarán esa reconstrucción. Sobre esa base queremos desarrollar una remasterización que conserve su identidad y abra la puerta a mejoras gráficas, sonoras y de uso.
 
+**[Consultar todas las teclas y controles](documentacion/controles.md)**: juego, volumen, sonido, cambios de pantalla y depuración.
+
 ## El proyecto que queremos construir
 
 El trabajo se plantea en dos etapas:

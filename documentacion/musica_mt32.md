@@ -42,3 +42,5 @@ El aviso de percusión no asignada procede del mapa rítmico del sintetizador: M
 - La comprobación SDL de AdLib exige señal efectiva después de conectar la mazmorra y ejercita los perfiles, el silencio y la desconexión de escena; comprueba que el callback sigue produciendo muestras durante una espera de 150 ms del hilo principal. El dispositivo de pruebas es `dummy`: falta escuchar la continuidad en el equipo del propietario.
 
 **Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+
+La mezcla mono MT-32 eleva su nivel 12 dB respecto a la primera integración, sin modificar notas, temporización ni la ganancia de AdLib o del PC Speaker. Se limita a ±28.000 antes de convertir a PCM de 16 bits para evitar desbordamientos y dejar margen para los efectos. La comprobación informa del pico y de las muestras limitadas de cada banco.

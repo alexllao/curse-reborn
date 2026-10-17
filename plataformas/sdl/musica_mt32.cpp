@@ -127,9 +127,15 @@ bool MusicaMt32::generar(short *salida, unsigned int cantidad) {
       bloque = hasta_pulso;
     short estereo[1024];
     sintetizar(contexto, estereo, bloque);
-    for (unsigned int i = 0; i < bloque; ++i)
-      salida[escritos + i] =
-          static_cast<short>((static_cast<int>(estereo[i * 2]) + estereo[i * 2 + 1]) / 4);
+    // Eleva la mezcla MT-32 12 dB respecto al nivel anterior y reserva margen para los efectos.
+    for (unsigned int i = 0; i < bloque; ++i) {
+      auto mono = static_cast<int>(estereo[i * 2]) + estereo[i * 2 + 1];
+      if (mono > 28000)
+        mono = 28000;
+      if (mono < -28000)
+        mono = -28000;
+      salida[escritos + i] = static_cast<short>(mono);
+    }
     escritos += bloque;
     fraccion += bloque * incremento;
     if (fraccion >= 2880000u) {

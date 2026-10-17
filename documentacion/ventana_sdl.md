@@ -10,7 +10,7 @@ Desde la raíz del repositorio:
 pnpm ventana
 ```
 
-En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre Core. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Una tecla o el botón izquierdo inicia el fundido hacia la siguiente vista: Core, título, introducción y mazmorra. F6 avanza directamente y F5 retrocede directamente para acelerar las pruebas. Desde la mazmorra, otro F6 abre una sesión nueva de desarrollo de la caída y la llegada al agua; F5 vuelve a una mazmorra nueva. Los atajos reinician esas vistas y no resuelven ni guardan puzles de la sesión anterior. Escape abre/cierra el menú dentro de una escena jugable y cierra fuera de ella; el botón de cierre siempre termina el programa. La terminal permanece ocupada mientras la ventana está abierta.
+En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre Core. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Una tecla o el botón izquierdo inicia el fundido hacia la siguiente vista: Core, título, introducción y mazmorra. F6 avanza directamente y F5 retrocede directamente para acelerar las pruebas. Desde la mazmorra, F6 abre una sesión nueva del corredor; otro F6 muestra la caída y el siguiente, el lago. F5 retrocede por el mismo orden. Los atajos reinician esas vistas y no resuelven ni guardan puzles de la sesión anterior. Escape abre/cierra el menú dentro de una escena jugable y cierra fuera de ella; el botón de cierre siempre termina el programa. La terminal permanece ocupada mientras la ventana está abierta.
 
 La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redimensionar o maximizar, la imagen se ajusta al espacio disponible manteniendo su proporción de 8:5, con bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT. Los marcos y la evaluación de filtros se dejan para más adelante.
 
@@ -72,3 +72,5 @@ El [movimiento con colisiones y la corrección de la puerta](movimiento_y_colisi
 `pnpm comprobar:corredor` verifica la entrada, el mecanismo y el regreso en tres capturas; [el alcance de cámara y las barreras originales](corredor_y_camara.md) distingue la partida de sus estados de prueba. `pnpm comprobar:caida` verifica DROP tras 16/32 pasos y la entrada a LAKEBED tras 24 pasos. La [guía de caída](recorridos/02_caida.txt) explica F5/F6 y sus reinicios. La llegada al agua no implica que estén resueltas las interacciones del lago.
 
 `pnpm comprobar:vistas` valida ocho cambios con eventos F5/F6: mazmorra, corredor, caída y lago, con regresos intercalados. El salto desde mazmorra ya pasa por el corredor. Los efectos PC Speaker y sus comprobaciones se describen en [altavoz del PC](altavoz_pc.md); M permite silenciarlos.
+
+[Referencia completa de teclas y controles](controles.md).
