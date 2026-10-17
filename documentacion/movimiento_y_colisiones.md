@@ -37,7 +37,7 @@ El punto de destino no teletransporta al personaje. Las colisiones corrigen cada
 
 F10 añade los rectángulos reales de `BOXDET`: **amarillo para paredes, azul para zonas de transición y rojo para zonas de finalización**, además del encuadre y los umbrales anteriores. Son líneas de diagnóstico; no modifican la geometría ni el estado. Las cajas de entidades y las zonas de proximidad de F8/F9 siguen siendo categorías distintas.
 
-La entrada en otras escenas, los servicios de las zonas especiales y el resto de puzles siguen pendientes. Al detectar una transición aún no integrada, SDL conserva el último punto de la habitación y detiene ese recorrido; no simula la siguiente escena ni permite continuar fuera del mapa. Las otras rutinas específicas deberán incorporarse al despacho al integrar sus escenas. La cámara de esta vista continúa usando el fondo fijo de la mazmorra.
+Fuera del corredor, DROP y la entrada a LAKEBED, las otras escenas, las zonas especiales y el resto de puzles siguen pendientes. Al detectar una transición aún no integrada, SDL conserva el último punto de la habitación y detiene ese recorrido; no simula la siguiente escena ni permite continuar fuera del mapa. Las otras rutinas específicas deberán incorporarse al despacho al integrar sus escenas. La cámara y las primeras transiciones se han conectado posteriormente; véanse [corredor y cámara](corredor_y_camara.md) y [caída al agua](caida_y_agua.md). Las demás salidas conservan ese rechazo explícito.
 
 ## Comprobaciones
 

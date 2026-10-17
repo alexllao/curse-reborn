@@ -1,4 +1,5 @@
 #include "mazmorra.hpp"
+#include "actualizar.hpp"
 #include "../estado/segmento.hpp"
 #include "../acciones/lista_identificadores.hpp"
 #include "../movimiento/planificar.hpp"
@@ -36,7 +37,7 @@ void actualizar_escena_cinco(unsigned char *datos) {
 // La tabla CS:17A3 contiene cero para la mazmorra (índice 0) y 183F para el índice 5.
 bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
-  if (escena == 0)
+  if (escena == 0 || escena == 2)
     return true;
   if (escena == 1) {
     // BEA8–BEFC: reacción del corredor en sus ventanas 24 y cero, con coordenadas con signo.
@@ -61,5 +62,80 @@ bool actualizar_rutina_escena(unsigned char *datos) {
     return true;
   }
   return false;
+}
+// Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
+bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
+                              const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) != 3)
+    return actualizar_rutina_escena(d);
+  const auto izquierda = static_cast<Palabra>(palabra(d, 0x3591) + palabra(d, 0x2e3d) - 11);
+  guardar(d, 0x18f5, izquierda);
+  guardar(d, 0x18f9, static_cast<Palabra>(izquierda + 42));
+  guardar(d, 0x18fb, 199);
+  const bool sumergido = d[0x358c] == 5 && static_cast<signed char>(d[0x2c3d]) <= 12;
+  bool emitir = sumergido;
+  if (!sumergido && d[0x358c] != 10) {
+    --d[0xadce];
+    if (!d[0xadce]) {
+      Palabra valor = 0;
+      if (!generar_aleatorio(azar, 50, valor))
+        return false;
+      d[0xadce] = static_cast<unsigned char>(valor + 1);
+      emitir = true;
+      // 5288 en modalidad cero no altera DS ni el azar.
+      if (d[0x0ad4] != 0)
+        return false;
+    }
+  }
+  if (emitir) {
+    Palabra valor = 0;
+    if (!generar_aleatorio(azar, 4, valor))
+      return false;
+    const unsigned int cantidad = valor + 2u;
+    for (unsigned int i = 0; i < cantidad; ++i) {
+      if (!generar_aleatorio(azar, 3, valor))
+        return false;
+      const auto descriptor = static_cast<Palabra>(0xaddf + valor * 9);
+      if (!generar_aleatorio(azar, 24, valor))
+        return false;
+      const auto x = static_cast<Palabra>(valor - 12 + palabra(d, 0x2c31));
+      guardar(d, static_cast<Palabra>(descriptor + 3),
+              static_cast<Palabra>((x >> 1) + palabra(d, 0x2c2d)));
+      if (!generar_aleatorio(azar, 6, valor))
+        return false;
+      guardar(d, static_cast<Palabra>(descriptor + 5),
+              static_cast<Palabra>(valor + 10 + palabra(d, 0x2c2f)));
+      const auto creada = crear_entidad(d, azar, recursos, descriptor);
+      if (!creada.valido)
+        return false;
+      if (!generar_aleatorio(azar, 12, valor))
+        return false;
+      // 8B6F devuelve DI=3510 cuando no queda registro libre; el original escribe también en ese
+      // caso.
+      const auto posicion = creada.creada ? creada.posicion : static_cast<Palabra>(0x3510);
+      d[static_cast<Palabra>(posicion + 0x17)] = static_cast<unsigned char>(valor);
+    }
+  }
+  if (con_signo(palabra(d, 0x2c6f)) < -400) {
+    guardar(d, 0x2c6f, static_cast<Palabra>(palabra(d, 0x2c2d) + 100));
+    guardar(d, 0x2c71, 0xfff2);
+    configurar_secuencia(d, 0x2c7d, 0xae69, 1, 1);
+    configurar_secuencia(d, 0x2c82, 0xae6e, 1, 1);
+    configurar_secuencia(d, 0x2c87, 0xae79, 1, 1);
+    guardar(d, 0x2cd2, static_cast<Palabra>(palabra(d, 0x2c2d) + 97));
+    guardar(d, 0x2cd4, 0xfff4);
+    configurar_secuencia(d, 0x2ce0, 0xaeb0, 1, 1);
+    configurar_secuencia(d, 0x2ce5, 0xaeb2, 1, 1);
+    configurar_secuencia(d, 0x2cea, 0xaeed, 1, 1);
+  }
+  if (d[0x389e] && static_cast<signed char>(d[0x3597]) >= 10 &&
+      static_cast<signed char>(d[0x3597]) <= 15 && d[0x2df9] == 3) {
+    d[0x2df9] = 1;
+    guardar(d, 0x2dfb, 0xff70);
+    guardar(d, 0x2dfd, 100);
+    configurar_secuencia(d, 0x2e09, 0xaf2d, 1, 2);
+    configurar_secuencia(d, 0x2e13, 0xaf32, 1, 2);
+  }
+  return true;
 }
 } // namespace motor

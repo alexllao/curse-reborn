@@ -1,6 +1,6 @@
 # Presentación reconstruida en una ventana SDL
 
-La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Ya se conectan el menú y las primeras interacciones; clic y flechas permiten caminar tras la liberación, con BOXDET; siguen pendientes otras acciones, transiciones y puzles completos. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
+La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Ya se conectan el menú y las primeras interacciones; clic y flechas permiten caminar tras la liberación, con BOXDET; el corredor permite entrar y regresar con estado persistente y la caída enlaza con el agua. Siguen pendientes otras acciones y puzles completos; la siguiente prioridad solicitada es el audio común.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
 
 ## Abrir la ventana
 
@@ -10,7 +10,7 @@ Desde la raíz del repositorio:
 pnpm ventana
 ```
 
-En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre Core. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Una tecla o el botón izquierdo inicia el fundido hacia la siguiente vista: Core, título y mazmorra. F6 avanza directamente y F5 retrocede directamente para acelerar las pruebas. Los atajos no modifican el progreso de una partida. Escape y el botón de cierre terminan el programa. La terminal permanece ocupada mientras la ventana está abierta.
+En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre Core. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Una tecla o el botón izquierdo inicia el fundido hacia la siguiente vista: Core, título, introducción y mazmorra. F6 avanza directamente y F5 retrocede directamente para acelerar las pruebas. Desde la mazmorra, otro F6 abre una sesión nueva de desarrollo de la caída y la llegada al agua; F5 vuelve a una mazmorra nueva. Los atajos reinician esas vistas y no resuelven ni guardan puzles de la sesión anterior. Escape abre/cierra el menú dentro de una escena jugable y cierra fuera de ella; el botón de cierre siempre termina el programa. La terminal permanece ocupada mientras la ventana está abierta.
 
 La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redimensionar o maximizar, la imagen se ajusta al espacio disponible manteniendo su proporción de 8:5, con bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT. Los marcos y la evaluación de filtros se dejan para más adelante.
 
@@ -68,3 +68,5 @@ La [introducción original](introduccion_original.md) se intercala ahora entre t
 El [menú y la depuración F7–F10](menu_e_interacciones.md) tienen comprobación SDL propia. Escape abre/cierra el menú dentro de la mazmorra; fuera mantiene el cierre de la ventana.
 
 El [movimiento con colisiones y la corrección de la puerta](movimiento_y_colisiones.md) disponen de comparación del bucle completo y capturas SDL propias.
+
+`pnpm comprobar:corredor` verifica la entrada, el mecanismo y el regreso en tres capturas; [el alcance de cámara y las barreras originales](corredor_y_camara.md) distingue la partida de sus estados de prueba. `pnpm comprobar:caida` verifica DROP tras 16/32 pasos y la entrada a LAKEBED tras 24 pasos. La [guía de caída](recorridos/02_caida.txt) explica F5/F6 y sus reinicios. La llegada al agua no implica que estén resueltas las interacciones del lago.

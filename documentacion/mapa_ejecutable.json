@@ -220,7 +220,7 @@
     {
       "direccion": "0000:4C43",
       "nombre": "Preparación del personaje al cambiar de escena",
-      "comentario": "Fragmentos 4B05, 4C43–4C98, 4D2B y 5145 reconstruidos para las entradas cero y dos con STD.BRD. Comparación de DS completo; no equivale a tener todo el cargador o transición SDL integrados.",
+      "comentario": "Fragmentos reconstruidos para las salidas cero a tres; STD y PLUNGE con intervalos y dimensiones de banco. Comparados DS completo y modelos, conectados con carga y fundidos SDL.",
       "traslado": "motor/estado/inicializar.cpp"
     },
     {
@@ -956,8 +956,44 @@
     },
     {
       "direccion": "0000:BEA8",
-      "nombre": "Rutina particular del corredor",
-      "comentario": "Escena uno de CS:17A3. Ventana 24 reactiva una entidad; ventana cero y Brad a la izquierda de 90 retiran la primera llave y programan un desplazamiento. Comparados 18 estados; corredor SDL aún pendiente.",
+      "nombre": "Rutina específica del corredor",
+      "comentario": "Ventanas 24/cero, retirada de la llave uno y planificación. Integrada con la carga de recursos y el regreso persistente en SDL.",
+      "traslado": "motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:4E98",
+      "nombre": "Tabla de tiras de la escena",
+      "comentario": "Dispone longitud y referencia de tiras; acota la ventana. Reconstruido para escenas cero a tres.",
+      "traslado": "motor/video/camara.cpp"
+    },
+    {
+      "direccion": "0000:EAFE",
+      "nombre": "Decisión de desplazamiento de cámara",
+      "comentario": "Compara el centro de Brad con umbrales de palabra con signo. El extremo de la ventana también limita el desplazamiento. Comparadas 24 decisiones.",
+      "traslado": "motor/video/camara.cpp"
+    },
+    {
+      "direccion": "0000:EC8A",
+      "nombre": "Desplazamiento de cámara hacia la derecha",
+      "comentario": "Avanza una tira y presenta ocho retrazos de cuatro píxeles. Nueve posiciones gráficas comparadas con las páginas y origen CRTC originales.",
+      "traslado": "motor/video/camara.cpp"
+    },
+    {
+      "direccion": "0000:EF7F",
+      "nombre": "Desplazamiento de cámara hacia la izquierda",
+      "comentario": "Retrocede una tira, conserva la franja exterior y presenta ocho retrazos. Estado de entidades, destinos e imagen comparados con el original.",
+      "traslado": "motor/video/camara.cpp"
+    },
+    {
+      "direccion": "0000:3858",
+      "nombre": "Mecanismo inicial del corredor",
+      "comentario": "Identificador ocho en 384A. Prepara aproximación, modelo DIG y canales diferidos para las entidades 2C8E y 2CAF. Comparado en el recorrido persistente del corredor.",
+      "traslado": "motor/acciones/menu.cpp"
+    },
+    {
+      "direccion": "0000:BEFD",
+      "nombre": "Rutina específica del fondo del lago",
+      "comentario": "BEFD–C092. Límites, contador, burbujas y entidades; utiliza el generador y el creador originales reconstruidos. Comparada durante la inmersión de PLUNGE.",
       "traslado": "motor/entidades/mazmorra.cpp"
     }
   ],

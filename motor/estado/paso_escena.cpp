@@ -28,7 +28,7 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
   if (!colision.valida || colision.acciones != 0)
     return colision;
   actualizar_historial_personaje(d);
-  if (!actualizar_entidades(d, azar, entidades) || !actualizar_rutina_escena(d))
+  if (!actualizar_entidades(d, azar, entidades) || !actualizar_rutina_escena(d, azar, entidades))
     return {false, 0, 0};
   return {true, 0, 0};
 }

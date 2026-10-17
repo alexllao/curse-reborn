@@ -3,20 +3,24 @@
 
 namespace motor {
 // Traduce los fragmentos de estado del cargador sin ejecutar sus servicios de memoria y vídeo DOS.
-bool preparar_transicion_mazmorra(unsigned char *d, unsigned short salida,
-                                  unsigned short referencia_estandar) {
-  if ((salida != 0 && salida != 2) || palabra(d, 0x8082) != (salida == 0 ? 0 : 1))
+bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
+                                unsigned short referencia_estandar,
+                                unsigned short referencia_modelo, unsigned short ancho,
+                                unsigned short alto) {
+  constexpr unsigned short origenes[] = {0, 1, 1, 2};
+  if (salida > 3 || palabra(d, 0x8082) != origenes[salida])
     return false;
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
-  if (d[static_cast<Palabra>(descriptor + 13)] != 0xff)
+  const auto modelo = d[static_cast<Palabra>(descriptor + 13)];
+  if (modelo != 0xff && modelo != 5)
     return false;
   guardar(d, 0x3598, salida);
   d[0x2c0b] = 0;
   guardar(d, 0x2c1a, 0);
   for (unsigned int i = 0; i < 6; ++i)
     d[0x2c2b + i] = d[descriptor + i];
-  guardar(d, 0x2c31, 32);
-  guardar(d, 0x2c33, 48);
+  guardar(d, 0x2c31, modelo == 0xff ? 32 : ancho);
+  guardar(d, 0x2c33, modelo == 0xff ? 48 : alto);
   guardar(d, 0x2c35, 0);
   guardar(d, 0x2c37, 0);
   guardar(d, 0x2c39, 0);
@@ -30,8 +34,12 @@ bool preparar_transicion_mazmorra(unsigned char *d, unsigned short salida,
   guardar(d, 0x3591, static_cast<Palabra>(d[0x3597] << 5));
   for (unsigned int i = 0; i < 10; ++i)
     guardar(d, static_cast<Palabra>(0x35b3 + i * 2), palabra(d, 0x2c2d));
-  d[0x358c] = 0xff;
-  guardar(d, 0x2c4a, referencia_estandar);
+  d[0x358c] = modelo;
+  if (modelo != 0xff) {
+    d[0x2c3f] = d[0x2c44] = d[0x2c49] = 2;
+    d[0x9974] = modelo;
+  }
+  guardar(d, 0x2c4a, modelo == 0xff ? referencia_estandar : referencia_modelo);
   guardar(d, 0x8082, palabra(d, static_cast<Palabra>(0x7482 + salida * 2)));
   guardar(d, 0x358d, 64);
   guardar(d, 0x358f, 223);
@@ -42,6 +50,12 @@ bool preparar_transicion_mazmorra(unsigned char *d, unsigned short salida,
   guardar(d, 0x0dfa, 0);
   d[0x0def] = 0;
   return true;
+}
+// Conserva el contrato de las entradas ya comparadas entre la celda y el corredor.
+bool preparar_transicion_mazmorra(unsigned char *d, unsigned short salida,
+                                  unsigned short referencia_estandar) {
+  return (salida == 0 || salida == 2) &&
+         preparar_transicion_escena(d, salida, referencia_estandar, referencia_estandar, 32, 48);
 }
 // La copia inicial acaba en el archivo; el resto de DS corresponde a memoria reservada a cero.
 bool leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,

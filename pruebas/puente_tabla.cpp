@@ -1,3 +1,4 @@
+#include "../motor/video/camara.hpp"
 #include "../motor/movimiento/geometria.hpp"
 #include "../motor/estado/paso_escena.hpp"
 #include "../motor/acciones/menu.hpp"
@@ -599,8 +600,8 @@ extern "C" EXPORTAR int avanzar_menu(unsigned char *datos, unsigned short *palab
                                      bool (*modelo)(void *, const unsigned char *, unsigned short,
                                                     unsigned short)) {
   motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
-  const motor::RecursosSecuencias recursos{nullptr, dimensiones,          0x6200, 0x4000,
-                                           0x5200,  omitir_sonido_prueba, modelo};
+  const motor::RecursosSecuencias recursos{nullptr, dimensiones,          0x6400, 0x4000,
+                                           0x5400,  omitir_sonido_prueba, modelo};
   if (!motor::avanzar_accion_pendiente(datos))
     return -1;
   const auto secuencias = motor::avanzar_secuencias(datos, estado, recursos);
@@ -630,8 +631,8 @@ const unsigned char *banco_menu_prueba(void *contexto, unsigned short referencia
                                        unsigned int &longitud) {
   const auto *bancos = static_cast<const BancoPrueba *>(contexto);
   const int indice = referencia == 0x4000   ? 0
-                     : referencia == 0x5200 ? 1
-                     : referencia == 0x6200 ? 2
+                     : referencia == 0x5400 ? 1
+                     : referencia == 0x6400 ? 2
                                             : -1;
   if (indice < 0)
     return nullptr;
@@ -684,8 +685,8 @@ extern "C" EXPORTAR int avanzar_jugabilidad(
     bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
     const unsigned char *geometria, unsigned int longitud, unsigned short direccion) {
   motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
-  const motor::RecursosSecuencias secuencias{nullptr, dimensiones,          0x6200, 0x4000,
-                                             0x5200,  omitir_sonido_prueba, modelo};
+  const motor::RecursosSecuencias secuencias{nullptr, dimensiones,          0x6400, 0x4000,
+                                             0x5400,  omitir_sonido_prueba, modelo};
   // Adapta la consulta de dimensiones al banco fijo de las entidades de escena.
   const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
                             unsigned short &alto) {
@@ -699,4 +700,30 @@ extern "C" EXPORTAR int avanzar_jugabilidad(
   palabras[2] = azar.tercera;
   palabras[3] = azar.cuarta;
   return r.valida ? static_cast<int>(r.acciones) : -1;
+}
+
+// Expone exclusivamente el estado de cámara y de su tabla; no ejecuta puertos VGA ni DOS.
+extern "C" EXPORTAR int procesar_camara(unsigned int operacion, unsigned char *datos,
+                                        int direccion) {
+  if (operacion == 0)
+    return motor::decidir_camara(datos);
+  if (operacion == 1)
+    return motor::desplazar_camara(datos, direccion) ? 1 : 0;
+  if (operacion == 2)
+    return motor::preparar_vista_escena(datos) ? 1 : 0;
+  return -2;
+}
+
+// Expone los ocho retrazos de cámara para contrastarlos con el origen CRTC de las páginas
+// originales.
+extern "C" EXPORTAR int componer_camara(const unsigned char *anterior, const unsigned char *destino,
+                                        int direccion, unsigned int paso, unsigned char *salida) {
+  return motor::componer_camara(anterior, destino, direccion, paso, salida) ? 1 : 0;
+}
+
+// Expone la preparación de entradas con modelo y dimensiones cargados por la plataforma de pruebas.
+extern "C" EXPORTAR int preparar_transicion(unsigned char *datos, unsigned short salida,
+                                            unsigned short estandar, unsigned short modelo,
+                                            unsigned short ancho, unsigned short alto) {
+  return motor::preparar_transicion_escena(datos, salida, estandar, modelo, ancho, alto) ? 1 : 0;
 }

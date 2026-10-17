@@ -258,12 +258,17 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:caida' ||
+      accion === 'comprobar:corredor' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
       necesarios.push(
         'DUNGEON.MAP',
         'DUNGEON.SPR',
+        ...(accion === 'ventana' || accion === 'comprobar:caida' || accion === 'comprobar:corredor'
+          ? ['CORRIDOR.MAP', 'CORRIDOR.SPR']
+          : []),
         'MANA.BRD',
         'STD.BRD',
         'SPRITES.PAL',
@@ -277,6 +282,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:caida' ||
+      accion === 'comprobar:corredor' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -285,6 +292,15 @@ export async function gestionarSdl(accion, argumentos) {
       for (let i = 1; i <= 5; ++i) necesarios.push(`BALCONY${i}.DAT`);
       for (let i = 1; i <= 6; ++i) necesarios.push(`BASEBAL${i}.DAT`);
     }
+    if (accion === 'ventana' || accion === 'comprobar:caida')
+      necesarios.push(
+        'DROP.MAP',
+        'DROP.SPR',
+        'LAKEBED.MAP',
+        'LAKEBED.SPR',
+        'PLUNGE.BRD',
+        'PLOK.BRD',
+      );
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
@@ -293,6 +309,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:caida' ||
+      accion === 'comprobar:corredor' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -315,9 +333,85 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción y mazmorra: F5/F6 recorren las vistas; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; otras acciones y transiciones siguen pendientes.',
+      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra inicia una vista nueva de la caída; faltan los demás puzles.',
     );
     ejecutar(programa, [datos], process.env, false, false);
+    return;
+  }
+  if (accion === 'comprobar:caida') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:caida',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_caida_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['caida-16', 'caida_16'],
+      ['caida-32', 'caida_32'],
+      ['agua-24', 'agua_24'],
+    ]) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, `--comprobar-${opcion}`, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_caida', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de las instrucciones originales.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify({ resultado: 'coinciden', capturas: 3, pixeles_por_captura: 64000 }, null, 2) +
+        '\n',
+    );
+    console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:corredor') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:corredor',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_corredor_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['entrada', 'corredor_entrada'],
+      ['mecanismo', 'corredor_mecanismo'],
+      ['regreso', 'mazmorra_regreso'],
+    ]) {
+      const captura = join(carpeta, `${opcion}.bmp`);
+      ejecutar(programa, [datos, `--comprobar-corredor-${opcion}`, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_corredor', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${opcion} difiere de la transición original.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify({ resultado: 'coinciden', capturas: 3, pixeles_por_captura: 64000 }, null, 2) +
+        '\n',
+    );
+    console.log(
+      'Corredor SDL: coinciden entrada, mecanismo y regreso a la celda con estado persistente.',
+    );
     return;
   }
   if (accion === 'comprobar:puzle') {

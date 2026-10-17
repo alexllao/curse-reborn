@@ -1,0 +1,28 @@
+CURSE REBORN — CAÍDA Y LLEGADA AL AGUA
+Autor del port: Àlex Llaó
+
+DROP es la escena dos del ejecutable. Sus guiones animan la caída y el
+cambio de modelo; la salida tres enlaza automáticamente con LAKEBED.
+No hay que elegir acciones durante la caída.
+
+PARA VERLA SIN RESOLVER EL CORREDOR
+1. Abrir el juego con pnpm ventana.
+2. Llegar a la vista de mazmorra y pulsar F6.
+3. Esperar: se reproduce la caída y después la entrada sumergida en el lago.
+4. F5 vuelve a una sesión nueva de la mazmorra.
+
+F5/F6 son vistas de desarrollo que reinician la sesión. No resuelven el
+puzle del corredor ni conservan el inventario de la partida anterior.
+El enlace normal a DROP también está conectado a la salida uno del
+corredor; todavía faltan acciones para completar el recorrido real hasta ella.
+
+VALIDACIÓN
+pnpm comparar:caida
+pnpm comprobar:caida
+
+Se comparan dos fases de DROP, la salida automática y la entrada al agua,
+incluidos memoria, azar, modelos, burbujas y composición. El lago todavía
+no tiene todas sus acciones o su puzle integrados.
+
+Después de este bloque, la prioridad acordada es el audio compartido:
+PC Speaker, AdLib y MT-32, con música y efectos según los recursos del juego.

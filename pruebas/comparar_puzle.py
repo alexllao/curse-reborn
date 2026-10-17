@@ -60,7 +60,7 @@ class ComparacionPuzle(ComparacionJugabilidad):
     def entrada(self, datos, salida):
         m, r = self.maquina, self.r
         m.mem_write(self.segmento, bytes(datos))
-        m.mem_write(0x000E, struct.pack('<H', 0x6200))
+        m.mem_write(0x000E, struct.pack('<H', 0x6400))
         m.reg_write(r.UC_X86_REG_BX, salida)
         self.ejecutar_hasta(0x4B05, 0x4B14)
         m.reg_write(r.UC_X86_REG_SI, 0x85AC + salida * 14)
@@ -72,7 +72,7 @@ class ComparacionPuzle(ComparacionJugabilidad):
         esperado = bytes(m.mem_read(self.segmento, 65536))
         if (
             self.nativa.procesar_menu(
-                4, (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6200
+                4, (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6400
             )
             != 0
             or bytes(datos) != esperado
@@ -81,13 +81,17 @@ class ComparacionPuzle(ComparacionJugabilidad):
             raise ErrorAnalisis(f'Entrada {salida}: diferencias {diferencias}.')
         self.resumen['entradas'] = self.resumen.get('entradas', 0) + 1
 
+    # Permite prolongar la partida validada sin inventar un segundo estado inicial para el corredor.
+    def despues_puerta(self, datos, semilla, salida):
+        pass
+
     # Cubre las ramas de aceptación y rechazo y después el puzle con sus menús y estado persistente.
     def ejecutar(self):
         preparacion = ComparacionObjetos(self.raiz, self.biblioteca, True)
         datos = preparacion.caso('entrada', 4, bytearray(self.base), 'MANA.BRD')
-        guardar(datos, 0x2C4A, 0x5200)
+        guardar(datos, 0x2C4A, 0x5400)
         preparacion.caso('carga', 0, datos)
-        guardar(datos, 0x2C29, 0x7200)
+        guardar(datos, 0x2C29, 0x7400)
         guardar(datos, 0x0DF0, self.cantidad)
         guardar(datos, 0x0DF2, 0)
         self.resumen = {}
@@ -160,9 +164,10 @@ class ComparacionPuzle(ComparacionJugabilidad):
         self.esperar(datos, semilla, 192)
         if datos[0x2CB0] != 0x10:
             raise ErrorAnalisis(f'La puerta no se abrió: {datos[0x2CB0]}.')
-        salida = self.raiz / 'trabajo/comparacion_puzle'
+        salida = self.raiz / 'trabajo' / getattr(self, 'carpeta_resultados', 'comparacion_puzle')
         salida.mkdir(parents=True, exist_ok=True)
         self.componer_resultado(datos, salida)
+        self.despues_puerta(datos, semilla, salida)
         ruta = salida / ('muestra.json' if self.muestra else 'resultado.json')
         ruta.write_text(
             json.dumps(

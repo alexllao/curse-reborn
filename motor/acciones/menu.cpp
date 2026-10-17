@@ -69,6 +69,22 @@ void abrir_menu(unsigned char *d, unsigned short x, unsigned short y) {
 // El ámbito explícito impide ejecutar una aproximación del mismo verbo en otras escenas.
 ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short manejador,
                                            unsigned short id) {
+  if (palabra(d, 0x8082) == 1 && manejador == 0x384a && id == 8) {
+    // 3858–389E: acciona el mecanismo del corredor y programa sus dos entidades al llegar.
+    guardar(d, 0x1a38, palabra(d, 0x2c90));
+    guardar(d, 0x1a3a, 160);
+    guardar(d, 0x0ad7, 0x1aa1);
+    guardar(d, 0x0adc, 0x1aac);
+    guardar(d, 0x009c, 0x2c8e);
+    guardar(d, 0x009e, 0x0209);
+    guardar(d, 0x00a0, 0x1be0);
+    guardar(d, 0x00a2, 0x1be9);
+    guardar(d, 0x00a4, 0x1bf1);
+    guardar(d, 0x00a6, 0x2caf);
+    guardar(d, 0x00a8, 0x0213);
+    guardar(d, 0x00aa, 0x1bd1);
+    return comenzar(d);
+  }
   if (palabra(d, 0x8082) != 0)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1) {

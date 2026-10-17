@@ -29,4 +29,4 @@ La comparación del cargador es por fragmentos de estado: no ejecuta ni valida s
 
 ## Guía y alcance
 
-[Recorrido de la mazmorra en texto](recorridos/00_mazmorra.txt), con casillas contadas desde uno. La guía y las pruebas terminan en la puerta abierta; la salida al corredor, desplazamiento de cámara, regreso, otras habitaciones, guardado/carga y audio siguen pendientes. No afirmar fidelidad del juego completo a partir de estas comprobaciones.
+[Recorrido de la mazmorra en texto](recorridos/00_mazmorra.txt), con casillas contadas desde uno. Este comparador termina en la puerta abierta. El comparador posterior de [corredor y cámara](corredor_y_camara.md) prolonga la misma partida hasta entrar y regresar; [DROP y la entrada al agua](caida_y_agua.md) tienen su propia comparación. Los demás puzles, guardado/carga y audio siguen pendientes. No afirmar fidelidad del juego completo a partir de estas comprobaciones.

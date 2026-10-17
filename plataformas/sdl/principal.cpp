@@ -65,7 +65,7 @@ bool cargar_imagen(const std::string &carpeta, const char *nombre) {
 }
 
 // 06B2 y 50D2: prepara el fondo y delega la entrada, los objetos y sus guiones en el adaptador.
-bool cargar_mazmorra(const std::string &carpeta) {
+bool cargar_mazmorra(const std::string &carpeta, bool caida = false) {
   // 0679–069A conserva los 64 colores altos de SPRITES.PAL al cargar fondos MAP.
   size_t longitud_paleta = 0;
   void *paleta = SDL_LoadFile((carpeta + "/SPRITES.PAL").c_str(), &longitud_paleta);
@@ -95,7 +95,9 @@ bool cargar_mazmorra(const std::string &carpeta) {
                                                     static_cast<unsigned int>(longitud), seleccion,
                                                     imagen, planos, tira);
   SDL_free(mapa);
-  return preparada && mazmorra.iniciar(carpeta, imagen) && mazmorra.dibujar(imagen);
+  return preparada &&
+         (caida ? mazmorra.iniciar_caida(carpeta, imagen) : mazmorra.iniciar(carpeta, imagen)) &&
+         mazmorra.dibujar(imagen);
 }
 
 // Adapta la paleta VGA de seis bits a RGBA y actualiza la textura sin filtros adicionales.
@@ -116,7 +118,7 @@ bool actualizar_textura(SDL_Texture *textura) {
 // guardar.
 bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &presentacion) {
   const bool cargada =
-      pantalla == 3   ? cargar_mazmorra(carpeta)
+      pantalla >= 3   ? cargar_mazmorra(carpeta, pantalla == 4)
       : pantalla == 2 ? (cargar_imagen(carpeta, "TITLE") && introduccion.iniciar(carpeta, imagen))
                       : cargar_imagen(carpeta, pantalla == 0 ? "CORE" : "TITLE");
   if (!cargada)
@@ -128,7 +130,9 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
                             pantalla == 0   ? "Curse Reborn — Core Design"
                             : pantalla == 1 ? "Curse Reborn — Pantalla de título"
                             : pantalla == 2 ? "Curse Reborn — Introducción original"
-                                            : "Curse Reborn — Mazmorra inicial (reconstrucción)");
+                            : pantalla == 4
+                                ? "Curse Reborn — Caída y agua (vista de desarrollo)"
+                                : "Curse Reborn — Mazmorra y corredor (reconstrucción)");
 }
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
@@ -145,15 +149,20 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
+  const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
+                               opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
+  const bool comprobar_corredor = opcion == "--comprobar-corredor-entrada" ||
+                                  opcion == "--comprobar-corredor-mecanismo" ||
+                                  opcion == "--comprobar-corredor-regreso";
   const bool comprobar_jugabilidad = opcion == "--comprobar-liberacion" ||
                                      opcion == "--comprobar-movimiento" ||
-                                     opcion == "--comprobar-puzle";
+                                     opcion == "--comprobar-puzle" || comprobar_corredor;
   const bool comprobar_menu = opcion == "--comprobar-menu" || opcion == "--comprobar-orden" ||
                               opcion == "--comprobar-depuracion";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
   const bool comprobar_escena =
       argc == 4 && (std::string(argv[2]) == "--comprobar-escena" || comprobar_animacion ||
-                    comprobar_menu || comprobar_jugabilidad);
+                    comprobar_menu || comprobar_jugabilidad || comprobar_caida);
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
@@ -196,10 +205,12 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido preparar el segundo avance de desarrollo");
     if (!SDL_PushEvent(&avance))
       return fallo("No se ha podido comprobar el avance con F6");
+    if (comprobar_caida && !SDL_PushEvent(&avance))
+      return fallo("No se ha podido disponer la vista de caída con F6");
   }
   bool salir = false, capturada = false, fundiendo = false;
   bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false,
-       jugabilidad_comprobada = false;
+       jugabilidad_comprobada = false, caida_comprobada = false;
   bool entrada_introduccion = false;
   bool depuracion = false, cajas_objetos = true, cajas_interaccion = true, cajas_limites = true;
   unsigned short puntero_x = 152, puntero_y = 92;
@@ -214,9 +225,9 @@ int main(int argc, char *argv[]) {
     while (SDL_PollEvent(&evento)) {
       if (evento.type == SDL_EVENT_QUIT ||
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
-           (pantalla != 3 || comprobar)))
+           (pantalla < 3 || comprobar)))
         salir = true;
-      if (!salir && pantalla == 3 &&
+      if (!salir && pantalla >= 3 &&
           (evento.type == SDL_EVENT_KEY_DOWN || evento.type == SDL_EVENT_KEY_UP)) {
         const unsigned short bit = evento.key.key == SDLK_LEFT    ? 8
                                    : evento.key.key == SDLK_RIGHT ? 4
@@ -263,7 +274,7 @@ int main(int argc, char *argv[]) {
               return fallo("No se ha podido dibujar el menú");
           }
         }
-        const bool avanzar = pantalla < 3 && evento.key.key == SDLK_F6;
+        const bool avanzar = pantalla < 4 && evento.key.key == SDLK_F6;
         const bool retroceder = pantalla > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
           pantalla += avanzar ? 1 : -1;
@@ -292,7 +303,7 @@ int main(int argc, char *argv[]) {
           inicio_fundido = SDL_GetTicksNS();
         }
       }
-      if (!salir && pantalla == 3 &&
+      if (!salir && pantalla >= 3 &&
           (evento.type == SDL_EVENT_MOUSE_MOTION || evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN)) {
         if (!SDL_ConvertEventToRenderCoordinates(presentacion.dibujante, &evento))
           return fallo("No se ha podido adaptar el ratón a la ventana");
@@ -360,7 +371,28 @@ int main(int argc, char *argv[]) {
       }
       introduccion_comprobada = true;
     }
-    if (comprobar_jugabilidad && pantalla == 3 && !jugabilidad_comprobada) {
+    if (comprobar_caida && !caida_comprobada) {
+      const unsigned int pasos = opcion == "--comprobar-caida-16" ? 16u : 32u;
+      if (opcion == "--comprobar-agua-24") {
+        for (unsigned int i = 0; i < 256 && mazmorra.escena_actual() == 2; ++i)
+          if (!mazmorra.avanzar() ||
+              !mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
+            return fallo("No se ha podido seguir la salida automática de la caída");
+        if (mazmorra.escena_actual() != 3)
+          return fallo("La caída no ha llegado al agua");
+      }
+      for (unsigned int i = 0; i < (opcion == "--comprobar-agua-24" ? 24u : pasos); ++i)
+        if (!mazmorra.avanzar())
+          return fallo("No se ha podido avanzar la caída o la inmersión");
+      if (!mazmorra.dibujar(imagen))
+        return fallo("No se ha podido dibujar la caída");
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido capturar la caída");
+      caida_comprobada = true;
+    }
+    if (comprobar_jugabilidad && pantalla >= 3 && !jugabilidad_comprobada) {
       // Recorre los mismos clics del menú que el jugador, sin cambiar directamente su inventario.
       const auto elegir = [](unsigned short casilla) {
         return mazmorra.entrada_menu(static_cast<unsigned short>(casilla * 32 + 16), 92, true,
@@ -369,7 +401,8 @@ int main(int argc, char *argv[]) {
       // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
       const auto avanzar = [](unsigned int cantidad) {
         for (unsigned int i = 0; i < cantidad; ++i)
-          if (!mazmorra.avanzar())
+          if (!mazmorra.avanzar() ||
+              !mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
             return false;
         return true;
       };
@@ -380,7 +413,8 @@ int main(int argc, char *argv[]) {
       for (const auto casilla : {2, 0, 0, 0, 1})
         if (!elegir(static_cast<unsigned short>(casilla)))
           return fallo("No se ha podido combinar la llave y las esposas");
-      if (mazmorra.menu_abierto() || !avanzar(opcion == "--comprobar-puzle" ? 192 : 80))
+      if (mazmorra.menu_abierto() ||
+          !avanzar(opcion == "--comprobar-puzle" || comprobar_corredor ? 192 : 80))
         return fallo("La liberación no ha terminado correctamente");
       if (opcion == "--comprobar-movimiento") {
         for (const auto bit : {4, 8, 2, 1}) {
@@ -396,7 +430,7 @@ int main(int argc, char *argv[]) {
           if (!mazmorra.mover_a(destino[0], destino[1]) || !avanzar(48))
             return fallo("No se ha podido caminar hacia el destino del ratón");
       }
-      if (opcion == "--comprobar-puzle") {
+      if (opcion == "--comprobar-puzle" || comprobar_corredor) {
         if (!mazmorra.mover_a(210, 157) || !avanzar(96) ||
             !mazmorra.entrada_menu(152, 92, false, true) || !elegir(2) || !elegir(2) ||
             !elegir(1) || !avanzar(192) || !mazmorra.entrada_menu(152, 92, false, true) ||
@@ -409,6 +443,36 @@ int main(int argc, char *argv[]) {
         if (mazmorra.menu_abierto() || !avanzar(192))
           return fallo("No ha terminado la apertura de la puerta");
       }
+      if (comprobar_corredor) {
+        if (!mazmorra.mover_a(45, 152))
+          return fallo("No se ha podido proponer la salida de la celda");
+        for (unsigned int i = 0; i < 96 && mazmorra.escena_actual() == 0; ++i)
+          if (!avanzar(1))
+            return fallo("No se ha podido cruzar la puerta de la celda");
+        if (mazmorra.escena_actual() != 1 || !avanzar(48))
+          return fallo("No se ha alcanzado el corredor con su entrada original");
+        if (opcion != "--comprobar-corredor-entrada") {
+          if (!mazmorra.mover_a(210, 185) || !avanzar(96) || !mazmorra.mover_a(210, 160) ||
+              !avanzar(96) || !mazmorra.entrada_menu(152, 92, false, true) || !elegir(3) ||
+              !elegir(0) || !avanzar(192))
+            return fallo("No se ha podido accionar el mecanismo del corredor");
+        }
+        if (opcion == "--comprobar-corredor-regreso") {
+          if (!mazmorra.mover_a(210, 185) || !avanzar(96))
+            return fallo("No se ha podido volver al suelo del corredor");
+          mazmorra.tecla_direccion(8, true);
+          if (!avanzar(80))
+            return fallo("No se ha podido contrastar la barrera del corredor");
+          mazmorra.tecla_direccion(8, false);
+          mazmorra.tecla_direccion(4, true);
+          for (unsigned int i = 0; i < 160 && mazmorra.escena_actual() == 1; ++i)
+            if (!avanzar(1))
+              return fallo("No se ha podido regresar hacia la celda");
+          mazmorra.tecla_direccion(4, false);
+          if (mazmorra.escena_actual() != 0 || !avanzar(48))
+            return fallo("No se ha completado el regreso a la mazmorra");
+        }
+      }
       if (!mazmorra.dibujar(imagen))
         return fallo("No se ha podido dibujar el estado jugable");
       for (unsigned int i = 0; i < 768; ++i)
@@ -417,7 +481,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido presentar el movimiento");
       jugabilidad_comprobada = true;
     }
-    if (comprobar_menu && pantalla == 3 && !menu_comprobado) {
+    if (comprobar_menu && pantalla >= 3 && !menu_comprobado) {
       if (!mazmorra.avanzar())
         return fallo("No se ha podido habilitar el menú inicial");
       if (opcion == "--comprobar-depuracion") {
@@ -442,7 +506,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido presentar la interacción");
       menu_comprobado = true;
     }
-    if (comprobar_animacion && pantalla == 3 && !animacion_preparada) {
+    if (comprobar_animacion && pantalla >= 3 && !animacion_preparada) {
       for (unsigned int paso = 0; paso < 32; ++paso) {
         if (!mazmorra.avanzar() ||
             !mazmorra.dibujar(imagen,
@@ -492,16 +556,27 @@ int main(int argc, char *argv[]) {
       } else if (!actualizar_textura(presentacion.textura))
         return fallo("No se ha podido dibujar la introducción");
     }
+    if (!comprobar && pantalla >= 3 && mazmorra.en_presentacion()) {
+      if (!mazmorra.avanzar_presentacion(ahora * 70u / 1000000000u) || !mazmorra.dibujar(imagen))
+        return fallo("No se ha podido avanzar el cambio de habitación o la cámara");
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido presentar el cambio de habitación o la cámara");
+      ultimo_paso_escena = ahora;
+    }
     // EAD5 espera cinco ticks del temporizador. Mantiene la referencia nominal de 70 Hz de esta
     // plataforma.
-    if (!comprobar && pantalla == 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
+    if (!comprobar && pantalla >= 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() ||
-          !mazmorra.dibujar(imagen,
-                            static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)) ||
-          !actualizar_textura(presentacion.textura)) {
+          !mazmorra.dibujar(imagen, static_cast<unsigned int>(SDL_GetTicks() / 57u))) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");
         return 1;
       }
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido actualizar la paleta de la escena");
       ultimo_paso_escena = ahora;
     }
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
@@ -509,7 +584,7 @@ int main(int argc, char *argv[]) {
         !SDL_RenderTexture(presentacion.dibujante, presentacion.textura, nullptr, nullptr)) {
       return fallo("No se ha podido dibujar el título");
     }
-    if (pantalla == 3 && depuracion &&
+    if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {

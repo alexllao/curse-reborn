@@ -47,9 +47,9 @@ class ComparacionJugabilidad(ComparacionMenu):
     def disponer(self, datos, geometria, semilla):
         m = self.maquina
         self.preparar_bancos_originales()
-        m.mem_write(0x0018, struct.pack('<H', 0x7800))
+        m.mem_write(0x0018, struct.pack('<H', 0x7A00))
         if geometria:
-            m.mem_write(0x78000, geometria)
+            m.mem_write(0x7A000, geometria)
         m.mem_write(self.segmento, bytes(datos))
         m.mem_write(0x78DE, struct.pack('<4H', *semilla))
 
@@ -135,9 +135,9 @@ class ComparacionJugabilidad(ComparacionMenu):
     def ejecutar(self):
         preparacion = ComparacionObjetos(self.raiz, self.biblioteca, True)
         datos = preparacion.caso('entrada', 4, bytearray(self.base), 'MANA.BRD')
-        guardar(datos, 0x2C4A, 0x5200)
+        guardar(datos, 0x2C4A, 0x5400)
         preparacion.caso('carga', 0, datos)
-        guardar(datos, 0x2C29, 0x7200)
+        guardar(datos, 0x2C29, 0x7400)
         guardar(datos, 0x0DF0, self.cantidad)
         guardar(datos, 0x0DF2, 0)
         base = bytes(datos)

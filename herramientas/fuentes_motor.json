@@ -32,5 +32,6 @@
   "motor/acciones/menu.cpp",
   "motor/video/menu.cpp",
   "motor/movimiento/geometria.cpp",
-  "motor/estado/paso_escena.cpp"
+  "motor/estado/paso_escena.cpp",
+  "motor/video/camara.cpp"
 ]

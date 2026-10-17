@@ -1,3 +1,6 @@
+#include "../../motor/video/camara.hpp"
+#include "../../motor/video/fundido.hpp"
+#include "../../motor/recursos/escena.hpp"
 #include "mazmorra.hpp"
 #include "../../motor/estado/paso_escena.hpp"
 #include "../../motor/movimiento/geometria.hpp"
@@ -146,6 +149,9 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   motor::guardar(datos, 0x0df2, 0);
   direccion = 0xffff;
   menu_visible = false;
+  animacion = paso_animacion = 0;
+  if (!cargar_banco("DUNGEON.MAP", mapa) || !motor::preparar_vista_escena(datos))
+    return false;
   motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
   return true;
@@ -153,8 +159,22 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
 
 // 06E8–0BC1: integra entrada, guiones, paredes e historial antes del despacho de la escena.
 bool Mazmorra::avanzar() {
-  if (menu_visible)
+  if (menu_visible || en_presentacion())
     return true;
+  const int camara = motor::decidir_camara(datos);
+  if (camara) {
+    if (!dibujar(imagen_anterior) || !motor::desplazar_camara(datos, camara) ||
+        !cargar_fondo_visible() || !dibujar(imagen_destino))
+      return false;
+    sentido_camara = camara;
+    animacion = 2;
+    paso_animacion = 0;
+    inicio_animacion = SDL_GetTicksNS() * 70u / 1000000000u;
+    return true;
+  }
+  // EAD5 presenta la posición anterior al paso que detectará la salida.
+  if (!dibujar(imagen_anterior))
+    return false;
   const motor::RecursosSecuencias secuencias{
       this,          dimensiones,  referencia_personaje, referencia_escena, referencia_modelo,
       omitir_sonido, cargar_modelo};
@@ -166,14 +186,26 @@ bool Mazmorra::avanzar() {
   if (!resultado.valida)
     return false;
   if (resultado.acciones) {
-    // La salida de esta habitación aún no está integrada: se conserva el último punto interior.
+    const auto actual = escena_actual();
+    if ((resultado.acciones == 2 || resultado.acciones == 16) &&
+        ((actual == 0 && resultado.parametro == 0) ||
+         (actual == 1 && (resultado.parametro == 1 || resultado.parametro == 2)) ||
+         (actual == 2 && resultado.parametro == 3))) {
+      salida_pendiente = resultado.parametro;
+      animacion = 1;
+      paso_animacion = 0;
+      inicio_animacion = SDL_GetTicksNS() * 70u / 1000000000u;
+      return true;
+    }
+    // Las otras salidas se reconocen, pero sus habitaciones todavía no tienen un adaptador
+    // completo.
     motor::guardar(datos, 0x2c2d, motor::palabra(datos, 0x0ae6));
     motor::guardar(datos, 0x2c2f, motor::palabra(datos, 0x0ae8));
     motor::guardar(datos, 0x359a, 0);
     motor::guardar(datos, 0x0dfa, 0);
     if (!motor::seleccionar_direccion(datos, 0))
       return false;
-    SDL_Log("La transición fuera de esta escena todavía está pendiente de integrar.");
+    SDL_Log("La salida %u de la escena %u aún no está integrada.", resultado.parametro, actual);
   }
   return true;
 }
@@ -181,6 +213,16 @@ bool Mazmorra::avanzar() {
 // Una imagen completa sustituye la restauración de rectángulos entre páginas VGA sin añadir
 // efectos.
 bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
+  if (animacion == 1) {
+    imagen = imagen_anterior;
+    return motor::calcular_fundido(imagen_anterior.paleta, 256, 32,
+                                   static_cast<unsigned short>(paso_animacion), imagen.paleta);
+  }
+  if (animacion == 2) {
+    imagen = imagen_destino;
+    return motor::componer_camara(imagen_anterior.indices, imagen_destino.indices, sentido_camara,
+                                  paso_animacion, imagen.indices);
+  }
   imagen = fondo;
   if (!motor::dibujar_entidades(datos, {this, banco, referencia_escena}, imagen.indices))
     return false;
@@ -196,6 +238,8 @@ bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
 
 // DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
 bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar) {
+  if (en_presentacion())
+    return true;
   if (alternar) {
     if (menu_visible) {
       menu_visible = false;
@@ -292,7 +336,7 @@ bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones
 
 // 08C8–08DA: el ratón solo propone rutas cuando el guion original ha habilitado el movimiento.
 bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
-  if (menu_visible || !datos[0x3594])
+  if (en_presentacion() || menu_visible || !datos[0x3594])
     return true;
   if (x >= 320 || y >= 200)
     return true;
@@ -321,4 +365,82 @@ void Mazmorra::tecla_direccion(unsigned short bit, bool pulsada) {
     datos[0x0ad5] = 0;
     datos[0x2c0a] = 0;
   }
+}
+
+// Mantiene el índice original, independiente de las vistas de presentación F5/F6.
+unsigned short Mazmorra::escena_actual() const {
+  return motor::palabra(datos, 0x8082);
+}
+
+// 50D2: recompone el fondo completo como sustitución portable de las copias solapadas VGA.
+bool Mazmorra::cargar_fondo_visible() {
+  const auto inicio = motor::palabra(datos, 0x0aed) + datos[0x3597];
+  return motor::preparar_fondo_mapa(mapa.data(), static_cast<unsigned int>(mapa.size()),
+                                    datos + inicio, fondo, planos_fondo, tira_fondo);
+}
+
+// 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
+// listas.
+bool Mazmorra::cambiar_habitacion(unsigned short salida) {
+  if (salida > 3)
+    return false;
+  unsigned short ancho = 32, alto = 48;
+  if (salida == 3 && (!cargar_banco("PLUNGE.BRD", modelo) ||
+                      !dimensiones(this, referencia_modelo, 0, ancho, alto)))
+    return false;
+  if (!motor::preparar_transicion_escena(datos, salida, referencia_personaje, referencia_modelo,
+                                         ancho, alto) ||
+      !motor::preparar_vista_escena(datos))
+    return false;
+  constexpr const char *bancos[] = {"DUNGEON", "CORRIDOR", "DROP", "LAKEBED"};
+  const auto actual = escena_actual();
+  if (actual > 3 || !cargar_banco(std::string(bancos[actual]) + ".SPR", escena) ||
+      !cargar_banco(std::string(bancos[actual]) + ".MAP", mapa) || !cargar_fondo_visible())
+    return false;
+  // 4EE5 conserva los 192 colores de fondo en DS para los siguientes fundidos.
+  for (unsigned int i = 0; i < 576; ++i)
+    datos[0x0aef + i] = mapa[i];
+  std::vector<unsigned char> boxdet;
+  unsigned int inicio = 0, cantidad = 0;
+  if (!cargar_banco("BOXDET.DAT", boxdet) ||
+      !motor::localizar_geometria(boxdet.data(), static_cast<unsigned int>(boxdet.size()),
+                                  escena_actual(), inicio, cantidad))
+    return false;
+  geometria.assign(boxdet.begin() + inicio, boxdet.begin() + inicio + cantidad * 10u);
+  motor::guardar(datos, 0x0df0, static_cast<unsigned short>(cantidad));
+  motor::guardar(datos, 0x0df2, 0);
+  const motor::RecursosEntidades recursos{this, dimensiones_escena, referencia_escena,
+                                          parrafo_escena};
+  if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
+    return false;
+  motor::guardar(datos, 0x0358, 0);
+  motor::guardar(datos, 0x0616, 0);
+  menu_visible = false;
+  direccion = 0xffff;
+  return true;
+}
+
+// El original detiene la lógica durante el fundido y los ocho retrazos del movimiento de cámara.
+bool Mazmorra::avanzar_presentacion(unsigned long long tick) {
+  if (!en_presentacion())
+    return true;
+  const auto transcurrido = tick > inicio_animacion ? tick - inicio_animacion : 0;
+  const unsigned int limite = animacion == 1 ? 32u : 8u;
+  paso_animacion = transcurrido < limite ? static_cast<unsigned int>(transcurrido) : limite;
+  if (transcurrido > limite) {
+    const auto anterior = animacion;
+    animacion = 0;
+    if (anterior == 1 && !cambiar_habitacion(salida_pendiente))
+      return false;
+  }
+  return true;
+}
+
+// Dispone exclusivamente la vista de desarrollo; nunca transforma una partida iniciada en otra
+// escena.
+bool Mazmorra::iniciar_caida(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo) {
+  if (!iniciar(ruta, imagen_fondo))
+    return false;
+  motor::guardar(datos, 0x8082, 1);
+  return cambiar_habitacion(1);
 }

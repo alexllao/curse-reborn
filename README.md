@@ -33,7 +33,7 @@ El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya est�
 
 **`pnpm ventana` recorre Core → título → introducción original → mazmorra inicial**. Los fundidos de salida conservan los 32 pasos de paleta del original. Una tecla o el botón izquierdo inicia el fundido; F6 avanza y F5 retrocede directamente entre estas vistas de desarrollo. Escape cierra fuera de la mazmorra; dentro abre/cierra el menú. La imagen se ajusta al redimensionar o maximizar conservando sus proporciones, con bandas negras y vecino más próximo, sin filtros añadidos.
 
-El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La nueva [carga, composición y selección de objetos](documentacion/objetos_mazmorra.md) tiene confirmados por el propietario sus **773 casos/pasos** de comparación amplia, incluidas 257 composiciones y 256 pasos persistentes. La comprobación SDL compara los **64.000 píxeles** del estado inicial y de los objetos tras 32 pasos. Ya están conectados el [menú y las primeras interacciones](documentacion/menu_e_interacciones.md). Ya se puede [caminar en la mazmorra](documentacion/movimiento_y_colisiones.md) tras la liberación, con clic o flechas y colisiones originales. Siguen pendientes las demás acciones, transiciones a otras habitaciones y la resolución completa de puzles. La cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual.
+El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La nueva [carga, composición y selección de objetos](documentacion/objetos_mazmorra.md) tiene confirmados por el propietario sus **773 casos/pasos** de comparación amplia, incluidas 257 composiciones y 256 pasos persistentes. La comprobación SDL compara los **64.000 píxeles** del estado inicial y de los objetos tras 32 pasos. Ya están conectados el [menú y las primeras interacciones](documentacion/menu_e_interacciones.md). Ya se puede [caminar en la mazmorra](documentacion/movimiento_y_colisiones.md) tras la liberación, con clic o flechas y colisiones originales. Ya están conectados [el corredor y el regreso](documentacion/corredor_y_camara.md), y [la caída con llegada al agua](documentacion/caida_y_agua.md). Siguen pendientes los demás puzles y habitaciones. La cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual.
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
@@ -43,7 +43,7 @@ Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 168 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 174 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -98,7 +98,8 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Contrastar los 307 casos/pasos de menú tras corregir la disposición de bancos del comparador.
 - [ ] Confirmar con el propietario la prueba visible del menú y sus controles.
 - [x] Conectar clic, flechas, BOXDET, corrección de colisiones e historial y corregir el despacho que desplazaba la puerta.
-- [ ] Completar las demás acciones y transiciones entre habitaciones.
+- [x] Conectar mazmorra y corredor con regreso persistente, cámara y caída al agua.
+- [ ] Completar los puzles del corredor y del lago, y las demás habitaciones.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
@@ -189,7 +190,7 @@ Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar 
 
 ### Introducción original
 
-La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción y mazmorra como vistas de desarrollo. No hay audio todavía.
+La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción, mazmorra y caída como vistas de desarrollo. No hay audio todavía.
 
 `pnpm comparar:introduccion` contrasta el recorrido y las imágenes contra el ejecutable; `pnpm comprobar:introduccion` compara capturas SDL del caldero, balcón, béisbol y llegada a la mazmorra al terminar y al omitir. Las esperas usan retrazos nominales a 70 Hz; la duración de la E/S DOS y la sincronización física de monitor no se reproducen.
 
@@ -205,7 +206,7 @@ En la mazmorra, Escape o botón derecho abre/cierra el menú. El ratón y el bot
 
 ### Recorrido de la mazmorra
 
-Ya se puede actuar sobre el guardia, recoger la segunda llave y combinarla con la puerta para abrirla. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La transición visual al corredor y su cámara todavía están pendientes: abrir la puerta no equivale a tener la siguiente habitación jugable.
+Ya se puede actuar sobre el guardia, recoger la segunda llave y combinarla con la puerta para abrirla. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La puerta permite entrar al corredor y regresar con el estado conservado. Se mantienen las restricciones de sus entidades; el resto de su puzle sigue pendiente.
 
 [Guía paso a paso en texto](documentacion/recorridos/00_mazmorra.txt). Se ampliará al validar cada pantalla. Las instrucciones usan las casillas reales del menú y el mismo orden que la comparación automática.
 
@@ -239,6 +240,14 @@ La rama de trabajo es **`development`**.
 La documentación, los comentarios del código, los textos propios de las herramientas y los mensajes de los cambios se escribirán en castellano. También se usarán nombres en castellano para los elementos propios del proyecto cuando sea viable. Se conservarán los identificadores exigidos por C++, SDL y otras dependencias, así como los nombres originales necesarios para leer los datos del juego.
 
 Los avances se documentarán con claridad: qué se ha comprobado, qué sigue siendo una hipótesis y qué puede ejecutarse realmente. Cada función reconstruida deberá poder contrastarse con el original; las mejoras de la remasterización se identificarán como tales.
+
+## Corredor, caída y siguiente bloque
+
+`pnpm comprobar:corredor` compara entrada, mecanismo y regreso en SDL, además de estados de cámara y sus 18 posiciones gráficas originales. El recorrido de partida conserva la barrera de la entidad del corredor; sus cambios de cámara se contrastan en estados de prueba separados, sin fingir que su puzle ya esté resuelto.
+
+`pnpm comprobar:caida` compara dos momentos de `DROP` y la entrada sumergida en `LAKEBED`. Desde la mazmorra, **F6 abre una nueva vista de desarrollo de la caída**; F5 regresa a una sesión nueva de la mazmorra. La caída avanza sola hasta el agua. Estos atajos no resuelven puzles de una partida ni conservan la sesión anterior.
+
+[Guía del corredor](documentacion/recorridos/01_corredor.txt) · [Guía de la caída](documentacion/recorridos/02_caida.txt). La siguiente prioridad acordada es el **audio compartido**, empezando por PC Speaker y continuando con AdLib y MT-32. La música y los efectos se enlazarán con las órdenes y recursos originales de cada escena; todavía no hay salida de audio.
 
 ## Recursos originales y autoría
 

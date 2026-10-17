@@ -83,9 +83,9 @@ class ComparacionMenu(ComparacionComposicion):
             raise ErrorAnalisis('No se pudo preparar el fondo del menú.')
         self.maquina.mem_write(0xD57A, struct.pack('<H', 0x4000))
         self.maquina.mem_write(0xD57E, struct.pack('<H', 0xA000))
-        self.maquina.mem_write(0xD580, struct.pack('<H', 0x7400))
+        self.maquina.mem_write(0xD580, struct.pack('<H', 0x7600))
         self.maquina.mem_write(0x40000, self.iconos)
-        self.maquina.mem_write(0x74000, bytes(self.fondo_menu))
+        self.maquina.mem_write(0x76000, bytes(self.fondo_menu))
         self.maquina.mem_write(0x6BFC, struct.pack('<200H', *(i * 112 for i in range(200))))
 
     # En comparaciones de memoria omite solo dibujo; conserva DF15 y los retornos y bloqueos.
@@ -122,7 +122,7 @@ class ComparacionMenu(ComparacionComposicion):
     def dibujar_panel(self, datos, principal=False):
         self.logica = False
         self.maquina.mem_write(0x40000, self.iconos)
-        self.maquina.mem_write(0x74000, bytes(self.fondo_menu))
+        self.maquina.mem_write(0x76000, bytes(self.fondo_menu))
         self.reiniciar_video()
         self.maquina.mem_write(self.segmento, bytes(datos))
         self.ejecutar_original(0xDE96 if principal else 0xDEFB)
@@ -149,9 +149,9 @@ class ComparacionMenu(ComparacionComposicion):
     def dimensiones_recurso(self, contexto, referencia, indice, ancho, alto):
         banco = {
             0x4000: self.escena,
-            0x5200: self.modelo,
-            0x6200: self.estandar,
-            0x7200: self.raton,
+            0x5400: self.modelo,
+            0x6400: self.estandar,
+            0x7400: self.raton,
         }.get(referencia)
         if banco is None or indice * 2 + 2 > len(banco):
             return False
@@ -191,18 +191,18 @@ class ComparacionMenu(ComparacionComposicion):
     def preparar_bancos_originales(self):
         bancos = (
             ('DUNGEON.SPR', 0x40000, self.escena),
-            ('modelo', 0x52000, self.modelo),
-            ('STD.BRD', 0x62000, self.estandar),
-            ('MOUSE.SPR', 0x72000, self.raton),
-            ('MENU.DAT', 0x74000, bytes(self.fondo_menu)),
+            ('modelo', 0x54000, self.modelo),
+            ('STD.BRD', 0x64000, self.estandar),
+            ('MOUSE.SPR', 0x74000, self.raton),
+            ('MENU.DAT', 0x76000, bytes(self.fondo_menu)),
         )
         for anterior, siguiente in zip(bancos, bancos[1:]):
             if anterior[1] + len(anterior[2]) > siguiente[1]:
                 raise ErrorAnalisis(
                     f'Bancos de referencia solapados: {anterior[0]} y {siguiente[0]}.'
                 )
-        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5200))
-        self.maquina.mem_write(0x000E, struct.pack('<H', 0x6200))
+        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5400))
+        self.maquina.mem_write(0x000E, struct.pack('<H', 0x6400))
         for nombre, direccion, datos in bancos:
             self.maquina.mem_write(direccion, datos)
         for nombre, direccion, datos in bancos:
@@ -215,7 +215,7 @@ class ComparacionMenu(ComparacionComposicion):
     def avanzar(self, datos, semilla):
         m = self.maquina
         self.preparar_bancos_originales()
-        m.mem_write(0x000E, struct.pack('<H', 0x6200))
+        m.mem_write(0x000E, struct.pack('<H', 0x6400))
         m.mem_write(self.segmento, bytes(datos))
         m.mem_write(0x78DE, struct.pack('<4H', *semilla))
         self.ejecutar_hasta(0x096D, 0x0A59)
@@ -248,9 +248,9 @@ class ComparacionMenu(ComparacionComposicion):
     def ejecutar(self):
         preparacion = ComparacionObjetos(self.raiz, self.biblioteca, True)
         datos = preparacion.caso('entrada', 4, bytearray(self.base), 'MANA.BRD')
-        guardar(datos, 0x2C4A, 0x5200)
+        guardar(datos, 0x2C4A, 0x5400)
         preparacion.caso('carga', 0, datos)
-        guardar(datos, 0x2C29, 0x7200)
+        guardar(datos, 0x2C29, 0x7400)
         # Una iteración consume FC/7C y habilita el menú como hace el bucle inicial.
         semilla = (ctypes.c_ushort * 4)(*self.semilla_original)
         self.avanzar(datos, semilla)
@@ -361,7 +361,9 @@ class ComparacionMenu(ComparacionComposicion):
     # Contrasta la imagen posterior a una acción con EBBD usando los bancos que dejó el guion.
     def componer_resultado(self, datos, salida):
         self.logica = False
-        fondo = self.fondo('DUNGEON.MAP', range(10))
+        fondo = self.fondo(
+            getattr(self, 'nombre_mapa', 'DUNGEON.MAP'), getattr(self, 'seleccion_fondo', range(10))
+        )
         self.maquina.mem_write(0x0008, struct.pack('<H', 0xA000))
         self.preparar_bancos_originales()
         self.maquina.mem_write(self.segmento, bytes(datos))
@@ -394,7 +396,7 @@ class ComparacionMenu(ComparacionComposicion):
             raise ErrorAnalisis('La composición de la interacción no coincide.')
         guardar_png(salida / 'interaccion_32_cpp.png', bytes(imagen), fondo.paleta)
         # La composición del fondo utiliza CS:0010; se restablece para el siguiente F8.
-        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5200))
+        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5400))
         self.logica = True
         self.resumen['composicion_interaccion'] = self.resumen.get('composicion_interaccion', 0) + 1
         return bytes(imagen), fondo.paleta

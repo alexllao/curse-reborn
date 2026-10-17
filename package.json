@@ -52,7 +52,11 @@
     "comparar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comparar:jugabilidad",
     "comprobar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comprobar:jugabilidad",
     "comparar:puzle": "node herramientas/gestionar_proyecto.mjs comparar:puzle",
-    "comprobar:puzle": "node herramientas/gestionar_proyecto.mjs comprobar:puzle"
+    "comprobar:puzle": "node herramientas/gestionar_proyecto.mjs comprobar:puzle",
+    "comparar:corredor": "node herramientas/gestionar_proyecto.mjs comparar:corredor",
+    "comprobar:corredor": "node herramientas/gestionar_proyecto.mjs comprobar:corredor",
+    "comparar:caida": "node herramientas/gestionar_proyecto.mjs comparar:caida",
+    "comprobar:caida": "node herramientas/gestionar_proyecto.mjs comprobar:caida"
   },
   "repository": {
     "type": "git",

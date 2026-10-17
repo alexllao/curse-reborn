@@ -63,9 +63,9 @@ CONTROLES
 
 7. SALIR AL CORREDOR
    Atravesar el umbral de la puerta abierta.
-   Pendiente de completar la integración y la comparación de la transición
-   visual, la cámara del corredor y el regreso. No dar este paso por validado
-   solo porque se haya abierto la puerta.
+   Puede hacerse clic en (45, 152), en coordenadas lógicas de 320 x 200.
+   Resultado esperado: fundido y entrada al corredor, conservando las llaves.
+   Continuar con 01_corredor.txt.
 
 COMPROBACIÓN
 pnpm comparar:puzle
