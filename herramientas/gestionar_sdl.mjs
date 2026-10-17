@@ -702,6 +702,7 @@ export async function gestionarSdl(accion, argumentos) {
       ['marcos-filtro', 1280, 720],
       ['marcos-corredor', 1280, 720],
       ['marcos-lago', 1280, 720],
+      ['marcos-mazmorra', 1280, 720],
     ]) {
       const prefijo = join(carpeta, opcion);
       ejecutar(programa, [datos, `--comprobar-${opcion}`, prefijo], {
@@ -716,12 +717,18 @@ export async function gestionarSdl(accion, argumentos) {
         y0 = (alto - 200 * escala) / 2;
       const solapeX = Math.min(2 * escala, x0 * 0.15),
         solapeY = Math.min(2 * escala, y0 * 0.15);
-      const nombre =
-        opcion === 'marcos-corredor'
-          ? 'corridor'
-          : opcion === 'marcos-lago'
-            ? 'lakebed'
-            : 'default';
+      const catalogo = JSON.parse(
+        readFileSync(join(raiz, 'assets', 'original', 'marcos', 'catalogo.json'), 'utf8'),
+      );
+      const contexto =
+        opcion === 'marcos-mazmorra'
+          ? 'escena_0'
+          : opcion === 'marcos-corredor'
+            ? 'escena_1'
+            : opcion === 'marcos-lago'
+              ? 'escena_3'
+              : 'titulo';
+      const nombre = catalogo.pantallas[contexto] ?? catalogo.predeterminado;
       const marco = JSON.parse(
         readFileSync(join(raiz, 'assets', 'original', 'marcos', `${nombre}.png.json`), 'utf8'),
       );
@@ -780,8 +787,17 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 21,
-          formatos: ['apaisado', 'vertical', 'ajustado', 'impar', 'xBRZ', 'corredor', 'lago'],
+          capturas: 24,
+          formatos: [
+            'apaisado',
+            'vertical',
+            'ajustado',
+            'impar',
+            'xBRZ',
+            'corredor',
+            'lago',
+            'mazmorra',
+          ],
           interior_conservado: true,
           remate_artistico_completo: true,
           solape_logico_adicional: 2,

@@ -1,7 +1,6 @@
 {
   "predeterminado": "default",
   "pantallas": {
-    "escena_1": "corridor",
-    "escena_3": "lakebed"
+    "escena_0": "mazmorra"
   }
 }

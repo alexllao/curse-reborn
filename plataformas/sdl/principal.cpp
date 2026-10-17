@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-marcos" || opcion == "--comprobar-marcos-vertical" ||
       opcion == "--comprobar-marcos-ajustado" || opcion == "--comprobar-marcos-impar" ||
       opcion == "--comprobar-marcos-filtro" || opcion == "--comprobar-marcos-corredor" ||
-      opcion == "--comprobar-marcos-lago";
+      opcion == "--comprobar-marcos-lago" || opcion == "--comprobar-marcos-mazmorra";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
@@ -1138,10 +1138,11 @@ int main(int argc, char *argv[]) {
                            nullptr)) {
       return fallo("No se ha podido dibujar el título");
     }
-    const std::string contexto_marco = opcion == "--comprobar-marcos-corredor" ? "escena_1"
-                                       : opcion == "--comprobar-marcos-lago"   ? "escena_3"
-                                       : pantalla == 0                         ? "core"
-                                       : pantalla == 1                         ? "titulo"
+    const std::string contexto_marco = opcion == "--comprobar-marcos-mazmorra"   ? "escena_0"
+                                       : opcion == "--comprobar-marcos-corredor" ? "escena_1"
+                                       : opcion == "--comprobar-marcos-lago"     ? "escena_3"
+                                       : pantalla == 0                           ? "core"
+                                       : pantalla == 1                           ? "titulo"
                                        : pantalla == 2
                                            ? "introduccion"
                                            : "escena_" + std::to_string(mazmorra.escena_actual());
