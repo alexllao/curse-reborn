@@ -595,8 +595,8 @@ extern "C" EXPORTAR int avanzar_menu(unsigned char *datos, unsigned short *palab
                                      bool (*modelo)(void *, const unsigned char *, unsigned short,
                                                     unsigned short)) {
   motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
-  const motor::RecursosSecuencias recursos{nullptr, dimensiones,          0x6000, 0x4000,
-                                           0x5000,  omitir_sonido_prueba, modelo};
+  const motor::RecursosSecuencias recursos{nullptr, dimensiones,          0x6200, 0x4000,
+                                           0x5200,  omitir_sonido_prueba, modelo};
   if (!motor::avanzar_accion_pendiente(datos))
     return -1;
   const auto secuencias = motor::avanzar_secuencias(datos, estado, recursos);
@@ -626,8 +626,8 @@ const unsigned char *banco_menu_prueba(void *contexto, unsigned short referencia
                                        unsigned int &longitud) {
   const auto *bancos = static_cast<const BancoPrueba *>(contexto);
   const int indice = referencia == 0x4000   ? 0
-                     : referencia == 0x5000 ? 1
-                     : referencia == 0x6000 ? 2
+                     : referencia == 0x5200 ? 1
+                     : referencia == 0x6200 ? 2
                                             : -1;
   if (indice < 0)
     return nullptr;

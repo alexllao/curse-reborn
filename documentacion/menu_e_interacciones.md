@@ -59,6 +59,12 @@ pnpm comprobar:menu
 
 La muestra comprobada contiene **91 casos/pasos**: 38 selecciones, cinco paneles, dos fondos, dos composiciones de interacción, 32 pasos persistentes, cuatro combinaciones y ocho activaciones de canales. La referencia ejecuta los manejadores originales y compara DS completo. El dibujo ejecuta `DEFB`/`DE96` con el modelo VGA contrastado; los pasos persistentes incluyen los cambios de banco solicitados por F8 y consumen los mismos archivos originales.
 
-La comparación amplia nueva prepara **307 casos/pasos**, con 192 pasos de interacción y 64 activaciones; queda para el propietario. Los resultados están en `trabajo/comparacion_menu/`.
+La comparación amplia de **307 casos/pasos**, con 192 pasos de interacción y 64 activaciones, también se ha ejecutado y coincide. Los resultados están en `trabajo/comparacion_menu/`.
 
 La comprobación SDL contrasta 64.000 píxeles del panel sobre la escena y otros 64.000 tras ejecutar la primera orden y avanzar 32 pasos. Una tercera captura verifica que las cinco categorías de color de depuración se dibujan. Los resultados quedan en `trabajo/comprobacion_menu_sdl/`. El ratón en una ventana visible maximizada, las teclas de depuración y las transiciones se comprueban manualmente.
+
+### Corrección de los bancos de referencia
+
+La primera comparación amplia detectó diferencias en `DS:2D18`–`DS:2D1B` en el paso 90. El comparador colocaba `DUNGEON.SPR` en `40000h` y el modelo en `50000h`; el banco de escena mide 67.504 bytes y el modelo sobrescribía sus últimos 1.968 bytes. La muestra de 32 pasos no alcanzaba los fotogramas afectados. El motor SDL mantiene estos recursos en vectores independientes y no tenía ese solapamiento.
+
+La referencia reserva ahora regiones separadas: escena `40000h`, modelo `52000h`, estándar `62000h`, ratón `72000h` y fondo de menú `74000h`. Las etiquetas del puente nativo se ajustan a esa distribución. Antes de avanzar se comprueba que ningún banco invade el siguiente y que los bytes de todos siguen intactos; los errores de avance indican paso y valores de cada diferencia. El recorrido amplio ya contrasta los 192 pasos, incluido el 90, sin modificar ni ignorar los campos que fallaban.

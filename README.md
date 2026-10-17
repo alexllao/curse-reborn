@@ -95,7 +95,8 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar la selección de objetos por proximidad y compatibilidad de acción.
 - [x] Confirmar con el propietario los 773 casos/pasos y las animaciones de objetos.
 - [x] Conectar el menú original, las primeras interacciones y la depuración F7–F10; muestra de 91 casos/pasos.
-- [ ] Confirmar los 307 casos/pasos de menú y la prueba visible de sus controles.
+- [x] Contrastar los 307 casos/pasos de menú tras corregir la disposición de bancos del comparador.
+- [ ] Confirmar con el propietario la prueba visible del menú y sus controles.
 - [ ] Completar las acciones particulares, colisiones y movimiento libre.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
