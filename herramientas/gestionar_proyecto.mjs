@@ -236,6 +236,7 @@ try {
     case 'comprobar:mt32':
       compararAcciones('musica_rs', argumentos);
       await gestionarSdl('comprobar:mt32', []);
+      ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_sintesis_mt32.py')]);
       break;
     case 'comparar:musica-rs':
       compararAcciones('musica_rs', argumentos);

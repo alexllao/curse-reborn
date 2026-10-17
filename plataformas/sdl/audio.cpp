@@ -8,11 +8,12 @@ bool Audio::abrir(const std::string &carpeta) {
     return true;
   if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
     return false;
-  const SDL_AudioSpec formato{SDL_AUDIO_S16, 1, 48000};
+  const SDL_AudioSpec formato{SDL_AUDIO_S16, 2, 48000};
+  const SDL_AudioSpec formato_efectos{SDL_AUDIO_S16, 1, 48000};
   dispositivo = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato);
   if (!dispositivo)
     return false;
-  flujo = SDL_CreateAudioStream(&formato, &formato);
+  flujo = SDL_CreateAudioStream(&formato_efectos, &formato);
   if (!flujo || !SDL_BindAudioStream(dispositivo, flujo)) {
     cerrar();
     return false;
@@ -77,22 +78,22 @@ void Audio::cerrar() {
 // El callback tiene el bloqueo del flujo: los cambios de banco y perfil usan el mismo bloqueo.
 void Audio::alimentar_musica(void *contexto, SDL_AudioStream *salida, int adicional, int) {
   auto &audio = *static_cast<Audio *>(contexto);
-  int pendientes = (adicional + 1) / 2;
-  short fm[512], roland[512];
+  int pendientes = (adicional + 3) / 4;
+  short fm[512], roland[1024], mezcla[1024];
   while (pendientes > 0) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 512 ? 512 : pendientes);
     bool correcto = audio.musica.generar(fm, cantidad);
     if (audio.mt32.disponible())
       correcto = correcto && audio.mt32.generar(roland, cantidad);
     unsigned int con_senal = 0;
-    for (unsigned int i = 0; i < cantidad; ++i) {
-      fm[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
-              : audio.perfil == 2                              ? roland[i]
-                                                               : fm[i];
-      con_senal += fm[i] > 64 || fm[i] < -64 ? 1u : 0u;
+    for (unsigned int i = 0; i < cantidad * 2; ++i) {
+      mezcla[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
+                  : audio.perfil == 2                              ? roland[i]
+                                                                   : fm[i / 2];
+      con_senal += mezcla[i] > 64 || mezcla[i] < -64 ? 1u : 0u;
     }
     audio.muestras_con_senal.fetch_add(con_senal);
-    if (!correcto || !SDL_PutAudioStreamData(salida, fm, static_cast<int>(cantidad * 2))) {
+    if (!correcto || !SDL_PutAudioStreamData(salida, mezcla, static_cast<int>(cantidad * 4))) {
       audio.fallo_musical.store(true);
       return;
     }
@@ -351,7 +352,7 @@ bool comprobar_salida_audio(const char *ruta) {
   auto *flujo =
       SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato, nullptr, nullptr);
   const bool correcto = flujo && audible && formato.format == SDL_AUDIO_S16 &&
-                        formato.channels == 1 && formato.freq == 48000 &&
+                        (formato.channels == 1 || formato.channels == 2) && formato.freq == 48000 &&
                         SDL_PutAudioStreamData(flujo, muestras, static_cast<int>(longitud)) &&
                         SDL_GetAudioStreamQueued(flujo) == static_cast<int>(longitud) &&
                         SDL_ResumeAudioStreamDevice(flujo);
@@ -359,11 +360,11 @@ bool comprobar_salida_audio(const char *ruta) {
   if (flujo)
     SDL_DestroyAudioStream(flujo);
   if (correcto)
-    std::printf("Salida SDL: PCM mono de 48.000 Hz aceptado por el dispositivo.\n");
+    std::printf("Salida SDL: PCM de 48.000 Hz aceptado por el dispositivo.\n");
   return correcto;
 }
 
-// Los cinco bancos deben producir audio; las transiciones que comparten banco no deben reiniciarlo.
+// Recorre 32 segundos de cada banco, incluida la percusión posterior al arranque de RS1.
 bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
   size_t longitud = 0;
   void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
@@ -375,8 +376,8 @@ bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
   if (!preparado)
     return false;
   constexpr unsigned short escenas[] = {0, 64, 3, 15, 0xffff};
-  constexpr unsigned int cantidad = 48000 * 8;
-  std::vector<short> muestras(cantidad);
+  constexpr unsigned int cantidad = 48000 * 32;
+  std::vector<short> muestras(cantidad * 2);
   bool guardado = false;
   for (unsigned int banco = 0; banco < 5; ++banco) {
     if (!sintetizador.cambiar_escena(escenas[banco]) || sintetizador.banco() != banco ||
@@ -408,12 +409,14 @@ bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
                                     'E', 'f', 'm', 't', ' ', 16,  0,   0, 0,   1,   0,
                                     1,   0,   0,   0,   0,   0,   0,   0, 0,   0,   2,
                                     0,   16,  0,   'd', 'a', 't', 'a', 0, 0,   0,   0};
-      campo_wav(cabecera, 4, cantidad * 2 + 36, 4);
+      campo_wav(cabecera, 4, cantidad * 4 + 36, 4);
+      campo_wav(cabecera, 22, 2, 2);
+      campo_wav(cabecera, 32, 4, 2);
       campo_wav(cabecera, 24, 48000, 4);
-      campo_wav(cabecera, 28, 96000, 4);
-      campo_wav(cabecera, 40, cantidad * 2, 4);
-      std::vector<unsigned char> bytes(cantidad * 2);
-      for (unsigned int i = 0; i < cantidad; ++i)
+      campo_wav(cabecera, 28, 192000, 4);
+      campo_wav(cabecera, 40, cantidad * 4, 4);
+      std::vector<unsigned char> bytes(cantidad * 4);
+      for (unsigned int i = 0; i < cantidad * 2; ++i)
         campo_wav(bytes.data(), i * 2, static_cast<unsigned short>(muestras[i]), 2);
       auto *salida = SDL_IOFromFile(ruta, "wb");
       if (!salida) {

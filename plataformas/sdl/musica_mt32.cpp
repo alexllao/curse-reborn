@@ -28,6 +28,8 @@ bool MusicaMt32::iniciar(const std::string &carpeta, const unsigned char *ejecut
   if (!biblioteca || !cargar_funcion(biblioteca, "mt32emu_create_context", crear) ||
       !cargar_funcion(biblioteca, "mt32emu_free_context", liberar) ||
       !cargar_funcion(biblioteca, "mt32emu_add_rom_file", agregar_rom) ||
+      !cargar_funcion(biblioteca, "mt32emu_get_rom_info", consultar_rom) ||
+      !cargar_funcion(biblioteca, "mt32emu_set_analog_output_mode", fijar_modo_analogico) ||
       !cargar_funcion(biblioteca, "mt32emu_set_stereo_output_samplerate", fijar_frecuencia) ||
       !cargar_funcion(biblioteca, "mt32emu_open_synth", abrir_sintesis) ||
       !cargar_funcion(biblioteca, "mt32emu_play_msg_now", enviar) ||
@@ -44,6 +46,11 @@ bool MusicaMt32::iniciar(const std::string &carpeta, const unsigned char *ejecut
     cerrar();
     return false;
   }
+  mt32emu_rom_info informacion{};
+  consultar_rom(contexto, &informacion);
+  registrar_accion("ROM Roland: %s; PCM: %s", informacion.control_rom_description,
+                   informacion.pcm_rom_id);
+  fijar_modo_analogico(contexto, MT32EMU_AOM_ACCURATE);
   fijar_frecuencia(contexto, 48000);
   if (abrir_sintesis(contexto) != MT32EMU_RC_OK) {
     cerrar();
@@ -127,14 +134,15 @@ bool MusicaMt32::generar(short *salida, unsigned int cantidad) {
       bloque = hasta_pulso;
     short estereo[1024];
     sintetizar(contexto, estereo, bloque);
-    // Eleva la mezcla MT-32 12 dB respecto al nivel anterior y reserva margen para los efectos.
-    for (unsigned int i = 0; i < bloque; ++i) {
-      auto mono = static_cast<int>(estereo[i * 2]) + estereo[i * 2 + 1];
-      if (mono > 28000)
-        mono = 28000;
-      if (mono < -28000)
-        mono = -28000;
-      salida[escritos + i] = static_cast<short>(mono);
+    // Conserva los dos canales de Munt; la ganancia por canal mantiene el nivel de la mezcla
+    // anterior.
+    for (unsigned int i = 0; i < bloque * 2; ++i) {
+      auto valor = static_cast<int>(estereo[i]) * 2;
+      if (valor > 28000)
+        valor = 28000;
+      if (valor < -28000)
+        valor = -28000;
+      salida[escritos * 2 + i] = static_cast<short>(valor);
     }
     escritos += bloque;
     fraccion += bloque * incremento;

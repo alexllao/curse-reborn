@@ -16,7 +16,8 @@ public:
   void cerrar();
   // FFFF es presentación; las demás escenas usan exclusivamente la tabla musical original.
   bool cambiar_escena(unsigned short escena);
-  // Atiende el reloj MPU de 120 pulsos por negra y produce PCM mono de 48 kHz.
+  // Atiende el reloj MPU de 120 pulsos por negra y produce PCM estéreo de 48 kHz; salida requiere
+  // dos muestras por fotograma.
   bool generar(short *salida, unsigned int cantidad);
   // Consulta disponibilidad tras validar ambas ROM y abrir el sintetizador.
   bool disponible() const {
@@ -33,6 +34,8 @@ private:
   decltype(&mt32emu_create_context) crear = nullptr;
   decltype(&mt32emu_free_context) liberar = nullptr;
   decltype(&mt32emu_add_rom_file) agregar_rom = nullptr;
+  decltype(&mt32emu_get_rom_info) consultar_rom = nullptr;
+  decltype(&mt32emu_set_analog_output_mode) fijar_modo_analogico = nullptr;
   decltype(&mt32emu_set_stereo_output_samplerate) fijar_frecuencia = nullptr;
   decltype(&mt32emu_open_synth) abrir_sintesis = nullptr;
   decltype(&mt32emu_play_msg_now) enviar = nullptr;

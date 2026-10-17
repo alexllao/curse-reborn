@@ -10,7 +10,8 @@
 // Salida compartida entre escenas; toda la lógica del juego permanece en el hilo principal.
 class Audio {
 public:
-  // Abre una salida mono; SDL convierte al formato y frecuencia del dispositivo real.
+  // Abre una salida estéreo con efectos mono; SDL convierte al formato y frecuencia del dispositivo
+  // real.
   bool abrir(const std::string &carpeta);
   // Cierra el flujo antes de SDL_Quit, incluso cuando falla la carga de una escena.
   void cerrar();
