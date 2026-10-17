@@ -33,12 +33,16 @@
     "comparar:altavoz": "node herramientas/gestionar_proyecto.mjs comparar:altavoz",
     "comparar:video": "node herramientas/gestionar_proyecto.mjs comparar:video",
     "comparar:rnc": "node herramientas/gestionar_proyecto.mjs comparar:rnc",
+    "comparar:rnc2": "node herramientas/gestionar_proyecto.mjs comparar:rnc2",
+    "comparar:escena": "node herramientas/gestionar_proyecto.mjs comparar:escena",
+    "comparar:presentacion": "node herramientas/gestionar_proyecto.mjs comparar:presentacion",
     "titulo": "node herramientas/gestionar_proyecto.mjs titulo",
     "comparar:graficos": "node herramientas/gestionar_proyecto.mjs comparar:graficos",
     "sdl:preparar": "node herramientas/gestionar_proyecto.mjs sdl:preparar",
     "sdl:compilar": "node herramientas/gestionar_proyecto.mjs sdl:compilar",
     "ventana": "node herramientas/gestionar_proyecto.mjs ventana",
     "comprobar:ventana": "node herramientas/gestionar_proyecto.mjs comprobar:ventana",
+    "comprobar:escena": "node herramientas/gestionar_proyecto.mjs comprobar:escena",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

@@ -1,6 +1,6 @@
-# Primera pantalla en una ventana SDL
+# Presentación reconstruida en una ventana SDL
 
-La primera presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee `TITLE.DAT` y `TITLE.PAL`, utiliza el núcleo reconstruido y muestra el título en SDL. **Es una pantalla fija de diagnóstico, todavía sin partida ni audio.**
+La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. **Hay tres vistas de desarrollo; aún faltan la presentación animada completa, el control del personaje y la partida. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales y las comprobaciones.
 
 ## Abrir la ventana
 
@@ -10,13 +10,13 @@ Desde la raíz del repositorio:
 pnpm ventana
 ```
 
-En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre la ventana. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Escape y el botón de cierre terminan el programa. La terminal permanece ocupada mientras la ventana está abierta.
+En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre Core. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Una tecla o el botón izquierdo inicia el fundido hacia la siguiente vista: Core, título y mazmorra. F6 avanza directamente y F5 retrocede directamente para acelerar las pruebas. Los atajos no modifican el progreso de una partida. Escape y el botón de cierre terminan el programa. La terminal permanece ocupada mientras la ventana está abierta.
 
 La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redimensionar o maximizar, la imagen se ajusta al espacio disponible manteniendo su proporción de 8:5, con bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT. Los marcos y la evaluación de filtros se dejan para más adelante.
 
 La aplicación carga los recursos originales directamente. No usa el PNG generado por Python, no necesita `CURSE.EXE` y no ejecuta Unicorn. El núcleo no incluye cabeceras SDL. [titulo.cpp](../motor/recursos/titulo.cpp) agrupa descompresión y copias por planos; la capa de plataforma abre archivos, adapta la paleta a RGBA y gestiona ventana, textura y eventos.
 
-Este recorrido corresponde a la imagen inicial de `0584`–`0612`, con los bloques ya contrastados de `64E0`, `7636` y `7679`. No incorpora la espera original de entrada, la selección de página VGA, los sprites ni el bucle completo del juego.
+Core y título corresponden a los recorridos de `0498` y `0584`, con los bloques contrastados de `64E0`, `7636` y `7679`. Los fundidos conservan las paletas de `77E4`; la capa SDL usa una frecuencia nominal de 70 Hz, pendiente de contrastar en una ejecución completa. La vista inicial incorpora el montaje de `50D2` y el sprite de `6D8C`, pero aún no el guion inicial ni el bucle de juego completo.
 
 ## Dependencias y compilación en Windows
 
@@ -47,13 +47,15 @@ SDL utiliza la licencia zlib. Se conserva su aviso sin modificar en [licencias/S
 pnpm comprobar:ventana
 ```
 
-El comando compila la aplicación y genera una referencia mediante `pnpm titulo`. Abre una ventana oculta de 320 × 200 con el dibujante de software de SDL, crea la textura, dibuja, recupera el fotograma y compara **los 64.000 píxeles RGB** con la referencia. Después introduce un evento de Escape en la cola SDL y comprueba que el programa termina por el tratamiento normal de eventos.
+El comando compila la aplicación y genera una referencia mediante `pnpm titulo`. Abre una ventana oculta de 320 × 200 con el dibujante de software de SDL, crea la textura, dibuja, recupera el fotograma y compara **los 64.000 píxeles RGB** con la referencia. Repite la comprobación después de iniciar Core e introducir una pulsación de Intro, esperando a que finalice el fundido normal hacia el título. Ambas capturas deben coincidir con la referencia. Después introduce un evento de Escape en la cola SDL y comprueba que el programa termina por el tratamiento normal de eventos.
 
-La comprobación ha pasado en Windows de 64 bits. La captura se ha inspeccionado visualmente y muestra el título y el castillo completos. Se guardan `trabajo/comprobacion_ventana/fotograma.bmp` y `resultado.json`; el informe recoge versión, plataforma, tipo de dibujante, huella RGB y alcance.
+La comprobación ha pasado en Windows de 64 bits. Las capturas de Core y del título se han inspeccionado visualmente. Se guardan `trabajo/comprobacion_ventana/fotograma.bmp`, `tras_fundido.bmp` y `resultado.json`; el informe recoge versión, plataforma, tipo de dibujante, huella RGB y alcance.
 
 La aplicación normal no requiere Python. La comprobación utiliza el generador de referencia existente y por ello necesita el entorno preparado con `pnpm preparar`. No vuelve a ejecutar todas las comparaciones diferenciales.
 
 Esta comprobación verifica la ruta de software con ventana oculta y cierre por Escape. La interacción visible, el cambio de tamaño y el dibujante acelerado quedan para la comprobación manual con `pnpm ventana`. No verifica audio, una partida ni compatibilidad con todos los controladores gráficos.
+
+`pnpm comprobar:escena` comprueba además el avance por F6 desde el título, la lectura del MAP y del banco del personaje y los 64.000 píxeles de la mazmorra. La comparación amplia del nuevo código está agrupada en `pnpm comparar:presentacion`; queda pendiente de confirmación del propietario.
 
 ## Otras plataformas
 

@@ -4,7 +4,8 @@ project(CurseReborn LANGUAGES CXX)
 find_package(SDL3 3.4.18 CONFIG REQUIRED)
 
 add_executable(curse-reborn plataformas/sdl/principal.cpp
-  motor/recursos/titulo.cpp motor/recursos/rnc.cpp motor/video/planos.cpp)
+  motor/recursos/titulo.cpp motor/recursos/rnc.cpp motor/recursos/rnc2.cpp
+  motor/recursos/escena.cpp motor/video/planos.cpp motor/video/sprites.cpp motor/video/fundido.cpp)
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)

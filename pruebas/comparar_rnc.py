@@ -89,26 +89,28 @@ def reutilizar_tablas(bloques):
 
 
 class ComparacionRnc(Comparacion):
+    metodo = 1
+    entrada_original = 0x64E0
+
     def __init__(self, raiz, biblioteca, muestra):
         super().__init__(raiz, biblioteca, muestra)
         memoria = ctypes.POINTER(ctypes.c_ubyte)
-        self.nativa.descomprimir_rnc1.argtypes = [
+        self.funcion = getattr(self.nativa, f'descomprimir_rnc{self.metodo}')
+        self.funcion.argtypes = [
             memoria,
             ctypes.c_uint,
             memoria,
             ctypes.c_uint,
             ctypes.POINTER(ctypes.c_uint),
         ]
-        self.nativa.descomprimir_rnc1.restype = ctypes.c_uint
+        self.funcion.restype = ctypes.c_uint
         self.archivos = {}
 
     def nativo(self, paquete, salida, capacidad):
         origen = (ctypes.c_ubyte * len(paquete)).from_buffer_copy(paquete)
         destino = (ctypes.c_ubyte * 65536).from_buffer(salida)
         escritos = ctypes.c_uint()
-        estado = self.nativa.descomprimir_rnc1(
-            origen, len(paquete), destino, capacidad, ctypes.byref(escritos)
-        )
+        estado = self.funcion(origen, len(paquete), destino, capacidad, ctypes.byref(escritos))
         return estado, escritos.value
 
     def contrastar(self, grupo, paquete, patron, mismo_buffer, capacidad, esperado=None, estado=0):
@@ -136,7 +138,7 @@ class ComparacionRnc(Comparacion):
         for registro, valor in contexto.items():
             m.reg_write(registro, valor)
         m.mem_write(0x8FF00, struct.pack('<H', 0x7000))
-        m.emu_start(0x64E0, 0x7000, count=20_000_000)
+        m.emu_start(self.entrada_original, 0x7000, count=20_000_000)
         if m.reg_read(r.UC_X86_REG_IP) != 0x7000 or m.reg_read(r.UC_X86_REG_SP) != 0xFF02:
             raise ErrorAnalisis(f'{grupo}: el original no retornó.')
         for registro, valor in contexto.items():

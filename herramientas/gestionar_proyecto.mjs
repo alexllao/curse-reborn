@@ -148,7 +148,11 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     join(raiz, 'motor', 'sonido', 'seleccionar.cpp'),
     join(raiz, 'motor', 'sonido', 'altavoz.cpp'),
     join(raiz, 'motor', 'video', 'planos.cpp'),
+    join(raiz, 'motor', 'video', 'sprites.cpp'),
+    join(raiz, 'motor', 'video', 'fundido.cpp'),
     join(raiz, 'motor', 'recursos', 'rnc.cpp'),
+    join(raiz, 'motor', 'recursos', 'rnc2.cpp'),
+    join(raiz, 'motor', 'recursos', 'escena.cpp'),
     join(raiz, 'motor', 'recursos', 'titulo.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'),
@@ -166,6 +170,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     altavoz: 'comparar_altavoz.py',
     video: 'comparar_video.py',
     rnc: 'comparar_rnc.py',
+    rnc2: 'comparar_rnc2.py',
+    escena: ['comparar_rnc2.py', 'comparar_escena.py'],
+    presentacion: ['comparar_rnc2.py', 'comparar_escena.py', 'comparar_fundidos.py'],
     titulo: 'generar_titulo.py',
     graficos: ['comparar_video.py', 'comparar_rnc.py'],
   }[tipo];
@@ -186,6 +193,7 @@ try {
     case 'sdl:compilar':
     case 'ventana':
     case 'comprobar:ventana':
+    case 'comprobar:escena':
       await gestionarSdl(accion, argumentos);
       break;
     case 'preparar':
@@ -233,6 +241,15 @@ try {
       break;
     case 'comparar:rnc':
       compararAcciones('rnc', argumentos);
+      break;
+    case 'comparar:rnc2':
+      compararAcciones('rnc2', argumentos);
+      break;
+    case 'comparar:escena':
+      compararAcciones('escena', argumentos);
+      break;
+    case 'comparar:presentacion':
+      compararAcciones('presentacion', argumentos);
       break;
     case 'titulo':
       compararAcciones('titulo', argumentos);

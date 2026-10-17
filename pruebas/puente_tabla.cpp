@@ -14,6 +14,9 @@
 #include "../motor/sonido/altavoz.hpp"
 #include "../motor/video/planos.hpp"
 #include "../motor/recursos/rnc.hpp"
+#include "../motor/recursos/escena.hpp"
+#include "../motor/video/sprites.hpp"
+#include "../motor/video/fundido.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -381,4 +384,35 @@ extern "C" EXPORTAR unsigned int descomprimir_rnc1(const unsigned char *origen,
   const auto resultado = motor::descomprimir_rnc1(origen, longitud, destino, capacidad);
   *escritos = resultado.escritos;
   return static_cast<unsigned int>(resultado.estado);
+}
+
+// Expone el método dos para contrastar la salida C++ con las instrucciones originales.
+extern "C" EXPORTAR unsigned int descomprimir_rnc2(const unsigned char *origen,
+                                                   unsigned int longitud, unsigned char *destino,
+                                                   unsigned int capacidad, unsigned int *escritos) {
+  const auto resultado = motor::descomprimir_rnc2(origen, longitud, destino, capacidad);
+  *escritos = resultado.escritos;
+  return static_cast<unsigned int>(resultado.estado);
+}
+
+// Expone el montaje MAP completo con imagen y matrices aportadas por el comparador.
+extern "C" EXPORTAR int preparar_fondo_mapa(const unsigned char *mapa, unsigned int longitud,
+                                            const unsigned char *seleccion,
+                                            motor::ImagenIndexada *imagen, unsigned char *planos,
+                                            unsigned char *tira) {
+  return motor::preparar_fondo_mapa(mapa, longitud, seleccion, *imagen, planos, tira) ? 1 : 0;
+}
+
+// Expone la presentación del fotograma para compararla con el dibujado VGA de 6D8C.
+extern "C" EXPORTAR int dibujar_fotograma(const unsigned char *banco, unsigned int longitud,
+                                          unsigned int indice, unsigned char *destino, int x, int y,
+                                          int invertido) {
+  return motor::dibujar_fotograma(banco, longitud, indice, destino, x, y, invertido != 0) ? 1 : 0;
+}
+
+// Expone un paso de paleta para contrastarlo con las escrituras DAC del fundido original.
+extern "C" EXPORTAR int calcular_fundido(const unsigned char *paleta, unsigned short colores,
+                                         unsigned short pasos, unsigned short paso,
+                                         unsigned char *salida) {
+  return motor::calcular_fundido(paleta, colores, pasos, paso, salida) ? 1 : 0;
 }

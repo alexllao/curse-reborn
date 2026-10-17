@@ -15,12 +15,14 @@ La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y doc
 
 El entregable principal es código C/C++ portable. Conservar el ensamblador comentado como referencia de los traslados: las anotaciones propias se versionan en el mapa y el listado completo se regenera en `trabajo/`. Mantener sincronizadas las referencias entre código original, contratos, C++ y comprobaciones.
 
-El núcleo reconstruido debe mantenerse independiente de SDL. La primera capa de plataforma está en `plataformas/sdl/`, con la pantalla de título compilada y comprobada mediante SDL3 en Windows. macOS y WebAssembly con Emscripten para navegador siguen pendientes de validar e integrar. Mantener explícita la diferencia entre esta pantalla fija y una partida completa.
+El núcleo reconstruido debe mantenerse independiente de SDL. La capa de plataforma está en `plataformas/sdl/`, con Core, título y una vista inicial de la mazmorra con el personaje. La presentación SDL está comprobada mediante software en Windows; el guion de apertura, sus actores y el control del personaje siguen pendientes de integrar. macOS y WebAssembly con Emscripten para navegador siguen pendientes de validar e integrar. Mantener explícita la diferencia entre estas vistas y una partida completa.
 
 ## Forma de trabajar
 
 - Priorizar la presentación y después la primera escena jugable, conectando personaje, movimiento e interacciones reconstruidos. El audio queda aparcado por preferencia del propietario.
+- Cuando se retome el audio, ofrecer emulación del PC Speaker, AdLib y MT-32 como opciones. Conservar ese objetivo sin anteponerlo a la jugabilidad actual.
 - Al redimensionar o maximizar, ajustar la imagen conservando sus proporciones y rellenar el espacio sobrante con bandas negras. Por ahora usar vecino más próximo, sin suavizado ni efectos visuales añadidos. Los marcos y la evaluación de filtros se reservan para una fase posterior.
+- Conservar las pantallas de Core, título y presentación y los efectos originales, incluidos sus fundidos; no confundirlos con filtros añadidos. Contrastar sus rutinas y declarar las diferencias de cadencia o partes aún pendientes. F5/F6 retroceden/avanzan en las vistas de desarrollo y no deben resolver puzles ni modificar partidas.
 - Trabajar en `development`, salvo indicación expresa del propietario.
 - Usar pnpm para la gestión del proyecto y Node para las herramientas generales. Mantener `package.json` y `pnpm-lock.yaml`; no generar archivos de bloqueo de npm o Yarn. Python se permite para el análisis del ejecutable y se invoca a través de los comandos de pnpm.
 - Revisar el estado del repositorio antes de modificar archivos y respetar el trabajo existente.

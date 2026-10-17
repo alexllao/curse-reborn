@@ -19,7 +19,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Primera pantalla de título en una ventana SDL, calculada por el núcleo C++ reconstruido. Todavía no hay una versión jugable.**
+**Core, título y vista inicial de la mazmorra con Brad, calculados por el núcleo C++ reconstruido y mostrados en SDL. Todavía no hay una versión jugable ni una presentación animada completa.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
@@ -31,15 +31,17 @@ Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están tras
 
 El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++ y el propietario ha confirmado sus **142 casos** de comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior.
 
-**`pnpm ventana` abre ahora esa pantalla en SDL**, ajustando la imagen al redimensionar o maximizar, conservando sus proporciones y dejando bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos, y permite cerrar con Escape. La comprobación con ventana oculta y dibujante de software coincide en los **64.000 píxeles** y termina mediante el evento de Escape. La interacción visible y el dibujante acelerado quedan para la comprobación manual; no hay partida ni audio. El método dos de RNC sigue pendiente.
+**`pnpm ventana` abre Core y permite pasar al título y a la mazmorra inicial**. Los fundidos de salida conservan los 32 pasos de paleta del original. Una tecla o el botón izquierdo inicia el fundido; F6 avanza y F5 retrocede directamente entre estas vistas de desarrollo. Escape cierra. La imagen se ajusta al redimensionar o maximizar conservando sus proporciones, con bandas negras y vecino más próximo, sin filtros añadidos.
 
-La prioridad actual es la presentación y después la primera escena jugable con el personaje, movimiento e interacciones. El audio queda aparcado. Más adelante se estudiarán marcos y filtros visuales.
+El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La comprobación SDL del título y la mazmorra compara sus **64.000 píxeles** con la referencia y termina mediante Escape. La interacción visible, la cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual. La mazmorra presenta su estado inicial; aún faltan el guion de apertura completo, los actores restantes y el control del personaje.
+
+La prioridad actual es completar la presentación original y después la primera escena jugable con el personaje, movimiento e interacciones. El audio queda aparcado; al retomarlo se contemplarán PC Speaker, AdLib y MT-32 como opciones. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 134 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [primera capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 140 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -82,7 +84,12 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar RNC de método uno y generar el título con C++; muestra de 38 casos coincidente.
 - [x] Confirmar con el propietario los 142 casos de RNC.
 - [x] Conectar el título a SDL y comprobar sus 64.000 píxeles con dibujante de software y cierre por Escape.
-- [ ] Confirmar manualmente la ventana visible y ampliar la presentación hacia los recursos de las escenas.
+- [x] Trasladar RNC de método dos, el montaje de fondos MAP y los sprites con transparencia, espejo y recorte; muestra de 102 casos coincidente.
+- [x] Trasladar los fundidos de paleta del arranque; 64 pasos contrastados contra el DAC original.
+- [x] Conectar Core, título y vista inicial con F5/F6; conservar los fundidos originales en el avance normal.
+- [ ] Confirmar la comparación amplia de la presentación con el propietario.
+- [ ] Completar el guion inicial y los actores de la mazmorra y conectar el control del personaje.
+- [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -95,7 +102,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** seguir la carga y el dibujo originales de escenas y entidades, incorporándolos a la presentación SDL; el título es todavía una pantalla fija.
+**Siguiente hito de reconstrucción:** ejecutar el guion original de apertura de la mazmorra, cargar sus actores y conectar el movimiento e interacciones reconstruidos, para pasar de las vistas iniciales a una escena jugable.
 
 ## Organización del repositorio
 
@@ -161,6 +168,8 @@ pnpm comprobar
 | `pnpm comprobar:ventana`    | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape.                                                                |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
+
+El nuevo comando `pnpm comparar:presentacion` agrupa RNC2, fondos, sprites y fundidos originales. `pnpm comparar:escena` agrupa RNC2, fondos y sprites; `pnpm comparar:rnc2` los comprueba por separado. `pnpm comprobar:escena` contrasta además los píxeles de la mazmorra dibujados por SDL. Consulta [el alcance de estos comandos y sus límites](documentacion/arranque_escena.md).
 
 Para comprobar los bloques trasladados, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar los tramos originales aislados. Consulta [los requisitos de compilación](documentacion/tabla_acciones.md) y [el alcance de las comparaciones](documentacion/contrato_acciones.md).
 

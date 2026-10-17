@@ -215,7 +215,43 @@
     {
       "direccion": "0000:4AF0",
       "nombre": "Selección y carga de escena",
-      "comentario": "Función todavía no trasladada. El recorrido mapea BX a un índice de recurso y puede cargar nuevos archivos."
+      "comentario": "El recorrido mapea BX a un índice de recurso y carga archivos. Trasladado el montaje de fondos en escena.cpp; faltan la inicialización completa de entidades y los guiones."
+    },
+    {
+      "direccion": "0000:4EE5",
+      "nombre": "Cabecera MAP y reserva del banco de tiras",
+      "comentario": "Lee 576 componentes de paleta en DS:0AEF, dos bytes de párrafos y después el banco completo. Los últimos 64 colores se conservan.",
+      "traslado": "motor/recursos/escena.cpp"
+    },
+    {
+      "direccion": "0000:50D2",
+      "nombre": "Montaje del fondo visible por tiras",
+      "comentario": "Recorre diez columnas desde la nueve: FF produce una tira negra; el resto indexa desplazamientos en párrafos y llama a 67BC. Cada tira de 32 por 200 se sube con paso de 80 bytes por plano.",
+      "traslado": "motor/recursos/escena.cpp"
+    },
+    {
+      "direccion": "0000:67BC",
+      "nombre": "Descompresión RNC de método dos",
+      "comentario": "Firma RNC02; el original reubica entradas solapadas. El traslado usa búferes separados, longitudes explícitas y rechaza referencias fuera de la salida previa.",
+      "traslado": "motor/recursos/rnc2.cpp"
+    },
+    {
+      "direccion": "0000:6862",
+      "nombre": "Bits y literales intercalados de método dos",
+      "comentario": "AL contiene bits de mayor a menor peso y un centinela. Descarta dos bits iniciales; comparte el puntero SI con literales y códigos de distancia. El traslado representa el centinela con un contador.",
+      "traslado": "motor/recursos/rnc2.cpp"
+    },
+    {
+      "direccion": "0000:6D8C",
+      "nombre": "Dibujo de un fotograma con transparencia y espejo",
+      "comentario": "Cabecera de diez bytes: ancho, alto y tres desplazamientos. Los cuatro flujos se consumen en orden base, campo ocho, seis y cuatro. Carreras positivas copian colores, negativas dejan huecos y cero termina la fila. Traslado a píxeles lineales sin listas de daños VGA.",
+      "traslado": "motor/video/sprites.cpp"
+    },
+    {
+      "direccion": "0000:77E4",
+      "nombre": "Fundido de paleta a negro",
+      "comentario": "Cada componente inicial se multiplica por 256. Su decremento es el cociente entero entre el acumulador y AX pasos; se resta antes de enviar AH al DAC tras cada retrazo. Los arranques estudiados usan 32 pasos.",
+      "traslado": "motor/video/fundido.cpp"
     },
     {
       "direccion": "0000:4D2B",

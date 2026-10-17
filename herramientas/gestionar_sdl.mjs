@@ -153,7 +153,11 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'motor', 'recursos', 'titulo.cpp'),
       join(raiz, 'motor', 'recursos', 'rnc.cpp'),
+      join(raiz, 'motor', 'recursos', 'rnc2.cpp'),
+      join(raiz, 'motor', 'recursos', 'escena.cpp'),
       join(raiz, 'motor', 'video', 'planos.cpp'),
+      join(raiz, 'motor', 'video', 'sprites.cpp'),
+      join(raiz, 'motor', 'video', 'fundido.cpp'),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
       join(aplicacion, 'curse-reborn.exe'),
@@ -165,8 +169,13 @@ async function compilar() {
   return join(aplicacion, 'curse-reborn.exe');
 }
 
-function leerReferencia() {
-  const archivo = readFileSync(join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png'));
+// Convierte la referencia indexada a RGB para compararla con una captura SDL.
+function leerReferencia(escena = false) {
+  const archivo = readFileSync(
+    escena
+      ? join(raiz, 'trabajo', 'comparacion_escena', 'mazmorra_cpp.png')
+      : join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png'),
+  );
   let posicion = 8,
     paleta,
     cabecera;
@@ -229,6 +238,7 @@ function leerCaptura(archivo) {
   return rgb;
 }
 
+// Prepara la dependencia, compila y abre o comprueba la presentación nativa solicitada.
 export async function gestionarSdl(accion, argumentos) {
   if (argumentos.length)
     throw new Error('Estos comandos todavía no admiten argumentos adicionales.');
@@ -236,11 +246,13 @@ export async function gestionarSdl(accion, argumentos) {
     if (await preparar()) console.log('Dependencia SDL preparada.');
     return;
   }
-  if (
-    accion !== 'sdl:compilar' &&
-    (!existsSync(join(datos, 'TITLE.DAT')) || !existsSync(join(datos, 'TITLE.PAL')))
-  ) {
-    throw new Error('Faltan TITLE.DAT o TITLE.PAL en datos_originales/CURSE/DATA.');
+  if (accion !== 'sdl:compilar') {
+    const necesarios = ['TITLE.DAT', 'TITLE.PAL', 'CORE.DAT', 'CORE.PAL'];
+    if (accion === 'ventana' || accion === 'comprobar:escena')
+      necesarios.push('DUNGEON.MAP', 'MANA.BRD', 'SPRITES.PAL');
+    const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
+    if (faltantes.length)
+      throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
   }
   const programa = await compilar();
   if (accion === 'sdl:compilar') {
@@ -248,22 +260,41 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'ventana') {
-    console.log('Abriendo el título. Escape o el botón de cierre cierran la ventana.');
+    console.log(
+      'Core, título y vista inicial: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Todavía sin control del personaje.',
+    );
     ejecutar(programa, [datos], process.env, false, false);
     return;
   }
-  ejecutar(process.execPath, [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'titulo']);
-  const carpeta = join(raiz, 'trabajo', 'comprobacion_ventana');
+  const escena = accion === 'comprobar:escena';
+  ejecutar(process.execPath, [
+    join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+    ...(escena ? ['comparar:escena', '--muestra'] : ['titulo']),
+  ]);
+  const carpeta = join(
+    raiz,
+    'trabajo',
+    escena ? 'comprobacion_escena_sdl' : 'comprobacion_ventana',
+  );
   mkdirSync(carpeta, { recursive: true });
   const captura = join(carpeta, 'fotograma.bmp');
-  ejecutar(programa, [datos, '--comprobar', captura], {
+  ejecutar(programa, [datos, escena ? '--comprobar-escena' : '--comprobar', captura], {
     ...process.env,
     SDL_RENDER_DRIVER: 'software',
   });
-  const esperado = leerReferencia(),
+  const esperado = leerReferencia(escena),
     observado = leerCaptura(captura);
   if (!observado.equals(esperado))
-    throw new Error('El fotograma SDL difiere de la referencia de título.');
+    throw new Error('El fotograma SDL difiere de la referencia reconstruida.');
+  if (!escena) {
+    const transicion = join(carpeta, 'tras_fundido.bmp');
+    ejecutar(programa, [datos, '--comprobar-transicion', transicion], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    if (!leerCaptura(transicion).equals(esperado))
+      throw new Error('El título tras el fundido de Core difiere de la referencia.');
+  }
   const informe = {
     version_sdl: configuracion.version,
     plataforma: process.platform,
@@ -272,9 +303,12 @@ export async function gestionarSdl(accion, argumentos) {
     dibujante: 'software',
     ventana_oculta: true,
     cierre_por_escape: true,
+    pantalla: escena ? 'mazmorra' : 'titulo',
+    avance_por_f6: escena,
+    transicion_core_titulo: !escena,
     sha256_rgb: createHash('sha256').update(observado).digest('hex'),
     alcance:
-      'Lectura de recursos, núcleo C++, textura SDL y captura del fotograma. Sin partida, audio ni verificación del dibujante acelerado.',
+      'Lectura de recursos, núcleo C++, textura SDL y captura del fotograma. Sin control del personaje, audio ni verificación del dibujante acelerado.',
   };
   writeFileSync(join(carpeta, 'resultado.json'), `${JSON.stringify(informe, null, 2)}\n`);
   console.log('Coinciden los 64.000 píxeles dibujados por SDL con la referencia.');
