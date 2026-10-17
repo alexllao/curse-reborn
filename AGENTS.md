@@ -10,12 +10,16 @@
 
 Curse Reborn reconstruye primero el funcionamiento de Curse of Enchantia para DOS en C++ con SDL. La futura remasterización se apoyará en esa base. El juego original fue el primer juego de ordenador del creador del proyecto; preservar su identidad forma parte del objetivo.
 
+La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y documentar las rutinas originales antes de trasladarlas a C++ y sustituir el acceso a DOS y al hardware por SDL. Investigar los recursos a través de las rutinas originales que los leen. Cada rutina trasladada debe indicar su dirección original, las evidencias y las comprobaciones realizadas.
+
 ## Forma de trabajar
 
 - Trabajar en `development`, salvo indicación expresa del propietario.
 - Revisar el estado del repositorio antes de modificar archivos y respetar el trabajo existente.
 - Distinguir hechos comprobados, hipótesis y funcionalidades pendientes. No presentar un visor o una demostración como un juego completo.
 - Documentar los formatos y las rutinas a partir de evidencias reproducibles. Comparar el comportamiento reconstruido con el original cuando sea posible.
+- Priorizar el mapa de código, las referencias y el flujo de control del ejecutable. La extracción de recursos por sí sola no constituye la reconstrucción del motor solicitada.
+- Guardar los desensamblados completos y otros resultados derivados del binario en `trabajo/`; versionar las herramientas propias y la documentación del análisis.
 - Verificar cada cambio de forma proporcionada y explicar los límites de la comprobación.
 - Mantener actualizados el estado y la hoja de ruta del README cuando cambien las capacidades reales.
 - Mantener la organización de monorepositorio: `motor/`, `herramientas/`, `documentacion/` y `pruebas/` comparten este repositorio y su historial.

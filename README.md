@@ -4,20 +4,26 @@
 
 Curse Reborn nace de un recuerdo muy concreto: *Curse of Enchantia* fue el primer juego al que su creador jugó en un ordenador. Este proyecto es una forma de regresar a aquella aventura, entender cómo funcionaba y construir una base que permita disfrutarla y remasterizarla con cuidado.
 
-La primera meta es reconstruir su funcionamiento en C++ con SDL, utilizando los recursos de la versión original para DOS. Sobre esa base queremos desarrollar una remasterización que conserve su identidad y abra la puerta a mejoras gráficas, sonoras y de uso.
+La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar su lógica a C++ con SDL**. Los recursos originales acompañarán esa reconstrucción. Sobre esa base queremos desarrollar una remasterización que conserve su identidad y abra la puerta a mejoras gráficas, sonoras y de uso.
 
 ## El proyecto que queremos construir
 
 El trabajo se plantea en dos etapas:
 
-1. **Reconstrucción del original.** Investigar el ejecutable y los archivos de datos, documentar sus formatos y reproducir el comportamiento del juego con un motor propio basado en SDL.
+1. **Reconstrucción del original desde su código.** Desensamblar el ejecutable, seguir sus llamadas y saltos, identificar sus rutinas y trasladarlas progresivamente a C++ con SDL. Los formatos de datos se investigarán siguiendo las rutinas originales de carga.
 2. **Remasterización.** Incorporar nuevos recursos y mejoras sobre un motor cuyo funcionamiento ya se haya comprobado frente al original.
 
 La fidelidad será el punto de partida: escenarios, personajes, animaciones, inventario y puzles deben entenderse antes de transformarse. La intención es poder distinguir el comportamiento original de las mejoras que se introduzcan más adelante.
 
+Cada parte trasladada deberá conservar una referencia a su dirección en el ejecutable, una explicación de su función y las comprobaciones realizadas. SDL sustituirá las dependencias de DOS y del hardware una vez identificado el comportamiento que deben conservar.
+
 ## Estado actual
 
-**Fase inicial de investigación y documentación. Todavía no hay una versión jugable ni un motor SDL implementado.**
+**Primera fase de desensamblado estático. Todavía no hay una versión jugable ni rutinas trasladadas a SDL.**
+
+Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos directos desde el punto de entrada y las entradas adicionales confirmadas. La primera pasada con tres manejadores de interrupción identificados alcanza **9.850 instrucciones y 101 destinos de llamada directa**, y señala **ocho transferencias indirectas pendientes**. Estas cifras son candidatos obtenidos por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada.
+
+El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque, las reubicaciones, las rutinas identificadas, las limitaciones y cómo reproducir el análisis. La herramienta tiene 13 comprobaciones con programas sintéticos que no requieren los archivos originales.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -37,28 +43,31 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 
 - [x] Inspeccionar inicialmente el ejecutable y el inventario de archivos.
 - [x] Crear el repositorio y establecer la rama `development`.
-- [ ] Descomprimir los recursos RNC y comprobar su integridad.
-- [ ] Recuperar y visualizar la pantalla de título con su paleta.
-- [ ] Documentar los formatos de escenarios, sprites y animaciones.
-- [ ] Crear un primer visor de recursos con SDL.
-- [ ] Mostrar un escenario con sus personajes y animaciones.
-- [ ] Reconstruir los controles, el movimiento y las interacciones.
-- [ ] Reconstruir el inventario, los eventos y los puzles.
-- [ ] Incorporar sonido, temporización y partidas guardadas.
+- [x] Crear una herramienta de desensamblado por flujo y validación de cabeceras MZ.
+- [x] Documentar el primer mapa de arranque y los manejadores de interrupción identificados.
+- [ ] Resolver las llamadas y los saltos indirectos para ampliar el mapa de código.
+- [ ] Identificar el bucle principal y las estructuras de estado del juego.
+- [ ] Seguir las rutinas originales de carga y descompresión de recursos.
+- [ ] Documentar los formatos de escenarios, sprites y animaciones a partir de esas rutinas.
+- [ ] Trasladar las primeras rutinas a C++ con referencias a sus direcciones originales.
+- [ ] Sustituir el acceso gráfico al hardware por SDL y comprobar el resultado.
+- [ ] Trasladar los controles, el movimiento y las interacciones.
+- [ ] Trasladar el inventario, los eventos y los puzles.
+- [ ] Trasladar el sonido, la temporización y las partidas guardadas.
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Primer hito visual:** mostrar la pantalla de título original a partir de sus archivos de datos. El siguiente será un escenario real con sus sprites.
+**Primer hito de reconstrucción:** explicar el recorrido desde el arranque hasta el bucle principal, resolver sus dependencias y preparar una primera rutina para su traslado verificable a C++.
 
 ## Organización del repositorio
 
-El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas compartirán este repositorio y su historial. Las carpetas iniciales contienen un archivo `.gitkeep` para conservar su estructura en Git; todavía no incluyen implementaciones. Las instrucciones de compilación se añadirán cuando exista la primera implementación.
+El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Ya hay una herramienta de análisis y sus comprobaciones; el motor sigue pendiente. Las carpetas vacías conservan un archivo `.gitkeep`. Las instrucciones de compilación del motor se añadirán cuando exista su primera implementación.
 
 ```text
 curse-reborn/
 ├── motor/              # Motor del juego basado en SDL
-├── herramientas/       # Análisis, extracción y conversión de recursos
-├── documentacion/      # Formatos, investigación y decisiones del proyecto
+├── herramientas/       # Análisis del ejecutable y apoyo a su reconstrucción
+├── documentacion/      # Mapa de código, formatos y decisiones del proyecto
 ├── pruebas/            # Comprobaciones del motor y las herramientas
 └── datos_originales/   # Copia local del juego; solo se versiona .gitkeep
 ```
