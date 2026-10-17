@@ -225,7 +225,12 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
-  const bool comprobar_lago = opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera";
+  const bool lago_segunda_parte =
+      opcion == "--comprobar-lago-concha" || opcion == "--comprobar-lago-viaje" ||
+      opcion == "--comprobar-lago-tortuga" || opcion == "--comprobar-lago-picana" ||
+      opcion == "--comprobar-lago-tiburon";
+  const bool comprobar_lago =
+      opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera" || lago_segunda_parte;
   const bool corredor_con_audio = opcion == "--comprobar-corredor-audio";
   const bool corredor_completo =
       opcion == "--comprobar-corredor-pecera" || opcion == "--comprobar-corredor-golpe" ||
@@ -640,13 +645,14 @@ int main(int argc, char *argv[]) {
           // Abre el menú común antes de cada acción del recorrido automático.
           const auto abrir = [&]() { return mazmorra.entrada_menu(152, 92, false, true); };
           // Busca el objeto por la misma cámara y los mismos controles de la partida normal.
-          const auto acercar = [&](unsigned short id, short dx, short dy, bool suelo) {
+          const auto acercar = [&](unsigned short id, short dx, short dy, bool suelo,
+                                   unsigned short limite_derecha = 240) {
             unsigned short x = 0, y = 0, alto = 0;
             bool visible = false;
             for (unsigned int i = 0; i < 400; ++i) {
               if (!mazmorra.posicion_objeto(id, x, y, alto))
                 return false;
-              if (x >= 40 && x <= 240) {
+              if (x >= 40 && x <= limite_derecha) {
                 visible = true;
                 break;
               }
@@ -680,6 +686,96 @@ int main(int argc, char *argv[]) {
                 !acercar(20, 12, 52, false) || !abrir() || !elegir(2) || !elegir(6) ||
                 !objeto(17) || !objeto(20) || !avanzar(192) || mazmorra.conserva_objeto(17))
               return fallo("No se ha podido entregar el gusano a Mr. Fish");
+          }
+        }
+        if (lago_segunda_parte) {
+          // Ejecuta menús y localiza objetos por sus identificadores en las casillas originales.
+          const auto objeto = [&](unsigned short id) {
+            const int casilla = mazmorra.casilla_objeto(id);
+            return casilla >= 0 && elegir(static_cast<unsigned int>(casilla));
+          };
+          // Inicia una acción de inventario con la misma apertura y casillas que usa el jugador.
+          const auto abrir = [&]() { return mazmorra.entrada_menu(152, 92, false, true); };
+          // Aproxima la concha hasta su borde derecho y utiliza los pies originales para el clic.
+          const auto recoger_concha = [&]() {
+            unsigned short x = 0, y = 0, alto = 0;
+            for (unsigned int i = 0; i < 400; ++i) {
+              if (!mazmorra.posicion_objeto(18, x, y, alto))
+                return false;
+              if (x >= 40 && x <= 280)
+                return mazmorra.mover_a(static_cast<unsigned short>(x + 5),
+                                        static_cast<unsigned short>(y + alto - 2)) &&
+                       avanzar(96);
+              const unsigned short direccion = x >= 32768 || x < 40 ? 8 : 4;
+              mazmorra.tecla_direccion(direccion, true);
+              const bool correcto = avanzar(1);
+              mazmorra.tecla_direccion(direccion, false);
+              if (!correcto)
+                return false;
+            }
+            return false;
+          };
+          if (!recoger_concha() || !abrir() || !elegir(1) || !objeto(18) || !avanzar(96) ||
+              !mazmorra.conserva_objeto(18))
+            return fallo("No se ha podido recoger la concha del pez liberado");
+          if (opcion != "--comprobar-lago-concha") {
+            bool entregada = false;
+            for (unsigned int i = 0; i < 500; ++i) {
+              unsigned short x = 0, y = 0, alto = 0, brad = 0;
+              if (!mazmorra.posicion_objeto(22, x, y, alto) ||
+                  !mazmorra.posicion_objeto(0, brad, y, alto))
+                return fallo("No se encuentra la tortuga durante la aproximación");
+              const int delta = static_cast<int>(x) - brad;
+              if (x < 32768 && delta > -24 && delta < 24) {
+                if (!avanzar(8) || !abrir() || !elegir(2) || !elegir(6) || !objeto(18) ||
+                    !objeto(22))
+                  return fallo("No se ha podido entregar la concha a la tortuga");
+                entregada = true;
+                break;
+              }
+              mazmorra.tecla_direccion(8, true);
+              const bool correcto = avanzar(1);
+              mazmorra.tecla_direccion(8, false);
+              if (!correcto)
+                return fallo("No se ha podido aproximar Brad a la tortuga");
+            }
+            if (!entregada || mazmorra.conserva_objeto(18) ||
+                !avanzar(opcion == "--comprobar-lago-viaje" ? 64 : 192))
+              return fallo("No se ha podido completar el transporte de la tortuga");
+            if (opcion != "--comprobar-lago-viaje" && opcion != "--comprobar-lago-tortuga") {
+              unsigned short x = 0, y = 0, alto = 0;
+              if (!mazmorra.posicion_objeto(23, x, y, alto) ||
+                  !mazmorra.mover_a(static_cast<unsigned short>(x + 5),
+                                    static_cast<unsigned short>(y + alto - 2)) ||
+                  !avanzar(96) || !abrir() || !elegir(1) || !objeto(23) || !avanzar(96) ||
+                  !mazmorra.conserva_objeto(23))
+                return fallo("No se ha podido recoger la picana tras las anguilas");
+              if (opcion != "--comprobar-lago-picana") {
+                bool descarga = false;
+                for (unsigned int i = 0; i < 350; ++i) {
+                  unsigned short tiburon = 0, brad = 0;
+                  if (mazmorra.tiburon_activo() &&
+                      mazmorra.posicion_objeto(0x040c, tiburon, y, alto) &&
+                      mazmorra.posicion_objeto(0, brad, y, alto) &&
+                      static_cast<int>(brad) - static_cast<short>(tiburon) <= 200) {
+                    if (!abrir() || !elegir(5) || !objeto(23))
+                      return fallo("No se ha podido usar la picana");
+                    descarga = true;
+                    break;
+                  }
+                  mazmorra.tecla_direccion(8, true);
+                  const bool correcto = avanzar(1);
+                  mazmorra.tecla_direccion(8, false);
+                  if (!correcto)
+                    return fallo("No se ha podido alcanzar la aparición del tiburón");
+                }
+                for (unsigned int i = 0; i < 48 && descarga && !mazmorra.tiburon_aturdido(); ++i)
+                  if (!avanzar(1))
+                    return fallo("No se ha podido reproducir la descarga de la picana");
+                if (!descarga || !mazmorra.tiburon_aturdido())
+                  return fallo("La picana no ha aturdido al tiburón en su intervalo original");
+              }
+            }
           }
         }
         if (!corredor_completo && opcion != "--comprobar-corredor-entrada") {
@@ -830,6 +926,8 @@ int main(int argc, char *argv[]) {
       SDL_DestroySurface(rgb);
       if (!guardado)
         return fallo("No se ha podido guardar el fotograma");
+      if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
+        return fallo("No se ha podido guardar el estado diagnóstico de la captura");
       capturada = true;
       // La comprobación termina por el mismo tratamiento de Escape que la ventana normal.
       SDL_Event cierre{};

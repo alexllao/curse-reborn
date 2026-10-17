@@ -44,6 +44,15 @@ public:
   bool conserva_objeto(unsigned short identificador) const;
   // El guion 0F94 es el golpe de las estatuas; permite detener una captura en esa fase real.
   bool golpe_estatua() const;
+  // Consulta la amenaza y la secuencia de descarga para comprobar el uso real de la picana.
+  bool tiburon_activo() const;
+  // Reconoce la respuesta original del tiburón alcanzado sin cambiar su comportamiento.
+  bool tiburon_aturdido() const;
+  // Conserva DS junto a una captura de prueba para localizar divergencias; no es una partida
+  // guardada.
+  bool guardar_estado_diagnostico(const std::string &ruta) const {
+    return SDL_SaveFile(ruta.c_str(), datos, sizeof(datos));
+  }
   // Consulta la tira inicial de la ventana visible, en unidades originales de 32 píxeles.
   unsigned char ventana_actual() const {
     return datos[0x3597];
@@ -114,6 +123,7 @@ private:
   unsigned char planos_fondo[262144]{}, tira_fondo[6400]{};
   unsigned int animacion = 0, paso_animacion = 0;
   int sentido_camara = 0;
+  bool paso_tras_camara = false;
   unsigned short salida_pendiente = 0;
   unsigned long long inicio_animacion = 0;
   motor::EstadoAleatorio aleatorio{};

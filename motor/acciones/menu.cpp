@@ -280,6 +280,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido);
     } else if (palabra(d, 0xb634) == 6 && objeto == 20 && previo == 17) {
       return ejecutar_interaccion_inicial(d, 0x9aa8, objeto, sonido);
+    } else if (palabra(d, 0xb634) == 6 && objeto == 22 && previo == 18) {
+      return ejecutar_interaccion_inicial(d, 0x9b86, objeto, sonido);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
         return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);

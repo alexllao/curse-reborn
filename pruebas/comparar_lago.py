@@ -14,6 +14,11 @@ class ComparacionLago(ComparacionCorredor):
         super().__init__(raiz, biblioteca, muestra)
         self.carpeta_resultados = 'comparacion_lago'
 
+    # Conserva el segmento junto a la imagen para revisar diferencias de guion, cámara y entrada.
+    def captura(self, datos, carpeta, nombre):
+        super().captura(datos, carpeta, nombre)
+        (carpeta / f'{nombre}.ds.bin').write_bytes(bytes(datos))
+
     # Continúa la entrada submarina real, con pecera y agua obtenidas en el corredor.
     def despues_corredor(self, datos, semilla, carpeta):
         (carpeta / 'entrada.bin').write_bytes(bytes(datos))
@@ -80,6 +85,92 @@ class ComparacionLago(ComparacionCorredor):
         (carpeta / 'oxigeno.bin').write_bytes(bytes(datos))
         (carpeta / 'oxigeno_semilla.json').write_text(json.dumps(list(semilla)), encoding='utf-8')
         self.resumen['intercambio_oxigeno'] = 1
+        self.segunda_parte(datos, semilla, carpeta)
+
+    # Recoge la concha real, espera a la tortuga, cruza las anguilas y utiliza la picana ante el tiburón.
+    def segunda_parte(self, datos, semilla, carpeta):
+        self.acercar(datos, semilla, 0x2CD0, 5, palabra(datos, 0x2CD8) - 2, 280)
+        self.elegir_objeto(datos, (1,), 18)
+        self.esperar(datos, semilla, 96)
+        if 18 not in [palabra(datos, 0x5225 + i * 2) for i in range(10)]:
+            raise ErrorAnalisis('La concha no se incorpora al inventario.')
+        self.captura(datos, carpeta, 'lago_concha')
+        for _ in range(500):
+            x = palabra(datos, 0x2D98)
+            if x < 32768 and abs(x - palabra(datos, 0x2C2D)) < 24:
+                self.andar(datos, semilla, 0, 8)
+                self.elegir_objeto(datos, (2, 6), 18)
+                self.elegir_objeto(datos, (), 22)
+                break
+            self.andar(datos, semilla, 8, 1)
+        else:
+            raise ErrorAnalisis('No se alcanza la tortuga con la concha.')
+        if palabra(datos, 0x2DA4) != 0x040B or palabra(datos, 0x358D) != 160:
+            raise ErrorAnalisis('La concha no activa el comportamiento original de transporte.')
+        montado = False
+        for paso in range(1, 193):
+            self.andar(datos, semilla, 0, 1)
+            montado = montado or palabra(datos, 0x2C3B) == 0x104A
+            if paso == 64:
+                self.captura(datos, carpeta, 'lago_tortuga_viaje')
+        if not montado or not datos[0x3594] or datos[0x3597] >= 20:
+            raise ErrorAnalisis('El transporte no cruza las anguilas o no devuelve el control.')
+        if 18 in [palabra(datos, 0x5225 + i * 2) for i in range(10)]:
+            raise ErrorAnalisis('La tortuga no consume la concha.')
+        self.captura(datos, carpeta, 'lago_tortuga')
+        self.clic(
+            datos, palabra(datos, 0x2DDA) + 5, palabra(datos, 0x2DDC) + palabra(datos, 0x2DE0) - 2
+        )
+        self.andar(datos, semilla, 0xFFFF, 96)
+        self.elegir_objeto(datos, (1,), 23)
+        self.esperar(datos, semilla, 96)
+        if 23 not in [palabra(datos, 0x5225 + i * 2) for i in range(10)]:
+            raise ErrorAnalisis('No se conserva la picana después del transporte.')
+        self.captura(datos, carpeta, 'lago_picana')
+        self.variantes_picana(datos)
+        for _ in range(350):
+            tiburon = palabra(datos, 0x2DFB)
+            tiburon = tiburon - 65536 if tiburon >= 32768 else tiburon
+            if datos[0x2DF9] == 1 and palabra(datos, 0x2C2D) - tiburon <= 200:
+                self.elegir_objeto(datos, (5,), 23)
+                break
+            self.andar(datos, semilla, 8, 1)
+        else:
+            raise ErrorAnalisis('El tiburón no aparece en el recorrido posterior a las anguilas.')
+        for _ in range(48):
+            self.andar(datos, semilla, 0xFFFF, 1)
+            if palabra(datos, 0x2E09) == 0x11C6:
+                break
+        else:
+            raise ErrorAnalisis(
+                'La picana no alcanza el intervalo original para aturdir al tiburón.'
+            )
+        if datos[0x389E] != 0:
+            raise ErrorAnalisis('El tiburón aturdido conserva su descriptor persistente activo.')
+        self.captura(datos, carpeta, 'lago_tiburon')
+        (carpeta / 'tiburon.bin').write_bytes(bytes(datos))
+        (carpeta / 'tiburon_semilla.json').write_text(json.dumps(list(semilla)), encoding='utf-8')
+        self.resumen['transporte_tortuga'] = 1
+        self.resumen['tiburon_aturdido'] = 1
+
+    # Compara el rechazo sin tiburón y la activación de la picana con las dos orientaciones de Brad.
+    def variantes_picana(self, base):
+        for estado in (0, 1, 3):
+            for orientacion in (0, 128):
+                d = bytearray(base)
+                d[0x2DF9] = estado
+                d[0x2C2C] = orientacion
+                guardar(d, 0xB60C, 0x2FCA)
+                guardar(d, 0xB620, 23 + 0x1A)
+                self.seleccionar(d, 0)
+        for puntos in (0, 0xFFFF):
+            d = bytearray(base)
+            guardar(d, 0x35C7, puntos)
+            guardar(d, 0xB60C, 0x3B53)
+            guardar(d, 0xB620, 22 + 0x1A)
+            guardar(d, 0xB634, 6)
+            guardar(d, 0xB638, 18)
+            self.seleccionar(d, 0)
 
     # Contrasta ramas aisladas sobre copias del estado real: capacidad, puntuación y concha en movimiento.
     def interacciones_lago(self, base):
@@ -116,10 +207,10 @@ class ComparacionLago(ComparacionCorredor):
         self.seleccionar(datos, objetos.index(identificador + 0x1A))
 
     # Recorre el fondo y su cámara hasta que el objeto entra en pantalla; después usa el clic original.
-    def acercar(self, datos, semilla, entidad, dx, dy):
+    def acercar(self, datos, semilla, entidad, dx, dy, limite_derecha=240):
         for _ in range(400):
             x = palabra(datos, entidad + 2)
-            if 40 <= x <= 240:
+            if 40 <= x <= limite_derecha:
                 break
             if self.andar(datos, semilla, 8 if x >= 32768 or x < 40 else 4, 1) is not None:
                 raise ErrorAnalisis('Se abandona el lago antes de alcanzar el objeto.')

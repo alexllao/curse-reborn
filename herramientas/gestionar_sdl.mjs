@@ -557,6 +557,11 @@ export async function gestionarSdl(accion, argumentos) {
     for (const [opcion, nombre] of [
       ['--comprobar-lago-pecera', 'lago_pecera_128'],
       ['--comprobar-lago', 'lago_oxigeno'],
+      ['--comprobar-lago-concha', 'lago_concha'],
+      ['--comprobar-lago-viaje', 'lago_tortuga_viaje'],
+      ['--comprobar-lago-tortuga', 'lago_tortuga'],
+      ['--comprobar-lago-picana', 'lago_picana'],
+      ['--comprobar-lago-tiburon', 'lago_tiburon'],
     ]) {
       const captura = join(carpeta, `${nombre}.bmp`);
       ejecutar(programa, [datos, opcion, captura], {
@@ -579,16 +584,16 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 2,
+          capturas: 7,
           pixeles_por_captura: 64000,
-          limite: 'Primera parte del lago hasta entregar el gusano; resto de la escena pendiente.',
+          limite: 'Recorrido hasta aturdir al tiburón; almeja y salida pendientes.',
         },
         null,
         2,
       ) + '\n',
     );
     console.log(
-      'Lago SDL: coinciden la pecera colocada y el recorrido hasta entregar el gusano a Mr. Fish.',
+      'Lago SDL: coinciden siete capturas hasta la concha, el transporte sobre las anguilas, la picana y el tiburón aturdido.',
     );
     return;
   }

@@ -1,4 +1,4 @@
-CURSE REBORN — PRIMERA PARTE DEL LAGO
+CURSE REBORN — LAGO HASTA EL TIBURÓN
 Autor del port: Àlex Llaó
 
 Llegar desde la mazmorra y el corredor con pecera y agua en el inventario.
@@ -31,9 +31,30 @@ Las casillas se cuentan desde uno y las coordenadas usan 320 x 200.
    Manipular objetos (3), dar (7), elegir el gusano y después Mr. Fish.
    Esperar su respuesta y la animación original.
 
+6. RECOGER LA CONCHA
+   El pez azul liberado deja caer una concha mediante su guion original.
+   Buscarla sobre el fondo y recogerla cuando haya terminado de caer.
+   Si todavía se está animando, el original rechaza conservarla.
+
+7. USAR LA TORTUGA
+   Acercarse a la tortuga y detener el movimiento cuando esté próxima.
+   Manipular objetos (3), dar (7), elegir la concha y después la tortuga.
+   Esperar: Brad sube, pasa sobre las anguilas y vuelve al fondo con control.
+
+8. RECOGER LA PICANA
+   Después de bajar, recoger el objeto junto a las algas.
+   El recorrido automático verifica que se incorpora al inventario.
+
+9. ATURDIR AL TIBURÓN
+   Avanzar hacia la izquierda hasta que aparezca el tiburón.
+   Elegir usar objeto (6) y la picana cuando se aproxime.
+   La descarga debe coincidir con su intervalo de ataque original;
+   el uso demasiado temprano o tardío puede fallar.
+   La prueba compara una descarga que lo aturde, sin forzar el impacto.
+
 PENDIENTE
-La ruta posterior de concha, tortuga, anguilas, picana, tiburones,
-almeja y tapón todavía no está completada en el port.
+Comprobar el resto del tramo de tiburones, saltar la almeja cerrada y
+abrir el tapón con la picana para abandonar el lago.
 
 COMPROBACIONES
 pnpm comparar:lago --muestra

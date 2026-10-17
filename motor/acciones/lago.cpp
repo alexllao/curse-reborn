@@ -112,6 +112,34 @@ ResultadoMenu ejecutar_interaccion_lago(unsigned char *d, unsigned short manejad
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  if (manejador == 0x9b86) {
+    // 9B86–9BB7: la concha activa el transporte de la tortuga y repone la reserva indicada por el
+    // guion.
+    retirar_identificador(d, 18);
+    guardar(d, 0x358d, 160);
+    guardar(d, 0x2da4, 0x040b);
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2e1c) + 38));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2e1e) + 40));
+    guardar(d, 0x0ad7, 0x99c8);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if (manejador == 0x2fca && id == 23) {
+    // 2FD3–300A: la picana exige un tiburón activo y mantiene habilitada la consulta del
+    // inventario.
+    if (d[0x2df9] != 1) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    guardar(d, 0x359a, 0);
+    guardar(d, 0x0dfa, 0);
+    guardar(d, 0x2c3b, 0x1ab2);
+    guardar(d, 0x2c40, 0x1ac3);
+    guardar(d, 0x2c45, 0);
+    const auto resultado = comenzar(d);
+    d[0x3596] = 1;
+    return resultado;
+  }
   if (manejador == 0x563a && (id == 17 || id == 18 || id == 23 || id == 26)) {
     const auto icono = d[0x524e + id * 2];
     if (icono == 0x1f || icono == 0x22)

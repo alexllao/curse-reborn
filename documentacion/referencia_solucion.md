@@ -14,7 +14,7 @@ El audio común ya está integrado. La prioridad actual es completar la jugabili
 | Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
 | Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
 | Caída                  | Animación y enlace automático con el lago comparados                                        |
-| Aventura submarina     | Ruta hasta la entrega del gusano comparada; concha, tortuga y segunda parte pendientes      |
+| Aventura submarina     | Ruta hasta concha, tortuga, picana y primer tiburón comparada; almeja y salida pendientes   |
 | Cuevas                 | Pendiente                                                                                   |
 | Paso del dragón        | Pendiente                                                                                   |
 | Confín del mundo       | Pendiente                                                                                   |
@@ -37,3 +37,13 @@ El audio común ya está integrado. La prioridad actual es completar la jugabili
 Redactar el recorrido propio en castellano; enlazar cada acción con su manejador DOS; comparar cambios persistentes, inventario y transiciones; comprobar la presentación en SDL. Marcar expresamente cualquier paso pendiente. La coincidencia de bloques aislados no acredita que una pantalla esté resuelta de principio a fin.
 
 Los recorridos de `documentacion/recorridos/` son redacción propia. No publicar la copia íntegra de la guía de referencia como parte del repositorio.
+
+## Cómo acreditar la fidelidad al original
+
+La comparación automática ejecuta rutinas del EXE DOS mediante Unicorn y las enfrenta a su traducción C++, con las mismas entradas, recursos y estado inicial. Contrasta memoria completa, azar, decisiones y secuencias. Esto acredita los casos y recorridos ejecutados; no supone haber validado todas las acciones posibles ni el programa DOS completo con sus dispositivos.
+
+Las composiciones y capturas SDL se comparan por píxeles. El viaje de la tortuga ha permitido localizar una diferencia real: SDL podía volver a desplazar la cámara antes de ejecutar el paso lógico que sigue a EAD5. La corrección conserva un único desplazamiento por ciclo antes de continuar la lógica.
+
+Para hablar de una versión completa fiel falta recorrer todas las escenas y sus puzles, alternativas, rechazos, muertes, regresos y cambios persistentes; reproducir partidas con entradas grabadas y contrastarlas también con DOSBox; y comprobar tiempos, interfaz, fundidos y audio. Las capturas estáticas no prueban la cadencia. Los mensajes musicales y muestras controladas no acreditan por sí solos la equivalencia acústica con hardware físico. El menú conserva adaptaciones y detalles de presentación pendientes, descritos en su documentación.
+
+Cada entrega debe identificar el tramo, las rutinas, los comandos ejecutados y sus límites. Mantener pendientes visibles; no usar el número de comparaciones como porcentaje del juego completo.

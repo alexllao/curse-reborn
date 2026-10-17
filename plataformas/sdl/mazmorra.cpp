@@ -155,6 +155,7 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   direccion = 0xffff;
   menu_visible = false;
   animacion = paso_animacion = 0;
+  paso_tras_camara = false;
   if (!cargar_banco("DUNGEON.MAP", mapa) || !motor::preparar_vista_escena(datos))
     return false;
   motor::guardar(datos, 0x2c29, referencia_raton);
@@ -169,11 +170,14 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
 bool Mazmorra::avanzar() {
   if (menu_visible || en_presentacion())
     return true;
-  const int camara = motor::decidir_camara(datos);
+  // EAD5 comprueba la cámara una vez por ciclo; tras sus ocho retrazos sigue el paso lógico.
+  const int camara = paso_tras_camara ? 0 : motor::decidir_camara(datos);
+  paso_tras_camara = false;
   if (camara) {
     if (!dibujar(imagen_anterior) || !motor::desplazar_camara(datos, camara) ||
         !cargar_fondo_visible() || !dibujar(imagen_destino))
       return false;
+    paso_tras_camara = true;
     sentido_camara = camara;
     animacion = 2;
     paso_animacion = 0;
@@ -283,6 +287,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
                          : manejador == 0xe0e9 || manejador == 0x384a ? "examinar"
                          : manejador == 0xe010 || manejador == 0x32de ? "hablar"
                          : manejador == 0xe14a || manejador == 0x3143 ? "atacar"
+                         : manejador == 0xe0fd || manejador == 0x2fca ? "usar objeto"
                          : manejador == 0xe126                        ? "saltar"
                                                                       : "elegir objeto o submenú";
     constexpr const char *manipulaciones[] = {"desbloquear",   "insertar",       "empujar o tirar",
@@ -579,6 +584,15 @@ int Mazmorra::casilla_objeto(unsigned short id) const {
 bool Mazmorra::conserva_objeto(unsigned short identificador) const {
   return motor::contiene_identificador(datos, identificador);
 }
+// El estado uno corresponde al tiburón visible que admite la acción 2FCA.
+bool Mazmorra::tiburon_activo() const {
+  return datos[0x2df9] == 1;
+}
+// 040C activa 11C6 únicamente cuando la descarga coincide con su intervalo original.
+bool Mazmorra::tiburon_aturdido() const {
+  return motor::palabra(datos, 0x2e09) == 0x11c6;
+}
+
 // Comprobación de una fase del personaje, sin forzar fotogramas ni detener sus entidades.
 bool Mazmorra::golpe_estatua() const {
   return motor::palabra(datos, 0x2c3b) == 0x0f94;

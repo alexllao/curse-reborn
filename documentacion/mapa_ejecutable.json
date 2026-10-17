@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:9B86",
+      "nombre": "Entrega de la concha y transporte de la tortuga",
+      "comentario": "9B86–9BB7: retira el identificador 12h, escribe reserva 160, cambia 2D96 a tipo 040B y prepara la aproximación y secuencia 99C8; suma cinco puntos. Traslado motor/acciones/lago.cpp. Ruta comparada hasta cruzar las anguilas y recuperar el control."
+    },
+    {
+      "direccion": "0000:2FD3",
+      "nombre": "Uso de la picana frente al tiburón",
+      "comentario": "2FD3–300A: el identificador 17h exige estado uno en 2DF9; configura 1AB2/1AC3, inicia la acción y habilita 3596. El comportamiento 040C conserva el intervalo de modelo y fotograma que produce 11C6. Traslado motor/acciones/lago.cpp; comparación de rechazos y descarga efectiva."
+    },
+    {
       "direccion": "0000:9994",
       "nombre": "Colocación de la pecera en el lago",
       "comentario": "9994–9A47: exige escena tres, retira los identificadores seis y siete, dispone seis canales auxiliares y dos de Brad y suma cinco puntos. Traslado: motor/acciones/lago.cpp. Comparación desde la partida persistente de mazmorra y corredor."
