@@ -1,0 +1,28 @@
+{
+  "label": "CORRIDOR",
+  "contexts": ["scene:1"],
+  "left": {
+    "x": 0,
+    "y": 0,
+    "width": 200,
+    "height": 200
+  },
+  "right": {
+    "x": 0,
+    "y": 0,
+    "width": 200,
+    "height": 200
+  },
+  "mirrorRight": true,
+  "fit": "cover",
+  "innerOverlap": 2,
+  "innerPadding": {
+    "left": 5,
+    "right": 5
+  },
+  "requestedSize": "2048x2048",
+  "actualSize": [200, 200],
+  "sourceSha256": "dacca8fd282a13d86355b42380d056d8ec5abe9f1dae0a647fba0ecd739b3a45",
+  "note": "Panel ancho del port; muro opaco hasta los extremos, alpha solo en el reborde interior. Original recreado a200x200/64colores; no recurso DOS.",
+  "huellaFuenteDeclarada": "dab91c11f9e38ae1aa79cb3dc0c7a79e1cf8ef696b6c6e4d2598904e10d611be"
+}

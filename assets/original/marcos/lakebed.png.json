@@ -1,0 +1,28 @@
+{
+  "label": "LAKEBED",
+  "contexts": ["scene:3"],
+  "left": {
+    "x": 0,
+    "y": 0,
+    "width": 200,
+    "height": 200
+  },
+  "right": {
+    "x": 0,
+    "y": 0,
+    "width": 200,
+    "height": 200
+  },
+  "mirrorRight": true,
+  "fit": "cover",
+  "innerOverlap": 2,
+  "innerPadding": {
+    "left": 9,
+    "right": 9
+  },
+  "requestedSize": "2048x2048",
+  "actualSize": [200, 200],
+  "sourceSha256": "10e409480848bd5bec9cfa78639cd035d166882df6e4dc1a8b937a5b9f35dd75",
+  "note": "Panel ancho del port; alpha solo en el reborde interior. Original recreado a200x200/64colores; no recurso DOS.",
+  "huellaFuenteDeclarada": "43d5ae848e76e938ce45517dfe47cc214c4b1d1ad128bfc76ac2c9347740dfd5"
+}

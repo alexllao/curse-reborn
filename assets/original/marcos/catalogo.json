@@ -1,4 +1,7 @@
 {
   "predeterminado": "default",
-  "pantallas": {}
+  "pantallas": {
+    "escena_1": "corridor",
+    "escena_3": "lakebed"
+  }
 }

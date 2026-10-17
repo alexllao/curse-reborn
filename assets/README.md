@@ -11,7 +11,7 @@ Esta carpeta contiene material adicional aportado o creado para Curse Reborn que
 
 Cada imagen tiene sus metadatos en `<nombre>.png.json`. `original/marcos/catalogo.json` elige el identificador `predeterminado` y permite asignaciones en `pantallas`, con claves `core`, `titulo`, `introduccion` o `escena_N`, donde N es el índice original de la escena. Por ejemplo, `escena_0` corresponde a la mazmorra inicial. Los valores son identificadores de imágenes sin `.png`.
 
-Si no existe una asignación específica se utiliza el predeterminado. De momento todas las pantallas usan `default`. Los `contexts` del JSON importado se conservan como información del recurso; la asignación efectiva de este port la decide `catalogo.json`.
+Si no existe una asignación específica se utiliza el predeterminado. El corredor (escena 1) utiliza `corridor` y el lago submarino (escena 3), `lakebed`; las demás pantallas utilizan `default`. Los dos paneles específicos, de 200 × 200, también han sido aportados por Àlex y se conservan sin editar, con las huellas comprobadas. Sus JSON traían huellas de versiones anteriores: se conservan en `huellaFuenteDeclarada` y `sourceSha256` identifica ahora el PNG aportado, sin editarlo. Los `contexts` del JSON importado se conservan como información del recurso; la asignación efectiva de este port la decide `catalogo.json`.
 
 Al compilar, Node valida recortes, dimensiones, huella y asignaciones, genera un catálogo C++ local y copia los assets junto al ejecutable. Añadir o cambiar una asignación requiere recompilar. El programa no depende de la ruta del proyecto anterior.
 
