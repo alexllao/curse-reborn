@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:300B",
+      "nombre": "Uso de la espada contra el asaltante",
+      "comentario": "300B–30D4: identificador75, retira espada y prepara canales1AFE/1B13/1B21 y1DB4/1DB8/1DBC. Crea40 fragmentos con120 consumos explícitos de azar; +5 puntos. Motor/acciones/asaltante.cpp y comparar:asaltante, incluidos registros agotados."
+    },
+    {
+      "direccion": "0000:5C44",
+      "nombre": "Recogida de la espada de COUNTRY2",
+      "comentario": "5C44–5C8C: tras comprobar capacidad por563A, conserva la postura del asaltante y prepara9771/977F, con demora calculada+6. Comparado en inventarios0/9/10 y modelos255/20."
+    },
+    {
+      "direccion": "0000:5C8F",
+      "nombre": "Recogida de dinero tras el asaltante",
+      "comentario": "5C8F–5CAC: ID76 elige2C8E en COUNTRY2 (2C6D en escena21), limpia4132 e invoca61A7 con desplazamientos5/1. Adaptación actual limitada aCOUNTRY2, sin afirmar soporte de los puzles deDRAGON."
+    },
+    {
+      "direccion": "0000:53E9",
+      "nombre": "Sendero de COUNTRY2 hacia Paso del Dragón",
+      "comentario": "53E9–541B: tipoBOXDET3/id1, destino183/96 y canales9525/9584/95DC; 886B, limpia2C0B/2C1A y retorna al flujo0BA0. Paso_escena.cpp y comparar:asaltante hasta salida26."
+    },
+    {
       "direccion": "0000:53B4",
       "nombre": "Acceso al sendero y perspectiva de COUNTRY1",
       "comentario": "53B4–53E6, tipo BOXDET 3/id0: AD7=93DC, ADC=944D, AE1=94B9, destino100/122; 886B y limpieza2C0B/2C1A. 0AC8 retorna a0BA0. Paso_escena.cpp conserva el flujo hasta actualizar historial y entidades; comparar:campo desde la salida real de las cuevas."

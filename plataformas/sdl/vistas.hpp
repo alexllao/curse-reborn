@@ -26,6 +26,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {14, 7, 16, "La cueva de los cuatro agujeros", "CAVE"},
     {12, 6, 13, "El pozo del cubo", "SHAFT"},
     {15, 12, 24, "La salida al campo", "COUNTRY1"},
+    {16, 15, 25, "El camino del asaltante", "COUNTRY2"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -35,5 +36,5 @@ inline const char *nombre_escena(unsigned short escena) {
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == escena)
       return vista.nombre;
-  return escena == 16 ? "El camino del asaltante (pendiente)" : "Escena pendiente";
+  return escena == 21 ? "La entrada de Paso del Dragón (pendiente)" : "Escena pendiente";
 }

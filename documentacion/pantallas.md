@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las dieciséis escenas jugables.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las diecisiete escenas jugables.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -22,10 +22,11 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 14    | 14         | La cueva de los cuatro agujeros | CAVE     |
 | 15    | 12         | El pozo del cubo                | SHAFT    |
 | 16    | 15         | La salida al campo              | COUNTRY1 |
+| 17    | 16         | El camino del asaltante         | COUNTRY2 |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
-La entrada siguiente, COUNTRY2 (escena 16), se identifica como **El camino del asaltante (pendiente)**. Sus puzles no están terminados y no se cuenta como otra pantalla completada.
+La entrada siguiente, DRAGON (escena 21), se identifica como **La entrada de Paso del Dragón (pendiente)**. Sus puzles no están terminados y no se cuenta como otra pantalla completada.
 
 El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
 

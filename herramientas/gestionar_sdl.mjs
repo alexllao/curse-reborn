@@ -431,6 +431,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
       accion === 'comprobar:campo' ||
+      accion === 'comprobar:asaltante' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -439,6 +440,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion) ||
@@ -457,6 +459,7 @@ export async function gestionarSdl(accion, argumentos) {
           'comprobar:cuevas',
           'comprobar:catapulta',
           'comprobar:campo',
+          'comprobar:asaltante',
           'comprobar:final-cuevas',
           'comprobar:partidas',
         ].includes(accion)
@@ -478,6 +481,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
       accion === 'comprobar:campo' ||
+      accion === 'comprobar:asaltante' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -486,6 +490,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion) ||
@@ -507,6 +512,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -527,6 +533,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -539,6 +546,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -550,6 +558,7 @@ export async function gestionarSdl(accion, argumentos) {
         'comprobar:cuevas',
         'comprobar:catapulta',
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -559,6 +568,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'ventana' ||
       [
         'comprobar:campo',
+        'comprobar:asaltante',
         'comprobar:catapulta',
         'comprobar:final-cuevas',
         'comprobar:partidas',
@@ -575,6 +585,8 @@ export async function gestionarSdl(accion, argumentos) {
         'COUNTRY1.SPR',
         'COUNTRY2.MAP',
         'COUNTRY2.SPR',
+        'DRAGON.MAP',
+        'DRAGON.SPR',
       );
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
@@ -586,6 +598,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
       accion === 'comprobar:campo' ||
+      accion === 'comprobar:asaltante' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -915,6 +928,78 @@ export async function gestionarSdl(accion, argumentos) {
     );
     return;
   }
+  if (accion === 'comprobar:asaltante') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_asaltante_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const entrada = join(carpeta, 'orden_entrada.bmp');
+    ejecutar(
+      programa,
+      [datos, '--comprobar-final-asaltante-entrada', entrada],
+      { ...process.env, SDL_RENDER_DRIVER: 'software' },
+      true,
+    );
+    ejecutar(
+      process.execPath,
+      [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'comparar:asaltante', '--muestra'],
+      { ...process.env, CURSE_REBORN_ORDEN_ENTRADA: entrada + '.ds.bin' },
+    );
+    const capturas = [
+      ['entrada', 'asaltante_entrada'],
+      ['tropiezo', 'asaltante_tropiezo'],
+      ['espada-suelo', 'asaltante_espada_suelo'],
+      ['espada', 'asaltante_espada'],
+      ['ataque-inicio', 'asaltante_ataque_inicio'],
+      ['ataque-0', 'asaltante_ataque_0'],
+      ['ataque-2', 'asaltante_ataque_2'],
+      ['ataque-7', 'asaltante_ataque_7'],
+      ['dinero', 'asaltante_dinero'],
+      ['camino', 'asaltante_camino'],
+      ['sendero', 'asaltante_sendero'],
+      ['salida', 'asaltante_salida'],
+    ];
+    for (const [opcion, nombre] of capturas) {
+      const captura = join(carpeta, nombre + '.bmp');
+      const registro = ejecutar(
+        programa,
+        [datos, '--comprobar-final-asaltante-' + opcion, captura],
+        { ...process.env, SDL_RENDER_DRIVER: 'software' },
+        true,
+      );
+      writeFileSync(join(carpeta, nombre + '.log'), registro + '\n');
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_asaltante', nombre + '_cpp.png'),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la referencia original.`);
+    }
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'vistas.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: capturas.length,
+          pixeles_por_captura: 64000,
+          vistas_jugables: 17,
+          cambios_de_vista: 34,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      `Asaltante: doce capturas SDL coincidentes y diecisiete vistas F5/F6. Resultados: ${carpeta}`,
+    );
+    return;
+  }
   if (accion === 'comprobar:campo') {
     ejecutar(process.execPath, [
       join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
@@ -965,15 +1050,15 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: capturas.length,
           pixeles_por_captura: 64000,
-          vistas_jugables: 16,
-          cambios_de_vista: 32,
+          vistas_jugables: 17,
+          cambios_de_vista: 34,
         },
         null,
         2,
       ) + '\n',
     );
     console.log(
-      `Campo: nueve capturas SDL coincidentes y dieciséis vistas F5/F6. Resultados: ${carpeta}`,
+      `Campo: nueve capturas SDL coincidentes y diecisiete vistas F5/F6. Resultados: ${carpeta}`,
     );
     return;
   }

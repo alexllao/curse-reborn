@@ -26,6 +26,7 @@ BANCOS_ESCENA = {
     14: 'CAVE',
     15: 'COUNTRY1',
     16: 'COUNTRY2',
+    21: 'DRAGON',
 }
 
 

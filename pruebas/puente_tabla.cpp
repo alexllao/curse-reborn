@@ -674,8 +674,8 @@ bool crear_menu_prueba(void *contexto, unsigned char *datos, unsigned short desc
   auto &estado = *static_cast<ContextoCreacionMenu *>(contexto);
   const motor::RecursosEntidades recursos{&estado.banco, dimensiones_banco, 0x4000, parrafo_banco};
   const auto resultado = motor::crear_entidad(datos, estado.azar, recursos, descriptor);
-  posicion = resultado.posicion;
-  return resultado.valido && resultado.creada;
+  posicion = resultado.creada ? resultado.posicion : 0x3510;
+  return resultado.valido;
 }
 // Permite comparar selecciones que crean fragmentos sin introducir recursos en el núcleo.
 extern "C" EXPORTAR int seleccionar_menu_recursos(unsigned char *datos, unsigned short casilla,
@@ -684,7 +684,7 @@ extern "C" EXPORTAR int seleccionar_menu_recursos(unsigned char *datos, unsigned
   ContextoCreacionMenu contexto{{banco, longitud},
                                 {semilla[0], semilla[1], semilla[2], semilla[3]}};
   const auto resultado =
-      motor::seleccionar_menu(datos, casilla, {}, {&contexto, crear_menu_prueba});
+      motor::seleccionar_menu(datos, casilla, {}, {&contexto, crear_menu_prueba, &contexto.azar});
   semilla[0] = contexto.azar.primera;
   semilla[1] = contexto.azar.segunda;
   semilla[2] = contexto.azar.tercera;

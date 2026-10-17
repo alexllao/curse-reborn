@@ -27,6 +27,7 @@
 #include "comprobar_catapulta.hpp"
 #include "comprobar_final_cuevas.hpp"
 #include "comprobar_campo.hpp"
+#include "comprobar_asaltante.hpp"
 #include "partidas.hpp"
 #include "comprobar_partidas.hpp"
 #include "marcos.hpp"
@@ -1075,9 +1076,13 @@ int main(int argc, char *argv[]) {
         if (comprobar_final_cuevas &&
             !comprobar_recorrido_final_cuevas(mazmorra, opcion, avanzar, abrir, elegir, objeto))
           return fallo("No coincide el recorrido SDL hasta salir de las cuevas");
-        if (opcion.rfind("--comprobar-final-campo-", 0) == 0 &&
+        if ((opcion.rfind("--comprobar-final-campo-", 0) == 0 ||
+             opcion.rfind("--comprobar-final-asaltante-", 0) == 0) &&
             !comprobar_recorrido_campo(mazmorra, opcion, avanzar))
           return fallo("No coincide el recorrido SDL de la salida al campo");
+        if (opcion.rfind("--comprobar-final-asaltante-", 0) == 0 &&
+            !comprobar_recorrido_asaltante(mazmorra, opcion, avanzar, abrir, elegir, objeto))
+          return fallo("No coincide el recorrido SDL del camino del asaltante");
         if (opcion == "--comprobar-final-partidas" &&
             !comprobar_partidas_sdl(partidas, presentacion.ventana, mazmorra, argv[1], imagen))
           return fallo("No coinciden las ranuras y la restauración SDL de partidas");

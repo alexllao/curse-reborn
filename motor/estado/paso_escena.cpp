@@ -26,14 +26,16 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
     return {true, 16, escena};
   }
   const auto colision = resolver_colision_personaje(d, azar, geometria, longitud);
-  if (colision.valida && colision.acciones == 8 && colision.parametro == 0 &&
-      palabra(d, 0x8082) == 15) {
-    // 0AC8 -> 53B4–53E6: entrar en el sendero prepara las tres secuencias de perspectiva.
-    guardar(d, 0x0ad7, 0x93dc);
-    guardar(d, 0x0adc, 0x944d);
-    guardar(d, 0x0ae1, 0x94b9);
-    guardar(d, 0x1a38, 100);
-    guardar(d, 0x1a3a, 122);
+  if (colision.valida && colision.acciones == 8 &&
+      ((colision.parametro == 0 && palabra(d, 0x8082) == 15) ||
+       (colision.parametro == 1 && palabra(d, 0x8082) == 16))) {
+    // 0AC8 -> 53B4–541B: cada sendero prepara sus tres secuencias de perspectiva.
+    const bool primero = colision.parametro == 0;
+    guardar(d, 0x0ad7, primero ? 0x93dc : 0x9525);
+    guardar(d, 0x0adc, primero ? 0x944d : 0x9584);
+    guardar(d, 0x0ae1, primero ? 0x94b9 : 0x95dc);
+    guardar(d, 0x1a38, primero ? 100 : 183);
+    guardar(d, 0x1a3a, primero ? 122 : 96);
     unsigned short pasos = 0;
     if (!iniciar_accion(d, pasos))
       return {false, 0, 0};

@@ -1,11 +1,14 @@
 #pragma once
 #include "../sonido/servicio.hpp"
+#include "../aleatorio/generador.hpp"
 namespace motor {
-// Adapta 8B6F a los recursos de la plataforma; el núcleo solo recibe un descriptor y su resultado.
+// Adapta 8B6F a los recursos: agotamiento normal devuelve posición 3510, sin error de recurso.
+// El azar compartido permite conservar también los consumos explícitos del manejador original.
 struct ServicioCreacion {
   void *contexto = nullptr;
   bool (*crear)(void *contexto, unsigned char *datos, unsigned short descriptor,
                 unsigned short &posicion) = nullptr;
+  EstadoAleatorio *azar = nullptr;
 };
 enum class ResultadoMenu { actualizado, accion, pendiente, error };
 // DE96–DEF4: diez acciones iniciales y bloqueo de recoger/temas mientras Brad tiene una secuencia.

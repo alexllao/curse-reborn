@@ -221,7 +221,8 @@ bool Mazmorra::avanzar() {
          (actual == 12 && (resultado.parametro == 21 || resultado.parametro == 24)) ||
          (actual == 13 && resultado.parametro == 22) ||
          (actual == 14 && resultado.parametro == 23) ||
-         (actual == 15 && resultado.parametro == 25))) {
+         (actual == 15 && resultado.parametro == 25) ||
+         (actual == 16 && resultado.parametro == 26))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -291,8 +292,8 @@ bool Mazmorra::crear_desde_menu(void *contexto, unsigned char *datos, unsigned s
                                           parrafo_escena,
                                           {contexto, reproducir_sonido}};
   const auto resultado = motor::crear_entidad(datos, partida.aleatorio, recursos, descriptor);
-  posicion = resultado.posicion;
-  return resultado.valido && resultado.creada;
+  posicion = resultado.creada ? resultado.posicion : 0x3510;
+  return resultado.valido;
 }
 
 // DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
@@ -353,7 +354,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
       return true;
     }
     const auto resultado = motor::seleccionar_menu(datos, casilla_menu, {this, reproducir_sonido},
-                                                   {this, crear_desde_menu});
+                                                   {this, crear_desde_menu, &aleatorio});
     if (resultado == motor::ResultadoMenu::error) {
       registrar_accion("Error al despachar la selección del menú");
       return false;
@@ -453,11 +454,11 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
     return false;
   const auto salida = motor::palabra(candidata.datos, 0x3598);
-  if (salida != 0xffff && salida > 25)
+  if (salida != 0xffff && salida > 26)
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 16)
+  if (escena_guardada > 16 && escena_guardada != 21)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;
@@ -581,7 +582,7 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 25)
+  if (salida > 26)
     return false;
   unsigned short ancho = 32, alto = 48;
   const auto modelo_entrada = datos[0x85ac + salida * 14 + 13];
@@ -600,7 +601,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
 bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_sonido,
                                         bool reconstruir_entidades) {
   const auto actual = escena_actual();
-  const char *nombre_banco = actual == 16 ? "COUNTRY2" : nullptr;
+  const char *nombre_banco = actual == 21 ? "DRAGON" : nullptr;
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == actual)
       nombre_banco = vista.banco;

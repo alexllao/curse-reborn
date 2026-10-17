@@ -46,5 +46,6 @@
   "motor/sonido/digital.cpp",
   "motor/acciones/lago.cpp",
   "motor/acciones/corredor.cpp",
-  "motor/estado/partidas.cpp"
+  "motor/estado/partidas.cpp",
+  "motor/acciones/asaltante.cpp"
 ]

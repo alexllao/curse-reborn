@@ -1,4 +1,5 @@
 #include "corredor.hpp"
+#include "asaltante.hpp"
 #include "lago.hpp"
 #include "poza.hpp"
 #include "cuevas.hpp"
@@ -100,6 +101,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 16)
+    return ejecutar_interaccion_asaltante(d, manejador, id, sonido, creacion);
   if (palabra(d, 0x8082) == 15) {
     // 3545, 37FF, 3B4F y 88A0: respuestas comunes de la explanada tras caer la máscara.
     if (manejador == 0x32de && id <= 1)
@@ -386,6 +389,11 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
     }
     if (palabra(d, 0x8082) == 15 && (objeto == 3 || objeto == 70 || objeto == 74) &&
         (previo == 0xffff || previo == 3 || previo == 70 || previo == 74)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    if (palabra(d, 0x8082) == 16 && (objeto == 3 || objeto == 70 || objeto == 75 || objeto == 76) &&
+        (previo == 0xffff || previo == 3 || previo == 70 || previo == 75 || previo == 76)) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }

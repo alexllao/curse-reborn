@@ -38,7 +38,7 @@ void actualizar_escena_cinco(unsigned char *datos) {
 bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
-      escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15)
+      escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 || escena == 21)
     return true;
   if (escena == 16) {
     // 1993–19A6: conserva la franja de proximidad del asaltante en la entrada siguiente.

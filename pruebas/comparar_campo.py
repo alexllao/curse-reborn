@@ -21,7 +21,12 @@ class ComparacionCampo(ComparacionFinalCuevas):
     def auditar(self, datos, nombre):
         if not datos[0x3595]:
             return
-        pendientes = auditar_estado(self, bytearray(datos), nombre)
+        semilla = list(self.semilla_menu)
+        try:
+            pendientes = auditar_estado(self, bytearray(datos), nombre)
+        finally:
+            self.semilla_menu[:] = semilla
+            self.retomar_recursos(datos)
         if pendientes:
             raise ErrorAnalisis(f'Opciones de {nombre} pendientes: {pendientes[:3]}')
         self.estados_auditados += 1
