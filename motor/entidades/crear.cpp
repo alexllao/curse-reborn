@@ -86,7 +86,7 @@ CreacionEntidad crear_entidad(unsigned char *datos, EstadoAleatorio &estado,
     datos[static_cast<Palabra>(destino + 0x1c)] = static_cast<unsigned char>(ax);
   }
   if ((b(0) & 4) != 0) {
-    // MOV AL,[DI+14h] conserva AH: el divisor original no es necesariamente un escribir_byte.
+    // MOV AL,[DI+14h] conserva AH: el divisor original puede superar un byte.
     ax = static_cast<Palabra>((ax & 0xff00) | datos[static_cast<Palabra>(destino + 0x14)]);
     if (!generar_aleatorio(estado, ax, ax))
       return {false, true, destino};

@@ -17,6 +17,12 @@
 #include "../motor/recursos/escena.hpp"
 #include "../motor/video/sprites.hpp"
 #include "../motor/video/fundido.hpp"
+#include "../motor/video/orden.hpp"
+#include "../motor/video/entidades.hpp"
+#include "../motor/entidades/mazmorra.hpp"
+#include "../motor/acciones/objetos_cercanos.hpp"
+#include "../motor/estado/inicializar.hpp"
+#include "../motor/recursos/banco.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -415,4 +421,119 @@ extern "C" EXPORTAR int calcular_fundido(const unsigned char *paleta, unsigned s
                                          unsigned short pasos, unsigned short paso,
                                          unsigned char *salida) {
   return motor::calcular_fundido(paleta, colores, pasos, paso, salida) ? 1 : 0;
+}
+
+namespace {
+struct BancoPrueba {
+  const unsigned char *datos;
+  unsigned int longitud;
+};
+// Aporta las cabeceras reales de la escena al cargador de entidades comparado.
+bool dimensiones_banco(void *contexto, unsigned short indice, unsigned short &ancho,
+                       unsigned short &alto) {
+  const auto &banco = *static_cast<const BancoPrueba *>(contexto);
+  unsigned short parrafo = 0;
+  return motor::consultar_fotograma(banco.datos, banco.longitud, indice, parrafo, ancho, alto);
+}
+// Aporta la referencia de cada superposición, sin convertirla en una dirección del anfitrión.
+bool parrafo_banco(void *contexto, unsigned short indice, unsigned short &parrafo) {
+  const auto &banco = *static_cast<const BancoPrueba *>(contexto);
+  unsigned short ancho = 0, alto = 0;
+  return motor::consultar_fotograma(banco.datos, banco.longitud, indice, parrafo, ancho, alto);
+}
+// Resuelve las dos referencias usadas por las composiciones comparadas con VGA.
+const unsigned char *banco_dibujo_prueba(void *contexto, unsigned short referencia,
+                                         unsigned int &longitud) {
+  const auto *bancos = static_cast<const BancoPrueba *>(contexto);
+  if (referencia != 0x4000 && referencia != 0x5000)
+    return nullptr;
+  const auto &banco = bancos[referencia == 0x4000 ? 0 : 1];
+  longitud = banco.longitud;
+  return banco.datos;
+}
+// Consulta dimensiones reales al avanzar los guiones de la mazmorra comparada.
+bool dimensiones_dibujo_prueba(void *contexto, unsigned short referencia, unsigned short indice,
+                               unsigned short &ancho, unsigned short &alto) {
+  unsigned int longitud = 0;
+  const auto *banco = banco_dibujo_prueba(contexto, referencia, longitud);
+  unsigned short parrafo = 0;
+  return banco && motor::consultar_fotograma(banco, longitud, indice, parrafo, ancho, alto);
+}
+// Equivale a la modalidad cero del selector, que no accede a dispositivos ni detiene la secuencia.
+bool omitir_sonido_prueba(void *, unsigned char *datos, unsigned short, unsigned char) {
+  return datos[0x0ad4] == 0;
+}
+} // namespace
+
+// Expone carga, rutina particular, ordenación, proximidad y entrada para sus comparaciones
+// completas de DS.
+extern "C" EXPORTAR int procesar_objetos(unsigned int operacion, unsigned char *datos,
+                                         unsigned short *palabras, const unsigned char *banco,
+                                         unsigned int longitud, unsigned short mascara,
+                                         unsigned short parametro, unsigned short *salida) {
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  BancoPrueba contexto{banco, longitud};
+  const motor::RecursosEntidades recursos{&contexto, dimensiones_banco, 0x4000, parrafo_banco};
+  bool valido = true;
+  if (operacion == 0)
+    valido = motor::cargar_entidades_escena(datos, estado, recursos);
+  else if (operacion == 1)
+    motor::actualizar_mazmorra(datos);
+  else if (operacion == 2)
+    motor::ordenar_entidades(datos);
+  else if (operacion == 3) {
+    const auto resultado = motor::buscar_objetos_cercanos(
+        datos, static_cast<unsigned char>(mascara), 0xa800, parametro);
+    valido = resultado.valido;
+    *salida = resultado.cantidad;
+  } else if (operacion == 4) {
+    unsigned short parrafo = 0, ancho = 0, alto = 0;
+    valido = motor::consultar_fotograma(banco, longitud, 0, parrafo, ancho, alto);
+    if (valido)
+      motor::preparar_entrada_mazmorra(datos, 0x4000, ancho, alto);
+  } else
+    valido = false;
+  palabras[0] = estado.primera;
+  palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera;
+  palabras[3] = estado.cuarta;
+  return valido ? 1 : 0;
+}
+
+// Compone una escena sobre el fondo de prueba y conserva la tabla de orden resultante en DS.
+extern "C" EXPORTAR int componer_objetos(unsigned char *datos, unsigned char *imagen,
+                                         const unsigned char *escena, unsigned int longitud_escena,
+                                         const unsigned char *personaje,
+                                         unsigned int longitud_personaje) {
+  BancoPrueba bancos[2] = {{escena, longitud_escena}, {personaje, longitud_personaje}};
+  return motor::dibujar_entidades(datos, {bancos, banco_dibujo_prueba, 0x4000}, imagen) ? 1 : 0;
+}
+
+// Integra un paso de secuencias y comportamientos con bancos reales y la rutina particular de la
+// escena cero.
+extern "C" EXPORTAR int avanzar_objetos(unsigned char *datos, unsigned short *palabras,
+                                        const unsigned char *escena, unsigned int longitud_escena,
+                                        const unsigned char *personaje,
+                                        unsigned int longitud_personaje) {
+  BancoPrueba bancos[2] = {{escena, longitud_escena}, {personaje, longitud_personaje}};
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const motor::RecursosSecuencias secuencias{bancos, dimensiones_dibujo_prueba, 0x5000, 0x4000,
+                                             0x5000, omitir_sonido_prueba,      nullptr};
+  const motor::RecursosEntidades entidades{&bancos[0], dimensiones_banco, 0x4000, parrafo_banco};
+  const bool valido =
+      motor::avanzar_secuencias(datos, estado, secuencias) == motor::EstadoSecuencias::correcto &&
+      motor::actualizar_entidades(datos, estado, entidades);
+  if (valido)
+    motor::actualizar_mazmorra(datos);
+  palabras[0] = estado.primera;
+  palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera;
+  palabras[3] = estado.cuarta;
+  return valido ? 1 : 0;
+}
+
+// Comprueba la copia de datos MZ por separado de las rutinas de juego que los consumen.
+extern "C" EXPORTAR int leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,
+                                             unsigned char *datos) {
+  return motor::leer_datos_iniciales(ejecutable, longitud, datos) ? 1 : 0;
 }

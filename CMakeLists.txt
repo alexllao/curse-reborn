@@ -3,9 +3,16 @@ project(CurseReborn LANGUAGES CXX)
 
 find_package(SDL3 3.4.18 CONFIG REQUIRED)
 
-add_executable(curse-reborn plataformas/sdl/principal.cpp
-  motor/recursos/titulo.cpp motor/recursos/rnc.cpp motor/recursos/rnc2.cpp
-  motor/recursos/escena.cpp motor/video/planos.cpp motor/video/sprites.cpp motor/video/fundido.cpp)
+# Compartir la lista de fuentes con las herramientas Node de compilación y comparación.
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/fuentes_motor.json" MANIFIESTO_MOTOR)
+string(JSON CANTIDAD_FUENTES LENGTH "${MANIFIESTO_MOTOR}")
+math(EXPR ULTIMA_FUENTE "${CANTIDAD_FUENTES} - 1")
+foreach(INDICE RANGE ${ULTIMA_FUENTE})
+  string(JSON FUENTE GET "${MANIFIESTO_MOTOR}" ${INDICE})
+  list(APPEND FUENTES_MOTOR "${FUENTE}")
+endforeach()
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS herramientas/fuentes_motor.json)
+add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)

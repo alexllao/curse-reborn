@@ -4,6 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { gestionarSdl } from './gestionar_sdl.mjs';
+import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const entorno = join(raiz, 'trabajo', 'entorno');
@@ -133,28 +134,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   console.log('Compilando los bloques C++ reconstruidos…');
   ejecutar(compilador, [
     ...opciones,
-    join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
-    join(raiz, 'motor', 'acciones', 'seleccionar_coincidencias.cpp'),
-    join(raiz, 'motor', 'acciones', 'retorno_accion.cpp'),
-    join(raiz, 'motor', 'acciones', 'preparar_resultados.cpp'),
-    join(raiz, 'motor', 'acciones', 'iniciar_accion.cpp'),
-    join(raiz, 'motor', 'acciones', 'lista_identificadores.cpp'),
-    join(raiz, 'motor', 'movimiento', 'direccion.cpp'),
-    join(raiz, 'motor', 'movimiento', 'planificar.cpp'),
-    join(raiz, 'motor', 'movimiento', 'avanzar.cpp'),
-    join(raiz, 'motor', 'entidades', 'crear.cpp'),
-    join(raiz, 'motor', 'entidades', 'actualizar.cpp'),
-    join(raiz, 'motor', 'entidades', 'secuencias.cpp'),
-    join(raiz, 'motor', 'sonido', 'seleccionar.cpp'),
-    join(raiz, 'motor', 'sonido', 'altavoz.cpp'),
-    join(raiz, 'motor', 'video', 'planos.cpp'),
-    join(raiz, 'motor', 'video', 'sprites.cpp'),
-    join(raiz, 'motor', 'video', 'fundido.cpp'),
-    join(raiz, 'motor', 'recursos', 'rnc.cpp'),
-    join(raiz, 'motor', 'recursos', 'rnc2.cpp'),
-    join(raiz, 'motor', 'recursos', 'escena.cpp'),
-    join(raiz, 'motor', 'recursos', 'titulo.cpp'),
-    join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
+    ...obtenerFuentesMotor(raiz),
     join(raiz, 'pruebas', 'puente_tabla.cpp'),
     '-o',
     biblioteca,
@@ -165,6 +145,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     resultados: 'comparar_resultados.py',
     avance: 'comparar_avance.py',
     entidades: 'comparar_entidades.py',
+    objetos: ['comparar_objetos.py', 'comparar_composicion.py'],
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -226,6 +207,9 @@ try {
       break;
     case 'comparar:entidades':
       compararAcciones('entidades', argumentos);
+      break;
+    case 'comparar:objetos':
+      compararAcciones('objetos', argumentos);
       break;
     case 'comparar:secuencias':
       compararAcciones('secuencias', argumentos);

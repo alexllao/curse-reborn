@@ -9,11 +9,12 @@ unsigned int palabra(const unsigned char *datos) {
 } // namespace
 
 // Traslada las carreras de 6F61–726A a píxeles lineales, conservando los huecos transparentes.
-bool dibujar_fotograma(const unsigned char *banco, unsigned int longitud, unsigned int indice,
-                       unsigned char *destino, int x, int y, bool invertido) {
-  if (indice >= 128 || longitud < 2 || indice * 2u + 2u > longitud)
+bool dibujar_fotograma_por_parrafo(const unsigned char *banco, unsigned int longitud,
+                                   unsigned int parrafo, unsigned char *destino, int x, int y,
+                                   bool invertido) {
+  if (parrafo > 65535)
     return false;
-  const unsigned int inicio = palabra(banco + indice * 2u) * 16u;
+  const unsigned int inicio = parrafo * 16u;
   if (inicio > longitud || longitud - inicio < 10)
     return false;
   const auto *cabecera = banco + inicio;
@@ -60,5 +61,13 @@ bool dibujar_fotograma(const unsigned char *banco, unsigned int longitud, unsign
     }
   }
   return true;
+}
+// EBE8–EC02 obtiene el desplazamiento del fotograma antes de entrar en el dibujado común.
+bool dibujar_fotograma(const unsigned char *banco, unsigned int longitud, unsigned int indice,
+                       unsigned char *destino, int x, int y, bool invertido) {
+  if (indice >= 128 || longitud < 2 || indice * 2u + 2u > longitud)
+    return false;
+  return dibujar_fotograma_por_parrafo(banco, longitud, palabra(banco + indice * 2u), destino, x, y,
+                                       invertido);
 }
 } // namespace motor

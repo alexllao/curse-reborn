@@ -1,4 +1,5 @@
-/** Compilación y comprobación de la primera presentación SDL, sin ejecutar el EXE original. */
+import { obtenerFuentesMotor } from './fuentes_motor.mjs';
+/** Compilación y comprobación de la presentación SDL y la mazmorra, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -22,7 +23,9 @@ function ejecutar(programa, argumentos, variables = process.env, capturar = fals
     encoding: 'utf8',
     windowsHide: ocultar,
     shell: false,
-    timeout: argumentos.includes('--comprobar') ? 15000 : undefined,
+    timeout: argumentos.some((argumento) => argumento.startsWith('--comprobar'))
+      ? 15000
+      : undefined,
     windowsVerbatimArguments:
       process.platform === 'win32' && programa.toLowerCase().endsWith('cmd.exe'),
   });
@@ -133,7 +136,7 @@ async function compilar() {
     return existsSync(directo) ? directo : join(aplicacion, 'Release', 'curse-reborn');
   }
   const sdl = await preparar();
-  console.log('Compilando la primera pantalla SDL…');
+  console.log('Compilando la presentación SDL y la mazmorra…');
   ejecutar(
     process.env.CXX || 'clang++',
     [
@@ -151,13 +154,8 @@ async function compilar() {
       '-I',
       join(sdl, 'include'),
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
-      join(raiz, 'motor', 'recursos', 'titulo.cpp'),
-      join(raiz, 'motor', 'recursos', 'rnc.cpp'),
-      join(raiz, 'motor', 'recursos', 'rnc2.cpp'),
-      join(raiz, 'motor', 'recursos', 'escena.cpp'),
-      join(raiz, 'motor', 'video', 'planos.cpp'),
-      join(raiz, 'motor', 'video', 'sprites.cpp'),
-      join(raiz, 'motor', 'video', 'fundido.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
+      ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
       join(aplicacion, 'curse-reborn.exe'),
@@ -170,10 +168,15 @@ async function compilar() {
 }
 
 // Convierte la referencia indexada a RGB para compararla con una captura SDL.
-function leerReferencia(escena = false) {
+function leerReferencia(escena = false, animada = false) {
   const archivo = readFileSync(
     escena
-      ? join(raiz, 'trabajo', 'comparacion_escena', 'mazmorra_cpp.png')
+      ? join(
+          raiz,
+          'trabajo',
+          'comparacion_objetos',
+          animada ? 'mazmorra_animada_cpp.png' : 'mazmorra_objetos_cpp.png',
+        )
       : join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png'),
   );
   let posicion = 8,
@@ -249,10 +252,22 @@ export async function gestionarSdl(accion, argumentos) {
   if (accion !== 'sdl:compilar') {
     const necesarios = ['TITLE.DAT', 'TITLE.PAL', 'CORE.DAT', 'CORE.PAL'];
     if (accion === 'ventana' || accion === 'comprobar:escena')
-      necesarios.push('DUNGEON.MAP', 'MANA.BRD', 'SPRITES.PAL');
+      necesarios.push('DUNGEON.MAP', 'DUNGEON.SPR', 'MANA.BRD', 'STD.BRD', 'SPRITES.PAL');
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
+    if (accion === 'ventana' || accion === 'comprobar:escena') {
+      const ejecutable = join(datos, '..', 'CURSE.EXE');
+      if (!existsSync(ejecutable))
+        throw new Error(
+          'Falta CURSE.EXE junto a la carpeta DATA: se necesitan sus tablas de objetos y guiones.',
+        );
+      const mapa = JSON.parse(
+        readFileSync(join(raiz, 'documentacion', 'mapa_ejecutable.json'), 'utf8'),
+      );
+      if (createHash('sha256').update(readFileSync(ejecutable)).digest('hex') !== mapa.sha256)
+        throw new Error('La huella de CURSE.EXE no coincide con la versión reconstruida.');
+    }
   }
   const programa = await compilar();
   if (accion === 'sdl:compilar') {
@@ -261,7 +276,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título y vista inicial: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Todavía sin control del personaje.',
+      'Core, título y mazmorra animada: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Menú y control del personaje todavía pendientes.',
     );
     ejecutar(programa, [datos], process.env, false, false);
     return;
@@ -269,7 +284,7 @@ export async function gestionarSdl(accion, argumentos) {
   const escena = accion === 'comprobar:escena';
   ejecutar(process.execPath, [
     join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
-    ...(escena ? ['comparar:escena', '--muestra'] : ['titulo']),
+    ...(escena ? ['comparar:objetos', '--muestra'] : ['titulo']),
   ]);
   const carpeta = join(
     raiz,
@@ -286,6 +301,15 @@ export async function gestionarSdl(accion, argumentos) {
     observado = leerCaptura(captura);
   if (!observado.equals(esperado))
     throw new Error('El fotograma SDL difiere de la referencia reconstruida.');
+  if (escena) {
+    const animacion = join(carpeta, 'tras_32_pasos.bmp');
+    ejecutar(programa, [datos, '--comprobar-animacion', animacion], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    if (!leerCaptura(animacion).equals(leerReferencia(true, true)))
+      throw new Error('Los objetos animados en SDL difieren de la referencia original.');
+  }
   if (!escena) {
     const transicion = join(carpeta, 'tras_fundido.bmp');
     ejecutar(programa, [datos, '--comprobar-transicion', transicion], {
@@ -306,6 +330,8 @@ export async function gestionarSdl(accion, argumentos) {
     pantalla: escena ? 'mazmorra' : 'titulo',
     avance_por_f6: escena,
     transicion_core_titulo: !escena,
+    pasos_animados: escena ? 32 : 0,
+    lectura_datos_exe: escena,
     sha256_rgb: createHash('sha256').update(observado).digest('hex'),
     alcance:
       'Lectura de recursos, núcleo C++, textura SDL y captura del fotograma. Sin control del personaje, audio ni verificación del dibujante acelerado.',

@@ -1,0 +1,56 @@
+#include "inicializar.hpp"
+#include "segmento.hpp"
+
+namespace motor {
+// La copia inicial acaba en el archivo; el resto de DS corresponde a memoria reservada a cero.
+bool leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,
+                          unsigned char *datos) {
+  constexpr unsigned int inicio = 512u + 0x0f31u * 16u;
+  if (longitud != 111606 || ejecutable[0] != 'M' || ejecutable[1] != 'Z' || ejecutable[8] != 32 ||
+      ejecutable[9] != 0)
+    return false;
+  for (unsigned int i = 0; i < 65536; ++i)
+    datos[i] = inicio + i < longitud ? ejecutable[inicio + i] : 0;
+  return true;
+}
+
+// Reconstruye el registro reservado del personaje a partir del descriptor DS:859E.
+void preparar_entrada_mazmorra(unsigned char *datos, unsigned short modelo, unsigned short ancho,
+                               unsigned short alto) {
+  guardar(datos, 0x3598, 0xffff);
+  datos[0x2c0b] = 0;
+  guardar(datos, 0x2c1a, 0);
+  for (unsigned int i = 0; i < 6; ++i)
+    datos[0x2c2b + i] = datos[0x859e + i];
+  guardar(datos, 0x2c31, ancho);
+  guardar(datos, 0x2c33, alto);
+  guardar(datos, 0x2c35, 0);
+  guardar(datos, 0x2c37, 0);
+  guardar(datos, 0x2c39, 0);
+  for (unsigned int canal = 0; canal < 3; ++canal) {
+    const auto base = static_cast<Palabra>(0x2c3b + canal * 5);
+    guardar(datos, base, palabra(datos, static_cast<Palabra>(0x85a4 + canal * 2)));
+    datos[static_cast<Palabra>(base + 2)] = 0;
+    datos[static_cast<Palabra>(base + 3)] = 1;
+    datos[static_cast<Palabra>(base + 4)] = 2;
+  }
+  datos[0x3597] = datos[0x85aa];
+  guardar(datos, 0x3591, static_cast<Palabra>(datos[0x3597] << 5));
+  for (unsigned int i = 0; i < 10; ++i)
+    guardar(datos, static_cast<Palabra>(0x35b3 + i * 2), palabra(datos, 0x2c2d));
+  datos[0x358c] = datos[0x85ab];
+  datos[0x9974] = datos[0x358c];
+  guardar(datos, 0x2c4a, modelo);
+  guardar(datos, 0x8082, palabra(datos, 0x7480));
+  guardar(datos, 0x358d, 64);
+  guardar(datos, 0x358f, 223);
+  datos[0x3594] = datos[0x3595] = datos[0x3596] = datos[0x3593] = 0;
+  guardar(datos, 0x359a, 0);
+  guardar(datos, 0x35b0, 0);
+  guardar(datos, 0x35ae, 0);
+  guardar(datos, 0x0dfa, 0);
+  datos[0x0def] = 0;
+  // La modalidad cero del selector original consume las órdenes de sonido sin dispositivo.
+  datos[0x0ad4] = 0;
+}
+} // namespace motor

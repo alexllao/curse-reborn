@@ -15,7 +15,7 @@ La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y doc
 
 El entregable principal es código C/C++ portable. Conservar el ensamblador comentado como referencia de los traslados: las anotaciones propias se versionan en el mapa y el listado completo se regenera en `trabajo/`. Mantener sincronizadas las referencias entre código original, contratos, C++ y comprobaciones.
 
-El núcleo reconstruido debe mantenerse independiente de SDL. La capa de plataforma está en `plataformas/sdl/`, con Core, título y una vista inicial de la mazmorra con el personaje. La presentación SDL está comprobada mediante software en Windows; el guion de apertura, sus actores y el control del personaje siguen pendientes de integrar. macOS y WebAssembly con Emscripten para navegador siguen pendientes de validar e integrar. Mantener explícita la diferencia entre estas vistas y una partida completa.
+El núcleo reconstruido debe mantenerse independiente de SDL. La capa de plataforma está en `plataformas/sdl/`, con Core, título y la mazmorra con sus entidades y animaciones autónomas. La presentación SDL está comprobada mediante software en Windows; el menú, las acciones de usuario, el control y la resolución de puzles siguen pendientes de integrar. La escena lee exclusivamente datos del EXE original, con huella verificada por Node; no ejecuta instrucciones DOS. macOS y WebAssembly con Emscripten para navegador siguen pendientes de validar e integrar. Mantener explícita la diferencia entre estos bloques y una partida completa.
 
 ## Forma de trabajar
 
@@ -35,6 +35,7 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La capa de platafo
 - Preferir comprobaciones selectivas para ahorrar ejecuciones y contexto, según la preferencia del propietario. Indicar explícitamente las comparaciones preparadas que aún no se hayan ejecutado y facilitar su comando.
 - Avanzar varios bloques relacionados antes de cerrar una entrega. Agrupar las comparaciones nuevas en un comando cuando sea viable; el propietario puede ejecutar la comparación amplia al final.
 - Mantener actualizados el estado y la hoja de ruta del README cuando cambien las capacidades reales.
+- Mantener las fuentes C++ en `herramientas/fuentes_motor.json`, compartido por la biblioteca de comparación, SDL y CMake. Las fuentes específicas de plataforma quedan fuera de ese manifiesto.
 - Mantener la organización de monorepositorio: `motor/`, `herramientas/`, `documentacion/` y `pruebas/` comparten este repositorio y su historial.
 
 ## Archivos del juego

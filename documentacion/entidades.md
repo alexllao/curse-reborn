@@ -81,4 +81,4 @@ Se comparan los 65.536 bytes de DS, las cuatro palabras del generador y, cuando 
 
 Los informes se guardan por separado en `trabajo/comparacion_entidades/muestra.json` y `resultado.json`, incluyendo huellas del ejecutable y de la biblioteca C++. La muestra se ejecuta con `pnpm comparar:entidades --muestra`. Ninguna de las dos modalidades comprueba dibujo, avance temporal general de fotogramas, rutinas particulares por escena ni una partida completa.
 
-El [avance de secuencias de animación](secuencias_animacion.md) continúa este traslado con los tres canales y la retirada de entidades. La presentación y las operaciones externas siguen pendientes.
+El [avance de secuencias de animación](secuencias_animacion.md) continúa este traslado con los tres canales y la retirada de entidades. La integración de [objetos de la mazmorra](objetos_mazmorra.md) añade la carga original, la composición, servicios de bancos reales y la rutina particular de la escena cero. Las acciones de usuario siguen pendientes.

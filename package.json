@@ -28,6 +28,7 @@
     "comparar:resultados": "node herramientas/gestionar_proyecto.mjs comparar:resultados",
     "comparar:avance": "node herramientas/gestionar_proyecto.mjs comparar:avance",
     "comparar:entidades": "node herramientas/gestionar_proyecto.mjs comparar:entidades",
+    "comparar:objetos": "node herramientas/gestionar_proyecto.mjs comparar:objetos",
     "comparar:secuencias": "node herramientas/gestionar_proyecto.mjs comparar:secuencias",
     "comparar:operaciones": "node herramientas/gestionar_proyecto.mjs comparar:operaciones",
     "comparar:altavoz": "node herramientas/gestionar_proyecto.mjs comparar:altavoz",

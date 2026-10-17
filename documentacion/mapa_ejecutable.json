@@ -215,7 +215,43 @@
     {
       "direccion": "0000:4AF0",
       "nombre": "Selección y carga de escena",
-      "comentario": "El recorrido mapea BX a un índice de recurso y carga archivos. Trasladado el montaje de fondos en escena.cpp; faltan la inicialización completa de entidades y los guiones."
+      "comentario": "El recorrido mapea BX a un índice de recurso y carga archivos. Trasladados el fondo, la entrada inicial de la mazmorra y la carga de entidades. La navegación completa entre escenas y las acciones siguen pendientes."
+    },
+    {
+      "direccion": "0000:4C43",
+      "nombre": "Registro inicial del personaje desde descriptor",
+      "comentario": "Copia posición y canales desde el descriptor de entrada, prepara contadores y conserva diez posiciones X históricas. La entrada de mazmorra usa DS:859E; dimensiones y banco llegan del servicio de recursos.",
+      "traslado": "motor/estado/inicializar.cpp"
+    },
+    {
+      "direccion": "0000:8AA6",
+      "nombre": "Carga de entidades y superposiciones de escena",
+      "comentario": "Limpia 68 estados, reserva cursor y personaje y recorre descriptores de nueve bytes desde DS:53B5 por escena. Cero crea una superposición de doce bytes; FF termina. Los demás reutilizan el bloque común 8BA0.",
+      "traslado": "motor/entidades/cargar.cpp"
+    },
+    {
+      "direccion": "0000:183F",
+      "nombre": "Rutina particular de la mazmorra inicial",
+      "comentario": "Comprueba estado y secuencia de DS:2CF1 y control del personaje; configura coordenadas y tres canales. La condición DS:2D54 modifica dos descriptores persistentes y activa otras secuencias.",
+      "traslado": "motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:F29A",
+      "nombre": "Ordenación de las entidades para dibujar",
+      "comentario": "Actualiza 69 claves de palabra como Y más alto más profundidad y ordena pares clave/referencia. Conserva comparaciones con signo, envoltura e intercambios; el salto decrece por tres cuartos y nueve/diez se sustituyen por once.",
+      "traslado": "motor/video/orden.cpp"
+    },
+    {
+      "direccion": "0000:EBBD",
+      "nombre": "Composición de entidades y superposiciones",
+      "comentario": "Ordena y dibuja estados no nulos salvo invisibles e imagen FF. Después superpone los recortes de fondo que solapan entidades con estado exactamente uno. Se compara la imagen completa y la tabla resultante con el original.",
+      "traslado": "motor/video/entidades.cpp"
+    },
+    {
+      "direccion": "0000:891E",
+      "nombre": "Selección de objetos próximos compatibles con una acción",
+      "comentario": "Construye una franja alrededor de los pies y recorre 68 entidades, atendiendo estado, tipo y máscara DL en DS:524D. Devuelve identificadores de objeto más 1A y rellena con FFFF. DS:3593 permite omitir proximidad; la API añade capacidad explícita.",
+      "traslado": "motor/acciones/objetos_cercanos.cpp"
     },
     {
       "direccion": "0000:4EE5",

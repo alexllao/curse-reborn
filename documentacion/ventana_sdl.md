@@ -1,6 +1,6 @@
 # Presentación reconstruida en una ventana SDL
 
-La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. **Hay tres vistas de desarrollo; aún faltan la presentación animada completa, el control del personaje y la partida. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales y las comprobaciones.
+La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Siguen pendientes menú, acciones de usuario, control y puzles. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
 
 ## Abrir la ventana
 
@@ -14,9 +14,9 @@ En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abr
 
 La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redimensionar o maximizar, la imagen se ajusta al espacio disponible manteniendo su proporción de 8:5, con bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT. Los marcos y la evaluación de filtros se dejan para más adelante.
 
-La aplicación carga los recursos originales directamente. No usa el PNG generado por Python, no necesita `CURSE.EXE` y no ejecuta Unicorn. El núcleo no incluye cabeceras SDL. [titulo.cpp](../motor/recursos/titulo.cpp) agrupa descompresión y copias por planos; la capa de plataforma abre archivos, adapta la paleta a RGBA y gestiona ventana, textura y eventos.
+La aplicación carga los recursos originales directamente y no usa el PNG generado por Python ni ejecuta Unicorn. Core y título solo necesitan sus DAT/PAL. **La mazmorra necesita ahora `CURSE.EXE` como fuente de tablas y guiones**, además de sus bancos originales. Node verifica la huella antes de iniciar la escena; C++ lee únicamente datos. El núcleo no incluye cabeceras SDL ni ejecuta instrucciones DOS. [titulo.cpp](../motor/recursos/titulo.cpp) agrupa descompresión y copias por planos; la capa de plataforma abre archivos, adapta la paleta a RGBA y gestiona ventana, textura y eventos.
 
-Core y título corresponden a los recorridos de `0498` y `0584`, con los bloques contrastados de `64E0`, `7636` y `7679`. Los fundidos conservan las paletas de `77E4`; la capa SDL usa una frecuencia nominal de 70 Hz, pendiente de contrastar en una ejecución completa. La vista inicial incorpora el montaje de `50D2` y el sprite de `6D8C`, pero aún no el guion inicial ni el bucle de juego completo.
+Core y título corresponden a los recorridos de `0498` y `0584`, con los bloques contrastados de `64E0`, `7636` y `7679`. Los fundidos conservan las paletas de `77E4`; la capa SDL usa una frecuencia nominal de 70 Hz, pendiente de contrastar en una ejecución completa. La mazmorra incorpora el montaje de `50D2`, la carga de `8AA6`, la composición de `EBBD` y el avance de secuencias, comportamientos y rutina particular de `183F`. El menú y los manejadores de acción siguen pendientes. F5/F6 recorren las vistas y preparan un estado nuevo al volver a entrar en la mazmorra; no escriben partidas.
 
 ## Dependencias y compilación en Windows
 
@@ -55,7 +55,7 @@ La aplicación normal no requiere Python. La comprobación utiliza el generador 
 
 Esta comprobación verifica la ruta de software con ventana oculta y cierre por Escape. La interacción visible, el cambio de tamaño y el dibujante acelerado quedan para la comprobación manual con `pnpm ventana`. No verifica audio, una partida ni compatibilidad con todos los controladores gráficos.
 
-`pnpm comprobar:escena` comprueba además el avance por F6 desde el título, la lectura del MAP y del banco del personaje y los 64.000 píxeles de la mazmorra. La comparación amplia del nuevo código está agrupada en `pnpm comparar:presentacion`; queda pendiente de confirmación del propietario.
+`pnpm comprobar:escena` comprueba el avance por F6 desde el título, la lectura de datos del EXE y los bancos y los 64.000 píxeles de la mazmorra inicial. Repite la captura tras 32 pasos de escena, con sus entidades y animaciones. Ambas coinciden con la referencia contrastada contra el original. La comparación amplia de objetos está agrupada en `pnpm comparar:objetos`; queda pendiente de confirmación del propietario. `pnpm comparar:presentacion` conserva el grupo anterior de fondos, sprites, RNC2 y fundidos.
 
 ## Otras plataformas
 

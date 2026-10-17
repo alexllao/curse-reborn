@@ -19,11 +19,11 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Core, título y vista inicial de la mazmorra con Brad, calculados por el núcleo C++ reconstruido y mostrados en SDL. Todavía no hay una versión jugable ni una presentación animada completa.**
+**Core, título y mazmorra con sus objetos, superposiciones y animaciones autónomas, calculados por el núcleo C++ reconstruido y mostrados en SDL. Todavía faltan las acciones del jugador y los puzles para tener una versión jugable.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
-El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. El acceso real a archivos aún debe integrarse.
+El traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. La mazmorra ya aporta la carga de modelos desde archivos; el audio sigue desactivado.
 
 El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Aún no genera audio digital ni salida audible.
 
@@ -33,7 +33,9 @@ El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya est�
 
 **`pnpm ventana` abre Core y permite pasar al título y a la mazmorra inicial**. Los fundidos de salida conservan los 32 pasos de paleta del original. Una tecla o el botón izquierdo inicia el fundido; F6 avanza y F5 retrocede directamente entre estas vistas de desarrollo. Escape cierra. La imagen se ajusta al redimensionar o maximizar conservando sus proporciones, con bandas negras y vecino más próximo, sin filtros añadidos.
 
-El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La comprobación SDL del título y la mazmorra compara sus **64.000 píxeles** con la referencia y termina mediante Escape. La interacción visible, la cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual. La mazmorra presenta su estado inicial; aún faltan el guion de apertura completo, los actores restantes y el control del personaje.
+El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC de método dos, coincide en una muestra de **102 casos**; los [fundidos originales](documentacion/arranque_escena.md) coinciden en **64 paletas** adicionales. La nueva [carga, composición y selección de objetos](documentacion/objetos_mazmorra.md) pasa una muestra de **145 casos/pasos**, incluidos 32 pasos consecutivos con los guiones reales y 33 composiciones. La comprobación SDL compara los **64.000 píxeles** del estado inicial y de los objetos tras 32 pasos. El menú, las acciones, el control del personaje y la resolución de puzles siguen pendientes. La cadencia en un monitor real y el dibujante acelerado quedan para comprobación manual.
+
+La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
 La prioridad actual es completar la presentación original y después la primera escena jugable con el personaje, movimiento e interacciones. El audio queda aparcado; al retomarlo se contemplarán PC Speaker, AdLib y MT-32 como opciones. Más adelante se estudiarán marcos y filtros visuales.
 
@@ -41,7 +43,7 @@ Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 140 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 146 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -88,7 +90,11 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar los fundidos de paleta del arranque; 64 pasos contrastados contra el DAC original.
 - [x] Conectar Core, título y vista inicial con F5/F6; conservar los fundidos originales en el avance normal.
 - [ ] Confirmar la comparación amplia de la presentación con el propietario.
-- [ ] Completar el guion inicial y los actores de la mazmorra y conectar el control del personaje.
+- [x] Cargar la lista original de entidades y superposiciones y conectarla a SDL.
+- [x] Integrar secuencias, comportamientos y rutina de mazmorra; comprobar 32 pasos y sus composiciones.
+- [x] Trasladar la selección de objetos por proximidad y compatibilidad de acción.
+- [ ] Confirmar la comparación amplia de objetos con el propietario.
+- [ ] Conectar el menú y los manejadores de acciones para completar la apertura y habilitar el control.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
@@ -102,7 +108,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** ejecutar el guion original de apertura de la mazmorra, cargar sus actores y conectar el movimiento e interacciones reconstruidos, para pasar de las vistas iniciales a una escena jugable.
+**Siguiente hito de reconstrucción:** conectar el menú original y los efectos de sus acciones sobre objetos y personaje, conservando las condiciones del puzle para pasar de la escena animada a una mazmorra jugable.
 
 ## Organización del repositorio
 
@@ -170,6 +176,8 @@ pnpm comprobar
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
 El nuevo comando `pnpm comparar:presentacion` agrupa RNC2, fondos, sprites y fundidos originales. `pnpm comparar:escena` agrupa RNC2, fondos y sprites; `pnpm comparar:rnc2` los comprueba por separado. `pnpm comprobar:escena` contrasta además los píxeles de la mazmorra dibujados por SDL. Consulta [el alcance de estos comandos y sus límites](documentacion/arranque_escena.md).
+
+`pnpm comparar:objetos` agrupa la carga de entidades, rutina particular, orden, selección, composición y avance persistente. Su comparación amplia de **773 casos/pasos** está preparada para que la ejecute el propietario. `pnpm comprobar:escena` utiliza ahora la muestra de objetos y compara también su animación. Consulta [los datos necesarios y el alcance actual](documentacion/objetos_mazmorra.md).
 
 Para comprobar los bloques trasladados, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar los tramos originales aislados. Consulta [los requisitos de compilación](documentacion/tabla_acciones.md) y [el alcance de las comparaciones](documentacion/contrato_acciones.md).
 
