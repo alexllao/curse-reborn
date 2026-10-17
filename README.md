@@ -294,7 +294,7 @@ La herramienta reproduce las pistas con los sintetizadores del port, sin efectos
 
 `pnpm comparar:cuevas --muestra` prolonga la partida hasta la cuerda; `pnpm comprobar:cuevas` añade cuatro capturas SDL y los veinte cambios de vista.
 
-`pnpm comprobar:marcos` comprueba quince capturas: apaisado, vertical, sin bandas, tamaño impar y xBRZ. F1 recupera las bandas anteriores y el juego se conserva fuera del solape de dos píxeles lógicos autorizado para dar profundidad.
+`pnpm comprobar:marcos` comprueba veintiuna capturas: apaisado, vertical, sin bandas, tamaño impar, xBRZ y los marcos del corredor y del lago. F1 recupera la imagen anterior. El remate artístico interior se dibuja completo con su transparencia, más dos píxeles lógicos de solape adicional para dar profundidad; puede superponerse al juego y a la barra.
 
 `pnpm comprobar:fps` prueba mostrar, ocultar y volver a mostrar los FPS a 1000 × 700. Comprueba que el juego y las bandas negras se conservan fuera de la placa. El HUD de mensajes de acciones está previsto para una fase posterior; el registro actual sigue en consola.
 

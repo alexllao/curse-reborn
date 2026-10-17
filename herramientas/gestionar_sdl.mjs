@@ -700,6 +700,8 @@ export async function gestionarSdl(accion, argumentos) {
       ['marcos-ajustado', 960, 600],
       ['marcos-impar', 1279, 721],
       ['marcos-filtro', 1280, 720],
+      ['marcos-corredor', 1280, 720],
+      ['marcos-lago', 1280, 720],
     ]) {
       const prefijo = join(carpeta, opcion);
       ejecutar(programa, [datos, `--comprobar-${opcion}`, prefijo], {
@@ -714,7 +716,33 @@ export async function gestionarSdl(accion, argumentos) {
         y0 = (alto - 200 * escala) / 2;
       const solapeX = Math.min(2 * escala, x0 * 0.15),
         solapeY = Math.min(2 * escala, y0 * 0.15);
+      const nombre =
+        opcion === 'marcos-corredor'
+          ? 'corridor'
+          : opcion === 'marcos-lago'
+            ? 'lakebed'
+            : 'default';
+      const marco = JSON.parse(
+        readFileSync(join(raiz, 'assets', 'original', 'marcos', `${nombre}.png.json`), 'utf8'),
+      );
+      const margenIzquierdo =
+        x0 > 0
+          ? (marco.innerPadding?.left ?? 0) *
+            Math.max(
+              (200 * escala) / marco.left.height,
+              Math.floor(x0 + solapeX) / (marco.left.width - (marco.innerPadding?.left ?? 0)),
+            )
+          : 0;
+      const margenDerecho =
+        x0 > 0
+          ? (marco.innerPadding?.right ?? 0) *
+            Math.max(
+              (200 * escala) / marco.right.height,
+              Math.floor(x0 + solapeX) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
+            )
+          : 0;
       let modificados = 0;
+      let relieve = 0;
       for (let y = 0; y < alto; y++)
         for (let x = 0; x < ancho; x++) {
           const p = (y * ancho + x) * 3;
@@ -724,18 +752,27 @@ export async function gestionarSdl(accion, argumentos) {
             capturas[0][p + 2] !== capturas[1][p + 2];
           if (!distinto) continue;
           if (
-            x >= Math.ceil(x0 + solapeX) &&
-            x < Math.floor(ancho - x0 - solapeX) &&
+            x >= Math.ceil(x0 + solapeX + margenIzquierdo) &&
+            x < Math.floor(ancho - x0 - solapeX - margenDerecho) &&
             y >= Math.ceil(y0 + solapeY) &&
             y < Math.floor(alto - y0 - solapeY)
           )
             throw new Error(`El marco modifica el área del juego: ${opcion}, ${x}, ${y}.`);
+          if (
+            y >= Math.ceil(y0 + solapeY) &&
+            y < Math.floor(alto - y0 - solapeY) &&
+            x >= Math.ceil(x0 + solapeX) &&
+            x < Math.floor(ancho - x0 - solapeX)
+          )
+            relieve++;
           modificados++;
         }
       if ((opcion === 'marcos-ajustado') !== (modificados === 0))
         throw new Error(`Presencia de marco incorrecta: ${opcion}.`);
+      if (x0 > 0 && margenIzquierdo > 0 && relieve === 0)
+        throw new Error(`El remate interior sigue cortado: ${opcion}.`);
       console.log(
-        `${opcion}: F1 reversible; ${modificados} píxeles de bandas decorados, juego conservado.`,
+        `${opcion}: F1 reversible; ${modificados} píxeles decorados y ${relieve} de relieve interior conservados.`,
       );
     }
     writeFileSync(
@@ -743,10 +780,11 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 15,
-          formatos: ['apaisado', 'vertical', 'ajustado', 'impar', 'xBRZ'],
+          capturas: 21,
+          formatos: ['apaisado', 'vertical', 'ajustado', 'impar', 'xBRZ', 'corredor', 'lago'],
           interior_conservado: true,
-          solape_logico_maximo: 2,
+          remate_artistico_completo: true,
+          solape_logico_adicional: 2,
           ciclo_reversible: true,
         },
         null,

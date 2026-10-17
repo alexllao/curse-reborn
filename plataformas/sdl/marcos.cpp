@@ -19,7 +19,7 @@ const DefinicionMarco *elegir_marco(const char *pantalla) {
   return nullptr;
 }
 
-// Ancla el ornamento al borde interior y recorta su imagen al espacio autorizado.
+// Conserva el remate interior completo, incluido su relieve transparente sobre el juego.
 bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMarco &panel,
                    const SDL_Rect &banda, const SDL_FRect &juego, bool derecha, bool cubrir,
                    bool reflejar, float solape, bool horizontal = false) {
@@ -35,10 +35,13 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
                           horizontal ? banda.y + (banda.h - panel.alto * escala) / 2.0f
                                      : juego.y + (juego.h - panel.alto * escala) / 2.0f,
                           panel.ancho * escala, panel.alto * escala};
-  // Recortar el origen evita quads enormes parcialmente fuera de pantalla.
-  const float x = std::max(destino.x, float(banda.x));
+  // Solo limita el exterior a la ventana: el margen artístico interior nunca se usa como tijera.
+  const float limite_x = !horizontal && derecha ? destino.x : float(banda.x);
+  const float limite_derecho =
+      !horizontal && !derecha ? destino.x + destino.w : float(banda.x + banda.w);
+  const float x = std::max(destino.x, limite_x);
   const float y = std::max(destino.y, float(banda.y));
-  const float ancho = std::min(destino.x + destino.w, float(banda.x + banda.w)) - x;
+  const float ancho = std::min(destino.x + destino.w, limite_derecho) - x;
   const float alto = std::min(destino.y + destino.h, float(banda.y + banda.h)) - y;
   if (ancho <= 0 || alto <= 0)
     return true;
@@ -87,7 +90,8 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla) {
                        SDL_GetError());
       return true;
     }
-    if (!SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_NEAREST))
+    if (!SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_NEAREST) ||
+        !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND))
       return false;
     actual = seleccion;
     registrar_accion("Marco de pantalla: %s", actual->nombre);
