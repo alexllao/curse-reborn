@@ -169,6 +169,7 @@ async function compilar() {
       '-I',
       join(mt32, 'include'),
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
@@ -256,23 +257,23 @@ function leerReferencia(escena = false, animada = false, ruta = null) {
   return rgb;
 }
 
-function leerCaptura(archivo) {
+function leerCaptura(archivo, ancho = 320, alto = 200) {
   const bmp = readFileSync(archivo);
   if (
     bmp.toString('ascii', 0, 2) !== 'BM' ||
-    bmp.readInt32LE(18) !== 320 ||
-    Math.abs(bmp.readInt32LE(22)) !== 200 ||
+    bmp.readInt32LE(18) !== ancho ||
+    Math.abs(bmp.readInt32LE(22)) !== alto ||
     bmp.readUInt16LE(28) !== 24 ||
     bmp.readUInt32LE(30) !== 0
   )
     throw new Error('La captura BMP no tiene el formato RGB esperado.');
   const inicio = bmp.readUInt32LE(10),
     invertida = bmp.readInt32LE(22) > 0;
-  const rgb = Buffer.alloc(64000 * 3);
-  for (let y = 0; y < 200; ++y)
-    for (let x = 0; x < 320; ++x) {
-      const origen = inicio + ((invertida ? 199 - y : y) * 320 + x) * 3;
-      const destino = (y * 320 + x) * 3;
+  const rgb = Buffer.alloc(ancho * alto * 3);
+  for (let y = 0; y < alto; ++y)
+    for (let x = 0; x < ancho; ++x) {
+      const origen = inicio + ((invertida ? alto - 1 - y : y) * ancho + x) * 3;
+      const destino = (y * ancho + x) * 3;
       rgb[destino] = bmp[origen + 2];
       rgb[destino + 1] = bmp[origen + 1];
       rgb[destino + 2] = bmp[origen];
@@ -504,7 +505,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
+      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración; F11 cambia el filtro de pantalla. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
     );
     ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
     return;
@@ -544,6 +545,54 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:filtros') {
+    ejecutar(process.execPath, [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'titulo']);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_filtros');
+    mkdirSync(carpeta, { recursive: true });
+    const prefijo = join(carpeta, 'filtro');
+    ejecutar(programa, [datos, '--comprobar-filtros', prefijo], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    const capturas = Array.from({ length: 5 }, (_, i) =>
+      leerCaptura(`${prefijo}.${i}.bmp`, 960, 600),
+    );
+    if (!capturas[0].equals(capturas[4]))
+      throw new Error('El ciclo F11 no recupera la imagen original.');
+    if (
+      new Set(capturas.slice(0, 4).map((rgb) => createHash('sha256').update(rgb).digest('hex')))
+        .size !== 4
+    )
+      throw new Error('Los cuatro modos de pantalla no producen imágenes diferentes.');
+    const original = Buffer.alloc(64000 * 3);
+    for (let y = 0; y < 200; y++)
+      for (let x = 0; x < 320; x++) {
+        const origen = ((y * 3 + 1) * 960 + x * 3 + 1) * 3;
+        capturas[0].copy(original, (y * 320 + x) * 3, origen, origen + 3);
+      }
+    if (!original.equals(leerReferencia()))
+      throw new Error('El modo sin filtro cambia los píxeles originales.');
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          tecla: 'F11',
+          modos: ['original', 'suavizado', 'líneas de escaneo', 'CRT suave'],
+          capturas: 5,
+          resolucion: [960, 600],
+          original_conservado: true,
+          ciclo_reversible: true,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Filtros SDL: cuatro modos diferentes, ciclo F11 reversible y 64.000 píxeles originales conservados.',
+    );
     return;
   }
   if (accion === 'comprobar:lago') {

@@ -70,7 +70,8 @@
     "exportar:musica": "node herramientas/gestionar_proyecto.mjs exportar:musica",
     "exportar:midi": "node herramientas/exportar_midi.mjs",
     "comparar:lago": "node herramientas/gestionar_proyecto.mjs comparar:lago",
-    "comprobar:lago": "node herramientas/gestionar_proyecto.mjs comprobar:lago"
+    "comprobar:lago": "node herramientas/gestionar_proyecto.mjs comprobar:lago",
+    "comprobar:filtros": "node herramientas/gestionar_proyecto.mjs comprobar:filtros"
   },
   "repository": {
     "type": "git",

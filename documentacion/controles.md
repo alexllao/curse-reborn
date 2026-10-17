@@ -16,6 +16,12 @@ El volumen va del 0 al 200 % y se muestra en consola al arrancar y al modificarl
 
 El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificación adicional, que puede saturar en los pasajes fuertes. M conserva también los ajustes superiores al 100 %.
 
+## Aspecto de pantalla
+
+**F11** recorre **original → suavizado → líneas de escaneo → CRT suave → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
+
+El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.
+
 ## Jugar
 
 | Control                                              | Función                                                            |
@@ -27,7 +33,7 @@ El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificació
 | **← / →**, con el menú abierto                       | Cambiar de casilla.                                                |
 | **Intro**, con el menú abierto                       | Confirmar la casilla seleccionada.                                 |
 
-En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido funcionan sin avanzar la presentación.
+En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido y F11 funcionan sin avanzar la presentación.
 
 **Escape cierra el programa en Core, título e introducción.** Dentro de una escena jugable abre o cierra el menú. El botón de cierre de la ventana termina el programa desde cualquier vista.
 

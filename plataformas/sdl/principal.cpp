@@ -19,6 +19,7 @@
 #include "mazmorra.hpp"
 #include "introduccion.hpp"
 #include "registro.hpp"
+#include "filtros.hpp"
 
 namespace {
 // Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
@@ -41,9 +42,11 @@ struct Presentacion {
   SDL_Window *ventana = nullptr;
   SDL_Renderer *dibujante = nullptr;
   SDL_Texture *textura = nullptr;
+  FiltrosPantalla filtros;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
     mazmorra.cerrar_audio();
+    filtros.cerrar();
     if (textura)
       SDL_DestroyTexture(textura);
     if (dibujante)
@@ -118,8 +121,8 @@ bool cargar_mazmorra(const std::string &carpeta, unsigned short escena_vista = 0
          mazmorra.dibujar(imagen);
 }
 
-// Adapta la paleta VGA de seis bits a RGBA y actualiza la textura sin filtros adicionales.
-bool actualizar_textura(SDL_Texture *textura) {
+// Adapta la paleta VGA a RGBA; los filtros opcionales se aplican después de la composición.
+bool actualizar_textura(Presentacion &presentacion) {
   // Adaptación de color de seis bits a RGBA; no sustituye la lógica original del juego.
   for (unsigned int i = 0; i < 64000; ++i) {
     const auto color = imagen.indices[i] * 3u;
@@ -129,7 +132,7 @@ bool actualizar_textura(SDL_Texture *textura) {
     }
     pixeles[i * 4 + 3] = 255;
   }
-  return SDL_UpdateTexture(textura, nullptr, pixeles, 320 * 4);
+  return presentacion.filtros.actualizar(presentacion.textura, pixeles);
 }
 
 // Recorre las vistas de desarrollo; cada entrada a la mazmorra prepara una sesión nueva sin
@@ -151,7 +154,7 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
     return false;
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
-  return actualizar_textura(presentacion.textura) &&
+  return actualizar_textura(presentacion) &&
          SDL_SetWindowTitle(presentacion.ventana,
                             pantalla == 0   ? "Curse Reborn — Core Design"
                             : pantalla == 1 ? "Curse Reborn — Pantalla de título"
@@ -222,6 +225,7 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
+  const bool comprobar_filtros = opcion == "--comprobar-filtros";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
@@ -252,7 +256,7 @@ int main(int argc, char *argv[]) {
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
       argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
-                    comprobar_transicion || comprobar_introduccion);
+                    comprobar_transicion || comprobar_introduccion || comprobar_filtros);
   if (argc == 4 && !comprobar) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
@@ -266,9 +270,10 @@ int main(int argc, char *argv[]) {
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
-  if (!SDL_CreateWindowAndRenderer("Curse Reborn — Pantalla de título", comprobar ? 320 : 960,
-                                   comprobar ? 200 : 600, opciones, &presentacion.ventana,
-                                   &presentacion.dibujante)) {
+  if (!SDL_CreateWindowAndRenderer("Curse Reborn — Pantalla de título",
+                                   comprobar && !comprobar_filtros ? 320 : 960,
+                                   comprobar && !comprobar_filtros ? 200 : 600, opciones,
+                                   &presentacion.ventana, &presentacion.dibujante)) {
     return fallo("No se ha podido crear la ventana");
   }
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
@@ -309,7 +314,7 @@ int main(int argc, char *argv[]) {
   unsigned short paso_fundido = 0;
   Uint64 inicio_pantalla = SDL_GetTicksNS(), inicio_fundido = 0;
   Uint64 ultimo_paso_escena = inicio_pantalla;
-  unsigned int paso_vistas = 0;
+  unsigned int paso_vistas = 0, paso_filtros = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
       return fallo("No se ha podido actualizar el audio del juego");
@@ -336,6 +341,11 @@ int main(int argc, char *argv[]) {
           const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
+          continue;
+        }
+        if (evento.key.key == SDLK_F11) {
+          if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
+            return fallo("No se ha podido cambiar el filtro de pantalla");
           continue;
         }
         if (evento.key.key == SDLK_F3) {
@@ -389,7 +399,7 @@ int main(int argc, char *argv[]) {
               return fallo("No se ha podido actualizar el menú");
             for (unsigned int i = 0; i < 768; ++i)
               paleta_visible[i] = imagen.paleta[i];
-            if (!actualizar_textura(presentacion.textura))
+            if (!actualizar_textura(presentacion))
               return fallo("No se ha podido dibujar el menú");
           }
         }
@@ -442,7 +452,7 @@ int main(int argc, char *argv[]) {
             return fallo("No se ha podido procesar el menú con el ratón");
           for (unsigned int i = 0; i < 768; ++i)
             paleta_visible[i] = imagen.paleta[i];
-          if (!actualizar_textura(presentacion.textura))
+          if (!actualizar_textura(presentacion))
             return fallo("No se ha podido actualizar la selección");
         }
       }
@@ -502,7 +512,7 @@ int main(int argc, char *argv[]) {
       } else {
         for (unsigned int i = 0; i < 768; ++i)
           paleta_visible[i] = imagen.paleta[i];
-        if (!actualizar_textura(presentacion.textura))
+        if (!actualizar_textura(presentacion))
           return fallo("No se ha podido comprobar la imagen de la introducción");
       }
       introduccion_comprobada = true;
@@ -524,7 +534,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido dibujar la caída");
       for (unsigned int i = 0; i < 768; ++i)
         paleta_visible[i] = imagen.paleta[i];
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido capturar la caída");
       caida_comprobada = true;
     }
@@ -804,7 +814,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido dibujar el estado jugable");
       for (unsigned int i = 0; i < 768; ++i)
         paleta_visible[i] = imagen.paleta[i];
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar el movimiento");
       jugabilidad_comprobada = true;
     }
@@ -829,7 +839,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido comprobar el menú");
       for (unsigned int i = 0; i < 768; ++i)
         paleta_visible[i] = imagen.paleta[i];
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar la interacción");
       menu_comprobado = true;
     }
@@ -840,7 +850,7 @@ int main(int argc, char *argv[]) {
                               static_cast<unsigned int>(comprobar ? 0 : SDL_GetTicks() / 57u)))
           return fallo("No se ha podido comprobar la animación de los objetos");
       }
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar la animación comprobada");
       animacion_preparada = true;
     }
@@ -864,7 +874,7 @@ int main(int argc, char *argv[]) {
       } else if (paso != paso_fundido) {
         paso_fundido = static_cast<unsigned short>(paso);
         if (!motor::calcular_fundido(imagen.paleta, 256, 32, paso_fundido, paleta_visible) ||
-            !actualizar_textura(presentacion.textura))
+            !actualizar_textura(presentacion))
           return fallo("No se ha podido avanzar el fundido original");
       }
     }
@@ -880,7 +890,7 @@ int main(int argc, char *argv[]) {
         if (!cambiar_pantalla(carpeta, pantalla, presentacion))
           return fallo("No se ha podido entrar en la mazmorra");
         ultimo_paso_escena = ahora;
-      } else if (!actualizar_textura(presentacion.textura))
+      } else if (!actualizar_textura(presentacion))
         return fallo("No se ha podido dibujar la introducción");
     }
     if (!comprobar && pantalla >= 3 && mazmorra.en_presentacion()) {
@@ -888,7 +898,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido avanzar el cambio de habitación o la cámara");
       for (unsigned int i = 0; i < 768; ++i)
         paleta_visible[i] = imagen.paleta[i];
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar el cambio de habitación o la cámara");
       ultimo_paso_escena = ahora;
     }
@@ -902,13 +912,15 @@ int main(int argc, char *argv[]) {
       }
       for (unsigned int i = 0; i < 768; ++i)
         paleta_visible[i] = imagen.paleta[i];
-      if (!actualizar_textura(presentacion.textura))
+      if (!actualizar_textura(presentacion))
         return fallo("No se ha podido actualizar la paleta de la escena");
       ultimo_paso_escena = ahora;
     }
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
-        !SDL_RenderTexture(presentacion.dibujante, presentacion.textura, nullptr, nullptr)) {
+        !SDL_RenderTexture(presentacion.dibujante,
+                           presentacion.filtros.textura_visible(presentacion.textura), nullptr,
+                           nullptr)) {
       return fallo("No se ha podido dibujar el título");
     }
     if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
@@ -922,19 +934,31 @@ int main(int argc, char *argv[]) {
       SDL_DestroySurface(captura);
       if (!rgb)
         return fallo("No se ha podido convertir la captura");
-      const bool guardado = SDL_SaveBMP(rgb, argv[3]);
+      const std::string ruta_captura =
+          comprobar_filtros ? std::string(argv[3]) + "." + std::to_string(paso_filtros) + ".bmp"
+                            : argv[3];
+      const bool guardado = SDL_SaveBMP(rgb, ruta_captura.c_str());
       SDL_DestroySurface(rgb);
       if (!guardado)
         return fallo("No se ha podido guardar el fotograma");
       if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
         return fallo("No se ha podido guardar el estado diagnóstico de la captura");
-      capturada = true;
-      // La comprobación termina por el mismo tratamiento de Escape que la ventana normal.
-      SDL_Event cierre{};
-      cierre.type = SDL_EVENT_KEY_DOWN;
-      cierre.key.key = SDLK_ESCAPE;
-      if (!SDL_PushEvent(&cierre))
-        return fallo("No se ha podido comprobar el cierre con Escape");
+      if (comprobar_filtros && paso_filtros < 4) {
+        ++paso_filtros;
+        SDL_Event filtro{};
+        filtro.type = SDL_EVENT_KEY_DOWN;
+        filtro.key.key = SDLK_F11;
+        if (!SDL_PushEvent(&filtro))
+          return fallo("No se ha podido comprobar F11");
+      } else {
+        capturada = true;
+        // La comprobación termina por el mismo tratamiento de Escape que la ventana normal.
+        SDL_Event cierre{};
+        cierre.type = SDL_EVENT_KEY_DOWN;
+        cierre.key.key = SDLK_ESCAPE;
+        if (!SDL_PushEvent(&cierre))
+          return fallo("No se ha podido comprobar el cierre con Escape");
+      }
     }
     if (!SDL_RenderPresent(presentacion.dibujante))
       return fallo("No se ha podido presentar el título");
