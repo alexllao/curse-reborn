@@ -297,6 +297,14 @@ int main(int argc, char *argv[]) {
           mazmorra.tecla_direccion(bit, evento.type == SDL_EVENT_KEY_DOWN);
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
+        if (evento.key.key == SDLK_PLUS || evento.key.key == SDLK_EQUALS ||
+            evento.key.key == SDLK_KP_PLUS || evento.key.key == SDLK_MINUS ||
+            evento.key.key == SDLK_KP_MINUS) {
+          const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
+          if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
+            return fallo("No se ha podido ajustar el volumen");
+          continue;
+        }
         if (evento.key.key == SDLK_F4) {
           if (!mazmorra.alternar_dispositivo_audio())
             return fallo("No se ha podido cambiar la opción de audio");

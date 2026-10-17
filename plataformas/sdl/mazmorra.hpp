@@ -77,6 +77,11 @@ public:
     return audio.alternar_silencio();
   }
 
+  // Modifica la ganancia común solicitada por los atajos + y - sin afectar la partida.
+  bool ajustar_volumen(int cambio) {
+    return audio.ajustar_volumen(cambio);
+  }
+
 private:
   Audio audio;
   unsigned short inventario_registrado[10]{};

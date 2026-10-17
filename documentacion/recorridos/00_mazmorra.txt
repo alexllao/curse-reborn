@@ -83,3 +83,5 @@ Referencia de solución: Curse of Enchantia: Walkthru, Sophie Cheshire
 redacta de nuevo en castellano; los pasos comprobados se distinguen de
 los puzles pendientes. Los números del comparador no identifican por sí
 solos el nombre narrativo de un objeto.
+
+- + / -: volumen general en pasos del 10 %; la consola muestra el porcentaje.

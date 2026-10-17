@@ -79,6 +79,36 @@ class ComparacionMusica(Comparacion):
         self.resumen[grupo] = self.resumen.get(grupo, 0) + 1
         return registros
 
+    # 4DD5–4DDC omite la selección RS con AdLib: cambiar de escena no toca CS ni DS.
+    def contrastar_transiciones_adlib(self):
+        codigo = self.preparar()
+        for escena in range(78):
+            self.maquina.mem_write(0, bytes(codigo))
+            datos = bytearray(self.base)
+            datos[0x0AD3] = 2
+            struct.pack_into('<H', datos, 0x8082, escena)
+            self.maquina.mem_write(self.segmento, bytes(datos))
+            antes = bytes(self.maquina.mem_read(0, 65536))
+            for registro, valor in {
+                self.r.UC_X86_REG_CS: 0,
+                self.r.UC_X86_REG_DS: 0x0F31,
+                self.r.UC_X86_REG_SS: 0x8000,
+                self.r.UC_X86_REG_SP: 0xFF00,
+                self.r.UC_X86_REG_EFLAGS: 2,
+            }.items():
+                self.maquina.reg_write(registro, valor)
+            self.traza = []
+            self.maquina.emu_start(0x4DD5, 0x4E98, count=20)
+            if (
+                self.maquina.reg_read(self.r.UC_X86_REG_IP) != 0x4E98
+                or bytes(self.maquina.mem_read(0, 65536)) != antes
+                or bytes(self.maquina.mem_read(self.segmento, 65536)) != datos
+                or self.maquina.reg_read(self.r.UC_X86_REG_SP) != 0xFF00
+                or self.traza
+            ):
+                raise ErrorAnalisis('La transición original alteró la música AdLib.')
+        self.resumen['transiciones_adlib'] = 78
+
     # Recorre los temas reales y prepara casos de borde que ejercitan cada orden del intérprete.
     def ejecutar(self):
         pulsos = 1024 if self.muestra else 8192
@@ -120,6 +150,7 @@ class ComparacionMusica(Comparacion):
                     datos[0xA100 : 0xA100 + len(patron)] = patron
                     datos[0xA120:0xA124] = bytes((0xFE, 3, 0x82, 30))
                     self.contrastar('ordenes_canal', datos, 2, posicion)
+        self.contrastar_transiciones_adlib()
         if not registros_totales:
             raise ErrorAnalisis('Los temas no emitieron notas.')
         informe = {

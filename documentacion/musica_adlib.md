@@ -16,7 +16,7 @@ La música se reconstruye desde el reproductor interno de `CURSE.EXE`, conservan
 
 El estado musical reside en **CS**, no en el DS del juego. Los nueve registros ocupan 17 bytes desde 8CE2. El traslado conserva las escrituras parciales de bytes, los signos de la repetición y las envolturas de palabra. Los contadores globales 8E5B/8E5D conservan su decremento original; la cadencia inicial es siete IRQ. Las listas de patrones admiten FFFE para repetir, FFFD para saltar y FFFF para terminar.
 
-La llamada encontrada al iniciador musical elige el tema uno antes de Core. El arranque reconstruido conserva ese tema en Core, título e introducción. No se han encontrado llamadas por habitación al iniciador 8DB0; para evitar repetir la presentación en la mazmorra, la mezcla AdLib queda en silencio en las escenas jugables hasta reconstruir sus arreglos. No asignar una pista distinta a cada habitación por intuición. La tabla contiene también un tema cero, que se conserva y compara, aunque no se selecciona en el arranque reconstruido. La ruta [MT-32](musica_mt32.md) es independiente y ya utiliza los bancos RS originales por zona.
+La llamada encontrada al iniciador musical elige el tema uno antes de Core. El arranque reconstruido conserva ese tema en Core, título, introducción y escenas jugables. La entrada 4DD5–4DDC omite el cambio de banco salvo en modalidad cuatro (MT-32). Con AdLib, modalidad dos, el tema sigue sonando al entrar en la mazmorra y al cambiar de habitación; no se reinicia ni se silencia. Las 78 referencias de escena atraviesan esa ruta original sin modificar CS musical, DS ni puertos, comprobado con Unicorn. Solo se ha localizado una llamada directa a 8DB0 en la imagen de código: la del arranque con tema uno. No asignar una pista distinta a cada habitación por intuición. La tabla contiene también un tema cero, que se conserva y compara, aunque no se selecciona en el arranque reconstruido. La ruta [MT-32](musica_mt32.md) es independiente y ya utiliza los bancos RS originales por zona.
 
 ## Síntesis y reloj
 
@@ -30,9 +30,9 @@ El flujo musical se alimenta desde el callback de SDL, separado del hilo que car
 
 ## Controles y consola
 
-- **F4** recorre PC Speaker (efectos), AdLib (presentación con efectos) y MT-32 (música por zona con efectos). Omite MT-32 cuando no se puede preparar. Los relojes musicales siguen avanzando al cambiar de perfil.
+- **F4** recorre PC Speaker (efectos), AdLib (tema continuo con efectos) y MT-32 (música por zona con efectos). Omite MT-32 cuando no se puede preparar. Los relojes musicales siguen avanzando al cambiar de perfil.
 - **M** silencia o reactiva toda la mezcla sin detener los secuenciadores.
-- SB16 digital sigue pendiente. Los arreglos de zona AdLib también; la mazmorra ya tiene su música correcta mediante MT-32.
+- SB16 digital sigue pendiente. AdLib conserva el tema continuo original; MT-32 ofrece los cinco bancos por zona.
 - `pnpm ventana --sin-sonido` desactiva el dispositivo desde el arranque.
 - En Windows se configura la consola como UTF-8 antes de imprimir los mensajes propios con tildes.
 
@@ -40,8 +40,10 @@ La consola registra apertura y cierre del menú, selecciones y resultado del des
 
 ## Verificación
 
-`pnpm comprobar:musica --muestra` compara **2.452 casos**, incluyendo 1.024 IRQ de cada tema, inicialización, límites del reloj y órdenes de los nueve canales. Coinciden todo CS, la pila y **5.442 escrituras OPL** observadas en los temas. Unicorn ejecuta el reproductor original; el oráculo no es otro intérprete del formato. Las esperas de puerto se fijan a uno para verificar la traza sin depender de la velocidad del PC DOS.
+`pnpm comprobar:musica --muestra` compara **2.530 casos**, incluyendo 1.024 IRQ de cada tema, inicialización, límites del reloj, órdenes de los nueve canales y las 78 transiciones originales en modalidad AdLib. Coinciden todo CS, la pila y **5.442 escrituras OPL** observadas en los temas. Unicorn ejecuta el reproductor original; el oráculo no es otro intérprete del formato. Las esperas de puerto se fijan a uno para verificar la traza sin depender de la velocidad del PC DOS.
 
 La comprobación SDL genera ocho segundos del tema uno: **384.000 muestras** coinciden al producirlas de una vez o en bloques de distintos tamaños, con **562 IRQ**. Se exige señal no nula y se guarda `trabajo/comparacion_musica/musica_adlib.wav`. También se ejercitan salida común, cambio de perfil, silencio y desconexión de escena con un dispositivo `dummy`. Esto no escucha los altavoces físicos.
 
 `pnpm comparar:musica` amplía a 8.192 IRQ por tema. La comparación amplia queda disponible para el propietario; sus resultados se registran aparte de la muestra.
+
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.

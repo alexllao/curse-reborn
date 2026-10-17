@@ -24,6 +24,8 @@ public:
   bool reproducir(unsigned char *segmento, unsigned short entidad, unsigned char identificador);
   // Silencia la salida audible; las secuencias y prioridades originales siguen avanzando.
   bool alternar_silencio();
+  // Ajusta el volumen general entre cero y cien sin alterar los relojes musicales.
+  bool ajustar_volumen(int cambio);
   // F4 recorre las opciones implementadas; informa de música y efectos activos en la consola.
   bool alternar_dispositivo();
 
@@ -34,14 +36,19 @@ public:
     return muestras_producidas.load();
   }
 
+  // Cuenta señal efectiva de la mezcla musical para detectar silencios de integración
+  // involuntarios.
+  unsigned long long muestras_audibles() const {
+    return muestras_con_senal.load();
+  }
+
 private:
   SDL_AudioDeviceID dispositivo = 0;
   SDL_AudioStream *flujo_musical = nullptr;
   MusicaMt32 mt32;
   std::atomic<bool> fallo_musical{false};
-  std::atomic<unsigned long long> muestras_producidas{0};
+  std::atomic<unsigned long long> muestras_producidas{0}, muestras_con_senal{0};
   unsigned int perfil = 1;
-  bool presentacion = true;
   // Produce solo música; este callback nunca accede al DS ni a las entidades del juego.
   static void alimentar_musica(void *contexto, SDL_AudioStream *flujo, int adicional, int total);
   SDL_AudioStream *flujo = nullptr;
@@ -50,6 +57,9 @@ private:
   MusicaAdlib musica{};
   Uint64 ultimo = 0, resto = 0;
   bool silencio = false;
+  unsigned int volumen = 100;
+  // Informa del volumen efectivo y conserva el ajuste elegido mientras M silencia.
+  void registrar_volumen() const;
 };
 
 // Comprueba la apertura y alimentación SDL con un WAV generado por las pruebas del motor.

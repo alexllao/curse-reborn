@@ -45,14 +45,17 @@ bool Audio::abrir(const std::string &carpeta) {
   resto = 0;
   fallo_musical.store(false);
   muestras_producidas.store(0);
-  if (!SDL_ResumeAudioDevice(dispositivo)) {
+  muestras_con_senal.store(0);
+  if (!SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : volumen / 100.0f) ||
+      !SDL_ResumeAudioDevice(dispositivo)) {
     cerrar();
     return false;
   }
   std::printf("Audio: %s + PC Speaker (efectos). F4 cambia la opción; M silencia.\nSB16 digital: "
               "pendiente.\n",
-              perfil == 2 ? "MT-32 (música por escena)" : "AdLib (presentación)");
+              perfil == 2 ? "MT-32 (música por escena)" : "AdLib (tema continuo original)");
   std::fflush(stdout);
+  registrar_volumen();
   return true;
 }
 
@@ -81,11 +84,14 @@ void Audio::alimentar_musica(void *contexto, SDL_AudioStream *salida, int adicio
     bool correcto = audio.musica.generar(fm, cantidad);
     if (audio.mt32.disponible())
       correcto = correcto && audio.mt32.generar(roland, cantidad);
-    for (unsigned int i = 0; i < cantidad; ++i)
+    unsigned int con_senal = 0;
+    for (unsigned int i = 0; i < cantidad; ++i) {
       fm[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
               : audio.perfil == 2                              ? roland[i]
-              : audio.presentacion                             ? fm[i]
-                                                               : 0;
+                                                               : fm[i];
+      con_senal += fm[i] > 64 || fm[i] < -64 ? 1u : 0u;
+    }
+    audio.muestras_con_senal.fetch_add(con_senal);
     if (!correcto || !SDL_PutAudioStreamData(salida, fm, static_cast<int>(cantidad * 2))) {
       audio.fallo_musical.store(true);
       return;
@@ -125,13 +131,9 @@ bool Audio::cambiar_escena(unsigned short escena) {
     return true;
   if (!SDL_LockAudioStream(flujo_musical))
     return false;
-  presentacion = escena == 0xffff;
   const bool correcto = !mt32.disponible() || mt32.cambiar_escena(escena);
   if (datos)
     datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
-  if (!presentacion && perfil == 1)
-    std::printf("AdLib: arreglo de esta zona pendiente; no se reutiliza el tema de presentación. "
-                "Usa MT-32.\n");
   SDL_UnlockAudioStream(flujo_musical);
   return correcto;
 }
@@ -190,7 +192,31 @@ bool Audio::alternar_silencio() {
     SDL_UnlockAudioStream(flujo_musical);
   std::printf("Audio: %s.\n", silencio ? "silenciado" : "reactivado");
   std::fflush(stdout);
-  return !flujo || SDL_SetAudioStreamGain(flujo, silencio ? 0.0f : 1.0f);
+  registrar_volumen();
+  return !dispositivo || SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : volumen / 100.0f);
+}
+
+// El volumen se aplica al dispositivo compartido, incluyendo música y efectos de cualquier perfil.
+bool Audio::ajustar_volumen(int cambio) {
+  int siguiente = static_cast<int>(volumen) + cambio;
+  if (siguiente < 0)
+    siguiente = 0;
+  if (siguiente > 100)
+    siguiente = 100;
+  if (dispositivo && !SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : siguiente / 100.0f))
+    return false;
+  volumen = static_cast<unsigned int>(siguiente);
+  registrar_volumen();
+  return true;
+}
+
+// El silencio muestra cero efectivo y permite recordar el porcentaje que se recuperará con M.
+void Audio::registrar_volumen() const {
+  if (silencio)
+    std::printf("[partida] Volumen: 0%% (silenciado con M; ajuste guardado: %u%%).\n", volumen);
+  else
+    std::printf("[partida] Volumen: %u%%.\n", volumen);
+  std::fflush(stdout);
 }
 
 // F4 solo ofrece dispositivos preparados; cada cambio se informa por consola.
@@ -206,7 +232,7 @@ bool Audio::alternar_dispositivo() {
     datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
   std::printf("Audio cambiado a %s%s.\n",
               perfil == 2   ? "MT-32 (música por escena) + PC Speaker"
-              : perfil == 1 ? "AdLib (presentación; arreglos de zona pendientes) + PC Speaker"
+              : perfil == 1 ? "AdLib (tema continuo original) + PC Speaker"
                             : "PC Speaker (efectos; sin música)",
               silencio ? " [silenciado con M]" : "");
   std::fflush(stdout);
@@ -291,9 +317,12 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
   SDL_Delay(25);
   integrada =
       integrada && audio.actualizar() && audio.alternar_dispositivo() && segmento[0x0ad3] == 2;
+  integrada = integrada && audio.alternar_silencio();
+  const auto senal_anterior = audio.muestras_audibles();
+  SDL_Delay(300);
+  integrada = integrada && audio.muestras_audibles() > senal_anterior;
   if (con_mt32)
     integrada = integrada && audio.alternar_dispositivo() && segmento[0x0ad3] == 4;
-  integrada = integrada && audio.alternar_silencio();
   audio.desconectar();
   const auto antes_de_carga = audio.muestras_musicales();
   SDL_Delay(150);

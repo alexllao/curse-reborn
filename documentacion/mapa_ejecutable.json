@@ -1035,7 +1035,7 @@
     {
       "direccion": "0000:4DD5",
       "nombre": "Selección del banco musical de escena",
-      "comentario": "En modalidad cuatro consulta DS:80CD y los cinco descriptores DS:80B9. Conserva el banco si coincide; si cambia solicita parada antes de cargar tempo y recurso.",
+      "comentario": "En modalidad cuatro consulta DS:80CD y los cinco descriptores DS:80B9. Conserva el banco si coincide; si cambia solicita parada antes de cargar tempo y recurso. En modalidad AdLib dos, 4DD5–4DDC salta a 4E98 sin cambiar la música: 78 escenas comprobadas sin cambios de CS, DS ni puertos.",
       "traslado": "motor/sonido/musica_rs.cpp"
     },
     {

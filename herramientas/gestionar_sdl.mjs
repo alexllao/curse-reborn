@@ -402,7 +402,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra inicia una vista nueva de la caída; faltan los demás puzles.',
+      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
     );
     ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
     return;

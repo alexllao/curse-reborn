@@ -26,17 +26,19 @@ La carga de imágenes no debe vaciar ni detener el flujo musical. SDL solicita s
 
 ## ROM y dependencia local
 
-Las ROM del propietario se conservan en `datos_originales/ROMS/MT32_CONTROL.ROM` y `MT32_PCM.ROM`, reconocidas por Munt. No se descargan, modifican ni distribuyen. Con ROM válidas, MT-32 es la selección inicial. F4 recorre PC Speaker, AdLib y MT-32; M silencia la mezcla sin detener sus relojes. AdLib mantiene la presentación; sus arreglos de zona siguen pendientes y no se sustituye la música de la mazmorra por la introducción.
+Las ROM del propietario se conservan en `datos_originales/ROMS/MT32_CONTROL.ROM` y `MT32_PCM.ROM`, reconocidas por Munt. No se descargan, modifican ni distribuyen. Con ROM válidas, MT-32 es la selección inicial. F4 recorre PC Speaker, AdLib y MT-32; M silencia la mezcla sin detener sus relojes. AdLib mantiene el tema continuo del EXE durante las escenas; MT-32 es la opción que utiliza bancos diferentes por zona.
 
 [Munt](https://github.com/munt/munt) se fija a la revisión de `herramientas/dependencias_mt32.json`, con huella SHA-256 del archivo fuente. El preparador Windows descarga ese código oficial y compila una biblioteca compartida, en `trabajo/dependencias/mt32emu`. Usa CMake 3.31.6 y Ninja 1.11.1.4 en el entorno local. La revisión corresponde a la etiqueta Munt 2.8.2; su biblioteca declara versión 2.8.3. No se incorpora al historial código comercial ni las ROM.
 
 La biblioteca mantiene LGPL 2.1 o posterior. Se carga dinámicamente como `mt32emu.dll` junto al ejecutable y se puede sustituir por otra compilación compatible del API C. Se copian los textos LGPL y GPL junto al ejecutable. La fuente exacta, su licencia y las instrucciones de compilación se obtienen del repositorio oficial y del preparador versionado; no se modifica el código de Munt. Esto no asigna licencia al resto del proyecto. La compilación manual CMake requiere sus cabeceras y una biblioteca compartida; macOS y WebAssembly siguen pendientes de validar.
 
-Los avisos de percusión no disponible dependen del modelo de ROM: estas ROM MT-32 no ofrecen todos los sonidos adicionales de un CM-32L. La verificación no garantiza equivalencia acústica con cada módulo o modelo Roland.
+El aviso de percusión no asignada procede del mapa rítmico del sintetizador: Munt lo emite si el timbre está marcado como desactivado o excede los timbres disponibles en el modelo. No detiene la pista. La inicialización MPU analizada envía FF/33 y órdenes de transporte; no se ha encontrado una carga SysEx de timbres en esa ruta. No sustituir notas por otras para ocultarlo. La verificación no garantiza equivalencia acústica con cada módulo o modelo Roland.
 
 ## Comprobaciones
 
 - `pnpm comparar:musica-rs --muestra`: 2.565 paquetes ejecutados contra la rutina original con Unicorn, con coincidencia de DS completo, pila, estado MIDI y bytes de puerto; también comprueba las 78 referencias contra las tablas del EXE y los cinco enlaces circulares. La selección de escena se contrasta con sus datos; no ejecuta todo el cargador DOS.
 - `pnpm comparar:musica-rs`: 13.130 paquetes coincidentes al recorrer cada banco hasta su primer enlace circular, con límite de 20.000 paquetes por banco. Comparación amplia ejecutada.
 - `pnpm comprobar:mt32 --muestra`: añade síntesis de ocho segundos de cada banco con las ROM locales, exige señal y guarda `trabajo/comparacion_musica_rs/mazmorra_mt32.wav`. Comprueba también la permanencia del banco en escenas 1 y 2.
-- La comprobación SDL de AdLib ejercita los perfiles, el silencio y la desconexión de escena; comprueba que el callback sigue produciendo muestras durante una espera de 150 ms del hilo principal. El dispositivo de pruebas es `dummy`: falta escuchar la continuidad en el equipo del propietario.
+- La comprobación SDL de AdLib exige señal efectiva después de conectar la mazmorra y ejercita los perfiles, el silencio y la desconexión de escena; comprueba que el callback sigue produciendo muestras durante una espera de 150 ms del hilo principal. El dispositivo de pruebas es `dummy`: falta escuchar la continuidad en el equipo del propietario.
+
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
