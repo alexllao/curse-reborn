@@ -11,7 +11,7 @@ Las direcciones se refieren a la copia identificada en [el análisis inicial](an
 | Tramo | Evidencias observadas |
 | --- | --- |
 | `0000:0276` en adelante | Inicialización, llamadas auxiliares y reservas de memoria; búsqueda y lectura de `std.brd` y `mouse.spr`, contrastando los punteros a sus nombres. |
-| `0000:0498`–`0000:057C` | Lectura de `core.pal` y `core.dat`, llamada a `0000:64E0` sobre el bloque cargado y presentación inicial. `64E0` se ha ejecutado como referencia de descompresión RNC del título; su traslado completo a C++ sigue pendiente. |
+| `0000:0498`–`0000:057C` | Lectura de `core.pal` y `core.dat`, llamada a `0000:64E0` sobre el bloque cargado y presentación inicial. `64E0` se ha ejecutado como referencia de descompresión RNC del título y su [método uno ya está trasladado a C++](descompresion_rnc.md). |
 | `0000:0584`–`0000:0612` | Lectura de `title.pal` y `title.dat`, descompresión, subida por planos y envío de paleta; [primeros traslados gráficos](video_planos.md) comparados y vista del título comprobada. |
 | `0000:061D`–`0000:0671` | Espera de teclado o dispositivo de entrada; una ruta llama a `0000:E19F`. No se asigna aún un nombre funcional definitivo a esa llamada. |
 | `0000:06B2`–`0000:06B7` | Prepara `BX=FFFFh` y `AL=0` y llama a `0000:4AF0`, la rutina que participa en la selección y carga del estado de escena. |

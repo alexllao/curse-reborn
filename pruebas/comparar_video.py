@@ -7,9 +7,9 @@ from itertools import product
 import json
 from pathlib import Path
 import struct
-import zlib
 
 from comparar_avance import Comparacion, ErrorAnalisis
+from generar_titulo import guardar_png
 
 
 class ComparacionVideo(Comparacion):
@@ -171,15 +171,6 @@ class ComparacionVideo(Comparacion):
         print(f'Total: {informe["casos_totales"]} casos. Coinciden memoria de vídeo y operaciones de puerto.')
         print(f'Informe local: {salida}')
         print(f'Vista diagnóstica: {self.raiz / "trabajo/vista_titulo/titulo.png"}')
-
-
-def guardar_png(ruta, imagen, paleta):
-    def bloque(tipo, contenido):
-        return struct.pack('>I', len(contenido)) + tipo + contenido + struct.pack('>I', zlib.crc32(tipo + contenido))
-    colores = bytes(v * 255 // 63 for v in paleta)
-    filas = b''.join(b'\0' + bytes(imagen[y * 320:(y + 1) * 320]) for y in range(200))
-    ruta.write_bytes(b'\x89PNG\r\n\x1a\n' + bloque(b'IHDR', struct.pack('>2I5B', 320, 200, 8, 3, 0, 0, 0)) +
-                     bloque(b'PLTE', colores) + bloque(b'IDAT', zlib.compress(filas)) + bloque(b'IEND', b''))
 
 
 if __name__ == '__main__':

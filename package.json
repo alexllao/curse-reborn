@@ -27,6 +27,9 @@
     "comparar:operaciones": "node herramientas/gestionar_proyecto.mjs comparar:operaciones",
     "comparar:altavoz": "node herramientas/gestionar_proyecto.mjs comparar:altavoz",
     "comparar:video": "node herramientas/gestionar_proyecto.mjs comparar:video",
+    "comparar:rnc": "node herramientas/gestionar_proyecto.mjs comparar:rnc",
+    "titulo": "node herramientas/gestionar_proyecto.mjs titulo",
+    "comparar:graficos": "node herramientas/gestionar_proyecto.mjs comparar:graficos",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

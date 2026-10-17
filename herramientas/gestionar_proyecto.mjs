@@ -71,7 +71,7 @@ function preparar() {
 }
 
 function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
-  comprobarEntorno(true);
+  comprobarEntorno(tipo !== 'titulo');
   if (process.platform === 'win32' && process.arch !== 'x64') {
     throw new Error('La compilación de esta comparación en Windows requiere Node y Python de 64 bits.');
   }
@@ -104,13 +104,17 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     join(raiz, 'motor', 'sonido', 'seleccionar.cpp'),
     join(raiz, 'motor', 'sonido', 'altavoz.cpp'),
     join(raiz, 'motor', 'video', 'planos.cpp'),
+    join(raiz, 'motor', 'recursos', 'rnc.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
-  const comparador = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
+  const comparadores = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
     resultados: 'comparar_resultados.py', avance: 'comparar_avance.py', entidades: 'comparar_entidades.py',
     secuencias: 'comparar_secuencias.py', operaciones: 'comparar_operaciones.py', altavoz: 'comparar_altavoz.py',
-    video: 'comparar_video.py' }[tipo];
-  ejecutar(pythonLocal, [join(raiz, 'pruebas', comparador), '--biblioteca', biblioteca, ...opcionesComparacion]);
+    video: 'comparar_video.py', rnc: 'comparar_rnc.py', titulo: 'generar_titulo.py',
+    graficos: ['comparar_video.py', 'comparar_rnc.py'] }[tipo];
+  for (const comparador of Array.isArray(comparadores) ? comparadores : [comparadores]) {
+    ejecutar(pythonLocal, [join(raiz, tipo === 'titulo' ? 'herramientas' : 'pruebas', comparador), '--biblioteca', biblioteca, ...opcionesComparacion]);
+  }
 }
 
 const [accion, ...argumentos] = process.argv.slice(2);
@@ -154,6 +158,15 @@ try {
       break;
     case 'comparar:video':
       compararAcciones('video', argumentos);
+      break;
+    case 'comparar:rnc':
+      compararAcciones('rnc', argumentos);
+      break;
+    case 'titulo':
+      compararAcciones('titulo', argumentos);
+      break;
+    case 'comparar:graficos':
+      compararAcciones('graficos', argumentos);
       break;
     case 'estado':
       console.log(`Node: ${process.version}`);

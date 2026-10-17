@@ -13,6 +13,7 @@
 #include "../motor/sonido/seleccionar.hpp"
 #include "../motor/sonido/altavoz.hpp"
 #include "../motor/video/planos.hpp"
+#include "../motor/recursos/rnc.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -294,4 +295,11 @@ extern "C" EXPORTAR int procesar_video(unsigned int operacion, unsigned char* da
   if (operacion == 1) return motor::recuperar_imagen(planos, datos, puertos, ancho, alto, paso, parametros[3]) ? 1 : 0;
   if (operacion == 2) return motor::copiar_planos(planos, puertos, ancho, alto, paso, parametros[5], parametros[3], parametros[4]) ? 1 : 0;
   return motor::enviar_paleta(datos, puertos, parametros[3], static_cast<unsigned char>(parametros[4]), ancho) ? 1 : 0;
+}
+
+extern "C" EXPORTAR unsigned int descomprimir_rnc1(const unsigned char* origen, unsigned int longitud,
+    unsigned char* destino, unsigned int capacidad, unsigned int* escritos) {
+  const auto resultado = motor::descomprimir_rnc1(origen, longitud, destino, capacidad);
+  *escritos = resultado.escritos;
+  return static_cast<unsigned int>(resultado.estado);
 }

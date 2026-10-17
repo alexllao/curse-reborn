@@ -2,7 +2,7 @@
 
 El código de [planos.cpp](../motor/video/planos.cpp) traslada cuatro rutinas gráficas originales. La muestra de **83 casos** coincide con el ejecutable en RAM, los cuatro planos y las operaciones de puerto. Hay **1.183 casos** preparados para la comparación amplia.
 
-También se ha recuperado y comprobado visualmente la pantalla de título como imagen de diagnóstico. **No es una partida ni una ventana SDL.** Su descompresión todavía la ejecuta la rutina original de `CURSE.EXE` en Unicorn; no se presenta como un descompresor C++ terminado.
+También se ha recuperado y comprobado visualmente la pantalla de título como imagen de diagnóstico. **No es una partida ni una ventana SDL.** Esta referencia inicial utiliza la rutina original de `CURSE.EXE` en Unicorn. El [traslado posterior de RNC](descompresion_rnc.md) ya permite generar la misma imagen con C++ mediante `pnpm titulo`, sin ejecutar esa rutina original.
 
 ## Recorrido desde el arranque
 
@@ -46,7 +46,7 @@ Se guardan localmente:
 
 La paleta del título contiene 768 bytes con componentes entre cero y 63. Para el PNG se convierten mediante `componente × 255 / 63`, con división entera. La imagen se ha inspeccionado: aparecen el título y el castillo completos. No se han inventado gráficos ni sustituido los recursos originales. Los archivos derivados permanecen fuera de Git.
 
-La descompresión RNC a C++, el cargador real y la presentación interactiva continúan pendientes. Usar la rutina original para obtener una referencia de comparación no equivale a haberlos trasladado.
+El [descompresor RNC de método uno](descompresion_rnc.md) ya está trasladado y conserva su comparación propia. El cargador real y la presentación interactiva continúan pendientes. Este conjunto gráfico sigue usando la descompresión original como referencia independiente.
 
 ## Comparación agrupada
 

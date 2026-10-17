@@ -27,13 +27,15 @@ El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones
 
 El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Aún no genera audio digital ni salida audible.
 
-Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++, con **83 casos de muestra** coincidentes y **1.183 casos** preparados para la comparación amplia. Se ha obtenido la primera imagen de diagnóstico: el título original, descomprimido por el ejecutable en Unicorn y copiado por las rutinas C++. Todavía no existe una ventana SDL ni una versión jugable; el descompresor C++ sigue pendiente.
+Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++, con **83 casos de muestra** coincidentes y **1.183 casos** preparados para la comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
+
+El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++, con **38 casos de muestra** coincidentes y **142 casos** preparados para la comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior. Todavía no existe una ventana SDL ni una versión jugable; el método dos de RNC sigue pendiente.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 125 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 134 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -42,8 +44,8 @@ Se ha realizado una primera inspección estática de una copia para DOS:
 | Archivos examinados | 196, incluidos el juego, el instalador y los datos |
 | Ejecutable principal | `CURSE.EXE`, formato DOS MZ de 16 bits, 111.606 bytes |
 | Recursos separados | Archivos `.MAP`, `.SPR`, `.BRD`, `.DAT`, `.PAL` y `.SFX`, entre otros |
-| Compresión identificada | Tres archivos con cabecera RNC de método 1 |
-| Pantalla de título | Imagen de 320 × 200 recuperada como referencia mediante el descompresor original; subida, recuperación y paleta contrastadas con C++ |
+| Compresión identificada | RNC de métodos 1 y 2; método 1 trasladado y comparado con `CORE.DAT`, `MENU.DAT` y `TITLE.DAT` |
+| Pantalla de título | Imagen de 320 × 200 generada por C++ y contrastada con la descompresión original, las copias por planos y la paleta |
 
 Estas observaciones permiten comenzar el trabajo, pero todavía falta determinar la estructura de buena parte de los recursos y reconstruir las rutinas del juego. Las extensiones y los nombres de archivo son pistas; su significado debe confirmarse mediante análisis.
 
@@ -72,7 +74,9 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar arranque, parada y temporizador del altavoz del PC; muestra de 310 casos coincidente.
 - [x] Confirmar con el propietario los 3.312 casos del altavoz.
 - [x] Trasladar copias por planos y envío de paleta; muestra de 83 casos y referencia visual del título comprobadas.
-- [ ] Ejecutar los 1.183 casos de vídeo, trasladar el descompresor y conectar la primera pantalla con SDL.
+- [ ] Confirmar la comparación amplia de 1.183 casos de vídeo.
+- [x] Trasladar RNC de método uno y generar el título con C++; muestra de 38 casos coincidente.
+- [ ] Ejecutar los 142 casos de RNC y conectar la primera pantalla con SDL.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -85,7 +89,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** trasladar el descompresor de `0000:64E0` a C++ y conectar la primera pantalla a SDL, manteniendo las comparaciones con el original.
+**Siguiente hito de reconstrucción:** conectar la pantalla generada por el núcleo C++ a una capa de presentación SDL, manteniendo las comparaciones con el original y sin presentarla como una partida.
 
 ## Organización del repositorio
 
@@ -138,6 +142,9 @@ pnpm comprobar
 | `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos. |
 | `pnpm comparar:altavoz` | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos. |
 | `pnpm comparar:video` | Compara copias por planos y paleta: 1.183 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 83 casos ya comprobados. Genera `trabajo/vista_titulo/titulo.png` usando la descompresión original como referencia. |
+| `pnpm comparar:rnc` | Compara el descompresor de método uno: 142 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 38 casos ya comprobados. |
+| `pnpm titulo` | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida. |
+| `pnpm comparar:graficos` | Compila una vez y agrupa los 1.183 casos de vídeo y los 142 de RNC: 1.325 casos preparados. Con `--muestra` ejecuta los 121 casos cortos. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
