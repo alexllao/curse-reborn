@@ -2,10 +2,12 @@
 
 #include <SDL3/SDL.h>
 #include "../../motor/sonido/pcm.hpp"
+#include "../../motor/sonido/digital.hpp"
 #include "musica_adlib.hpp"
 #include "musica_mt32.hpp"
 #include <atomic>
 #include <string>
+#include <vector>
 
 // Salida compartida entre escenas; toda la lógica del juego permanece en el hilo principal.
 class Audio {
@@ -25,10 +27,16 @@ public:
   bool reproducir(unsigned char *segmento, unsigned short entidad, unsigned char identificador);
   // Silencia la salida audible; las secuencias y prioridades originales siguen avanzando.
   bool alternar_silencio();
-  // Ajusta el volumen general entre cero y cien sin alterar los relojes musicales.
+  // Ajusta el volumen general entre cero y doscientos sin alterar los relojes musicales.
   bool ajustar_volumen(int cambio);
-  // F4 recorre las opciones implementadas; informa de música y efectos activos en la consola.
+  // Permite consultar el ajuste guardado, incluso durante el silencio temporal de M.
+  unsigned int nivel_volumen() const {
+    return volumen;
+  }
+  // F4 recorre las opciones musicales; los efectos se eligen por separado con F3.
   bool alternar_dispositivo();
+  // F3 cambia los efectos entre Sound Blaster digital y PC Speaker sin modificar la música.
+  bool alternar_efectos();
 
   // Selecciona el banco de la escena bajo el bloqueo del flujo musical, sin vaciar sus muestras.
   bool cambiar_escena(unsigned short escena);
@@ -55,6 +63,15 @@ private:
   SDL_AudioStream *flujo = nullptr;
   unsigned char *datos = nullptr;
   motor::AltavozPcm altavoz{};
+  motor::DigitalPcm digital{};
+  bool efectos_digitales = true;
+  unsigned char referencias[65536]{};
+  std::string carpeta_datos;
+  std::vector<unsigned char> banco_general, banco_escena;
+  // Carga los SFX mediante los nombres de la tabla original; no deduce nombres del fondo gráfico.
+  bool cargar_efectos(unsigned short escena);
+  // Lee un archivo de audio acotado y mantiene su propiedad durante la sesión.
+  bool cargar_banco_efectos(const char *nombre, std::vector<unsigned char> &destino);
   MusicaAdlib musica{};
   Uint64 ultimo = 0, resto = 0;
   bool silencio = false;
@@ -63,6 +80,11 @@ private:
   void registrar_volumen() const;
 };
 
+// Exporta referencias WAV de duración elegida, sin aplicar el volumen ni el silencio de la partida.
+bool exportar_musica_wav(const std::string &carpeta, const std::string &destino,
+                         unsigned int segundos);
+// Contrasta efectos reales en SDL, el cambio F3, el volumen y la continuidad musical.
+bool comprobar_efectos_digitales(const std::string &carpeta, const char *ruta);
 // Comprueba la apertura y alimentación SDL con un WAV generado por las pruebas del motor.
 bool comprobar_salida_audio(const char *ruta);
 // Genera un tema real, contrasta particiones y reloj y guarda un WAV local para su escucha.

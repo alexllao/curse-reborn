@@ -4,14 +4,17 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 
 ## Sonido
 
-| Tecla  | Función                                                                      |
-| ------ | ---------------------------------------------------------------------------- |
-| **+**  | Subir el volumen general un 10 %. También sirve **=**.                       |
-| **−**  | Bajar el volumen general un 10 %.                                            |
-| **M**  | Silenciar o reactivar música y efectos, conservando el volumen elegido.      |
-| **F4** | Cambiar entre PC Speaker, AdLib y MT-32. La consola indica la opción activa. |
+| Tecla  | Función                                                                                                         |
+| ------ | --------------------------------------------------------------------------------------------------------------- |
+| **+**  | Subir el volumen general un 10 %, hasta el 200 %. También sirve **=**.                                          |
+| **−**  | Bajar el volumen general un 10 %.                                                                               |
+| **M**  | Silenciar o reactivar música y efectos, conservando el volumen elegido.                                         |
+| **F3** | Cambiar los efectos entre Sound Blaster digital y PC Speaker, conservando la música.                            |
+| **F4** | Cambiar la música entre ninguna, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32. La consola indica la opción activa. |
 
-El volumen va del 0 al 100 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Por ahora los efectos siguen siendo PC Speaker en todos los perfiles.
+El volumen va del 0 al 200 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Los efectos digitales Sound Blaster están activos al arrancar; F3 permite comparar con PC Speaker sin reiniciar la escena. Ambas opciones comparten el volumen y el silencio.
+
+El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificación adicional, que puede saturar en los pasajes fuertes. M conserva también los ajustes superiores al 100 %.
 
 ## Jugar
 

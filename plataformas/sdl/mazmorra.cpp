@@ -129,6 +129,8 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   if (!dimensiones(this, referencia_modelo, 0, ancho, alto))
     return false;
   motor::preparar_entrada_mazmorra(datos, referencia_modelo, ancho, alto);
+  if (!audio.conectar(datos))
+    return false;
   const motor::RecursosEntidades recursos{
       this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
@@ -159,7 +161,7 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   registro_preparado = false;
   registrar_accion("Inicio de sesión nueva: mazmorra");
   registrar_estado();
-  return audio.conectar(datos);
+  return true;
 }
 
 // 06E8–0BC1: integra entrada, guiones, paredes e historial antes del despacho de la escena.
@@ -462,6 +464,8 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   geometria.assign(boxdet.begin() + inicio, boxdet.begin() + inicio + cantidad * 10u);
   motor::guardar(datos, 0x0df0, static_cast<unsigned short>(cantidad));
   motor::guardar(datos, 0x0df2, 0);
+  if (!audio.cambiar_escena(actual))
+    return false;
   const motor::RecursosEntidades recursos{
       this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
@@ -472,7 +476,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   direccion = 0xffff;
   registrar_accion("Escena cargada: %s (índice %u, salida %u)", bancos[actual], actual, salida);
   registrar_estado();
-  return audio.cambiar_escena(actual);
+  return true;
 }
 
 // El original detiene la lógica durante el fundido y los ocho retrazos del movimiento de cámara.

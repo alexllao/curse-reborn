@@ -6,6 +6,7 @@
 void MusicaAdlib::escribir(void *contexto, unsigned short registro, unsigned char valor) {
   auto &estado = *static_cast<MusicaAdlib *>(contexto);
   OPL3_WriteRegBuffered(&estado.chip, registro, valor);
+  estado.opl2.escribir(registro, valor);
 }
 
 // La copia incluye tablas y patrones originales; su uso se limita a lecturas y al estado musical.
@@ -18,6 +19,8 @@ bool MusicaAdlib::iniciar(const unsigned char *ejecutable, unsigned int longitud
   for (unsigned int i = 0; i < 65536; ++i)
     codigo[i] = ejecutable[512 + i];
   OPL3_Reset(&chip, 48000);
+  if (!opl2.reiniciar())
+    return false;
   fraccion = 0;
   hasta_interrupcion = 0x4250;
   interrupciones = 0;
@@ -27,12 +30,15 @@ bool MusicaAdlib::iniciar(const unsigned char *ejecutable, unsigned int longitud
 }
 
 // Las órdenes que cruzan una muestra se aplican al terminarla: precisión de una muestra de PCM.
-bool MusicaAdlib::generar(short *salida, unsigned int cantidad) {
+bool MusicaAdlib::generar(short *salida, unsigned int cantidad, short *salida_opl2) {
   if (!preparada || (!salida && cantidad))
     return false;
   for (unsigned int i = 0; i < cantidad; ++i) {
     short canales[2];
     OPL3_GenerateResampled(&chip, canales);
+    const auto muestra_opl2 = opl2.generar();
+    if (salida_opl2)
+      salida_opl2[i] = muestra_opl2;
     salida[i] = static_cast<short>((static_cast<int>(canales[0]) + canales[1]) / 4);
     fraccion += 14318180;
     const auto ciclos = fraccion / 576000u;

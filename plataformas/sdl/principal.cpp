@@ -165,7 +165,7 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
   configurar_consola();
-  if (argc != 2 && argc != 3 && argc != 4) {
+  if (argc != 2 && argc != 3 && argc != 4 && argc != 5) {
     std::fprintf(
         stderr,
         "Uso: curse-reborn <carpeta DATA> "
@@ -177,6 +177,20 @@ int main(int argc, char *argv[]) {
     std::fprintf(stderr, "La opción de ejecución debe ser --sin-sonido.\n");
     return 1;
   }
+  if (opcion == "--exportar-musica" && argc == 5) {
+    unsigned int segundos = 0;
+    for (const char *letra = argv[4]; *letra; ++letra) {
+      if (*letra < '0' || *letra > '9' || segundos > 600)
+        return fallo("La duración debe ser un entero entre 1 y 600 segundos");
+      segundos = segundos * 10 + static_cast<unsigned int>(*letra - '0');
+    }
+    Presentacion limpieza;
+    if (!SDL_Init(0) || !exportar_musica_wav(argv[1], argv[3], segundos))
+      return fallo("No se ha podido exportar la música; revisa datos, ROM y destino");
+    return 0;
+  }
+  if (argc == 5)
+    return fallo("Opción no reconocida");
   if (opcion == "--comprobar-mt32" && argc == 4) {
     Presentacion limpieza;
     if (!SDL_Init(0) || !comprobar_musica_mt32(argv[1], argv[3]) ||
@@ -190,6 +204,12 @@ int main(int argc, char *argv[]) {
         !comprobar_musica_adlib(argv[1], argv[3], opcion == "--muestra-musica-0" ? 0 : 1) ||
         !comprobar_salida_audio(argv[3]))
       return fallo("No se ha podido comprobar la música AdLib");
+    return 0;
+  }
+  if (opcion == "--comprobar-digital" && argc == 4) {
+    Presentacion limpieza;
+    if (!SDL_Init(0) || !comprobar_efectos_digitales(argv[1], argv[3]))
+      return fallo("No se han podido comprobar los efectos digitales");
     return 0;
   }
   if (opcion == "--comprobar-audio" && argc == 4) {
@@ -303,6 +323,11 @@ int main(int argc, char *argv[]) {
           const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
+          continue;
+        }
+        if (evento.key.key == SDLK_F3) {
+          if (!mazmorra.alternar_efectos_audio())
+            return fallo("No se ha podido cambiar el dispositivo de efectos");
           continue;
         }
         if (evento.key.key == SDLK_F4) {

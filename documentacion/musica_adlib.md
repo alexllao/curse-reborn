@@ -20,19 +20,24 @@ La llamada encontrada al iniciador musical elige el tema uno antes de Core. El a
 
 ## Síntesis y reloj
 
-`motor/sonido/musica.cpp` reconstruye el reproductor y emite registros. `plataformas/sdl/musica_adlib.cpp` alimenta [Nuked OPL3](https://github.com/nukeykt/Nuked-OPL3), fijado a una revisión en `herramientas/dependencias_audio.json`. El sintetizador funciona en su modo compatible para las órdenes OPL empleadas. No se afirma equivalencia acústica exacta entre este núcleo OPL3 y cada tarjeta AdLib OPL2 física.
+`motor/sonido/musica.cpp` reconstruye el reproductor y emite los mismos registros para las dos opciones FM:
+
+- **AdLib OPL2**: YM3812 de [ymfm](https://github.com/aaronsgiles/ymfm), de Aaron Giles, con su DAC de mantisa/exponente. Revisión y huellas en `herramientas/dependencias_opl2.json`; licencia BSD de tres cláusulas conservada y copiada como `LICENCIA_YMFM.txt`.
+- **Sound Blaster 16 OPL3**: [Nuked OPL3](https://github.com/nukeykt/Nuked-OPL3), fijado en `herramientas/dependencias_audio.json`, reproduce las escrituras originales compatibles con OPL2 en un YMF262. El juego no habilita voces adicionales ni una mezcla estéreo OPL3.
+
+No son dos etiquetas para el mismo PCM. El adaptador `plataformas/sdl/opl2.cpp` conserva el reloj 3.579.545/72 Hz y convierte a 48 kHz; las escrituras del YM3812 se espacian dos muestras nativas para que un apagado y un encendido consecutivos no se fusionen; ambos chips reciben la misma partitura y continúan avanzando al cambiar F4. Los temporizadores de detección del chip y las esperas del bus ISA no se ejecutan: el reloj musical procede del PIT reconstruido. Ninguna de estas comprobaciones acredita equivalencia acústica exacta con todas las revisiones de tarjetas físicas.
 
 La fuente externa se conserva sin cambios en `terceros/nuked_opl3`, con su licencia LGPL 2.1 o posterior. El resto del proyecto mantiene su situación de licencia. La compilación copia el aviso junto al ejecutable. La procedencia, huellas y reconstrucción están documentadas en esa carpeta.
 
-Se genera PCM mono a 48.000 Hz, con el reloj nominal del PIT de 14.318.180/12 Hz y divisor 4250h. Las órdenes se aplican al terminar la muestra que cruza la IRQ, con una precisión de una muestra. La calibración DOS de esperas de puerto no se emula: el chip recibe las órdenes por su cola temporal. El volumen musical deja margen para mezclar efectos PC Speaker y la suma se limita al rango de 16 bits.
+Se genera PCM mono a 48.000 Hz, con el reloj nominal del PIT de 14.318.180/12 Hz y divisor 4250h. Las órdenes se aplican al terminar la muestra que cruza la IRQ, con una precisión de una muestra. La calibración DOS de esperas de puerto no se emula: el chip recibe las órdenes por su cola temporal. El volumen musical deja margen para mezclar efectos digitales o PC Speaker y la suma se limita al rango de 16 bits.
 
 El flujo musical se alimenta desde el callback de SDL, separado del hilo que carga imágenes. Dos flujos comparten un dispositivo: música autónoma y efectos de la partida. El cambio de vista conserva el búfer musical; los cambios de banco y perfil se serializan mediante el bloqueo del flujo. Una prueba bloquea el hilo principal 150 ms y comprueba que se siguen produciendo muestras; no mide cortes acústicos en un dispositivo físico.
 
 ## Controles y consola
 
-- **F4** recorre PC Speaker (efectos), AdLib (tema continuo con efectos) y MT-32 (música por zona con efectos). Omite MT-32 cuando no se puede preparar. Los relojes musicales siguen avanzando al cambiar de perfil.
+- **F4** recorre sin música, AdLib OPL2, Sound Blaster 16 OPL3 (ambos con el tema continuo) y MT-32 (música por zona). **F3** selecciona efectos Sound Blaster digitales o PC Speaker de forma independiente. Omite MT-32 cuando no se puede preparar. Los relojes musicales siguen avanzando al cambiar de perfil.
 - **M** silencia o reactiva toda la mezcla sin detener los secuenciadores.
-- SB16 digital sigue pendiente. AdLib conserva el tema continuo original; MT-32 ofrece los cinco bancos por zona.
+- Los [efectos digitales Sound Blaster](efectos_digitales.md) ya están conectados al servicio común de las escenas. AdLib conserva el tema continuo original; MT-32 ofrece los cinco bancos por zona.
 - `pnpm ventana --sin-sonido` desactiva el dispositivo desde el arranque.
 - En Windows se configura la consola como UTF-8 antes de imprimir los mensajes propios con tildes.
 
@@ -46,4 +51,10 @@ La comprobación SDL genera ocho segundos del tema uno: **384.000 muestras** coi
 
 `pnpm comparar:musica` amplía a 8.192 IRQ por tema. La comparación amplia queda disponible para el propietario; sus resultados se registran aparte de la muestra.
 
-**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+
+La comprobación nativa de música genera ocho segundos de **cada chip**, exige señal audible, salida distinta entre OPL2/OPL3 y coincidencia exacta de cada salida al fragmentar los bloques. Guarda el OPL3 en `trabajo/comparacion_musica/musica_adlib.wav` y el OPL2 en `musica_adlib.wav.opl2.wav`. También recorre F4 por las dos opciones FM antes de volver a MT-32.
+
+El volumen común admite de cero a **200 %**: cien conserva la ganancia normal y los valores superiores la amplifican, con posible saturación. M conserva el porcentaje elegido. La integración digital comprueba los límites cero/doscientos y su conservación al silenciar.
+
+`pnpm exportar:musica` utiliza estos mismos núcleos para guardar referencias WAV de ambos temas internos y de los cinco bancos MT-32. La duración se calcula desde los guiones: los RS incluyen su entrada y terminan en el primer salto de repetición; FM espera a que los nueve canales hayan repetido su estado de control o terminado. Esto cubre una pasada de cada voz, sin alargar el archivo hasta el mínimo común múltiplo de bucles independientes. `--segundos 1…600` permite forzar un corte de prueba; los bucles no se convierten en finales inventados. Se guardan en `trabajo/exportacion_musica/` junto con su inventario y huellas, sin efectos ni amplificación del volumen de la partida. Sirven como material para preparar un remaster separado del port fiel.

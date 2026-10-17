@@ -1,3 +1,4 @@
+#include "../motor/sonido/digital.hpp"
 #include "../motor/estado/segmento.hpp"
 #include "../motor/video/camara.hpp"
 #include "../motor/movimiento/geometria.hpp"
@@ -819,4 +820,45 @@ extern "C" EXPORTAR int preparar_transicion(unsigned char *datos, unsigned short
                                             unsigned short estandar, unsigned short modelo,
                                             unsigned short ancho, unsigned short alto) {
   return motor::preparar_transicion_escena(datos, salida, estandar, modelo, ancho, alto) ? 1 : 0;
+}
+
+// Expone el primer bloque DMA para contrastarlo con las escrituras y el estado de 7FB3.
+extern "C" EXPORTAR void preparar_dma_digital(unsigned short segmento, unsigned short posicion,
+                                              unsigned int longitud, unsigned int *salida) {
+  const auto bloque = motor::preparar_dma(segmento, posicion, longitud);
+  salida[0] = bloque.direccion;
+  salida[1] = bloque.cuenta;
+  salida[2] = bloque.pagina;
+  salida[3] = bloque.restantes;
+}
+// Conserva una sesión digital entre llamadas para comprobar interrupciones, prioridades y bloques.
+extern "C" EXPORTAR int procesar_digital(unsigned int operacion, unsigned char *datos,
+                                         const unsigned char *general,
+                                         unsigned int longitud_general, const unsigned char *escena,
+                                         unsigned int longitud_escena, unsigned short entidad,
+                                         unsigned char identificador, short *salida,
+                                         unsigned int cantidad) {
+  static motor::DigitalPcm audio;
+  if (operacion == 0) {
+    audio.conectar(general, longitud_general, escena, longitud_escena);
+    return 1;
+  }
+  if (operacion == 1)
+    return audio.reproducir(datos, entidad, identificador) ? 1 : 0;
+  if (operacion == 2) {
+    audio.generar(salida, cantidad);
+    return 1;
+  }
+  if (operacion == 3)
+    return audio.activa() ? 1 : 0;
+  if (operacion == 4) {
+    audio.detener();
+    return 1;
+  }
+  return 0;
+}
+// Obtiene referencias de bancos desde la misma tabla de 78 registros que utiliza el cargador DOS.
+extern "C" EXPORTAR int nombre_sfx(const unsigned char *datos, unsigned short escena,
+                                   char *nombre) {
+  return motor::nombre_banco_sonido(datos, escena, nombre) ? 1 : 0;
 }

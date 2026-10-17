@@ -159,6 +159,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     musica: 'comparar_musica.py',
     musica_rs: 'comparar_musica_rs.py',
     midi_dosbox: 'comparar_midi_dosbox.py',
+    digital: 'comparar_digital.py',
     video: 'comparar_video.py',
     rnc: 'comparar_rnc.py',
     rnc2: 'comparar_rnc2.py',
@@ -238,6 +239,16 @@ try {
       compararAcciones('musica_rs', argumentos);
       await gestionarSdl('comprobar:mt32', []);
       ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_sintesis_mt32.py')]);
+      break;
+    case 'exportar:musica':
+      await gestionarSdl('exportar:musica', argumentos);
+      break;
+    case 'comparar:digital':
+      compararAcciones('digital', argumentos);
+      break;
+    case 'comprobar:digital':
+      compararAcciones('digital', argumentos);
+      await gestionarSdl('comprobar:digital', []);
       break;
     case 'comparar:dosbox-midi':
       compararAcciones('midi_dosbox', argumentos);

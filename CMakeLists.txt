@@ -12,7 +12,7 @@ foreach(INDICE RANGE ${ULTIMA_FUENTE})
   list(APPEND FUENTES_MOTOR "${FUENTE}")
 endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS herramientas/fuentes_motor.json)
-add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp ${FUENTES_MOTOR})
+add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp plataformas/sdl/opl2.cpp plataformas/sdl/ymfm_opl.cpp plataformas/sdl/ymfm_adpcm.cpp plataformas/sdl/ymfm_pcm.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)
@@ -59,3 +59,8 @@ foreach(LICENCIA COPYING.LESSER.txt COPYING.txt)
       "${CARPETA_LICENCIA_MT32EMU}/${LICENCIA}" "$<TARGET_FILE_DIR:curse-reborn>/MT32EMU_${LICENCIA}")
   endif()
 endforeach()
+
+# Mantener la atribución BSD del núcleo YM3812 también en compilaciones fuera de Windows.
+add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  "${CMAKE_CURRENT_SOURCE_DIR}/terceros/ymfm/LICENSE"
+  "$<TARGET_FILE_DIR:curse-reborn>/LICENCIA_YMFM.txt")

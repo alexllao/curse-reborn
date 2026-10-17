@@ -21,13 +21,13 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Core, título, introducción, mazmorra con su ruta inicial, corredor parcial y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos PC Speaker tienen salida audible. Los demás puzles, el juego completo y el resto de dispositivos de sonido siguen pendientes.**
+**Core, título, introducción, mazmorra con su ruta inicial, corredor parcial y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos digitales Sound Blaster y PC Speaker tienen salida audible, con música AdLib o MT-32. Los demás puzles y el juego completo siguen pendientes.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
-El traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. La mazmorra ya aporta la carga de modelos desde archivos; el audio sigue desactivado.
+El traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. La mazmorra ya aporta la carga de modelos desde archivos; los servicios de audio están conectados a SDL.
 
-El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Los efectos ya generan PCM y se escuchan mediante una salida SDL compartida; la música de zona [MT-32](documentacion/musica_mt32.md) ya está integrada mediante Munt; AdLib mantiene su tema continuo original y SB16 digital sigue pendiente.
+El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Los efectos ya generan PCM y se escuchan mediante una salida SDL compartida; la música de zona [MT-32](documentacion/musica_mt32.md) ya está integrada mediante Munt; AdLib mantiene su tema continuo original y los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados.
 
 Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++ y el propietario ha confirmado sus **1.183 casos** de comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
 
@@ -39,7 +39,7 @@ El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
-La prioridad de jugabilidad es completar las acciones del corredor y del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; SB16 digital sigue pendiente. Más adelante se estudiarán marcos y filtros visuales.
+La prioridad de jugabilidad es completar las acciones del corredor y del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
@@ -102,6 +102,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Conectar clic, flechas, BOXDET, corrección de colisiones e historial y corregir el despacho que desplazaba la puerta.
 - [x] Conectar mazmorra y corredor con regreso persistente, cámara y caída al agua.
 - [ ] Completar los puzles del corredor y del lago, y las demás habitaciones.
+- [x] Preparar un exportador de referencias WAV sin pérdida para el futuro remaster sinfónico con IA, conservando las versiones originales.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
@@ -111,7 +112,8 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Sustituir el acceso gráfico al hardware por SDL y comprobar el resultado.
 - [ ] Trasladar los controles, el movimiento y las interacciones.
 - [ ] Trasladar el inventario, los eventos y los puzles.
-- [ ] Trasladar el sonido, la temporización y las partidas guardadas.
+- [x] Conectar efectos digitales Sound Blaster y PC Speaker con música AdLib y MT-32.
+- [ ] Completar las demás temporizaciones y las partidas guardadas.
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
@@ -192,7 +194,7 @@ Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar 
 
 ### Introducción original
 
-La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción, mazmorra, corredor, caída y lago como vistas de desarrollo. La música MT-32 comienza con CURSE.RS5 antes de Core y cambia según la tabla original de cada escena; los efectos PC Speaker están activos en las escenas jugables.
+La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción, mazmorra, corredor, caída y lago como vistas de desarrollo. La música MT-32 comienza con CURSE.RS5 antes de Core y cambia según la tabla original de cada escena; los efectos digitales Sound Blaster están activos en las escenas jugables y F3 permite volver a PC Speaker.
 
 `pnpm comparar:introduccion` contrasta el recorrido y las imágenes contra el ejecutable; `pnpm comprobar:introduccion` compara capturas SDL del caldero, balcón, béisbol y llegada a la mazmorra al terminar y al omitir. Las esperas usan retrazos nominales a 70 Hz; la duración de la E/S DOS y la sincronización física de monitor no se reproducen.
 
@@ -249,7 +251,7 @@ Los avances se documentarán con claridad: qué se ha comprobado, qué sigue sie
 
 `pnpm comprobar:caida` compara dos momentos de `DROP` y la entrada sumergida en `LAKEBED`. Desde la mazmorra, **F6 abre el corredor** y otro F6 abre la caída; F5 retrocede por las escenas integradas. Cada salto prepara una sesión nueva. La caída avanza sola hasta el agua. Estos atajos no resuelven puzles de una partida ni conservan la sesión anterior.
 
-[Guía del corredor](documentacion/recorridos/01_corredor.txt) · [Guía de la caída](documentacion/recorridos/02_caida.txt). La siguiente prioridad acordada es el **audio compartido**, empezando por PC Speaker y continuando con AdLib y MT-32. Los efectos PC Speaker ya siguen las órdenes, prioridades y secuencias originales, con una salida compartida entre escenas. La música de zona [MT-32](documentacion/musica_mt32.md) ya está integrada mediante Munt; AdLib mantiene su tema continuo original y SB16 digital sigue pendiente.
+[Guía del corredor](documentacion/recorridos/01_corredor.txt) · [Guía de la caída](documentacion/recorridos/02_caida.txt). El **audio compartido** ya incluye PC Speaker, efectos digitales Sound Blaster y música AdLib OPL2, OPL3 y MT-32. Los efectos PC Speaker ya siguen las órdenes, prioridades y secuencias originales, con una salida compartida entre escenas. La música de zona [MT-32](documentacion/musica_mt32.md) ya está integrada mediante Munt; AdLib mantiene su tema continuo original y los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados.
 
 ## Recursos originales y autoría
 
@@ -267,16 +269,26 @@ Este proyecto empieza con el deseo de volver al primer juego de ordenador de su 
 
 La solución de referencia y el seguimiento por tramos están en [referencia de solución](documentacion/referencia_solucion.md), a partir de la guía de Sophie Cheshire aportada por Àlex.
 
+## Exportar música para preparar el remaster
+
+`pnpm exportar:musica` genera nueve WAV locales con **duración tomada de los guiones originales**: cinco bancos MT-32 y dos temas internos FM con OPL2 y OPL3. En MT-32 incluye la entrada y termina en el primer salto de repetición; en FM espera a que todos los canales hayan completado su primer recorrido, porque sus bucles son independientes. Se guardan en `trabajo/exportacion_musica/`, con `pistas.json` que identifica archivos, duración, canales y huellas. Requiere los recursos originales y las ROM locales para MT-32.
+
+Para forzar un corte de prueba: `pnpm exportar:musica --segundos 180` (entre 1 y 600). Si no puede identificar el recorrido, la herramienta informa del error; no lo sustituye por un corte arbitrario.
+
+La herramienta reproduce las pistas con los sintetizadores del port, sin efectos del juego ni el volumen amplificado de la partida. La exportación automática conserva la entrada y un recorrido de sus bucles; la duración forzada con `--segundos` puede acabar a mitad de uno. El tema FM cero se exporta como material auxiliar: el original arranca con el uno. Los originales y las futuras versiones sinfónicas deben conservarse separados. No se incluyen WAV, recursos ni ROM en Git.
+
 ## Sonido y vistas de desarrollo
 
-`pnpm ventana` activa los efectos originales de PC Speaker. **M** alterna el silencio; los guiones y el temporizador siguen avanzando. Los sonidos usan las secuencias del EXE, también con el menú abierto o durante un fundido. Si no hay dispositivo, la ventana continúa sin audio. Para desactivarlo desde el arranque: `pnpm ventana --sin-sonido`.
+`pnpm comprobar:digital` compara **134 efectos**, **3.442.325 muestras**, **140 programaciones DSP/DMA** y las **78 referencias de bancos**, y después comprueba su integración SDL. Admite `--muestra` con 31 efectos. `pnpm comparar:digital` ejecuta solo el contraste del motor. Los efectos siguen las órdenes originales de las acciones integradas; esta prueba no implementa puzles o habitaciones pendientes. [Funcionamiento y límites](documentacion/efectos_digitales.md).
+
+`pnpm ventana` activa los efectos digitales originales de Sound Blaster. **F3** alterna con PC Speaker sin cambiar la música. **M** alterna el silencio; los guiones y el temporizador siguen avanzando. Los sonidos usan las secuencias del EXE, también con el menú abierto o durante un fundido. Si no hay dispositivo, la ventana continúa sin audio. Para desactivarlo desde el arranque: `pnpm ventana --sin-sonido`.
 
 `pnpm comprobar:audio --muestra` agrupa la comparación original del altavoz, la nueva señal PCM y la apertura/alimentación de SDL con un dispositivo de prueba. `pnpm comparar:audio` amplía la comparación. El WAV de prueba se guarda localmente en `trabajo/comparacion_audio/efecto_original.wav`. Esta prueba no escucha ni valida los altavoces físicos. Véanse [detalles y límites](documentacion/altavoz_pc.md).
 
 `pnpm comprobar:vistas` introduce ocho cambios F5/F6 y verifica el orden mazmorra → corredor → caída → lago y el regreso. Estos atajos reinician la sesión; para conservar el inventario hay que atravesar las salidas normales del juego.
 
-La [música MT-32](documentacion/musica_mt32.md) reproduce los cinco bancos CURSE.RS y consulta las 78 referencias originales de escena. Con las ROM locales válidas se selecciona al arrancar. **F4** recorre PC Speaker, AdLib y MT-32, con efectos PC Speaker; omite MT-32 si no puede prepararlo. La [música AdLib](documentacion/musica_adlib.md) conserva sus nueve canales y el tema uno de forma continua, también durante las escenas; la selección de bancos RS por zona pertenece a MT-32. SB16 digital sigue pendiente. La consola describe la opción efectiva. **M** silencia toda la mezcla. Se registran también las acciones del jugador, selecciones, inventario y cambios de escena, sin repetir mensajes por fotograma.
+La [música MT-32](documentacion/musica_mt32.md) reproduce los cinco bancos CURSE.RS y consulta las 78 referencias originales de escena. Con las ROM locales válidas se selecciona al arrancar. **F4** recorre sin música, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32; **F3** elige por separado efectos digitales Sound Blaster o PC Speaker; omite MT-32 si no puede prepararlo. La [música AdLib](documentacion/musica_adlib.md) conserva sus nueve canales y el tema uno de forma continua, también durante las escenas; la selección de bancos RS por zona pertenece a MT-32. Los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. La consola describe la opción efectiva. **M** silencia toda la mezcla y **+ / −** ajustan entre 0 y 200 % (100 % es el nivel normal). Se registran también las acciones del jugador, selecciones, inventario y cambios de escena, sin repetir mensajes por fotograma.
 
 `pnpm comprobar:musica --muestra` compara el reproductor musical original y comprueba ocho segundos de síntesis y salida SDL de prueba. La comparación amplia queda disponible en `pnpm comparar:musica`.
 
-**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.

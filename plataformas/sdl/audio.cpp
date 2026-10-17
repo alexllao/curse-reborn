@@ -1,6 +1,10 @@
 #include "audio.hpp"
+#include "../../motor/estado/inicializar.hpp"
 #include <cstdio>
 #include <vector>
+#include <unordered_set>
+#include "../../motor/sonido/musica.hpp"
+#include "../../motor/estado/segmento.hpp"
 
 // Abre dos flujos del mismo dispositivo: música autónoma y efectos atendidos por el juego.
 bool Audio::abrir(const std::string &carpeta) {
@@ -20,19 +24,25 @@ bool Audio::abrir(const std::string &carpeta) {
   }
   size_t longitud = 0;
   void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
+  carpeta_datos = carpeta;
   const bool preparada = archivo && longitud <= 0xffffffffu &&
                          musica.iniciar(static_cast<const unsigned char *>(archivo),
                                         static_cast<unsigned int>(longitud));
+  const bool efectos_preparados =
+      preparada &&
+      motor::leer_datos_iniciales(static_cast<const unsigned char *>(archivo),
+                                  static_cast<unsigned int>(longitud), referencias) &&
+      cargar_efectos(0xffff);
   if (preparada && mt32.iniciar(carpeta, static_cast<const unsigned char *>(archivo),
                                 static_cast<unsigned int>(longitud)))
-    perfil = 2;
+    perfil = 3;
   else {
     perfil = 1;
     std::printf(
         "MT-32 no disponible: revisa MT32_CONTROL.ROM y MT32_PCM.ROM en datos_originales/ROMS.\n");
   }
   SDL_free(archivo);
-  if (!preparada) {
+  if (!preparada || !efectos_preparados) {
     cerrar();
     return false;
   }
@@ -52,9 +62,9 @@ bool Audio::abrir(const std::string &carpeta) {
     cerrar();
     return false;
   }
-  std::printf("Audio: %s + PC Speaker (efectos). F4 cambia la opción; M silencia.\nSB16 digital: "
-              "pendiente.\n",
-              perfil == 2 ? "MT-32 (música por escena)" : "AdLib (tema continuo original)");
+  std::printf("Audio: %s + Sound Blaster digital (efectos). F4 cambia música; F3 cambia efectos; M "
+              "silencia.\n",
+              perfil == 3 ? "MT-32 (música por escena)" : "AdLib OPL2 (tema continuo original)");
   std::fflush(stdout);
   registrar_volumen();
   return true;
@@ -69,6 +79,9 @@ void Audio::cerrar() {
     SDL_DestroyAudioStream(flujo);
   flujo = nullptr;
   datos = nullptr;
+  digital.conectar(nullptr, 0, nullptr, 0);
+  banco_general.clear();
+  banco_escena.clear();
   if (dispositivo)
     SDL_CloseAudioDevice(dispositivo);
   dispositivo = 0;
@@ -79,16 +92,17 @@ void Audio::cerrar() {
 void Audio::alimentar_musica(void *contexto, SDL_AudioStream *salida, int adicional, int) {
   auto &audio = *static_cast<Audio *>(contexto);
   int pendientes = (adicional + 3) / 4;
-  short fm[512], roland[1024], mezcla[1024];
+  short fm[512], fm_opl2[512], roland[1024], mezcla[1024];
   while (pendientes > 0) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 512 ? 512 : pendientes);
-    bool correcto = audio.musica.generar(fm, cantidad);
+    bool correcto = audio.musica.generar(fm, cantidad, fm_opl2);
     if (audio.mt32.disponible())
       correcto = correcto && audio.mt32.generar(roland, cantidad);
     unsigned int con_senal = 0;
     for (unsigned int i = 0; i < cantidad * 2; ++i) {
       mezcla[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
-                  : audio.perfil == 2                              ? roland[i]
+                  : audio.perfil == 3                              ? roland[i]
+                  : audio.perfil == 1                              ? fm_opl2[i / 2]
                                                                    : fm[i / 2];
       con_senal += mezcla[i] > 64 || mezcla[i] < -64 ? 1u : 0u;
     }
@@ -113,12 +127,13 @@ bool Audio::conectar(unsigned char *segmento) {
   if (!altavoz.detener(datos))
     return false;
   datos[0x9924] = 0;
-  datos[0x0ad4] = 1;
+  datos[0x0ad4] = efectos_digitales ? 3 : 1;
   return cambiar_escena(static_cast<unsigned short>(datos[0x8082] | (datos[0x8083] << 8)));
 }
 
 // Desconecta solo los efectos: la música mantiene su búfer y su reloj durante la carga de imágenes.
 void Audio::desconectar() {
+  digital.detener();
   if (datos) {
     altavoz.detener(datos);
     datos[0x0ad4] = datos[0x0ad3] = 0;
@@ -130,11 +145,11 @@ void Audio::desconectar() {
 bool Audio::cambiar_escena(unsigned short escena) {
   if (!flujo_musical)
     return true;
-  if (!SDL_LockAudioStream(flujo_musical))
+  if (!cargar_efectos(escena) || !SDL_LockAudioStream(flujo_musical))
     return false;
   const bool correcto = !mt32.disponible() || mt32.cambiar_escena(escena);
   if (datos)
-    datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
+    datos[0x0ad3] = perfil == 3 ? 4 : perfil != 0 ? 2 : 0;
   SDL_UnlockAudioStream(flujo_musical);
   return correcto;
 }
@@ -153,6 +168,7 @@ bool Audio::actualizar() {
       altavoz.detener(datos);
       datos[0x9924] = 0;
     }
+    digital.detener();
     transcurrido = resto = 0;
   }
   const auto reloj = transcurrido * 48000u + resto;
@@ -163,8 +179,12 @@ bool Audio::actualizar() {
   short muestras[1024];
   while (pendientes) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 1024 ? 1024 : pendientes);
-    if (datos && !altavoz.generar(datos, muestras, cantidad))
-      return false;
+    if (datos) {
+      if (efectos_digitales)
+        digital.generar(muestras, cantidad);
+      else if (!altavoz.generar(datos, muestras, cantidad))
+        return false;
+    }
     if (!datos || silencio)
       for (unsigned int i = 0; i < cantidad; ++i)
         muestras[i] = 0;
@@ -181,7 +201,10 @@ bool Audio::reproducir(unsigned char *segmento, unsigned short entidad,
                        unsigned char identificador) {
   if (segmento[0x0ad4] == 0)
     return true;
-  return datos == segmento && actualizar() && altavoz.reproducir(datos, entidad, identificador);
+  if (datos != segmento || !actualizar())
+    return false;
+  return efectos_digitales ? digital.reproducir(datos, entidad, identificador)
+                           : altavoz.reproducir(datos, entidad, identificador);
 }
 
 // El cambio de ganancia evita vaciar muestras y mantiene la continuidad del dispositivo.
@@ -202,8 +225,8 @@ bool Audio::ajustar_volumen(int cambio) {
   int siguiente = static_cast<int>(volumen) + cambio;
   if (siguiente < 0)
     siguiente = 0;
-  if (siguiente > 100)
-    siguiente = 100;
+  if (siguiente > 200)
+    siguiente = 200;
   if (dispositivo && !SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : siguiente / 100.0f))
     return false;
   volumen = static_cast<unsigned int>(siguiente);
@@ -228,16 +251,81 @@ bool Audio::alternar_dispositivo() {
   }
   if (!SDL_LockAudioStream(flujo_musical))
     return false;
-  perfil = (perfil + 1) % (mt32.disponible() ? 3u : 2u);
+  perfil = (perfil + 1) % (mt32.disponible() ? 4u : 3u);
   if (datos)
-    datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
-  std::printf("Audio cambiado a %s%s.\n",
-              perfil == 2   ? "MT-32 (música por escena) + PC Speaker"
-              : perfil == 1 ? "AdLib (tema continuo original) + PC Speaker"
-                            : "PC Speaker (efectos; sin música)",
+    datos[0x0ad3] = perfil == 3 ? 4 : perfil != 0 ? 2 : 0;
+  std::printf("Audio cambiado a %s; efectos: %s%s.\n",
+              perfil == 3   ? "MT-32 (música por escena)"
+              : perfil == 2 ? "Sound Blaster 16 OPL3 (tema continuo original)"
+              : perfil == 1 ? "AdLib OPL2 (tema continuo original)"
+                            : "sin música",
+              efectos_digitales ? "Sound Blaster digital" : "PC Speaker",
               silencio ? " [silenciado con M]" : "");
   std::fflush(stdout);
   SDL_UnlockAudioStream(flujo_musical);
+  return true;
+}
+
+// La tecla F3 solo afecta al dispositivo de efectos y conserva el perfil musical y su reloj.
+bool Audio::alternar_efectos() {
+  if (!flujo)
+    return true;
+  if (!actualizar())
+    return false;
+  if (datos && !altavoz.detener(datos))
+    return false;
+  digital.detener();
+  efectos_digitales = !efectos_digitales;
+  if (datos) {
+    datos[0x9924] = 0;
+    datos[0x0ad4] = efectos_digitales ? 3 : 1;
+  }
+  std::printf("[partida] Efectos: %s.\n",
+              efectos_digitales ? "Sound Blaster digital" : "PC Speaker");
+  std::fflush(stdout);
+  return SDL_ClearAudioStream(flujo);
+}
+// 038E/4FDF: sustituye únicamente los servicios DOS de lectura; no transforma los recursos.
+bool Audio::cargar_banco_efectos(const char *nombre, std::vector<unsigned char> &destino) {
+  if (!nombre[0]) {
+    destino.clear();
+    return true;
+  }
+  std::string nombre_dos = nombre;
+  for (auto &letra : nombre_dos)
+    if (letra >= 'a' && letra <= 'z')
+      letra = static_cast<char>(letra - 'a' + 'A');
+  size_t longitud = 0;
+  auto *archivo = SDL_LoadFile((carpeta_datos + "/" + nombre_dos).c_str(), &longitud);
+  if (!archivo || longitud > 65536 || longitud < 2) {
+    SDL_free(archivo);
+    return false;
+  }
+  const auto *bytes = static_cast<const unsigned char *>(archivo);
+  destino.assign(bytes, bytes + longitud);
+  SDL_free(archivo);
+  return true;
+}
+// 4FD1: recarga el banco antes de atender las entidades de la nueva escena y cancela el anterior.
+bool Audio::cargar_efectos(unsigned short escena) {
+  char nombre[13]{};
+  digital.detener();
+  if (banco_general.empty() && (!motor::nombre_banco_sonido(referencias, 0xffff, nombre) ||
+                                !cargar_banco_efectos(nombre, banco_general)))
+    return false;
+  if (escena == 0xffff)
+    banco_escena.clear();
+  else if (!motor::nombre_banco_sonido(referencias, escena, nombre) ||
+           !cargar_banco_efectos(nombre, banco_escena))
+    return false;
+  digital.conectar(banco_general.data(), static_cast<unsigned int>(banco_general.size()),
+                   banco_escena.empty() ? nullptr : banco_escena.data(),
+                   static_cast<unsigned int>(banco_escena.size()));
+  if (escena != 0xffff) {
+    std::printf("[partida] Banco de efectos: %s; generales: STD.SFX.\n",
+                nombre[0] ? nombre : "ninguno");
+    std::fflush(stdout);
+  }
   return true;
 }
 
@@ -267,8 +355,9 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
   if (!preparadas)
     return false;
   constexpr unsigned int cantidad = 48000 * 8;
-  std::vector<short> primera(cantidad), segunda(cantidad);
-  if (!continua.generar(primera.data(), cantidad))
+  std::vector<short> primera(cantidad), segunda(cantidad), primera_opl2(cantidad),
+      segunda_opl2(cantidad);
+  if (!continua.generar(primera.data(), cantidad, primera_opl2.data()))
     return false;
   constexpr unsigned int tamanos[] = {1, 682, 683, 1024, 4096};
   unsigned int posicion = 0, bloque = 0;
@@ -276,19 +365,29 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
     auto tamano = tamanos[bloque++ % 5];
     if (tamano > cantidad - posicion)
       tamano = cantidad - posicion;
-    if (!fragmentada.generar(segunda.data() + posicion, tamano))
+    if (!fragmentada.generar(segunda.data() + posicion, tamano, segunda_opl2.data() + posicion))
       return false;
     posicion += tamano;
   }
-  unsigned int no_nulas = 0;
+  unsigned int no_nulas = 0, no_nulas_opl2 = 0, distintas = 0;
   for (unsigned int i = 0; i < cantidad; ++i) {
-    if (primera[i] != segunda[i])
+    if (primera[i] != segunda[i] || primera_opl2[i] != segunda_opl2[i]) {
+      std::fprintf(stderr, "Partición FM distinta en muestra %u: OPL3 %d/%d, OPL2 %d/%d.\n", i,
+                   primera[i], segunda[i], primera_opl2[i], segunda_opl2[i]);
       return false;
+    }
     no_nulas += primera[i] != 0 ? 1u : 0u;
+    no_nulas_opl2 += primera_opl2[i] != 0 ? 1u : 0u;
+    distintas += primera[i] != primera_opl2[i] ? 1u : 0u;
   }
   constexpr auto pulsos = static_cast<unsigned long long>(cantidad) * 14318180 / 576000 / 0x4250;
-  if (no_nulas < cantidad / 4 || continua.pulsos() != pulsos || fragmentada.pulsos() != pulsos)
+  if (no_nulas < cantidad / 4 || no_nulas_opl2 < cantidad / 4 || distintas < cantidad / 10 ||
+      continua.pulsos() != pulsos || fragmentada.pulsos() != pulsos) {
+    std::fprintf(
+        stderr, "Señal FM: OPL3 %u, OPL2 %u, distintas %u, IRQ %llu/%llu, previstas %llu.\n",
+        no_nulas, no_nulas_opl2, distintas, continua.pulsos(), fragmentada.pulsos(), pulsos);
     return false;
+  }
   unsigned char cabecera[44] = {
       'R', 'I', 'F', 'F', 0, 0, 0, 0, 'W', 'A', 'V', 'E', 'f', 'm', 't', ' ', 16,  0,   0, 0, 1, 0,
       1,   0,   0,   0,   0, 0, 0, 0, 0,   0,   2,   0,   16,  0,   'd', 'a', 't', 'a', 0, 0, 0, 0};
@@ -305,6 +404,19 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
   const bool guardado = SDL_WriteIO(salida, cabecera, 44) == 44 &&
                         SDL_WriteIO(salida, bytes.data(), bytes.size()) == bytes.size();
   const bool cerrado = SDL_CloseIO(salida);
+  for (unsigned int i = 0; i < cantidad; ++i)
+    campo_wav(bytes.data(), i * 2, static_cast<unsigned short>(primera_opl2[i]), 2);
+  auto *salida_opl2 = SDL_IOFromFile((std::string(ruta) + ".opl2.wav").c_str(), "wb");
+  if (!salida_opl2)
+    return false;
+  const bool guardado_opl2 = SDL_WriteIO(salida_opl2, cabecera, 44) == 44 &&
+                             SDL_WriteIO(salida_opl2, bytes.data(), bytes.size()) == bytes.size();
+  const bool cerrado_opl2 = SDL_CloseIO(salida_opl2);
+  if (!guardado_opl2 || !cerrado_opl2)
+    return false;
+  std::printf(
+      "OPL2 y OPL3: %u muestras distintas entre chips; ambas salidas coinciden al fragmentar.\n",
+      distintas);
   // Ejercita la salida común, el cambio de opción y su continuidad al desconectar una escena.
   Audio audio;
   static unsigned char segmento[65536]{};
@@ -313,6 +425,8 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
   SDL_Delay(25);
   bool integrada = audio.actualizar() && audio.conectar(segmento);
   const bool con_mt32 = segmento[0x0ad3] == 4;
+  if (!con_mt32)
+    integrada = integrada && audio.alternar_dispositivo();
   integrada = integrada && (segmento[0x0ad3] == 2 || con_mt32) && audio.alternar_dispositivo() &&
               segmento[0x0ad3] == 0 && audio.alternar_silencio();
   SDL_Delay(25);
@@ -322,6 +436,7 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsign
   const auto senal_anterior = audio.muestras_audibles();
   SDL_Delay(300);
   integrada = integrada && audio.muestras_audibles() > senal_anterior;
+  integrada = integrada && audio.alternar_dispositivo() && segmento[0x0ad3] == 2;
   if (con_mt32)
     integrada = integrada && audio.alternar_dispositivo() && segmento[0x0ad3] == 4;
   audio.desconectar();
@@ -435,4 +550,210 @@ bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
   }
   sintetizador.cerrar();
   return guardado;
+}
+
+// Comprueba el servicio usado por la partida, incluidos F3, F4 y M, sin exigir hardware de audio.
+bool comprobar_efectos_digitales(const std::string &carpeta, const char *ruta) {
+  Audio audio;
+  static unsigned char datos[65536]{};
+  size_t longitud = 0;
+  void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
+  const bool preparado = archivo && longitud <= 0xffffffffu &&
+                         motor::leer_datos_iniciales(static_cast<const unsigned char *>(archivo),
+                                                     static_cast<unsigned int>(longitud), datos);
+  SDL_free(archivo);
+  if (!preparado || !audio.abrir(carpeta))
+    return false;
+  datos[0x2c4e] = 100;
+  datos[0x2c50] = 100;
+  datos[0x2c52] = 32;
+  datos[0x2c54] = 48;
+  bool correcto = true;
+  for (unsigned short escena = 0; escena < 4 && correcto; ++escena) {
+    datos[0x8082] = static_cast<unsigned char>(escena);
+    datos[0x8083] = 0;
+    correcto = audio.conectar(datos) && datos[0x0ad4] == 3 && audio.reproducir(datos, 0x2c4c, 15);
+    SDL_Delay(30);
+    correcto = correcto && audio.actualizar() && audio.alternar_efectos() && datos[0x0ad4] == 1 &&
+               audio.reproducir(datos, 0x2c4c, 15) && audio.alternar_efectos() &&
+               datos[0x0ad4] == 3 && audio.alternar_dispositivo() && datos[0x0ad4] == 3 &&
+               audio.ajustar_volumen(-40) && audio.alternar_silencio() &&
+               audio.reproducir(datos, 0x2c4c, 0);
+    SDL_Delay(30);
+    correcto =
+        correcto && audio.actualizar() && audio.alternar_silencio() && audio.ajustar_volumen(40);
+    audio.desconectar();
+    correcto = correcto && datos[0x0ad4] == 0;
+  }
+  correcto = correcto && audio.ajustar_volumen(999) && audio.nivel_volumen() == 200 &&
+             audio.alternar_silencio() && audio.nivel_volumen() == 200 &&
+             audio.alternar_silencio() && audio.ajustar_volumen(-999) &&
+             audio.nivel_volumen() == 0 && audio.ajustar_volumen(100) &&
+             audio.nivel_volumen() == 100;
+  const auto antes = audio.muestras_musicales();
+  SDL_Delay(150);
+  correcto = correcto && audio.muestras_musicales() > antes;
+  audio.cerrar();
+  if (correcto)
+    std::printf("Efectos SDL: cuatro escenas, Sound Blaster/PC Speaker, música, silencio y volumen "
+                "comprobados.\n");
+  return correcto && comprobar_salida_audio(ruta);
+}
+
+namespace {
+// La exploración del guion musical no necesita producir señal ni modificar registros del chip.
+void omitir_registro_exportacion(void *, unsigned short, unsigned char) {}
+// FM tiene nueve bucles independientes: termina cuando todos han repetido su estado de control.
+unsigned int longitud_tema_fm(const std::vector<unsigned char> &ejecutable, unsigned short tema) {
+  unsigned char codigo[65536];
+  for (unsigned int i = 0; i < 65536; ++i)
+    codigo[i] = ejecutable[512 + i];
+  if (!motor::iniciar_musica(codigo, tema))
+    return 0;
+  std::unordered_set<std::string> estados[9];
+  bool completos[9]{};
+  constexpr motor::SalidaAdlib salida{nullptr, omitir_registro_exportacion};
+  for (unsigned int irq = 0; irq < 43000; ++irq) {
+    if (motor::palabra(codigo, 0x8e5b) == 1) {
+      bool terminado = true;
+      for (unsigned short canal = 0; canal < 9; ++canal) {
+        const auto posicion = static_cast<unsigned short>(0x8ce2 + canal * 17);
+        if (!completos[canal]) {
+          const std::string clave(reinterpret_cast<const char *>(codigo + posicion), 17);
+          completos[canal] = motor::palabra(codigo, posicion + 11) == 0xffff ||
+                             !estados[canal].insert(clave).second;
+        }
+        terminado = terminado && completos[canal];
+      }
+      if (terminado)
+        return static_cast<unsigned int>(
+            (static_cast<unsigned long long>(irq) * 0x4250 * 576000 + 14318179) / 14318180);
+    }
+    if (!motor::avanzar_musica(codigo, salida))
+      return 0;
+  }
+  return 0;
+}
+// RS contiene un salto FF al principio del tramo repetido; incluye la entrada antes de ese salto.
+unsigned int longitud_banco_rs(const std::string &carpeta, unsigned int indice,
+                               unsigned char tempo) {
+  size_t longitud = 0;
+  auto *archivo =
+      SDL_LoadFile((carpeta + "/CURSE.RS" + std::to_string(indice + 1)).c_str(), &longitud);
+  if (!archivo || longitud > 65536 || !tempo) {
+    SDL_free(archivo);
+    return 0;
+  }
+  const auto *bytes = static_cast<const unsigned char *>(archivo);
+  unsigned short posicion = 0;
+  unsigned char estado = 0;
+  unsigned long long pulsos = 0;
+  unsigned int cantidad = 0;
+  for (unsigned int evento = 0; evento < 100000 && posicion < longitud; ++evento) {
+    if (bytes[posicion] == 0xff && posicion + 2u < longitud &&
+        motor::palabra(bytes, posicion + 1) < posicion) {
+      cantidad = static_cast<unsigned int>((pulsos * 24000 + tempo - 1) / tempo);
+      break;
+    }
+    motor::EventoMusicaRS orden{};
+    if (!motor::leer_evento_musica_rs(bytes, static_cast<unsigned int>(longitud), posicion, estado,
+                                      orden))
+      break;
+    pulsos += orden.tiempo;
+    if (pulsos * 24000 > static_cast<unsigned long long>(tempo) * 48000 * 600)
+      break;
+  }
+  SDL_free(archivo);
+  return cantidad;
+}
+// Guarda PCM de 48 kHz con cabecera RIFF explícita para evitar depender del orden de bytes
+// anfitrión.
+bool guardar_pista_wav(const std::string &ruta, const std::vector<short> &muestras,
+                       unsigned int canales) {
+  unsigned char cabecera[44] = {
+      'R', 'I', 'F', 'F', 0, 0, 0, 0, 'W', 'A', 'V', 'E', 'f', 'm', 't', ' ', 16,  0,   0, 0, 1, 0,
+      0,   0,   0,   0,   0, 0, 0, 0, 0,   0,   0,   0,   16,  0,   'd', 'a', 't', 'a', 0, 0, 0, 0};
+  const auto longitud = static_cast<unsigned int>(muestras.size()) * 2;
+  campo_wav(cabecera, 4, longitud + 36, 4);
+  campo_wav(cabecera, 22, canales, 2);
+  campo_wav(cabecera, 24, 48000, 4);
+  campo_wav(cabecera, 28, 48000 * canales * 2, 4);
+  campo_wav(cabecera, 32, canales * 2, 2);
+  campo_wav(cabecera, 40, longitud, 4);
+  auto *archivo = SDL_IOFromFile(ruta.c_str(), "wb");
+  if (!archivo)
+    return false;
+  bool correcto = SDL_WriteIO(archivo, cabecera, 44) == 44;
+  unsigned char bloque[4096];
+  for (unsigned int inicio = 0; correcto && inicio < muestras.size();) {
+    auto cantidad = static_cast<unsigned int>(muestras.size()) - inicio;
+    if (cantidad > 2048)
+      cantidad = 2048;
+    for (unsigned int i = 0; i < cantidad; ++i)
+      campo_wav(bloque, i * 2, static_cast<unsigned short>(muestras[inicio + i]), 2);
+    correcto = SDL_WriteIO(archivo, bloque, cantidad * 2) == cantidad * 2;
+    inicio += cantidad;
+  }
+  return SDL_CloseIO(archivo) && correcto;
+}
+} // namespace
+
+// Lee únicamente recursos originales locales y renderiza sin abrir un dispositivo de reproducción.
+bool exportar_musica_wav(const std::string &carpeta, const std::string &destino,
+                         unsigned int segundos) {
+  if (segundos > 600)
+    return false;
+  size_t longitud = 0;
+  auto *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
+  if (!archivo || longitud > 0xffffffffu) {
+    SDL_free(archivo);
+    return false;
+  }
+  const auto *bytes = static_cast<const unsigned char *>(archivo);
+  std::vector<unsigned char> ejecutable(bytes, bytes + longitud);
+  SDL_free(archivo);
+  unsigned char datos_originales[65536];
+  if (!motor::leer_datos_iniciales(ejecutable.data(), static_cast<unsigned int>(longitud),
+                                   datos_originales))
+    return false;
+  MusicaAdlib fm;
+  std::vector<short> opl3, opl2;
+  for (unsigned short tema = 0; tema < 2; ++tema) {
+    const auto cantidad = segundos ? segundos * 48000 : longitud_tema_fm(ejecutable, tema);
+    if (!cantidad)
+      return false;
+    opl3.resize(cantidad);
+    opl2.resize(cantidad);
+    if (!fm.iniciar(ejecutable.data(), static_cast<unsigned int>(longitud), tema) ||
+        !fm.generar(opl3.data(), cantidad, opl2.data()) ||
+        !guardar_pista_wav(destino + "/adlib_opl2_tema_" + std::to_string(tema) + ".wav", opl2,
+                           1) ||
+        !guardar_pista_wav(destino + "/sb16_opl3_tema_" + std::to_string(tema) + ".wav", opl3, 1))
+      return false;
+    std::printf("Exportados OPL2 y OPL3: tema %u, %.3f segundos.\n", tema, cantidad / 48000.0);
+    std::fflush(stdout);
+  }
+  MusicaMt32 roland;
+  constexpr unsigned short escenas[] = {0, 64, 3, 15, 0xffff};
+  std::vector<short> muestras;
+  for (unsigned int banco = 0; banco < 5; ++banco) {
+    const auto referencia = motor::seleccionar_musica_rs(datos_originales, escenas[banco]);
+    const auto cantidad =
+        segundos ? segundos * 48000 : longitud_banco_rs(carpeta, banco, referencia.tempo);
+    if (!cantidad)
+      return false;
+    muestras.resize(cantidad * 2);
+    const bool correcto =
+        roland.iniciar(carpeta, ejecutable.data(), static_cast<unsigned int>(longitud),
+                       escenas[banco]) &&
+        roland.generar(muestras.data(), cantidad) &&
+        guardar_pista_wav(destino + "/mt32_curse_rs" + std::to_string(banco + 1) + ".wav", muestras,
+                          2);
+    roland.cerrar();
+    if (!correcto)
+      return false;
+    std::printf("Exportado MT-32: CURSE.RS%u, %.3f segundos.\n", banco + 1, cantidad / 48000.0);
+    std::fflush(stdout);
+  }
+  return true;
 }

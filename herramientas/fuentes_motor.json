@@ -36,5 +36,6 @@
   "motor/video/camara.cpp",
   "motor/sonido/pcm.cpp",
   "motor/sonido/musica.cpp",
-  "motor/sonido/musica_rs.cpp"
+  "motor/sonido/musica_rs.cpp",
+  "motor/sonido/digital.cpp"
 ]

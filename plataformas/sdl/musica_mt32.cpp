@@ -13,7 +13,7 @@ bool cargar_funcion(SDL_SharedObject *biblioteca, const char *nombre, Funcion &d
 
 // Munt identifica las ROM por su contenido; no se distribuyen ni se modifican estos archivos.
 bool MusicaMt32::iniciar(const std::string &carpeta, const unsigned char *ejecutable,
-                         unsigned int longitud) {
+                         unsigned int longitud, unsigned short escena_inicial) {
   cerrar();
   if (!motor::leer_datos_iniciales(ejecutable, longitud, datos))
     return false;
@@ -69,7 +69,7 @@ bool MusicaMt32::iniciar(const std::string &carpeta, const unsigned char *ejecut
     SDL_free(archivo);
   }
   banco_actual = 255;
-  return cambiar_escena(0xffff);
+  return cambiar_escena(escena_inicial);
 }
 
 // Las llamadas se serializan con el flujo musical y nunca acceden al DS de la partida.

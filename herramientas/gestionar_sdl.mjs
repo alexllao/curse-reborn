@@ -130,6 +130,16 @@ function entornoCompilador() {
 
 async function compilar() {
   mkdirSync(aplicacion, { recursive: true });
+  const opl2 = JSON.parse(
+    readFileSync(join(raiz, 'herramientas', 'dependencias_opl2.json'), 'utf8'),
+  );
+  for (const [archivo, huella] of Object.entries(opl2.sha256))
+    if (
+      createHash('sha256')
+        .update(readFileSync(join(raiz, 'terceros', 'ymfm', archivo)))
+        .digest('hex') !== huella
+    )
+      throw new Error(`La fuente OPL2 no coincide con la revisión documentada: ${archivo}.`);
   if (process.platform !== 'win32') {
     ejecutar('cmake', ['-S', raiz, '-B', aplicacion, '-DCMAKE_BUILD_TYPE=Release']);
     ejecutar('cmake', ['--build', aplicacion, '--config', 'Release']);
@@ -165,6 +175,10 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'musica_adlib.cpp'),
       join(raiz, 'plataformas', 'sdl', 'musica_mt32.cpp'),
       join(raiz, 'plataformas', 'sdl', 'opl.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'opl2.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'ymfm_opl.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'ymfm_adpcm.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'ymfm_pcm.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
@@ -181,6 +195,7 @@ async function compilar() {
     join(mt32, 'share', 'doc', 'munt', 'libmt32emu', 'COPYING.LESSER.txt'),
     join(aplicacion, 'LICENCIA_MT32EMU.txt'),
   );
+  copyFileSync(join(raiz, 'terceros', 'ymfm', 'LICENSE'), join(aplicacion, 'LICENCIA_YMFM.txt'));
   copyFileSync(join(sdl, 'lib', 'x64', 'SDL3.dll'), join(aplicacion, 'SDL3.dll'));
   copyFileSync(join(sdl, 'LICENSE.txt'), join(aplicacion, 'LICENCIA_SDL3.txt'));
   copyFileSync(
@@ -269,7 +284,7 @@ function leerCaptura(archivo) {
 export async function gestionarSdl(accion, argumentos) {
   const sinSonido =
     accion === 'ventana' && argumentos.length === 1 && argumentos[0] === '--sin-sonido';
-  if (argumentos.length && !sinSonido)
+  if (argumentos.length && !sinSonido && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
     if (await preparar()) console.log('Dependencia SDL preparada.');
@@ -283,6 +298,66 @@ export async function gestionarSdl(accion, argumentos) {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
     });
+    return;
+  }
+  if (accion === 'exportar:musica') {
+    const segundos =
+      argumentos.length === 0
+        ? 0
+        : argumentos.length === 2 && argumentos[0] === '--segundos'
+          ? Number(argumentos[1])
+          : NaN;
+    if (
+      !Number.isInteger(segundos) ||
+      segundos < 0 ||
+      segundos > 600 ||
+      (argumentos.length && segundos === 0)
+    )
+      throw new Error('Uso: pnpm exportar:musica [--segundos 1…600].');
+    const programa = await compilar();
+    const carpeta = join(raiz, 'trabajo', 'exportacion_musica');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--exportar-musica', carpeta, String(segundos)]);
+    const pistas = [];
+    for (let tema = 0; tema < 2; tema++)
+      for (const chip of ['adlib_opl2', 'sb16_opl3'])
+        pistas.push({ archivo: `${chip}_tema_${tema}.wav`, canales: 1, tema_interno: tema });
+    for (let banco = 1; banco <= 5; banco++)
+      pistas.push({ archivo: `mt32_curse_rs${banco}.wav`, canales: 2, banco_rs: banco });
+    for (const pista of pistas) {
+      const wav = readFileSync(join(carpeta, pista.archivo));
+      if (
+        wav.toString('ascii', 0, 4) !== 'RIFF' ||
+        wav.toString('ascii', 8, 12) !== 'WAVE' ||
+        wav.readUInt16LE(22) !== pista.canales ||
+        wav.readUInt32LE(24) !== 48000 ||
+        wav.readUInt16LE(34) !== 16 ||
+        wav.readUInt32LE(40) !== wav.length - 44 ||
+        wav.readUInt32LE(40) === 0 ||
+        (segundos && wav.readUInt32LE(40) !== segundos * 48000 * pista.canales * 2)
+      )
+        throw new Error(`WAV exportado incorrecto: ${pista.archivo}.`);
+      pista.sha256 = createHash('sha256').update(wav).digest('hex');
+      pista.muestras_por_canal = wav.readUInt32LE(40) / (pista.canales * 2);
+      pista.duracion_segundos = pista.muestras_por_canal / 48000;
+    }
+    writeFileSync(
+      join(carpeta, 'pistas.json'),
+      JSON.stringify(
+        {
+          duracion_fija_segundos: segundos || null,
+          modo: segundos ? 'duración elegida' : 'entrada y primer recorrido de bucles originales',
+          frecuencia_hz: 48000,
+          bits: 16,
+          pistas,
+          origen: 'CURSE.EXE y recursos originales locales; las pistas conservan sus bucles.',
+          nota: 'Por defecto RS termina en su primer salto de repetición; FM termina cuando todos sus canales han completado un recorrido. --segundos fuerza un corte de prueba. El tema FM cero es auxiliar; el original arranca con el uno. Sin efectos ni volumen de la partida.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(`Nueve referencias WAV exportadas: ${carpeta}`);
     return;
   }
   if (accion === 'comprobar:mt32') {
@@ -305,6 +380,22 @@ export async function gestionarSdl(accion, argumentos) {
       SDL_AUDIO_DRIVER: 'dummy',
     });
     console.log(`Muestra de música: ${wav}`);
+    return;
+  }
+  if (accion === 'comprobar:digital') {
+    const programa = await compilar();
+    ejecutar(
+      programa,
+      [
+        datos,
+        '--comprobar-digital',
+        join(raiz, 'trabajo', 'comparacion_digital', 'efectos_digitales.wav'),
+      ],
+      {
+        ...process.env,
+        SDL_AUDIO_DRIVER: 'dummy',
+      },
+    );
     return;
   }
   if (accion === 'comprobar:audio') {

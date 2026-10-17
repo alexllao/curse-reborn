@@ -1,6 +1,6 @@
 {
   "sha256": "f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d",
-  "raices": ["0000:0238", "0000:6A8C", "0000:8C51"],
+  "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
       "direccion": "0000:001A",
@@ -1049,6 +1049,26 @@
       "nombre": "Alimentación de paquetes musicales RS",
       "comentario": "Lee desde DS:9928/9926, resuelve FF como salto absoluto y conserva el estado MIDI implícito en CS:7EED. Comparado con los bytes enviados a puerto y DS completo.",
       "traslado": "motor/sonido/musica_rs.cpp"
+    },
+    {
+      "direccion": "0000:038E",
+      "nombre": "Carga del banco general de efectos",
+      "comentario": "Abre el nombre DOS DS:0E11, STD.SFX, solo en modalidad tres; sustituido por el cargador SDL de efectos."
+    },
+    {
+      "direccion": "0000:4FD1",
+      "nombre": "Carga del banco digital de escena",
+      "comentario": "El tercer campo del registro de ocho bytes DS:784E contiene el nombre SFX o cero. Traslado: motor/sonido/digital.cpp y plataformas/sdl/audio.cpp."
+    },
+    {
+      "direccion": "0000:7FB3",
+      "nombre": "Reproducción digital Sound Blaster",
+      "comentario": "AX/DX longitud, DS:SI muestra, BL constante temporal DSP. 40 fija frecuencia y 14 reproduce PCM mono de ocho bits sin signo; DMA canal uno se divide por fronteras de 64 KiB. Traslado: motor/sonido/digital.cpp; comparar:digital contrasta órdenes, DMA y PCM."
+    },
+    {
+      "direccion": "0000:82C6",
+      "nombre": "Interrupción de final de bloque digital",
+      "comentario": "Continúa DMA en la página siguiente si quedan bytes; con restantes cero, 82E5 libera CS:8351. El adaptador PCM conserva la muestra contigua y libera la prioridad al terminar."
     }
   ],
   "tablas": [

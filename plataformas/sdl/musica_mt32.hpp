@@ -11,7 +11,8 @@
 class MusicaMt32 {
 public:
   // Valida las ROM mediante Munt y precarga recursos antes de iniciar el hilo de sonido.
-  bool iniciar(const std::string &carpeta, const unsigned char *ejecutable, unsigned int longitud);
+  bool iniciar(const std::string &carpeta, const unsigned char *ejecutable, unsigned int longitud,
+               unsigned short escena_inicial = 0xffff);
   // Libera el contexto antes de descargar la biblioteca compartida.
   void cerrar();
   // FFFF es presentación; las demás escenas usan exclusivamente la tabla musical original.

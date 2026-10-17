@@ -72,6 +72,10 @@ public:
   bool alternar_dispositivo_audio() {
     return audio.alternar_dispositivo();
   }
+  // Permite contrastar los efectos digitales y el altavoz sin reiniciar ni cambiar la música.
+  bool alternar_efectos_audio() {
+    return audio.alternar_efectos();
+  }
   // Alterna el silencio de plataforma con la tecla M.
   bool alternar_silencio() {
     return audio.alternar_silencio();

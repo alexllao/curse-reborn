@@ -22,11 +22,11 @@ El port interpreta los cinco recursos originales `CURSE.RS1`–`CURSE.RS5` media
 
 La plataforma sustituye la parada MPU por All Notes Off en los 16 canales antes de cambiar de banco, sin destruir el sintetizador: las envolventes y la reverberación pueden dejar una cola natural. No se reproduce la latencia exacta de la petición de parada del MPU ni se ha medido la transición en un módulo físico. No añadir un fundido musical por intuición.
 
-La carga de imágenes no debe vaciar ni detener el flujo musical. SDL solicita sus muestras desde su callback; los bancos están cargados previamente y el sintetizador no accede al DS de la partida. Los cambios de banco y perfil usan el bloqueo de ese flujo. Los efectos PC Speaker siguen atendiendo el DS desde el hilo principal.
+La carga de imágenes no debe vaciar ni detener el flujo musical. SDL solicita sus muestras desde su callback; los bancos están cargados previamente y el sintetizador no accede al DS de la partida. Los cambios de banco y perfil usan el bloqueo de ese flujo. Los efectos digitales Sound Blaster y PC Speaker siguen atendiendo el DS desde el hilo principal.
 
 ## ROM y dependencia local
 
-Las ROM del propietario se conservan en `datos_originales/ROMS/MT32_CONTROL.ROM` y `MT32_PCM.ROM`, reconocidas por Munt. No se descargan, modifican ni distribuyen. Con ROM válidas, MT-32 es la selección inicial. F4 recorre PC Speaker, AdLib y MT-32; M silencia la mezcla sin detener sus relojes. AdLib mantiene el tema continuo del EXE durante las escenas; MT-32 es la opción que utiliza bancos diferentes por zona.
+Las ROM del propietario se conservan en `datos_originales/ROMS/MT32_CONTROL.ROM` y `MT32_PCM.ROM`, reconocidas por Munt. No se descargan, modifican ni distribuyen. Con ROM válidas, MT-32 es la selección inicial. F4 recorre sin música, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32; M silencia la mezcla sin detener sus relojes. AdLib mantiene el tema continuo del EXE durante las escenas; MT-32 es la opción que utiliza bancos diferentes por zona.
 
 [Munt](https://github.com/munt/munt) se fija a la revisión de `herramientas/dependencias_mt32.json`, con huella SHA-256 del archivo fuente. El preparador Windows descarga ese código oficial y compila una biblioteca compartida, en `trabajo/dependencias/mt32emu`. Usa CMake 3.31.6 y Ninja 1.11.1.4 en el entorno local. La revisión corresponde a la etiqueta Munt 2.8.2; su biblioteca declara versión 2.8.3. No se incorpora al historial código comercial ni las ROM.
 
@@ -41,7 +41,7 @@ El aviso de percusión no asignada procede del mapa rítmico del sintetizador: M
 - `pnpm comprobar:mt32 --muestra`: añade síntesis de 32 segundos de cada banco con las ROM locales, exige señal y guarda `trabajo/comparacion_musica_rs/mazmorra_mt32.wav`. Comprueba también la permanencia del banco en escenas 1 y 2.
 - La comprobación SDL de AdLib exige señal efectiva después de conectar la mazmorra y ejercita los perfiles, el silencio y la desconexión de escena; comprueba que el callback sigue produciendo muestras durante una espera de 150 ms del hilo principal. El dispositivo de pruebas es `dummy`: falta escuchar la continuidad en el equipo del propietario.
 
-**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 100 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
 
 La salida MT-32 conserva los dos canales de Munt a 48.000 Hz. Cada canal se amplifica por dos y se limita a ±28.000 para evitar desbordamientos; su nivel medio equivale a la mezcla mono previa, elevada 12 dB respecto a la primera integración. AdLib y PC Speaker conservan su ganancia. El dispositivo común es estéreo; SDL convierte los efectos mono y AdLib se duplica en ambos canales. La comprobación informa del pico y de las muestras limitadas de cada banco.
 
