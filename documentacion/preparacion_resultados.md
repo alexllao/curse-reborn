@@ -1,6 +1,6 @@
 # Preparación integrada de resultados en C++
 
-El nuevo bloque [preparar_resultados.cpp](../motor/acciones/preparar_resultados.cpp) integra el generador y la selección de coincidencias. Corresponde a `0000:B740`–`0000:B939`, con la auxiliar `0000:88F3`–`0000:891D`. Se ha compilado y enlazado la biblioteca; **su comparación integrada contra el original está pendiente**.
+El bloque [preparar_resultados.cpp](../motor/acciones/preparar_resultados.cpp) integra el generador y la selección de coincidencias. Corresponde a `0000:B740`–`0000:B939`, con la auxiliar `0000:88F3`–`0000:891D`. **El propietario confirmó la coincidencia en las 2.048 operaciones integradas**, incluido DS completo y el estado del generador. La ejecución no se ha repetido íntegramente en el entorno del asistente.
 
 ## Recorrido trasladado
 
@@ -27,4 +27,4 @@ Se preparan 64 semillas, dos estados iniciales de memoria y 16 operaciones conse
 
 Después de cada operación se compara el segmento DS completo y las cuatro palabras del estado aleatorio; también se comprueba que las llamadas originales dejan la pila equilibrada. Las modificaciones se conservan entre operaciones para detectar desajustes acumulados. El informe se guarda en `trabajo/comparacion_resultados/resultado.json`.
 
-No se comparan todos los registros ni indicadores de la CPU, el dibujo posterior ni una partida completa. La prueba del generador aislado ya fue confirmada por el propietario en 18.816 llamadas; eso no sustituye esta comprobación de integración.
+No se comparan todos los registros ni indicadores de la CPU, el dibujo posterior ni una partida completa. La ampliación que continúa por `886B` hasta el retorno está en [avance_acciones_movimiento.md](avance_acciones_movimiento.md), con una comparación propia cuya muestra pasa y cuya ejecución amplia queda pendiente.

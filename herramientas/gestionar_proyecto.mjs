@@ -70,7 +70,7 @@ function preparar() {
   console.log('Preparación completada. Puedes ejecutar «pnpm analizar» y «pnpm comprobar».');
 }
 
-function compararAcciones(tipo = 'acciones') {
+function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   comprobarEntorno(true);
   if (process.platform === 'win32' && process.arch !== 'x64') {
     throw new Error('La compilación de esta comparación en Windows requiere Node y Python de 64 bits.');
@@ -93,11 +93,16 @@ function compararAcciones(tipo = 'acciones') {
     join(raiz, 'motor', 'acciones', 'seleccionar_coincidencias.cpp'),
     join(raiz, 'motor', 'acciones', 'retorno_accion.cpp'),
     join(raiz, 'motor', 'acciones', 'preparar_resultados.cpp'),
+    join(raiz, 'motor', 'acciones', 'iniciar_accion.cpp'),
+    join(raiz, 'motor', 'acciones', 'lista_identificadores.cpp'),
+    join(raiz, 'motor', 'movimiento', 'direccion.cpp'),
+    join(raiz, 'motor', 'movimiento', 'planificar.cpp'),
+    join(raiz, 'motor', 'movimiento', 'avanzar.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
   const comparador = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
-    resultados: 'comparar_resultados.py' }[tipo];
-  ejecutar(pythonLocal, [join(raiz, 'pruebas', comparador), '--biblioteca', biblioteca]);
+    resultados: 'comparar_resultados.py', avance: 'comparar_avance.py' }[tipo];
+  ejecutar(pythonLocal, [join(raiz, 'pruebas', comparador), '--biblioteca', biblioteca, ...opcionesComparacion]);
 }
 
 const [accion, ...argumentos] = process.argv.slice(2);
@@ -124,6 +129,9 @@ try {
     case 'comparar:resultados':
       compararAcciones('resultados');
       break;
+    case 'comparar:avance':
+      compararAcciones('avance', argumentos);
+      break;
     case 'estado':
       console.log(`Node: ${process.version}`);
       console.log(`Carpeta del proyecto: ${raiz}`);
@@ -134,7 +142,7 @@ try {
       console.log('Dependencias de análisis: preparadas.');
       break;
     default:
-      throw new Error('Acción desconocida. Usa «pnpm preparar», «pnpm analizar», «pnpm comprobar», «pnpm comparar:acciones», «pnpm comparar:aleatorio», «pnpm comparar:resultados» o «pnpm estado».');
+      throw new Error('Acción desconocida. Consulta los comandos disponibles con «pnpm run».');
   }
 } catch (error) {
   console.error(`Error: ${error.message}`);

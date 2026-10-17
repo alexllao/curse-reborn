@@ -149,7 +149,10 @@ def seguir_flujo(imagen, raices, limite=100000, resoluciones=None):
             registro = {
                 'segmento': cs, 'desplazamiento': ip, 'posicion_imagen': posicion,
                 'tamano': instruccion.size, 'bytes': instruccion.bytes.hex(' '),
-                'operacion': instruccion.mnemonic, 'operandos': instruccion.op_str,
+                # Capstone 5 etiqueta estos opcodes sin prefijo como CWDE/CDQ incluso
+                # en este listado de 16 bits. Conservamos la nomenclatura CBW/CWD.
+                'operacion': {b'\x98': 'cbw', b'\x99': 'cwd'}.get(bytes(instruccion.bytes), instruccion.mnemonic),
+                'operandos': instruccion.op_str,
             }
             instrucciones[cs, ip] = registro
             for p in range(posicion, posicion + instruccion.size):

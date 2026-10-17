@@ -50,6 +50,10 @@ class ComprobarMZ(unittest.TestCase):
 
 
 class ComprobarFlujo(unittest.TestCase):
+    def test_nomenclatura_de_extension_de_signo_en_16_bits(self):
+        flujo = seguir_flujo(b'\x98\x99\xc3', [(0, 0)])
+        self.assertEqual([i['operacion'] for i in flujo['instrucciones']], ['cbw', 'cwd', 'ret'])
+
     def test_omite_datos_tras_salto_y_retorno(self):
         flujo = seguir_flujo(b'\xeb\x04\x11\x22\x33\x44\xc3\x90', [(0, 0)])
         self.assertEqual([i['desplazamiento'] for i in flujo['instrucciones']], [0, 6])
