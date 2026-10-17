@@ -27,6 +27,11 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {12, 6, 13, "El pozo del cubo", "SHAFT"},
     {15, 12, 24, "La salida al campo", "COUNTRY1"},
     {16, 15, 25, "El camino del asaltante", "COUNTRY2"},
+    {21, 16, 26, "La entrada de Paso del Dragón", "DRAGON"},
+    {29, 21, 42, "La tienda de Frank", "FRANKS"},
+    {17, 21, 43, "La plaza de la fuente", "XROADS"},
+    {18, 17, 28, "La calle de las maravillas", "SORCERY"},
+    {22, 18, 32, "La tienda del mago", "MAGE"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -36,5 +41,5 @@ inline const char *nombre_escena(unsigned short escena) {
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == escena)
       return vista.nombre;
-  return escena == 21 ? "La entrada de Paso del Dragón (pendiente)" : "Escena pendiente";
+  return escena == 30 ? "El borde del mundo (pendiente)" : "Escena pendiente";
 }

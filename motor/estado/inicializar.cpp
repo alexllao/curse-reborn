@@ -7,14 +7,17 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                 unsigned short referencia_estandar,
                                 unsigned short referencia_modelo, unsigned short ancho,
                                 unsigned short alto) {
-  constexpr unsigned short origenes[] = {0, 1, 1, 2, 3, 4,  4,  5,  5,  5,  6,  6,  6, 6,
-                                         7, 7, 7, 8, 9, 10, 11, 12, 13, 14, 12, 15, 16};
+  constexpr unsigned short origenes[] = {
+      0,      1,      1,  2,      3,      4,  4,      5,      5,  5,      6,      6,      6,
+      6,      7,      7,  7,      8,      9,  10,     11,     12, 13,     14,     12,     15,
+      16,     0xffff, 17, 0xffff, 0xffff, 17, 18,     0xffff, 18, 0xffff, 0xffff, 0xffff, 0xffff,
+      0xffff, 0xffff, 21, 21,     21,     22, 0xffff, 0xffff, 22, 0xffff, 0xffff, 0xffff, 29};
   if (salida >= sizeof(origenes) / sizeof(origenes[0]) || origenes[salida] == 0xffff ||
       palabra(d, 0x8082) != origenes[salida])
     return false;
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
   const auto modelo = d[static_cast<Palabra>(descriptor + 13)];
-  if (modelo != 0xff && modelo != 5 && modelo != 11 && modelo != 14)
+  if (modelo != 0xff && modelo != 5 && modelo != 11 && modelo != 14 && modelo != 20)
     return false;
   guardar(d, 0x3598, salida);
   d[0x2c0b] = 0;

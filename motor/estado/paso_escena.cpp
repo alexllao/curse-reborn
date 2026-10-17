@@ -42,6 +42,32 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
     d[0x2c0b] = 0;
     guardar(d, 0x2c1a, 0);
     guardar(d, 0x359c, 2);
+  } else if (colision.valida && colision.acciones == 8 && colision.parametro == 3 &&
+             palabra(d, 0x8082) == 21) {
+    // 5482–54A9: al cruzar el portal Brad pasa a los tres canales de perspectiva.
+    reiniciar_estado_accion(d);
+    guardar(d, 0x2c3b, 0x93c0);
+    d[0x2c3f] = 1;
+    guardar(d, 0x2c40, 0x93ca);
+    d[0x2c44] = 1;
+    guardar(d, 0x2c45, 0x93d3);
+    d[0x2c49] = 1;
+    guardar(d, 0x359c, 2);
+  } else if (colision.valida && colision.acciones == 8 && colision.parametro == 4 &&
+             palabra(d, 0x8082) == 21) {
+    // 54AA–54EA: el portero acompaña el intento de entrar en la posada.
+    d[0x2c4d] = 19;
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2c4e) + 20));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2c50) + 50));
+    guardar(d, 0x0ad7, 0x93a4);
+    guardar(d, 0x0adc, 0x93ae);
+    guardar(d, 0x0ae1, 0x93b7);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos) || !emitir_sonido(entidades.sonido, d, 0x2c2b, 7))
+      return {false, 0, 0};
+    d[0x2c0b] = 0;
+    guardar(d, 0x2c1a, 0);
+    guardar(d, 0x359c, 2);
   } else if (!colision.valida || colision.acciones != 0)
     return colision;
   actualizar_historial_personaje(d);

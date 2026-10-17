@@ -22,7 +22,8 @@ void retirar_oferta(unsigned char *d, Palabra entidad) {
 ResultadoMenu ejecutar_interaccion_asaltante(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido,
                                              const ServicioCreacion &creacion) {
-  if (palabra(d, 0x8082) != 16)
+  const auto escena = palabra(d, 0x8082);
+  if (escena != 16 && !(escena == 21 && manejador == 0x563a && id == 76))
     return ResultadoMenu::pendiente;
   if (manejador == 0x563a && (id == 75 || id == 76)) {
     // 563A–5679: la falta de sitio rechaza la recogida antes de tocar actor y oferta.
@@ -48,16 +49,18 @@ ResultadoMenu ejecutar_interaccion_asaltante(unsigned char *d, unsigned short ma
       d[0x2c80] = static_cast<unsigned char>(pasos + 6);
     } else {
       // 5C8F–5CAC y 61A7–61F0: desactiva el dinero tanto en la escena como en su lista.
+      const Palabra entidad = escena == 21 ? 0x2c6d : 0x2c8e;
       d[0x4132] = 0;
-      guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2c90) + 5));
-      guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2c92) + palabra(d, 0x2c96) + 1));
-      retirar_oferta(d, 0x2c8e);
-      canal(d, 0x2c9e, 0x1a2e, 1);
+      guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + 5));
+      guardar(d, 0x1a3a,
+              static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) + 1));
+      retirar_oferta(d, entidad);
+      canal(d, entidad + 16, 0x1a2e, 1);
       guardar(d, 0x0ad7, d[0x358c] == 20 ? 0x9705 : 0x96cf);
       guardar(d, 0x0adc, d[0x358c] == 20 ? 0x970e : 0x96d8);
       if (!iniciar_accion(d, pasos))
         return ResultadoMenu::error;
-      d[0x2ca1] = static_cast<unsigned char>(pasos + 6);
+      d[entidad + 19] = static_cast<unsigned char>(pasos + 6);
     }
     return ResultadoMenu::accion;
   }

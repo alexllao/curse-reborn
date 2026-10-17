@@ -89,6 +89,8 @@
     "comprobar:informacion": "node herramientas/gestionar_proyecto.mjs comprobar:informacion",
     "comparar:campo": "node herramientas/gestionar_proyecto.mjs comparar:campo",
     "comprobar:campo": "node herramientas/gestionar_proyecto.mjs comprobar:campo",
+    "comparar:poblacion": "node herramientas/gestionar_proyecto.mjs comparar:poblacion",
+    "comprobar:poblacion": "node herramientas/gestionar_proyecto.mjs comprobar:poblacion",
     "comparar:asaltante": "node herramientas/gestionar_proyecto.mjs comparar:asaltante",
     "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante"
   },

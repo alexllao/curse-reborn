@@ -3,6 +3,46 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:358A",
+      "nombre": "Respuesta al saludo en MAGE",
+      "comentario": "358A–35B0: escena22 y entidad2C4C activa; canal2CE0=1A2F, fase0, espera1, intervalo40 y sonido1. Poblacion.cpp y comparar:poblacion."
+    },
+    {
+      "direccion": "0000:35FB",
+      "nombre": "Saludo de Frank",
+      "comentario": "35FB–3617: escena29, canal2C7D=1A2F con espera1 e intervalo40 antes de37FF. Recorrido real y menús auditados."
+    },
+    {
+      "direccion": "0000:419E",
+      "nombre": "Comer la comida comprada",
+      "comentario": "419E–41D7: ID84; solo modeloFF, retira comida, elige1A69/1A77 para imágenes18–26 y1A4E/1A5C en el resto. Comparadas fronteras y modelo20."
+    },
+    {
+      "direccion": "0000:41DA",
+      "nombre": "Compra de comida a Frank",
+      "comentario": "41DA–420C: Dar dinero76 al ID83; retira84 antes de insertarlo, conserva capacidad y programa224C en2C4C. Poblacion.cpp, inventario0/9/10."
+    },
+    {
+      "direccion": "0000:420F",
+      "nombre": "Dar dinero al identificador81",
+      "comentario": "420F–430C: cinco respuestas según bits0–2 de35C9; canales diferidos de2C4C y2C8E. Ramas aisladas comparadas, sin afirmar integrada su ruta futura."
+    },
+    {
+      "direccion": "0000:43B4",
+      "nombre": "Intercambio con el mago",
+      "comentario": "43B4–44A8: Dar dinero76 al ID77; tres guiones según35C9, rechazo402E, ofertas persistentes, puntuación+5 y canales1F84/1F90. Primera visita recorre el transporte hasta salida47."
+    },
+    {
+      "direccion": "0000:5482",
+      "nombre": "Perspectiva del portal de Paso del Dragón",
+      "comentario": "5482–54A9: BOXDET3/id3 de DRAGON, reinicia acción y canales93C0/93CA/93D3 con intervalo1; sigue por0BA0. Paso_escena.cpp y recorrido hasta XROADS."
+    },
+    {
+      "direccion": "0000:54AA",
+      "nombre": "Reacción del portero de la posada",
+      "comentario": "54AA–54EA: BOXDET3/id4, postura19 y destino relativo20/50; canales93A4/93AE/93B7 y sonido7. Paso_escena.cpp. La posada y su ruta permanecen pendientes."
+    },
+    {
       "direccion": "0000:300B",
       "nombre": "Uso de la espada contra el asaltante",
       "comentario": "300B–30D4: identificador75, retira espada y prepara canales1AFE/1B13/1B21 y1DB4/1DB8/1DBC. Crea40 fragmentos con120 consumos explícitos de azar; +5 puntos. Motor/acciones/asaltante.cpp y comparar:asaltante, incluidos registros agotados."
@@ -15,7 +55,7 @@
     {
       "direccion": "0000:5C8F",
       "nombre": "Recogida de dinero tras el asaltante",
-      "comentario": "5C8F–5CAC: ID76 elige2C8E en COUNTRY2 (2C6D en escena21), limpia4132 e invoca61A7 con desplazamientos5/1. Adaptación actual limitada aCOUNTRY2, sin afirmar soporte de los puzles deDRAGON."
+      "comentario": "5C8F–5CAC: ID76 elige2C8E en COUNTRY2 y2C6D en DRAGON21, limpia4132 e invoca61A7 con desplazamientos5/1. Comparadas ambas variantes con inventarios0/9/10 y modelos255/20."
     },
     {
       "direccion": "0000:53E9",

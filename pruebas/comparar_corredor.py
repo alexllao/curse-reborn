@@ -26,7 +26,12 @@ BANCOS_ESCENA = {
     14: 'CAVE',
     15: 'COUNTRY1',
     16: 'COUNTRY2',
+    17: 'XROADS',
+    18: 'SORCERY',
     21: 'DRAGON',
+    22: 'MAGE',
+    29: 'FRANKS',
+    30: 'EDGE',
 }
 
 
@@ -69,6 +74,8 @@ class ComparacionCorredor(ComparacionPuzle):
             self.modelo = (self.carpeta / 'PLUNGE.BRD').read_bytes()
         elif salida == 4:
             self.modelo = (self.carpeta / 'EMERGE.BRD').read_bytes()
+        elif salida == 47:
+            self.modelo = (self.carpeta / 'SMALL.BRD').read_bytes()
         elif salida == 24:
             p = palabra(datos, 0x0918 + 14 * 2)
             nombre = bytes(datos[p : p + 13]).split(b'\0')[0].decode('ascii').upper()

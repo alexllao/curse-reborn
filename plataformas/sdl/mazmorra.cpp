@@ -170,7 +170,8 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
 
 // 06E8–0BC1: integra entrada, guiones, paredes e historial antes del despacho de la escena.
 bool Mazmorra::avanzar() {
-  if (menu_visible || en_presentacion())
+  // EDGE solo está cargada como límite de este tramo: su rutina C093 continúa pendiente.
+  if (menu_visible || en_presentacion() || escena_actual() == 30)
     return true;
   // EAD5 comprueba la cámara una vez por ciclo; tras sus ocho retrazos sigue el paso lógico.
   const int camara = paso_tras_camara ? 0 : motor::decidir_camara(datos);
@@ -222,7 +223,12 @@ bool Mazmorra::avanzar() {
          (actual == 13 && resultado.parametro == 22) ||
          (actual == 14 && resultado.parametro == 23) ||
          (actual == 15 && resultado.parametro == 25) ||
-         (actual == 16 && resultado.parametro == 26))) {
+         (actual == 16 && resultado.parametro == 26) ||
+         (actual == 21 && (resultado.parametro == 42 || resultado.parametro == 43)) ||
+         (actual == 29 && resultado.parametro == 51) ||
+         (actual == 17 && (resultado.parametro == 28 || resultado.parametro == 31)) ||
+         (actual == 18 && (resultado.parametro == 32 || resultado.parametro == 34)) ||
+         (actual == 22 && (resultado.parametro == 44 || resultado.parametro == 47)))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -454,11 +460,12 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
     return false;
   const auto salida = motor::palabra(candidata.datos, 0x3598);
-  if (salida != 0xffff && salida > 26)
+  if (salida != 0xffff && salida > 51)
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 16 && escena_guardada != 21)
+  if (escena_guardada > 18 && escena_guardada != 21 && escena_guardada != 22 &&
+      escena_guardada != 29 && escena_guardada != 30)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;
@@ -582,7 +589,7 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 26)
+  if (salida > 51)
     return false;
   unsigned short ancho = 32, alto = 48;
   const auto modelo_entrada = datos[0x85ac + salida * 14 + 13];
@@ -601,7 +608,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
 bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_sonido,
                                         bool reconstruir_entidades) {
   const auto actual = escena_actual();
-  const char *nombre_banco = actual == 21 ? "DRAGON" : nullptr;
+  const char *nombre_banco = actual == 30 ? "EDGE" : nullptr;
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == actual)
       nombre_banco = vista.banco;
@@ -644,6 +651,8 @@ bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_s
   motor::guardar(datos, 0x0616, 0);
   menu_visible = false;
   direccion = 0xffff;
+  if (actual == 30)
+    registrar_accion("Borde del mundo: punto de llegada; jugabilidad de esta zona pendiente");
   registrar_accion("Escena cargada: %s (índice %u, recurso %s, salida %u)", nombre_escena(actual),
                    actual, nombre_banco, salida);
   registrar_estado();

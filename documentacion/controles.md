@@ -86,3 +86,5 @@ En el panel de partidas, usar ratón o flechas arriba/abajo para seleccionar una
 El último icono del menú abre las cuatro páginas originales con puntuación y créditos. Clic izquierdo, Intro o Espacio avanzan; después de la cuarta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.
 
 La última vista F5/F6 es **El camino del asaltante (COUNTRY2)**, después de **La salida al campo**: diecisiete escenas jugables. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.
+
+F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de las maravillas y mago: veintidós vistas de desarrollo. Estos atajos no transfieren inventario. Para probar la compra y el mago en una partida continua, sigue el [recorrido de la población](recorridos/10_paso_del_dragon.txt). El borde del mundo es todavía un punto de llegada detenido; F5/F6 permite volver a las vistas disponibles.

@@ -1,0 +1,18 @@
+PASO DEL DRAGÓN: COMIDA Y MAGO
+Redacción propia basada en la guía aportada por Àlex y contrastada con el EXE DOS.
+
+1. Continúa desde el camino del asaltante después de recoger su dinero. Las salidas normales conservan el inventario; F5/F6 empieza otra sesión.
+2. Espera a terminar la entrada a la población y la aparición de los guardias.
+3. Entra por la puerta de Frank's Food. Acércate al mostrador y elige Hablar → Hi.
+4. En Manipular → Dar, selecciona dinero y luego Frank. Recibirás comida.
+5. Elige Manipular → Comer/Beber y selecciona la comida. Espera la animación.
+6. Sal de la tienda. Cruza el portal del fondo hacia la plaza de la fuente.
+7. Rodea la fuente por la derecha y continúa por la calle que sale por arriba.
+8. Entra en la tienda de las maravillas, a la izquierda. Da dinero al mago mediante Manipular → Dar.
+9. Espera su secuencia. El traslado termina en el borde del mundo.
+
+LÍMITE ACTUAL
+El borde del mundo solo es el punto de llegada y permanece detenido; su jugabilidad sigue pendiente. Usa F5/F6 para cambiar de vista. No se consideran resueltas las otras rutas de la ciudad ni sus capítulos posteriores.
+
+Para comprobarlo: pnpm comprobar:poblacion
+Para jugar: pnpm ventana

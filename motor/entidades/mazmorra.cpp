@@ -38,8 +38,18 @@ void actualizar_escena_cinco(unsigned char *datos) {
 bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
-      escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 || escena == 21)
+      escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 ||
+      escena == 18 || escena == 21 || escena == 22 || escena == 29)
     return true;
+  if (escena == 17) {
+    // 19A7–19C0: la fuente delimita la zona próxima mientras su entidad permanece activa.
+    if (datos[0x2c6d] == 1) {
+      guardar(datos, 0x18f9, 319);
+      guardar(datos, 0x18f7, 190);
+      guardar(datos, 0x18fb, 199);
+    }
+    return true;
+  }
   if (escena == 16) {
     // 1993–19A6: conserva la franja de proximidad del asaltante en la entrada siguiente.
     if (datos[0x2c4c]) {

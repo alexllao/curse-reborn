@@ -1,5 +1,6 @@
 [
   "motor/acciones/construir_tabla.cpp",
+  "motor/acciones/poblacion.cpp",
   "motor/acciones/poza.cpp",
   "motor/acciones/cuevas.cpp",
   "motor/acciones/catapulta.cpp",

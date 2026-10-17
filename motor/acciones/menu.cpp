@@ -1,5 +1,6 @@
 #include "corredor.hpp"
 #include "asaltante.hpp"
+#include "poblacion.hpp"
 #include "lago.hpp"
 #include "poza.hpp"
 #include "cuevas.hpp"
@@ -101,6 +102,9 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 17 || palabra(d, 0x8082) == 18 || palabra(d, 0x8082) == 21 ||
+      palabra(d, 0x8082) == 22 || palabra(d, 0x8082) == 29)
+    return ejecutar_interaccion_poblacion(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 16)
     return ejecutar_interaccion_asaltante(d, manejador, id, sonido, creacion);
   if (palabra(d, 0x8082) == 15) {
@@ -314,6 +318,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         guardar(d, 0xb638, objeto);
         return preparar_destinos(d) ? ResultadoMenu::actualizado : ResultadoMenu::error;
       }
+      if (accion == 3 && objeto == 84)
+        return ejecutar_interaccion_inicial(d, 0x419e, objeto, sonido, creacion);
       if (accion == 4 && objeto == 6)
         return ejecutar_interaccion_inicial(d, 0x9994, objeto, sonido, creacion);
       if (accion == 2 && objeto == 15)
@@ -375,6 +381,16 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido, creacion);
       if ((objeto == 3 && previo == 4) || (objeto == 4 && previo == 3))
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
+    }
+    const auto escena = palabra(d, 0x8082);
+    if (escena == 17 || escena == 18 || escena == 21 || escena == 22 || escena == 29) {
+      if (palabra(d, 0xb634) == 6 && previo == 76 && (objeto == 83 || objeto == 81 || objeto == 77))
+        return ejecutar_interaccion_inicial(d,
+                                            objeto == 83   ? 0x41da
+                                            : objeto == 77 ? 0x43b4
+                                                           : 0x420f,
+                                            objeto, sonido, creacion);
+      return ejecutar_interaccion_poblacion(d, 0x3b53, objeto, sonido);
     }
     if ((palabra(d, 0x8082) == 0 && objeto <= 5 && (previo == 0xffff || previo <= 5)) ||
         (palabra(d, 0x8082) == 1 && objeto <= 14 && (previo == 0xffff || previo <= 14)) ||

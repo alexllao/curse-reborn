@@ -6,4 +6,4 @@ EL CAMINO DEL ASALTANTE
 4. Acércate al dinero que queda en el suelo y recógelo. Se conserva en el inventario para el siguiente tramo.
 5. Rodea las piedras por la izquierda y sube hacia el sendero del fondo. La secuencia en perspectiva conduce a la entrada de Paso del Dragón.
 
-Los puzles de la población, las tiendas y los intercambios posteriores siguen pendientes de reconstruir.
+Continúa por Frank, comida y mago según 10_paso_del_dragon.txt. Las otras rutas de la ciudad y los intercambios de capítulos posteriores siguen pendientes.
