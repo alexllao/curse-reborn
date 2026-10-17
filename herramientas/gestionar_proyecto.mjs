@@ -100,10 +100,12 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     join(raiz, 'motor', 'movimiento', 'avanzar.cpp'),
     join(raiz, 'motor', 'entidades', 'crear.cpp'),
     join(raiz, 'motor', 'entidades', 'actualizar.cpp'),
+    join(raiz, 'motor', 'entidades', 'secuencias.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
   const comparador = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
-    resultados: 'comparar_resultados.py', avance: 'comparar_avance.py', entidades: 'comparar_entidades.py' }[tipo];
+    resultados: 'comparar_resultados.py', avance: 'comparar_avance.py', entidades: 'comparar_entidades.py',
+    secuencias: 'comparar_secuencias.py' }[tipo];
   ejecutar(pythonLocal, [join(raiz, 'pruebas', comparador), '--biblioteca', biblioteca, ...opcionesComparacion]);
 }
 
@@ -136,6 +138,9 @@ try {
       break;
     case 'comparar:entidades':
       compararAcciones('entidades', argumentos);
+      break;
+    case 'comparar:secuencias':
+      compararAcciones('secuencias', argumentos);
       break;
     case 'estado':
       console.log(`Node: ${process.version}`);

@@ -19,15 +19,15 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Reconstrucción en C++ con acciones, movimiento y comportamientos de entidades. Todavía no hay una versión jugable ni integración con SDL.**
+**Reconstrucción en C++ con acciones, movimiento, entidades y secuencias de animación. Todavía no hay una versión jugable ni integración con SDL.**
 
-El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. El nuevo traslado de [creación y actualización de entidades](documentacion/entidades.md) cubre catorce comportamientos y el recorrido de 68 registros: pasa una muestra de **374 casos**, con **3.028 casos** preparados para la comparación amplia.
+El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El nuevo [avance de secuencias de animación](documentacion/secuencias_animacion.md) interpreta imagen y desplazamientos, con una muestra de **462 casos** coincidente y **8.924 casos** preparados para la comparación amplia. Las órdenes de sonido y carga de modelos no residentes se señalan como pendientes.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 71 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 91 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -58,7 +58,9 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Conectar la acción completa con su planificación y trasladar listas, direcciones y avance de movimiento; muestra de 421 casos coincidente.
 - [x] Confirmar con el propietario la coincidencia de los 10.930 casos de acciones y movimiento.
 - [x] Trasladar creación, catorce comportamientos y recorrido de entidades; muestra de 374 casos coincidente.
-- [ ] Ejecutar la comparación amplia de 3.028 casos de entidades.
+- [x] Confirmar con el propietario los 3.028 casos de entidades.
+- [x] Trasladar el avance de tres canales de secuencias, dimensiones y retirada; muestra de 462 casos coincidente.
+- [ ] Ejecutar los 8.924 casos de secuencias e integrar sus operaciones pendientes de sonido y carga.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -71,7 +73,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** seguir el avance temporal de las secuencias y su relación con la presentación y los recursos reales, mientras se valida la comparación amplia de entidades.
+**Siguiente hito de reconstrucción:** seguir las llamadas de sonido y carga pendientes de las secuencias, y la selección de recursos utilizada por la presentación.
 
 ## Organización del repositorio
 
@@ -119,7 +121,8 @@ pnpm comprobar
 | `pnpm comparar:aleatorio` | Compara 18.816 llamadas al generador; el propietario ya ha confirmado su coincidencia. |
 | `pnpm comparar:resultados` | Compara las 2.048 operaciones del tramo integrado de preparación; el propietario ha confirmado su coincidencia. |
 | `pnpm comparar:avance` | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos. |
-| `pnpm comparar:entidades` | Compara creación y comportamientos de entidades: 3.028 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 374 casos ya comprobados. |
+| `pnpm comparar:entidades` | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos. |
+| `pnpm comparar:secuencias` | Compara tres canales de animación y retirada: 8.924 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 462 casos ya comprobados. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 

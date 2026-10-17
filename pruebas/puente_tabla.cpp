@@ -9,6 +9,7 @@
 #include "../motor/movimiento/planificar.hpp"
 #include "../motor/movimiento/avanzar.hpp"
 #include "../motor/entidades/actualizar.hpp"
+#include "../motor/entidades/secuencias.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -101,6 +102,15 @@ bool dimensiones_entidad(void* contexto, unsigned short indice, unsigned short& 
   ancho = dimensiones[indice * 2]; alto = dimensiones[indice * 2 + 1];
   return true;
 }
+
+bool dimensiones_secuencia(void* contexto, unsigned short referencia, unsigned short indice,
+                           unsigned short& ancho, unsigned short& alto) {
+  if (referencia < 0x4000 || referencia > 0x4200 || (referencia & 0xff) != 0 || indice >= 128) return false;
+  const auto* dimensiones = static_cast<const unsigned short*>(contexto);
+  const unsigned int posicion = ((referencia - 0x4000) / 256 * 128 + indice) * 2;
+  ancho = dimensiones[posicion]; alto = dimensiones[posicion + 1];
+  return true;
+}
 }
 
 // Recursos sintéticos de prueba: las cabeceras originales se preparan en 4000h.
@@ -124,4 +134,17 @@ extern "C" EXPORTAR int procesar_entidades(unsigned int operacion, unsigned char
   palabras[0] = estado.primera; palabras[1] = estado.segunda;
   palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
   return valido ? 1 : 0;
+}
+
+extern "C" EXPORTAR int procesar_secuencias(unsigned int operacion, unsigned char* datos,
+    unsigned short* palabras, unsigned short* dimensiones, unsigned short posicion) {
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const motor::RecursosSecuencias recursos{dimensiones, dimensiones_secuencia, 0x4100, 0x4000, 0x4200};
+  auto resultado = motor::EstadoSecuencias::correcto;
+  if (operacion == 0) resultado = motor::avanzar_secuencias_entidad(datos, estado, recursos, posicion);
+  else if (operacion == 1) motor::retirar_entidad_fuera_de_limites(datos, posicion);
+  else resultado = motor::avanzar_secuencias(datos, estado, recursos);
+  palabras[0] = estado.primera; palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera; palabras[3] = estado.cuarta;
+  return static_cast<int>(resultado) + 1;
 }

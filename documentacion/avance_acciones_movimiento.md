@@ -38,7 +38,7 @@ La planificación devuelve el AX observado: el contador de movimiento, con míni
 
 Las funciones de entrada de acción devuelven AX por parámetro. Un resultado `true` de la API indica que la ejecución trasladada es válida; el acarreo original en el retorno normal de `886B` está activo. No se confunde ese estado con el indicador físico de la CPU que ejecuta C++.
 
-Los bloques que actualizan memoria no prometen reproducir todos los registros o indicadores del procesador. La comparación comprueba DS completo, los retornos declarados, el estado aleatorio en la acción completa y el equilibrio de la pila original. La actualización de entidades de `10EC` se amplía en el [traslado siguiente](entidades.md); la presentación y el avance temporal general de fotogramas continúan pendientes.
+Los bloques que actualizan memoria no prometen reproducir todos los registros o indicadores del procesador. La comparación comprueba DS completo, los retornos declarados, el estado aleatorio en la acción completa y el equilibrio de la pila original. La actualización de entidades de `10EC` se amplía en el [traslado siguiente](entidades.md); el avance temporal se amplía en [secuencias_animacion.md](secuencias_animacion.md), mientras la presentación continúa pendiente.
 
 ## Un comando para el conjunto
 
@@ -62,4 +62,4 @@ Unicorn recorre el código original y sus llamadas reales. No se sustituyen los 
 
 ## Continuación
 
-La [creación y actualización de entidades](entidades.md) amplía este conjunto con las dependencias utilizadas por `0000:10EC`. El siguiente trabajo sigue el avance temporal de las secuencias y su relación con la presentación y los recursos reales.
+La [creación y actualización de entidades](entidades.md) amplía este conjunto con las dependencias utilizadas por `0000:10EC`. El [avance de secuencias](secuencias_animacion.md) incorpora los tres canales y la retirada; sus operaciones de sonido y carga todavía deben integrarse.

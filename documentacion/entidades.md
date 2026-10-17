@@ -1,6 +1,6 @@
 # Creación y actualización de entidades
 
-El traslado a C++ cubre `0000:10EC`–`0000:1790`, la creación dinámica de `8B6F`–`8C25` y la transición de `C4DC`–`C5DF`. Se ha compilado con avisos tratados como errores y ha pasado una muestra diferencial de **374 casos**. La comparación amplia de **3.028 casos** queda preparada para el propietario.
+El traslado a C++ cubre `0000:10EC`–`0000:1790`, la creación dinámica de `8B6F`–`8C25` y la transición de `C4DC`–`C5DF`. Se ha compilado con avisos tratados como errores y ha pasado una muestra diferencial de **374 casos**. El propietario ha confirmado también la coincidencia de los **3.028 casos** de la comparación amplia.
 
 ## Relación con el original
 
@@ -26,7 +26,7 @@ Los registros ocupan 33 bytes. El recorrido empieza en `DS:2C4C`; la reserva gen
 | `06`, `08` | Palabras | Ancho y alto obtenidos del recurso. |
 | `0A`, `0C` | Palabras | Campos copiados de la definición; significado completo pendiente. |
 | `0E` | Palabra | Tipo de comportamiento. |
-| `10`, `15`, `1A` | Cinco bytes cada uno | Referencia de secuencia, índice de fase, contador y modalidad. |
+| `10`, `15`, `1A` | Cinco bytes cada uno | Referencia de secuencia, índice de fase, contador e intervalo; uso precisado por el traslado de animación. |
 | `1F` | Palabra | Referencia de segmento de recurso conservada como dato del original. |
 
 El descriptor de creación ocupa nueve bytes: banderas, estado, imagen, X, Y y referencia a una definición de 18 bytes. A la coordenada X se le resta `DS:99B8`. Las banderas `02h` y `04h` activan la elección aleatoria de fase y contador; `80h` puede impedir la creación según `DS:0AD6`.
@@ -81,4 +81,4 @@ Se comparan los 65.536 bytes de DS, las cuatro palabras del generador y, cuando 
 
 Los informes se guardan por separado en `trabajo/comparacion_entidades/muestra.json` y `resultado.json`, incluyendo huellas del ejecutable y de la biblioteca C++. La muestra se ejecuta con `pnpm comparar:entidades --muestra`. Ninguna de las dos modalidades comprueba dibujo, avance temporal general de fotogramas, rutinas particulares por escena ni una partida completa.
 
-El siguiente paso es seguir el avance temporal de las secuencias y su relación con la presentación y los recursos reales.
+El [avance de secuencias de animación](secuencias_animacion.md) continúa este traslado con los tres canales y la retirada de entidades. La presentación y las operaciones externas siguen pendientes.
