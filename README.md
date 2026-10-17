@@ -21,7 +21,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Core, título, introducción, mazmorra con su ruta inicial, corredor parcial y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos digitales Sound Blaster y PC Speaker tienen salida audible, con música AdLib o MT-32. Los demás puzles y el juego completo siguen pendientes.**
+**Core, título, introducción, mazmorra con su ruta inicial, corredor con su ruta hasta la salida izquierda y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos digitales Sound Blaster y PC Speaker tienen salida audible, con música AdLib o MT-32. Los demás puzles y el juego completo siguen pendientes.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
@@ -39,7 +39,7 @@ El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
-La prioridad de jugabilidad es completar las acciones del corredor y del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. Más adelante se estudiarán marcos y filtros visuales.
+La prioridad de jugabilidad es completar las acciones del lago siguiendo la guía aportada por Àlex. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
@@ -101,7 +101,8 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Confirmar con el propietario la prueba visible del menú y sus controles.
 - [x] Conectar clic, flechas, BOXDET, corrección de colisiones e historial y corregir el despacho que desplazaba la puerta.
 - [x] Conectar mazmorra y corredor con regreso persistente, cámara y caída al agua.
-- [ ] Completar los puzles del corredor y del lago, y las demás habitaciones.
+- [x] Recoger la pecera y atravesar el corredor hasta la caída, conservando el inventario.
+- [ ] Completar los puzles del lago y las demás habitaciones.
 - [x] Preparar un exportador de referencias WAV sin pérdida para el futuro remaster sinfónico con IA, conservando las versiones originales.
 - [ ] Confirmar manualmente ventana visible, maximización y cadencia de los fundidos.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
@@ -210,7 +211,7 @@ En la mazmorra, Escape o botón derecho abre/cierra el menú. El ratón y el bot
 
 ### Recorrido de la mazmorra
 
-Ya se puede empujar la pared, recoger el clip y desbloquear la puerta con él. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La puerta permite entrar al corredor y regresar con el estado conservado. Faltan la recogida de la pecera y el recorrido completo entre estatuas y guardias.
+Ya se puede empujar la pared, recoger el clip y desbloquear la puerta con él. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La puerta permite entrar al corredor y regresar con el estado conservado. Ya se recoge la pecera y se atraviesan las estatuas y los guardias hasta la puerta izquierda, la caída y el lago.
 
 [Guía paso a paso en texto](documentacion/recorridos/00_mazmorra.txt). Se ampliará al validar cada pantalla. Las instrucciones usan las casillas reales del menú y el mismo orden que la comparación automática.
 
@@ -247,7 +248,7 @@ Los avances se documentarán con claridad: qué se ha comprobado, qué sigue sie
 
 ## Corredor, caída y siguiente bloque
 
-`pnpm comprobar:corredor` compara entrada, mecanismo y regreso en SDL, además de estados de cámara y sus 18 posiciones gráficas originales. El recorrido de partida conserva la barrera de la entidad del corredor; sus cambios de cámara se contrastan en estados de prueba separados, sin fingir que su puzle ya esté resuelto.
+`pnpm comprobar:corredor` compara ocho capturas SDL: entrada, mecanismo, regreso, pecera, golpe de estatua, caída y llegada al agua, también con audio activo en un dispositivo de prueba. Contrasta el recorrido con el ejecutable original, incluidos los golpes, la recuperación del control y el inventario persistente; conserva además las pruebas de cámara y sus 18 posiciones gráficas originales.
 
 `pnpm comprobar:caida` compara dos momentos de `DROP` y la entrada sumergida en `LAKEBED`. Desde la mazmorra, **F6 abre el corredor** y otro F6 abre la caída; F5 retrocede por las escenas integradas. Cada salto prepara una sesión nueva. La caída avanza sola hasta el agua. Estos atajos no resuelven puzles de una partida ni conservan la sesión anterior.
 
@@ -270,6 +271,8 @@ Este proyecto empieza con el deseo de volver al primer juego de ordenador de su 
 La solución de referencia y el seguimiento por tramos están en [referencia de solución](documentacion/referencia_solucion.md), a partir de la guía de Sophie Cheshire aportada por Àlex.
 
 ## Exportar música para preparar el remaster
+
+`pnpm exportar:midi` reúne las cinco pistas originales `CURSE.RS1`–`CURSE.RS5` y sus versiones MIDI estándar en `trabajo/referencias_musicales/`. Conserva mensajes, tempos y marcadores `LOOPSTART`/`LOOPEND`; `pistas.json` documenta los tiempos y las huellas, y `LEEME.txt` explica su uso. Los programas son de Roland MT-32: un sintetizador General MIDI puede reproducir instrumentos distintos. No necesita las ROM para esta conversión. Estos archivos son referencias locales para reorquestar y no se publican en Git.
 
 `pnpm exportar:musica` genera nueve WAV locales con **duración tomada de los guiones originales**: cinco bancos MT-32 y dos temas internos FM con OPL2 y OPL3. En MT-32 incluye la entrada y termina en el primer salto de repetición; en FM espera a que todos los canales hayan completado su primer recorrido, porque sus bucles son independientes. Se guardan en `trabajo/exportacion_musica/`, con `pistas.json` que identifica archivos, duración, canales y huellas. Requiere los recursos originales y las ROM locales para MT-32.
 

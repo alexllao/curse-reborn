@@ -3,7 +3,6 @@
 import argparse
 import ctypes
 import json
-import struct
 from pathlib import Path
 
 from comparar_corredor import ComparacionCorredor, ErrorAnalisis
@@ -19,40 +18,6 @@ class ComparacionCaida(ComparacionCorredor):
             ctypes.c_ushort
         ] * 5
         self.nativa.preparar_transicion.restype = ctypes.c_int
-
-    # Ejecuta 4C43 con la lectura DOS del modelo original cuando el descriptor solicita PLUNGE.
-    def entrada(self, datos, salida):
-        if salida in (0, 2):
-            return super().entrada(datos, salida)
-        if salida == 3:
-            self.modelo = (self.carpeta / 'PLUNGE.BRD').read_bytes()
-        self.preparar_bancos_originales()
-        m, r = self.maquina, self.r
-        m.mem_write(self.segmento, bytes(datos))
-        m.reg_write(r.UC_X86_REG_BX, salida)
-        self.ejecutar_hasta(0x4B05, 0x4B14)
-        m.reg_write(r.UC_X86_REG_SI, 0x85AC + salida * 14)
-        m.reg_write(r.UC_X86_REG_DI, 0x2C2B)
-        self.ejecutar_hasta(0x4C43, 0x4D2B)
-        m.reg_write(r.UC_X86_REG_BX, salida)
-        self.ejecutar_hasta(0x4D2B, 0x4D40)
-        self.ejecutar_hasta(0x5145, 0x5182)
-        esperado = bytes(m.mem_read(self.segmento, 65536))
-        p = struct.unpack_from('<H', self.modelo)[0] * 16
-        ancho, alto = struct.unpack_from('<2H', self.modelo, p)
-        if (
-            not self.nativa.preparar_transicion(
-                (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6400, 0x5400, ancho, alto
-            )
-            or bytes(datos) != esperado
-        ):
-            diferencias = [
-                f'{i:04X}:{datos[i]:02X}/{esperado[i]:02X}'
-                for i in range(65536)
-                if datos[i] != esperado[i]
-            ][:8]
-            raise ErrorAnalisis(f'Entrada de caída {salida} distinta: {diferencias}.')
-        self.resumen['entradas'] = self.resumen.get('entradas', 0) + 1
 
     # Dispone la vista de desarrollo de DROP; no simula la resolución del puzle del corredor.
     def ejecutar(self):

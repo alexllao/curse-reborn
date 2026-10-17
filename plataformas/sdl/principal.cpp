@@ -225,9 +225,14 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
+  const bool corredor_con_audio = opcion == "--comprobar-corredor-audio";
+  const bool corredor_completo = opcion == "--comprobar-corredor-pecera" ||
+                                 opcion == "--comprobar-corredor-golpe" ||
+                                 opcion == "--comprobar-corredor-caida" ||
+                                 opcion == "--comprobar-corredor-agua" || corredor_con_audio;
   const bool comprobar_corredor = opcion == "--comprobar-corredor-entrada" ||
                                   opcion == "--comprobar-corredor-mecanismo" ||
-                                  opcion == "--comprobar-corredor-regreso";
+                                  opcion == "--comprobar-corredor-regreso" || corredor_completo;
   const bool comprobar_jugabilidad = opcion == "--comprobar-liberacion" ||
                                      opcion == "--comprobar-movimiento" ||
                                      opcion == "--comprobar-puzle" || comprobar_corredor;
@@ -250,6 +255,8 @@ int main(int argc, char *argv[]) {
   Presentacion presentacion;
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
+  if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
+    return fallo("No se ha podido abrir el audio para el recorrido del corredor");
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
@@ -498,7 +505,7 @@ int main(int argc, char *argv[]) {
       const unsigned int pasos = opcion == "--comprobar-caida-16" ? 16u : 32u;
       if (opcion == "--comprobar-agua-24") {
         for (unsigned int i = 0; i < 256 && mazmorra.escena_actual() == 2; ++i)
-          if (!mazmorra.avanzar() ||
+          if (!mazmorra.actualizar_audio() || !mazmorra.avanzar() ||
               !mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
             return fallo("No se ha podido seguir la salida automática de la caída");
         if (mazmorra.escena_actual() != 3)
@@ -524,7 +531,7 @@ int main(int argc, char *argv[]) {
       // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
       const auto avanzar = [](unsigned int cantidad) {
         for (unsigned int i = 0; i < cantidad; ++i)
-          if (!mazmorra.avanzar() ||
+          if (!mazmorra.actualizar_audio() || !mazmorra.avanzar() ||
               !mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
             return false;
         return true;
@@ -574,7 +581,45 @@ int main(int argc, char *argv[]) {
             return fallo("No se ha podido cruzar la puerta de la celda");
         if (mazmorra.escena_actual() != 1 || !avanzar(48))
           return fallo("No se ha alcanzado el corredor con su entrada original");
-        if (opcion != "--comprobar-corredor-entrada") {
+        if (corredor_completo) {
+          if (!mazmorra.mover_a(267, 149) || !avanzar(96) ||
+              !mazmorra.entrada_menu(152, 92, false, true) || !elegir(1) || !elegir(0) ||
+              mazmorra.menu_abierto() || !avanzar(96) || !mazmorra.conserva_objeto(6) ||
+              !mazmorra.conserva_objeto(7))
+            return fallo("No se ha podido recoger la pecera con su agua desde el menú");
+          if (opcion != "--comprobar-corredor-pecera") {
+            mazmorra.tecla_direccion(8, true);
+            bool golpe = false;
+            for (unsigned int i = 0; i < 800 && mazmorra.escena_actual() == 1; ++i) {
+              const bool anterior = mazmorra.golpe_estatua();
+              if (!avanzar(1))
+                return fallo("No se ha podido atravesar el corredor con sus guardias y estatuas");
+              golpe = golpe || (!anterior && mazmorra.golpe_estatua());
+              if (opcion == "--comprobar-corredor-golpe" && golpe)
+                break;
+            }
+            mazmorra.tecla_direccion(8, false);
+            if (!golpe)
+              return fallo("No se ha alcanzado la secuencia original del golpe de estatua");
+            if (opcion != "--comprobar-corredor-golpe") {
+              if (mazmorra.escena_actual() != 2)
+                return fallo("La puerta izquierda no ha conducido a DROP");
+              if (opcion == "--comprobar-corredor-caida") {
+                if (!avanzar(16))
+                  return fallo("No se ha podido continuar la caída de la partida real");
+              } else {
+                for (unsigned int i = 0; i < 256 && mazmorra.escena_actual() == 2; ++i)
+                  if (!avanzar(1))
+                    return fallo("No se ha podido enlazar el corredor con el agua");
+                if (mazmorra.escena_actual() != 3 || !avanzar(24) || !mazmorra.conserva_objeto(6) ||
+                    !mazmorra.conserva_objeto(7) || mazmorra.conserva_objeto(1))
+                  return fallo(
+                      "La llegada al agua no conserva el inventario original del corredor");
+              }
+            }
+          }
+        }
+        if (!corredor_completo && opcion != "--comprobar-corredor-entrada") {
           if (!mazmorra.mover_a(210, 185) || !avanzar(96) || !mazmorra.mover_a(210, 160) ||
               !avanzar(96) || !mazmorra.entrada_menu(152, 92, false, true) || !elegir(3) ||
               !elegir(0) || !avanzar(192))

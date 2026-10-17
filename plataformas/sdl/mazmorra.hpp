@@ -28,6 +28,11 @@ public:
   }
   // Consulta la escena y ventana reconstruidas para verificar recorridos sin alterar la partida.
   unsigned short escena_actual() const;
+  // Consulta el inventario persistente para comprobar recogidas y transiciones sin alterar la
+  // partida.
+  bool conserva_objeto(unsigned short identificador) const;
+  // El guion 0F94 es el golpe de las estatuas; permite detener una captura en esa fase real.
+  bool golpe_estatua() const;
   // Consulta la tira inicial de la ventana visible, en unidades originales de 32 píxeles.
   unsigned char ventana_actual() const {
     return datos[0x3597];

@@ -37,5 +37,6 @@
   "motor/sonido/pcm.cpp",
   "motor/sonido/musica.cpp",
   "motor/sonido/musica_rs.cpp",
-  "motor/sonido/digital.cpp"
+  "motor/sonido/digital.cpp",
+  "motor/acciones/corredor.cpp"
 ]

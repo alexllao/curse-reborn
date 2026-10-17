@@ -6,22 +6,22 @@ La guía corresponde a Amiga; su autora indica que también sirve para DOS, salv
 
 ## Orden de trabajo
 
-La prioridad acordada sigue siendo el audio compartido: primero PC Speaker y después AdLib y MT-32. Al retomar la jugabilidad, completar el corredor y el lago siguiendo esta referencia, antes de avanzar por los demás capítulos.
+La prioridad acordada sigue siendo el audio compartido: primero PC Speaker y después AdLib y MT-32. Al retomar la jugabilidad, completar el lago siguiendo esta referencia, antes de avanzar por los demás capítulos.
 
-| Tramo de la referencia | Estado del port                                                                                 |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                     |
-| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                              |
-| Corredor               | Entrada, regreso y cámara comparados; pecera, estatuas, guardias y solución completa pendientes |
-| Caída                  | Animación y enlace automático con el lago comparados                                            |
-| Aventura submarina     | Entrada y entidades parciales; acciones y puzles pendientes                                     |
-| Cuevas                 | Pendiente                                                                                       |
-| Paso del dragón        | Pendiente                                                                                       |
-| Confín del mundo       | Pendiente                                                                                       |
-| Valle de lo perdido    | Pendiente                                                                                       |
-| Hielo y nieve          | Pendiente                                                                                       |
-| Muertos vivientes      | Pendiente                                                                                       |
-| Enfrentamiento final   | Pendiente                                                                                       |
+| Tramo de la referencia | Estado del port                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                 |
+| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
+| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
+| Caída                  | Animación y enlace automático con el lago comparados                                        |
+| Aventura submarina     | Entrada y entidades parciales; acciones y puzles pendientes                                 |
+| Cuevas                 | Pendiente                                                                                   |
+| Paso del dragón        | Pendiente                                                                                   |
+| Confín del mundo       | Pendiente                                                                                   |
+| Valle de lo perdido    | Pendiente                                                                                   |
+| Hielo y nieve          | Pendiente                                                                                   |
+| Muertos vivientes      | Pendiente                                                                                   |
+| Enfrentamiento final   | Pendiente                                                                                   |
 
 ## Correcciones que deben conservarse
 

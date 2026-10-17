@@ -1,3 +1,4 @@
+#include "../../motor/acciones/lista_identificadores.hpp"
 #include "../../motor/video/camara.hpp"
 #include "../../motor/video/fundido.hpp"
 #include "../../motor/recursos/escena.hpp"
@@ -539,4 +540,13 @@ void Mazmorra::registrar_estado() {
                      datos[0x3594] ? "habilitado" : "bloqueado por el guion");
   control_registrado = datos[0x3594];
   registro_preparado = true;
+}
+
+// 88BC: consulta de diez identificadores; conserva orden, contenido y resto del segmento.
+bool Mazmorra::conserva_objeto(unsigned short identificador) const {
+  return motor::contiene_identificador(datos, identificador);
+}
+// Comprobación de una fase del personaje, sin forzar fotogramas ni detener sus entidades.
+bool Mazmorra::golpe_estatua() const {
+  return motor::palabra(datos, 0x2c3b) == 0x0f94;
 }

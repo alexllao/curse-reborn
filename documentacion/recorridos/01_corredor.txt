@@ -3,47 +3,39 @@ Autor del port: Àlex Llaó
 
 Esta ruta empieza al atravesar la puerta abierta de la mazmorra.
 Las coordenadas son lógicas, de 320 x 200; las casillas empiezan por uno.
-No describe todavía la solución completa del puzle del corredor.
 
 1. ENTRAR
    Esperar a que termine el fundido y la animación de entrada.
-   Brad aparece en el extremo derecho del corredor.
-   El inventario y el estado de la mazmorra se conservan.
+   Brad aparece en el extremo derecho. El inventario se conserva.
 
-2. RECOGER LA PECERA Y COMPLETAR EL PASILLO — PENDIENTE
-   Según la guía aportada por Àlex, hay que recoger la pecera en la zona
-   derecha antes de atravesar el corredor. Después se avanza a la izquierda,
-   pasando las estatuas con martillos y los guardias, y se abre la puerta
-   del extremo izquierdo para llegar a la caída.
-   Este recorrido completo todavía no está implementado ni validado en el port.
-   El movimiento de una prueba corta que se detiene junto a una entidad
-   no demuestra que exista una barrera permanente en la solución del juego.
+2. RECOGER LA PECERA
+   Caminar junto a la pecera, aproximadamente a (267, 149).
+   Abrir el menú, elegir recoger (casilla 2) y la pecera (casilla 1).
+   Esperar a que termine la animación. Se incorporan pecera y agua al inventario.
 
-3. MECANISMO YA RECONSTRUIDO — PRUEBA PARCIAL, NO SOLUCIÓN DEL PASILLO
-   La prueba de código camina a (210, 185) y después a (210, 160), abre el
-   menú y escoge 4, 1 para contrastar el manejador 384A del identificador ocho.
-   Eso valida un bloque del EXE; no sustituye la recogida de la pecera ni
-   los demás pasos de la solución anterior.
+3. ATRAVESAR EL CORREDOR
+   Mantener la flecha izquierda. Los golpes de las estatuas son parte del
+   recorrido original; Brad recupera el control después de cada golpe.
+   La prueba automática recibe seis golpes antes de alcanzar la salida.
+   La puerta izquierda se abre por el guion al aproximarse.
 
-4. REGRESAR A LA MAZMORRA
-   Caminar hacia el extremo derecho, manteniendo los pies junto a y=185.
-   La prueba automática mantiene la flecha derecha hasta alcanzar la salida.
-   Resultado esperado: fundido y regreso a la celda con el inventario y la puerta
-   abierta. Los objetos recogidos y los cambios del guardia no se reinician.
+4. CAER AL AGUA
+   La salida conduce a DROP y después a LAKEBED automáticamente.
+   Pecera y agua se conservan. La llave se retira por el guion original.
+   Ponerse la pecera y los siguientes puzles del lago siguen pendientes.
 
-CÁMARA
-El motor desplaza la ventana en bloques de 32 píxeles y ocho retrazos de
-cuatro píxeles. Sus posiciones, destinos, límites e imágenes se comparan con
-las instrucciones VGA originales. La comparación usa estados de cámara
-separados; la partida real sigue respetando los comportamientos de las entidades.
+REGRESO OPCIONAL A LA MAZMORRA
+Antes de abandonar el corredor por la izquierda, puede probarse el mecanismo
+junto a (210, 160), con el menú 4, 1. Caminar después hacia la derecha por
+y=185 permite volver a la celda con la puerta abierta y su estado conservado.
+Esta rama también se compara contra el ejecutable original.
 
 COMPROBACIÓN
 pnpm comparar:corredor
 pnpm comprobar:corredor
 
-CAÍDA COMO VISTA DE DESARROLLO
-Desde la mazmorra, F6 abre el corredor; otro F6 reinicia la sesión y muestra DROP. Véase 02_caida.txt.
-Este atajo no resuelve el corredor ni conserva la partida que había antes.
+F5/F6 son vistas de desarrollo: reinician la sesión y no conservan la partida.
+Para probar el inventario persistente hay que usar las salidas del juego.
 
 Referencia: walkthrough de Sophie Cheshire (falsehead), 28/03/2003,
-aportado por Àlex; para Amiga, contrastable con nuestra versión DOS.
+aportado por Àlex; para Amiga, contrastado aquí con nuestra versión DOS.

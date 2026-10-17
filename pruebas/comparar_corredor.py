@@ -27,6 +27,10 @@ class ComparacionCorredor(ComparacionPuzle):
         ]
         self.nativa.componer_camara.restype = ctypes.c_int
         self.carpeta_resultados = 'comparacion_corredor'
+        self.nativa.preparar_transicion.argtypes = [ctypes.POINTER(ctypes.c_ubyte)] + [
+            ctypes.c_ushort
+        ] * 5
+        self.nativa.preparar_transicion.restype = ctypes.c_int
         self.nativa.procesar_camara.argtypes = [
             ctypes.c_uint,
             ctypes.POINTER(ctypes.c_ubyte),
@@ -35,6 +39,40 @@ class ComparacionCorredor(ComparacionPuzle):
         self.nativa.procesar_camara.restype = ctypes.c_int
         preparacion = ComparacionObjetos(raiz, biblioteca, True)
         self.nativa.procesar_objetos.argtypes = preparacion.nativa.procesar_objetos.argtypes
+
+    # Ejecuta 4C43 con la lectura DOS del modelo original cuando el descriptor solicita PLUNGE.
+    def entrada(self, datos, salida):
+        if salida in (0, 2):
+            return super().entrada(datos, salida)
+        if salida == 3:
+            self.modelo = (self.carpeta / 'PLUNGE.BRD').read_bytes()
+        self.preparar_bancos_originales()
+        m, r = self.maquina, self.r
+        m.mem_write(self.segmento, bytes(datos))
+        m.reg_write(r.UC_X86_REG_BX, salida)
+        self.ejecutar_hasta(0x4B05, 0x4B14)
+        m.reg_write(r.UC_X86_REG_SI, 0x85AC + salida * 14)
+        m.reg_write(r.UC_X86_REG_DI, 0x2C2B)
+        self.ejecutar_hasta(0x4C43, 0x4D2B)
+        m.reg_write(r.UC_X86_REG_BX, salida)
+        self.ejecutar_hasta(0x4D2B, 0x4D40)
+        self.ejecutar_hasta(0x5145, 0x5182)
+        esperado = bytes(m.mem_read(self.segmento, 65536))
+        p = struct.unpack_from('<H', self.modelo)[0] * 16
+        ancho, alto = struct.unpack_from('<2H', self.modelo, p)
+        if (
+            not self.nativa.preparar_transicion(
+                (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6400, 0x5400, ancho, alto
+            )
+            or bytes(datos) != esperado
+        ):
+            diferencias = [
+                f'{i:04X}:{datos[i]:02X}/{esperado[i]:02X}'
+                for i in range(65536)
+                if datos[i] != esperado[i]
+            ][:8]
+            raise ErrorAnalisis(f'Entrada de caída {salida} distinta: {diferencias}.')
+        self.resumen['entradas'] = self.resumen.get('entradas', 0) + 1
 
     # Alterna el retrazo VGA únicamente para permitir las esperas originales de la animación.
     def leer_puerto(self, maquina, puerto, tamano, contexto):
@@ -335,6 +373,115 @@ class ComparacionCorredor(ComparacionPuzle):
         ):
             raise ErrorAnalisis('Clic de transición distinto.')
 
+    # Recupera solo los archivos de una instantánea de partida; nunca modifica sus banderas o entidades.
+    def retomar_recursos(self, datos):
+        escena = palabra(datos, 0x8082)
+        nombre = ('DUNGEON', 'CORRIDOR', 'DROP', 'LAKEBED')[escena]
+        self.escena = (self.carpeta / (nombre + '.SPR')).read_bytes()
+        self.nombre_mapa = nombre + '.MAP'
+        modelo = datos[0x9974]
+        if modelo < 0xFE:
+            p = palabra(datos, 0x0918 + modelo * 2)
+            nombre_modelo = bytes(datos[p : p + 13]).split(b'\0')[0].decode('ascii').upper()
+            self.modelo = (self.carpeta / nombre_modelo).read_bytes()
+        archivo = (self.carpeta / 'BOXDET.DAT').read_bytes()
+        p = struct.unpack_from('<H', archivo, escena * 2)[0]
+        self.cantidad = struct.unpack_from('<H', archivo, p)[0]
+        self.geometria = archivo[p + 2 : p + 2 + self.cantidad * 10]
+        self.buffer_geometria = (ctypes.c_ubyte * len(self.geometria)).from_buffer_copy(
+            self.geometria
+        )
+        self.maquina.mem_write(0x4AEE, struct.pack('<H', 0x4000))
+
+    # Contrasta todas las recogidas y sus límites de inventario, puntuación y fase en copias del estado real.
+    def interacciones_corredor(self, base):
+        for identificador in (6, 9, 10, 11, 12, 13, 14):
+            for ocupadas in (2, 9, 10) if self.muestra else (0, 2, 8, 9, 10):
+                for puntuacion in (0, 0xFFFF):
+                    d = bytearray(base)
+                    for i in range(10):
+                        guardar(d, 0x5225 + i * 2, 40 + i if i < ocupadas else 0xFFFF)
+                    guardar(d, 0x35C7, puntuacion)
+                    guardar(d, 0xB60C, 0x563A)
+                    guardar(d, 0xB620, identificador + 0x1A)
+                    self.seleccionar(d, 0)
+                    self.resumen['recogidas_corredor'] = (
+                        self.resumen.get('recogidas_corredor', 0) + 1
+                    )
+        for manejador in (0x2FCA, 0x3143, 0x384A):
+            for identificador in (1, 3, *range(6, 15)):
+                d = bytearray(base)
+                guardar(d, 0xB60C, manejador)
+                guardar(d, 0xB620, identificador + 0x1A)
+                self.seleccionar(d, 0)
+        for accion in range(8):
+            for previo in (0xFFFF, 1, 3, 6, 7):
+                for objeto in (1, 3, *range(6, 15)):
+                    d = bytearray(base)
+                    guardar(d, 0xB60C, 0x3B53)
+                    guardar(d, 0xB620, objeto + 0x1A)
+                    guardar(d, 0xB634, accion)
+                    guardar(d, 0xB638, previo)
+                    self.seleccionar(d, 0)
+
+    # Recorre la solución aportada por Àlex desde una entrada real, sin resolver puzles mediante atajos.
+    def recorrido_completo(self, datos, semilla, carpeta):
+        self.clic(datos, 267, 149)
+        self.andar(datos, semilla, 0xFFFF, 96)
+        self.menu(datos, (1,))
+        objetos = [palabra(datos, 0xB620 + i * 2) for i in range(10)]
+        if 0x20 not in objetos:
+            raise ErrorAnalisis('La pecera no aparece en recoger al aproximarse a su soporte.')
+        self.seleccionar(datos, objetos.index(0x20))
+        self.esperar(datos, semilla, 96)
+        inventario = [palabra(datos, 0x5225 + i * 2) for i in range(10)]
+        if 6 not in inventario or 7 not in inventario or datos[0x366C] or datos[0x3675]:
+            raise ErrorAnalisis(
+                'La pecera no se conserva con su agua o sus descriptores siguen activos.'
+            )
+        self.captura(datos, carpeta, 'corredor_pecera')
+        golpes = 0
+        for paso in range(800):
+            anterior = palabra(datos, 0x2C3B)
+            salida = self.andar(datos, semilla, 8, 1)
+            if palabra(datos, 0x2C3B) == 0x0F94 and anterior != 0x0F94:
+                golpes += 1
+                if golpes == 1:
+                    self.captura(datos, carpeta, 'corredor_golpe')
+            if salida is not None:
+                break
+        if salida != 1 or datos[0x3597] != 0 or golpes == 0:
+            raise ErrorAnalisis(
+                f'El corredor no termina por su salida uno: {salida}; golpes {golpes}.'
+            )
+        self.captura(datos, carpeta, 'corredor_salida')
+        self.resumen['golpes_estatuas'] = self.resumen.get('golpes_estatuas', 0) + golpes
+        self.cambiar(datos, semilla, 1)
+        for paso in range(1, 257):
+            salida = self.paso(datos, semilla)
+            if paso == 16:
+                self.captura(datos, carpeta, 'corredor_caida')
+            if salida is not None:
+                break
+        if salida != 3:
+            raise ErrorAnalisis(
+                'La partida del corredor no enlaza con la salida automática de DROP.'
+            )
+        self.cambiar(datos, semilla, 3)
+        self.esperar(datos, semilla, 24)
+        self.captura(datos, carpeta, 'corredor_agua')
+        inventario = [palabra(datos, 0x5225 + i * 2) for i in range(10)]
+        if (
+            palabra(datos, 0x8082) != 3
+            or 6 not in inventario
+            or 7 not in inventario
+            or 1 in inventario
+        ):
+            raise ErrorAnalisis(
+                'La llegada al agua altera la pecera o conserva la llave que retira BEA8.'
+            )
+        self.resumen['recorridos_completos'] = self.resumen.get('recorridos_completos', 0) + 1
+
     # Cruza la salida original, prueba las dos direcciones de cámara y vuelve por la salida dos.
     def despues_puerta(self, datos, semilla, carpeta):
         inventario = bytes(datos[0x5225:0x5239])
@@ -347,6 +494,13 @@ class ComparacionCorredor(ComparacionPuzle):
         self.cambiar(datos, semilla, salida)
         self.esperar(datos, semilla, 48)
         self.captura(datos, carpeta, 'corredor_entrada')
+        copia = bytearray(datos)
+        copia_semilla = list(semilla)
+        self.interacciones_corredor(datos)
+        self.recorrido_completo(datos, semilla, carpeta)
+        datos[:] = copia
+        semilla[:] = copia_semilla
+        self.retomar_recursos(datos)
         self.clic(datos, 210, 185)
         self.andar(datos, semilla, 0xFFFF, 96)
         self.clic(datos, 210, 160)

@@ -17,22 +17,24 @@ La salida cero de la celda enlaza con el índice de escena uno mediante DS:7482.
 | 3858–389E                      | Mecanismo de identificador ocho: aproximación y dos entidades programadas               |
 | BEA8–BEFC                      | Rutina específica del corredor, según ventana y estado                                  |
 
-Fuentes principales: `motor/video/camara.cpp`, `motor/estado/inicializar.cpp`, `motor/acciones/menu.cpp` y `plataformas/sdl/mazmorra.cpp`.
+Fuentes principales: `motor/video/camara.cpp`, `motor/estado/inicializar.cpp`, `motor/acciones/menu.cpp`, `motor/acciones/corredor.cpp` y `plataformas/sdl/mazmorra.cpp`.
 
 Los recursos del corredor son `CORRIDOR.MAP`, `CORRIDOR.SPR`, STD y los modelos que soliciten los guiones. El adaptador conserva las referencias como etiquetas de bancos separados. Los fundidos y desplazamientos detienen los pasos lógicos mientras la plataforma presenta sus retrazos nominales a 70 Hz.
 
 ## Comprobaciones
 
-`pnpm comparar:corredor --muestra` prolonga la partida comprobada de la mazmorra hasta salir, accionar el mecanismo, volver al suelo, comprobar la barrera y regresar. Contrasta DS completo, generador y composición. Comprueba explícitamente las llaves conservadas y la puerta abierta al regresar.
+`pnpm comparar:corredor --muestra` prolonga la partida comprobada de la mazmorra hasta salir, recoger la pecera y atravesar el corredor con sus golpes de estatua, caída y llegada al agua. También conserva la rama de mecanismo y regreso a la celda. Contrasta DS completo, generador y composición. Comprueba explícitamente las llaves conservadas y la puerta abierta al regresar.
 
-Las **24 decisiones de umbral**, **59 traslados de cámara** y **18 posiciones gráficas** se contrastan en estados separados. Las posiciones gráficas se obtienen ejecutando las rutinas VGA completas, con sus copias, descompresión y escrituras de origen CRTC, y recuperando los píxeles de los cuatro planos. Incluyen posición inicial y ocho retrazos en cada dirección.
+Las **24 decisiones de umbral**, **87 traslados de cámara** y **18 posiciones gráficas** se contrastan en estados separados. Las posiciones gráficas se obtienen ejecutando las rutinas VGA completas, con sus copias, descompresión y escrituras de origen CRTC, y recuperando los píxeles de los cuatro planos. Incluyen posición inicial y ocho retrazos en cada dirección.
 
-`pnpm comprobar:corredor` compila SDL y compara tres capturas RGB de 64.000 píxeles: entrada, mecanismo y regreso. La comprobación omite esperas de tiempo real; el uso normal presenta las esperas. La cadencia física de monitor y los tiempos de lectura de archivos DOS no se igualan.
+`pnpm comprobar:corredor` compila SDL y compara ocho capturas RGB de 64.000 píxeles: entrada, mecanismo, regreso, pecera, golpe, caída y llegada al agua sin audio y con audio activo en un dispositivo de prueba. La comprobación omite esperas de tiempo real; el uso normal presenta las esperas. La cadencia física de monitor y los tiempos de lectura de archivos DOS no se igualan.
 
-La muestra verificada contiene **2.429 casos/pasos**, con regresión y capturas SDL repetidas tras ampliar las reservas para LAKEBED. `pnpm comparar:corredor` amplía las fases del guardia heredadas del puzle de la celda; no es necesario repetir todas las comparaciones anteriores.
+La muestra verificada contiene **3.848 casos/pasos**, con regresión y capturas SDL repetidas tras ampliar las reservas para LAKEBED. `pnpm comparar:corredor` amplía las fases del guardia heredadas del puzle de la celda; no es necesario repetir todas las comparaciones anteriores.
 
 ## Límite de jugabilidad
 
-En la prueba corta, una entidad detiene el movimiento hacia la izquierda. Eso no valida el recorrido completo: la guía aportada por Àlex exige recoger la pecera y continuar pasando las estatuas y los guardias. Queda por reconstruir y comprobar esa secuencia completa. Las pruebas sintéticas de cámara no desbloquean ni resuelven su puzle. Faltan otras acciones del corredor y el recorrido completo hasta su salida uno. El enlace de esa salida con [DROP](caida_y_agua.md) está conectado y tiene una vista de desarrollo separada.
+La recogida de la pecera (56DC–574D) incorpora pecera y agua al inventario, retira sus descriptores persistentes y cambia las secuencias originales de las entidades del corredor. Las recogidas 574E–57F0 y sus auxiliares 563A, 615C y 623D conservan los límites del inventario, la puntuación y la retirada de objetos. Las selecciones y combinaciones se comparan contra las instrucciones originales.
+
+El recorrido comprobado recoge la pecera, mantiene la dirección izquierda, recibe seis golpes de las estatuas y recupera el control antes de alcanzar la salida uno. BEA8 abre la puerta izquierda al aproximarse. La caída enlaza con LAKEBED conservando pecera y agua; la llave se retira por el guion original. Esto valida esa ruta de solución, sin acreditar todas las acciones opcionales posibles. Las acciones posteriores del lago, incluida ponerse la pecera, siguen pendientes.
 
 [Guía de la partida y regreso](recorridos/01_corredor.txt).

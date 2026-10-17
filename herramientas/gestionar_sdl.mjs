@@ -547,11 +547,17 @@ export async function gestionarSdl(accion, argumentos) {
       ['entrada', 'corredor_entrada'],
       ['mecanismo', 'corredor_mecanismo'],
       ['regreso', 'mazmorra_regreso'],
+      ['pecera', 'corredor_pecera'],
+      ['golpe', 'corredor_golpe'],
+      ['caida', 'corredor_caida'],
+      ['agua', 'corredor_agua'],
+      ['audio', 'corredor_agua'],
     ]) {
       const captura = join(carpeta, `${opcion}.bmp`);
       ejecutar(programa, [datos, `--comprobar-corredor-${opcion}`, captura], {
         ...process.env,
         SDL_RENDER_DRIVER: 'software',
+        SDL_AUDIO_DRIVER: 'dummy',
       });
       if (
         !leerCaptura(captura).equals(
@@ -566,11 +572,11 @@ export async function gestionarSdl(accion, argumentos) {
     }
     writeFileSync(
       join(carpeta, 'resultado.json'),
-      JSON.stringify({ resultado: 'coinciden', capturas: 3, pixeles_por_captura: 64000 }, null, 2) +
+      JSON.stringify({ resultado: 'coinciden', capturas: 8, pixeles_por_captura: 64000 }, null, 2) +
         '\n',
     );
     console.log(
-      'Corredor SDL: coinciden entrada, mecanismo y regreso a la celda con estado persistente.',
+      'Corredor SDL: coinciden ocho capturas; pecera, golpes, regreso y llegada al agua con inventario persistente, también con audio activo.',
     );
     return;
   }

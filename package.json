@@ -67,7 +67,8 @@
     "comparar:dosbox-midi": "node herramientas/gestionar_proyecto.mjs comparar:dosbox-midi",
     "comparar:digital": "node herramientas/gestionar_proyecto.mjs comparar:digital",
     "comprobar:digital": "node herramientas/gestionar_proyecto.mjs comprobar:digital",
-    "exportar:musica": "node herramientas/gestionar_proyecto.mjs exportar:musica"
+    "exportar:musica": "node herramientas/gestionar_proyecto.mjs exportar:musica",
+    "exportar:midi": "node herramientas/exportar_midi.mjs"
   },
   "repository": {
     "type": "git",
