@@ -18,6 +18,8 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La primera capa de
 
 ## Forma de trabajar
 
+- Priorizar la presentación y después la primera escena jugable, conectando personaje, movimiento e interacciones reconstruidos. El audio queda aparcado por preferencia del propietario.
+- Al redimensionar o maximizar, ajustar la imagen conservando sus proporciones y rellenar el espacio sobrante con bandas negras. Por ahora usar vecino más próximo, sin suavizado ni efectos visuales añadidos. Los marcos y la evaluación de filtros se reservan para una fase posterior.
 - Trabajar en `development`, salvo indicación expresa del propietario.
 - Usar pnpm para la gestión del proyecto y Node para las herramientas generales. Mantener `package.json` y `pnpm-lock.yaml`; no generar archivos de bloqueo de npm o Yarn. Python se permite para el análisis del ejecutable y se invoca a través de los comandos de pnpm.
 - Revisar el estado del repositorio antes de modificar archivos y respetar el trabajo existente.

@@ -31,7 +31,9 @@ Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están tras
 
 El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++ y el propietario ha confirmado sus **142 casos** de comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior.
 
-**`pnpm ventana` abre ahora esa pantalla en SDL**, con escalado entero y cierre con Escape. La comprobación con ventana oculta y dibujante de software coincide en los **64.000 píxeles** y termina mediante el evento de Escape. La interacción visible y el dibujante acelerado quedan para la comprobación manual; no hay partida ni audio. El método dos de RNC sigue pendiente.
+**`pnpm ventana` abre ahora esa pantalla en SDL**, ajustando la imagen al redimensionar o maximizar, conservando sus proporciones y dejando bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos, y permite cerrar con Escape. La comprobación con ventana oculta y dibujante de software coincide en los **64.000 píxeles** y termina mediante el evento de Escape. La interacción visible y el dibujante acelerado quedan para la comprobación manual; no hay partida ni audio. El método dos de RNC sigue pendiente.
+
+La prioridad actual es la presentación y después la primera escena jugable con el personaje, movimiento e interacciones. El audio queda aparcado. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 

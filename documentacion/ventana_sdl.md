@@ -12,7 +12,7 @@ pnpm ventana
 
 En Windows de 64 bits, la primera ejecución prepara SDL si falta, compila y abre la ventana. Las siguientes utilizan el paquete descargado y vuelven a compilar la aplicación. Escape y el botón de cierre terminan el programa. La terminal permanece ocupada mientras la ventana está abierta.
 
-La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600, permite cambiar su tamaño y usa escalado entero con filtrado de vecino más próximo y bandas negras. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT.
+La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redimensionar o maximizar, la imagen se ajusta al espacio disponible manteniendo su proporción de 8:5, con bandas negras donde sobra espacio. Usa vecino más próximo, sin suavizado ni efectos visuales añadidos. Por ahora presenta píxeles cuadrados; no reproduce el aspecto físico de un monitor CRT. Los marcos y la evaluación de filtros se dejan para más adelante.
 
 La aplicación carga los recursos originales directamente. No usa el PNG generado por Python, no necesita `CURSE.EXE` y no ejecuta Unicorn. El núcleo no incluye cabeceras SDL. [titulo.cpp](../motor/recursos/titulo.cpp) agrupa descompresión y copias por planos; la capa de plataforma abre archivos, adapta la paleta a RGBA y gestiona ventana, textura y eventos.
 

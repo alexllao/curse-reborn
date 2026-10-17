@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
     return fallo("No se ha podido crear la ventana");
   }
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
-      !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE)) {
+      !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200, SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
     return fallo("No se ha podido configurar la presentación");
   }
   presentacion.textura = SDL_CreateTexture(presentacion.dibujante, SDL_PIXELFORMAT_RGBA32,
