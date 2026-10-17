@@ -8,6 +8,8 @@ from pathlib import Path
 from comparar_puzle import ComparacionPuzle, ErrorAnalisis
 from comparar_objetos import ComparacionObjetos, guardar, palabra
 
+BANCOS_ESCENA = {0: 'DUNGEON', 1: 'CORRIDOR', 2: 'DROP', 3: 'LAKEBED', 8: 'POOL'}
+
 
 class ComparacionCorredor(ComparacionPuzle):
     # Reutiliza la partida completa y el modelo de memoria sin crear una partida sintética liberada.
@@ -46,6 +48,8 @@ class ComparacionCorredor(ComparacionPuzle):
             return super().entrada(datos, salida)
         if salida == 3:
             self.modelo = (self.carpeta / 'PLUNGE.BRD').read_bytes()
+        elif salida == 4:
+            self.modelo = (self.carpeta / 'EMERGE.BRD').read_bytes()
         self.preparar_bancos_originales()
         m, r = self.maquina, self.r
         m.mem_write(self.segmento, bytes(datos))
@@ -293,12 +297,15 @@ class ComparacionCorredor(ComparacionPuzle):
             not self.nativa.procesar_camara(2, (ctypes.c_ubyte * 65536).from_buffer(datos), 0)
             or bytes(datos) != esperado
         ):
-            raise ErrorAnalisis('Tabla de tiras distinta al entrar en la escena.')
+            diferencias = [
+                f'{i:04X}:{datos[i]:02X}/{esperado[i]:02X}'
+                for i in range(65536)
+                if datos[i] != esperado[i]
+            ][:8]
+            raise ErrorAnalisis(f'Tabla de tiras distinta al entrar en la escena: {diferencias}.')
         escena = palabra(datos, 0x8082)
-        self.escena = (
-            self.carpeta / (('DUNGEON', 'CORRIDOR', 'DROP', 'LAKEBED')[escena] + '.SPR')
-        ).read_bytes()
-        self.nombre_mapa = ('DUNGEON', 'CORRIDOR', 'DROP', 'LAKEBED')[escena] + '.MAP'
+        self.escena = (self.carpeta / (BANCOS_ESCENA[escena] + '.SPR')).read_bytes()
+        self.nombre_mapa = BANCOS_ESCENA[escena] + '.MAP'
         mapa = (self.carpeta / self.nombre_mapa).read_bytes()
         datos[0x0AEF : 0x0AEF + 576] = mapa[:576]
         archivo = (self.carpeta / 'BOXDET.DAT').read_bytes()
@@ -376,7 +383,7 @@ class ComparacionCorredor(ComparacionPuzle):
     # Recupera solo los archivos de una instantánea de partida; nunca modifica sus banderas o entidades.
     def retomar_recursos(self, datos):
         escena = palabra(datos, 0x8082)
-        nombre = ('DUNGEON', 'CORRIDOR', 'DROP', 'LAKEBED')[escena]
+        nombre = BANCOS_ESCENA[escena]
         self.escena = (self.carpeta / (nombre + '.SPR')).read_bytes()
         self.nombre_mapa = nombre + '.MAP'
         modelo = datos[0x9974]

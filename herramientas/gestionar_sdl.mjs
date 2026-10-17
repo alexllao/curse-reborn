@@ -658,6 +658,10 @@ export async function gestionarSdl(accion, argumentos) {
       ['--comprobar-lago-tortuga', 'lago_tortuga'],
       ['--comprobar-lago-picana', 'lago_picana'],
       ['--comprobar-lago-tiburon', 'lago_tiburon'],
+      ['--comprobar-lago-almeja', 'lago_almeja'],
+      ['--comprobar-lago-tapon', 'lago_tapon'],
+      ['--comprobar-cueva-entrada', 'cueva_entrada'],
+      ['--comprobar-cueva-emergida', 'cueva_emergida'],
     ]) {
       const captura = join(carpeta, `${nombre}.bmp`);
       ejecutar(programa, [datos, opcion, captura], {
@@ -680,16 +684,17 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 8,
+          capturas: 12,
           pixeles_por_captura: 64000,
-          limite: 'Recorrido hasta aturdir al tiburón; almeja y salida pendientes.',
+          limite:
+            'Recorrido hasta salir del lago y emerger en la cueva; acciones de las cuevas pendientes.',
         },
         null,
         2,
       ) + '\n',
     );
     console.log(
-      'Lago SDL: coinciden ocho capturas, incluida la reacción de Mr. Fish al hablar, hasta la concha, el transporte sobre las anguilas, la picana y el tiburón aturdido.',
+      'Lago SDL: coinciden doce capturas, incluido hablar con Mr. Fish, el salto de la almeja, el tapón y la llegada a la cueva.',
     );
     return;
   }

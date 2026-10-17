@@ -207,7 +207,7 @@ bool Mazmorra::avanzar() {
     if ((resultado.acciones == 2 || resultado.acciones == 16) &&
         ((actual == 0 && resultado.parametro == 0) ||
          (actual == 1 && (resultado.parametro == 1 || resultado.parametro == 2)) ||
-         (actual == 2 && resultado.parametro == 3))) {
+         (actual == 2 && resultado.parametro == 3) || (actual == 3 && resultado.parametro == 4))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -443,19 +443,22 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 3)
+  if (salida > 4)
     return false;
   unsigned short ancho = 32, alto = 48;
-  if (salida == 3 && (!cargar_banco("PLUNGE.BRD", modelo) ||
-                      !dimensiones(this, referencia_modelo, 0, ancho, alto)))
+  if ((salida == 3 || salida == 4) &&
+      (!cargar_banco(salida == 3 ? "PLUNGE.BRD" : "EMERGE.BRD", modelo) ||
+       !dimensiones(this, referencia_modelo, 0, ancho, alto)))
     return false;
   if (!motor::preparar_transicion_escena(datos, salida, referencia_personaje, referencia_modelo,
                                          ancho, alto) ||
       !motor::preparar_vista_escena(datos))
     return false;
-  constexpr const char *bancos[] = {"DUNGEON", "CORRIDOR", "DROP", "LAKEBED"};
+  constexpr const char *bancos[] = {"DUNGEON", "CORRIDOR", "DROP",  "LAKEBED", nullptr,
+                                    nullptr,   nullptr,    nullptr, "POOL"};
   const auto actual = escena_actual();
-  if (actual > 3 || !cargar_banco(std::string(bancos[actual]) + ".SPR", escena) ||
+  if (actual > 8 || !bancos[actual] ||
+      !cargar_banco(std::string(bancos[actual]) + ".SPR", escena) ||
       !cargar_banco(std::string(bancos[actual]) + ".MAP", mapa) || !cargar_fondo_visible())
     return false;
   // 4EE5 conserva los 192 colores de fondo en DS para los siguientes fundidos.
@@ -511,14 +514,14 @@ bool Mazmorra::iniciar_caida(const std::string &ruta, const motor::ImagenIndexad
 // partida.
 bool Mazmorra::iniciar_vista(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo,
                              unsigned short escena_vista) {
-  if (escena_vista > 3 || !iniciar(ruta, imagen_fondo))
+  if (escena_vista > 4 || !iniciar(ruta, imagen_fondo))
     return false;
   if (!escena_vista)
     return true;
   if (escena_vista == 1)
     return cambiar_habitacion(0);
-  motor::guardar(datos, 0x8082, escena_vista == 2 ? 1 : 2);
-  return cambiar_habitacion(escena_vista == 2 ? 1 : 3);
+  motor::guardar(datos, 0x8082, escena_vista == 2 ? 1 : escena_vista == 3 ? 2 : 3);
+  return cambiar_habitacion(escena_vista == 2 ? 1 : escena_vista == 3 ? 3 : 4);
 }
 
 // Registra solo los cambios de lista y de habilitación de movimiento, conservando todos los datos.

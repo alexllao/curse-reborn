@@ -139,6 +139,53 @@ ResultadoMenu ejecutar_interaccion_lago(unsigned char *d, unsigned short manejad
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  if (manejador == 0x3143 && id == 24) {
+    // 314C–3193: la almeja debe estar cerrada (modelo 12); programa el salto sobre ella.
+    if (d[0x2e3c] != 12) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    d[0x2e4e] = 20;
+    d[0x2e53] = 20;
+    d[0x2e58] = 20;
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2e3d) + 61));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2e3f) + 21));
+    guardar(d, 0x0ad7, 0x225b);
+    guardar(d, 0x0adc, 0x226c);
+    guardar(d, 0x0ae1, 0x2276);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if (manejador == 0x9bb8) {
+    // 9BB8–9C72: insertar la picana retira también el identificador uno y sincroniza los canales
+    // del tapón y del objeto con la duración del acercamiento; los guiones deciden la salida.
+    retirar_identificador(d, 23);
+    retirar_identificador(d, 1);
+    guardar(d, 0x2e66, 100);
+    canal(d, 0x2e6c, 0x9b99, d[0x2e6f], 2);
+    canal(d, 0x2e76, 0x9ba0, d[0x2e79], 2);
+    d[0x2dd8] = 3;
+    guardar(d, 0x2de2, 100);
+    canal(d, 0x2de8, 0x9ba7, d[0x2deb], 2);
+    canal(d, 0x2ded, 0x9bb2, d[0x2df0], 2);
+    canal(d, 0x2df2, 0x9bbd, d[0x2df5], 2);
+    const auto x = static_cast<Palabra>(palabra(d, 0x2e5e) + 68);
+    const auto y = static_cast<Palabra>(palabra(d, 0x2e60) + 30);
+    guardar(d, 0x1a38, x);
+    guardar(d, 0x2dda, static_cast<Palabra>(x - 7));
+    guardar(d, 0x1a3a, y);
+    guardar(d, 0x2ddc, static_cast<Palabra>(y - 22));
+    guardar(d, 0x0ad7, 0x9aeb);
+    guardar(d, 0x0adc, 0x9b03);
+    guardar(d, 0x0ae1, 0x9b12);
+    const auto resultado = comenzar(d);
+    const auto demora = static_cast<unsigned char>(palabra(d, 0x359a) + 14);
+    constexpr Palabra demoras[] = {0x2e6f, 0x2e79, 0x2deb, 0x2df0, 0x2df5};
+    for (const auto p : demoras)
+      d[p] = demora;
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return resultado;
+  }
   if (manejador == 0x2fca && id == 23) {
     // 2FD3–300A: la picana exige un tiburón activo y mantiene habilitada la consulta del
     // inventario.
@@ -171,8 +218,8 @@ ResultadoMenu ejecutar_interaccion_lago(unsigned char *d, unsigned short manejad
     }
     return recoger(d, id == 17 ? 0x2caf : id == 18 ? 0x2cd0 : id == 23 ? 0x2dd8 : 0x2d75);
   }
-  if ((manejador == 0x2fca && id <= 26) || (manejador == 0x3143 && id <= 26 && id != 24)) {
-    // 313E/32D9: rechazos originales; el ataque de la almeja se mantiene pendiente de traslado.
+  if ((manejador == 0x2fca || manejador == 0x3143) && id <= 26) {
+    // 313E/32D9: rechazos originales para objetos sin una rama especial.
     marcar_accion_rechazada(d);
     return ResultadoMenu::accion;
   }

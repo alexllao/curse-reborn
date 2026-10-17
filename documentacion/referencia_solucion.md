@@ -14,8 +14,8 @@ El audio común ya está integrado. La prioridad actual es completar la jugabili
 | Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
 | Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
 | Caída                  | Animación y enlace automático con el lago comparados                                        |
-| Aventura submarina     | Ruta hasta concha, tortuga, picana y primer tiburón comparada; almeja y salida pendientes   |
-| Cuevas                 | Pendiente                                                                                   |
+| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente               |
+| Cuevas                 | Entrada y aparición de Brad integradas; acciones y puzles pendientes                        |
 | Paso del dragón        | Pendiente                                                                                   |
 | Confín del mundo       | Pendiente                                                                                   |
 | Valle de lo perdido    | Pendiente                                                                                   |

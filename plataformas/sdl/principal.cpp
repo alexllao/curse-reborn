@@ -148,7 +148,8 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
                                           : pantalla == 3 ? "mazmorra"
                                           : pantalla == 4 ? "corredor"
                                           : pantalla == 5 ? "caída"
-                                                          : "lago");
+                                          : pantalla == 6 ? "lago"
+                                                          : "entrada a las cuevas");
   mazmorra.desconectar_audio();
   const bool cargada =
       pantalla >= 3   ? cargar_mazmorra(carpeta, static_cast<unsigned short>(pantalla - 3))
@@ -166,7 +167,9 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
                             : pantalla == 4 ? "Curse Reborn — Corredor (vista de desarrollo)"
                             : pantalla == 5 ? "Curse Reborn — Caída (vista de desarrollo)"
                             : pantalla == 6 ? "Curse Reborn — Lago (vista de desarrollo)"
-                                            : "Curse Reborn — Mazmorra (reconstrucción)");
+                            : pantalla == 7
+                                ? "Curse Reborn — Entrada a las cuevas (vista de desarrollo)"
+                                : "Curse Reborn — Mazmorra (reconstrucción)");
 }
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
@@ -234,10 +237,13 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
+  const bool lago_tercera_parte =
+      opcion == "--comprobar-lago-almeja" || opcion == "--comprobar-lago-tapon" ||
+      opcion == "--comprobar-cueva-entrada" || opcion == "--comprobar-cueva-emergida";
   const bool lago_segunda_parte =
-      opcion == "--comprobar-lago-concha" || opcion == "--comprobar-lago-viaje" ||
-      opcion == "--comprobar-lago-tortuga" || opcion == "--comprobar-lago-picana" ||
-      opcion == "--comprobar-lago-tiburon";
+      lago_tercera_parte || opcion == "--comprobar-lago-concha" ||
+      opcion == "--comprobar-lago-viaje" || opcion == "--comprobar-lago-tortuga" ||
+      opcion == "--comprobar-lago-picana" || opcion == "--comprobar-lago-tiburon";
   const bool comprobar_lago = opcion == "--comprobar-lago" || opcion == "--comprobar-lago-pecera" ||
                               opcion == "--comprobar-lago-hablar" || lago_segunda_parte;
   const bool corredor_con_audio = opcion == "--comprobar-corredor-audio";
@@ -427,8 +433,10 @@ int main(int argc, char *argv[]) {
               return fallo("No se ha podido dibujar el menú");
           }
         }
-        const int vista_actual = pantalla >= 3 ? 3 + mazmorra.escena_actual() : pantalla;
-        const bool avanzar = vista_actual < 6 && evento.key.key == SDLK_F6;
+        const int vista_actual =
+            pantalla >= 3 ? (mazmorra.escena_actual() == 8 ? 7 : 3 + mazmorra.escena_actual())
+                          : pantalla;
+        const bool avanzar = vista_actual < 7 && evento.key.key == SDLK_F6;
         const bool retroceder = vista_actual > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
           pantalla = vista_actual + (avanzar ? 1 : -1);
@@ -499,12 +507,12 @@ int main(int argc, char *argv[]) {
     if (salir)
       break;
     if (comprobar_vistas && !capturada) {
-      constexpr unsigned short escenas[] = {0, 1, 0, 1, 2, 1, 2, 3, 2};
-      constexpr SDL_Keycode teclas[] = {SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6,
-                                        SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5};
+      constexpr unsigned short escenas[] = {0, 1, 0, 1, 2, 1, 2, 3, 8, 3, 2};
+      constexpr SDL_Keycode teclas[] = {SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5,
+                                        SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5};
       if (mazmorra.escena_actual() != escenas[paso_vistas])
         return fallo("F5/F6 no han respetado el orden de las escenas");
-      if (paso_vistas < 8) {
+      if (paso_vistas < 10) {
         SDL_Event tecla{};
         tecla.type = SDL_EVENT_KEY_DOWN;
         tecla.key.key = teclas[paso_vistas++];
@@ -512,7 +520,8 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido comprobar la navegación de desarrollo");
         continue;
       }
-      std::printf("F5/F6: ocho cambios comprobados entre mazmorra, corredor, caída y lago.\n");
+      std::printf(
+          "F5/F6: diez cambios comprobados entre mazmorra, corredor, caída, lago y cueva.\n");
     }
     if (comprobar_introduccion && !introduccion_comprobada) {
       const unsigned int limite = opcion == "--comprobar-caldero"   ? 33
@@ -813,6 +822,73 @@ int main(int argc, char *argv[]) {
                     return fallo("No se ha podido reproducir la descarga de la picana");
                 if (!descarga || !mazmorra.tiburon_aturdido())
                   return fallo("La picana no ha aturdido al tiburón en su intervalo original");
+                if (lago_tercera_parte) {
+                  bool alcanzada = false;
+                  for (unsigned int i = 0; i < 500; ++i) {
+                    if (!mazmorra.posicion_objeto(24, x, y, alto))
+                      return fallo("No se encuentra la almeja");
+                    if (x > 30 && x < 250) {
+                      alcanzada = true;
+                      break;
+                    }
+                    unsigned short tiburon = 0, brad = 0;
+                    if (mazmorra.tiburon_activo() && !mazmorra.tiburon_aturdido() &&
+                        !mazmorra.secuencia_personaje_activa() &&
+                        mazmorra.posicion_objeto(0x040c, tiburon, y, alto) &&
+                        mazmorra.posicion_objeto(0, brad, y, alto) &&
+                        static_cast<int>(brad) - static_cast<short>(tiburon) <= 200) {
+                      if (!abrir() || !elegir(5) || !objeto(23))
+                        return fallo("No se ha podido repetir la descarga ante el tiburón");
+                    }
+                    mazmorra.tecla_direccion(8, true);
+                    const bool correcto = avanzar(1);
+                    mazmorra.tecla_direccion(8, false);
+                    if (!correcto)
+                      return fallo("No se ha podido cruzar el tramo del tiburón");
+                  }
+                  if (!alcanzada || !mazmorra.posicion_objeto(24, x, y, alto) ||
+                      !mazmorra.mover_a(static_cast<unsigned short>(x + 61),
+                                        static_cast<unsigned short>(y + 21)) ||
+                      !avanzar(64))
+                    return fallo("No se ha podido preparar el salto de la almeja");
+                  for (unsigned int i = 0; i < 120 && !mazmorra.almeja_cerrada(); ++i)
+                    if (!avanzar(1))
+                      return fallo("No se ha podido esperar el cierre de la almeja");
+                  if (!mazmorra.almeja_cerrada() || !abrir() || !elegir(6) || !objeto(24) ||
+                      !avanzar(96))
+                    return fallo("No se ha podido saltar la almeja cerrada");
+                  if (opcion != "--comprobar-lago-almeja") {
+                    bool tapon_visible = false;
+                    for (unsigned int i = 0; i < 400; ++i) {
+                      if (!mazmorra.posicion_objeto(25, x, y, alto))
+                        return fallo("No se encuentra el tapón");
+                      if (x >= 40 && x <= 240) {
+                        tapon_visible = true;
+                        break;
+                      }
+                      const unsigned short direccion = x >= 32768 || x < 40 ? 8 : 4;
+                      mazmorra.tecla_direccion(direccion, true);
+                      const bool correcto = avanzar(1);
+                      mazmorra.tecla_direccion(direccion, false);
+                      if (!correcto)
+                        return fallo("No se ha podido alcanzar el tapón");
+                    }
+                    if (!tapon_visible ||
+                        !mazmorra.mover_a(static_cast<unsigned short>(x + 68),
+                                          static_cast<unsigned short>(y + 30)) ||
+                        !avanzar(96) || !abrir() || !elegir(2) || !elegir(1) || !objeto(23) ||
+                        !objeto(25) || !avanzar(17))
+                      return fallo("No se ha podido insertar la picana en el tapón");
+                    if (opcion != "--comprobar-lago-tapon") {
+                      for (unsigned int i = 0; i < 200 && mazmorra.escena_actual() == 3; ++i)
+                        if (!avanzar(1))
+                          return fallo("No se ha podido seguir el desagüe hacia las cuevas");
+                      if (mazmorra.escena_actual() != 8 || mazmorra.conserva_objeto(23) ||
+                          (opcion == "--comprobar-cueva-emergida" && !avanzar(96)))
+                        return fallo("No se ha podido completar la llegada a las cuevas");
+                    }
+                  }
+                }
               }
             }
           }

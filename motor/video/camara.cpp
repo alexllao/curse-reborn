@@ -73,10 +73,10 @@ bool desplazar_camara(unsigned char *d, int direccion) {
   return true;
 }
 
-// Solo dispone las cuatro escenas integradas; los nombres y recursos se resuelven en la plataforma.
+// 4E98–4EC8: dispone las cinco escenas integradas; la plataforma resuelve nombres y recursos.
 bool preparar_vista_escena(unsigned char *d) {
   const auto escena = palabra(d, 0x8082);
-  if (escena > 3)
+  if (escena > 3 && escena != 8)
     return false;
   const auto tabla = palabra(d, static_cast<Palabra>(0x757e + escena * 2));
   if (d[tabla] < 10 || static_cast<unsigned int>(tabla) + d[tabla] >= 65536u)

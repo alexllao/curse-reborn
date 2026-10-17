@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:1963",
+      "nombre": "Partículas de la poza de entrada a las cuevas",
+      "comentario": "1963–1992: escena ocho, recurso POOL. Si 0DEF es cero retorna sin consumir azar. En otro caso genera módulo dos; si sale cero prepara descriptor 12FE con x aleatoria módulo 200 más 50 e y módulo diez menos 20 y llama a 8B6F. La salida cuatro del lago selecciona esta escena mediante DS:7482, no la escena cuatro CAVECOR. Traslado motor/entidades/mazmorra.cpp."
+    },
+    {
+      "direccion": "0000:314C",
+      "nombre": "Salto de la almeja cerrada",
+      "comentario": "314C–3193: identificador 18h, modelo 12 en 2E3C; rechaza si no está cerrado. Fija tres demoras a 20, destino relativo +61/+21, canales 225B/226C/2276 y cinco puntos antes de 886B. Despacho por 3143 desde la casilla de combate; traslado motor/acciones/lago.cpp."
+    },
+    {
+      "direccion": "0000:9BB8",
+      "nombre": "Inserción de la picana y apertura del tapón",
+      "comentario": "3D72–3D89 admite identificadores 17h/19h en ambos órdenes con acción insertar. 9BB8–9C72 retira 17h y uno, configura cinco canales del tapón y la picana, inicia el acercamiento y fija sus demoras a AL de 359A más 14; suma cinco puntos. Los guiones solicitan salida cuatro hacia POOL, con modelo EMERGE.BRD. Traslado motor/acciones/lago.cpp e inicializar.cpp."
+    },
+    {
       "direccion": "0000:3558",
       "nombre": "Reacción de Mr. Fish al hablar cerca de su tienda",
       "comentario": "3558–3587: escena tres y tema uno; resta las posiciones horizontales de Brad y Mr. Fish con aritmética de 16 bits y exige distancia absoluta menor que 64. Configura 2DC7=1A2F, fase cero, contador uno e intervalo 40. 37FF emite el sonido uno mediante 5288. Traslado motor/acciones/lago.cpp y prueba de límites y conversación desde una partida real."

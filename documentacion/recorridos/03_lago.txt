@@ -1,4 +1,4 @@
-CURSE REBORN — LAGO HASTA EL TIBURÓN
+CURSE REBORN — LAGO Y SALIDA A LAS CUEVAS
 Autor del port: Àlex Llaó
 
 Llegar desde la mazmorra y el corredor con pecera y agua en el inventario.
@@ -54,9 +54,25 @@ Las casillas se cuentan desde uno y las coordenadas usan 320 x 200.
    el uso demasiado temprano o tardío puede fallar.
    La prueba compara una descarga que lo aturde, sin forzar el impacto.
 
+10. CRUZAR EL TRAMO DEL TIBURÓN
+    Seguir hacia la izquierda. Repetir usar picana cuando vuelva a
+    aproximarse un tiburón activo, esperando el intervalo de descarga.
+    El recorrido automático llega hasta la almeja sin cambiar banderas.
+
+11. SALTAR LA ALMEJA
+    Acercarse a su lado derecho y esperar a que esté cerrada.
+    En este ejecutable se elige la casilla de combate (7) y la almeja.
+    El manejador original programa el salto; abierta rechaza la acción.
+
+12. ABRIR EL TAPÓN
+    Continuar hacia la izquierda hasta el gran tapón.
+    Manipular objetos (3), insertar (2), elegir picana y después tapón.
+    Esperar la apertura y el desagüe: se enlaza con la entrada a la cueva.
+    La picana se consume y la partida conserva su estado anterior.
+
 PENDIENTE
-Comprobar el resto del tramo de tiburones, saltar la almeja cerrada y
-abrir el tapón con la picana para abandonar el lago.
+Las acciones y puzles posteriores a la llegada a las cuevas.
+La revisión de todas las combinaciones y respuestas del menú del lago.
 
 COMPROBACIONES
 pnpm comparar:lago --muestra

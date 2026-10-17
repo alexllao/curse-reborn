@@ -48,6 +48,10 @@ public:
   bool tiburon_activo() const;
   // Reconoce la respuesta original del tiburón alcanzado sin cambiar su comportamiento.
   bool tiburon_aturdido() const;
+  // 3151: consulta el modelo cerrado de la almeja para esperar su condición de salto original.
+  bool almeja_cerrada() const {
+    return datos[0x2e3c] == 12;
+  }
   // Conserva DS junto a una captura de prueba para localizar divergencias; no es una partida
   // guardada.
   bool guardar_estado_diagnostico(const std::string &ruta) const {

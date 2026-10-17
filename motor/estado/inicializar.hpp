@@ -1,8 +1,8 @@
 #pragma once
 
 namespace motor {
-// 4C43–4D40 y 5145: entradas 0–3; STD conserva 32x48 y PLUNGE usa dimensiones del banco cargado.
-// El adaptador carga PLUNGE.BRD para la salida tres antes de invocar este bloque de estado.
+// 4C43–4D40 y 5145: entradas 0–4; STD conserva 32x48, PLUNGE y EMERGE leen sus dimensiones.
+// El adaptador carga PLUNGE.BRD o EMERGE.BRD para las salidas tres y cuatro, respectivamente.
 bool preparar_transicion_escena(unsigned char *datos, unsigned short salida,
                                 unsigned short referencia_estandar,
                                 unsigned short referencia_modelo, unsigned short ancho,

@@ -139,6 +139,7 @@ class ComparacionLago(ComparacionCorredor):
             raise ErrorAnalisis('No se conserva la picana después del transporte.')
         self.captura(datos, carpeta, 'lago_picana')
         self.variantes_picana(datos)
+        self.variantes_salida(datos)
         for _ in range(350):
             tiburon = palabra(datos, 0x2DFB)
             tiburon = tiburon - 65536 if tiburon >= 32768 else tiburon
@@ -163,6 +164,99 @@ class ComparacionLago(ComparacionCorredor):
         (carpeta / 'tiburon_semilla.json').write_text(json.dumps(list(semilla)), encoding='utf-8')
         self.resumen['transporte_tortuga'] = 1
         self.resumen['tiburon_aturdido'] = 1
+        self.tercera_parte(datos, semilla, carpeta)
+
+    # Continúa sin modificar inventario ni banderas: tiburón, almeja, tapón y entrada por salida cuatro.
+    def tercera_parte(self, datos, semilla, carpeta):
+        for _ in range(500):
+            if 30 < palabra(datos, 0x2E3D) < 250:
+                break
+            if (
+                datos[0x2DF9] == 1
+                and palabra(datos, 0x2E09) != 0x11C6
+                and not palabra(datos, 0x2C3B)
+            ):
+                tiburon = palabra(datos, 0x2DFB)
+                tiburon = tiburon - 65536 if tiburon >= 32768 else tiburon
+                if palabra(datos, 0x2C2D) - tiburon <= 200:
+                    self.elegir_objeto(datos, (5,), 23)
+            if self.andar(datos, semilla, 8, 1) is not None:
+                raise ErrorAnalisis('Se abandona el lago antes de alcanzar la almeja.')
+        else:
+            raise ErrorAnalisis('No se alcanza la almeja después del tiburón.')
+        self.clic(datos, palabra(datos, 0x2E3D) + 61, palabra(datos, 0x2E3F) + 21)
+        self.andar(datos, semilla, 0xFFFF, 64)
+        for _ in range(120):
+            if datos[0x2E3C] == 12:
+                self.elegir_objeto(datos, (6,), 24)
+                break
+            self.andar(datos, semilla, 0, 1)
+        else:
+            raise ErrorAnalisis('La almeja no alcanza su modelo cerrado original.')
+        self.andar(datos, semilla, 0, 96)
+        self.captura(datos, carpeta, 'lago_almeja')
+        self.acercar(datos, semilla, 0x2E5C, 68, 30)
+        self.elegir_objeto(datos, (2, 1), 23)
+        self.elegir_objeto(datos, (), 25)
+        for paso in range(200):
+            salida = self.andar(datos, semilla, 0, 1)
+            if paso == 16:
+                self.captura(datos, carpeta, 'lago_tapon')
+            if salida is not None:
+                if salida != 4:
+                    raise ErrorAnalisis(f'El tapón solicita una salida distinta: {salida}.')
+                break
+        else:
+            raise ErrorAnalisis('El tapón no conduce a la salida original.')
+        self.cambiar(datos, semilla, 4)
+        self.captura(datos, carpeta, 'cueva_entrada')
+        for _ in range(96):
+            if self.andar(datos, semilla, 0xFFFF, 1) is not None:
+                raise ErrorAnalisis('La entrada en la cueva solicita otra salida prematuramente.')
+        self.captura(datos, carpeta, 'cueva_emergida')
+        self.variantes_poza(datos, semilla)
+        if (
+            palabra(datos, 0x8082) != 8
+            or not datos[0x3594]
+            or 23 in [palabra(datos, 0x5225 + i * 2) for i in range(10)]
+        ):
+            raise ErrorAnalisis('La llegada a la cueva no conserva el consumo de la picana.')
+        self.resumen['salida_lago'] = 1
+
+    # 1963–1992: activa la presentación solo en copias para cubrir creación y ausencia de partículas.
+    def variantes_poza(self, base, semilla):
+        for presentacion in (0, 1, 2):
+            for desplazamiento in range(8):
+                d = bytearray(base)
+                d[0x0DEF] = presentacion
+                copia_semilla = type(semilla)(
+                    *((valor + desplazamiento) & 65535 for valor in semilla)
+                )
+                self.paso(d, copia_semilla)
+        self.retomar_recursos(base)
+
+    # 314C–3193 y 3D72–9C72: contrasta la almeja y el tapón sobre copias de la partida real.
+    def variantes_salida(self, base):
+        for modelo in (0, 11, 12, 13, 255):
+            for puntos in (0, 65535):
+                d = bytearray(base)
+                d[0x2E3C] = modelo
+                guardar(d, 0x35C7, puntos)
+                guardar(d, 0xB60C, 0x3143)
+                guardar(d, 0xB620, 24 + 0x1A)
+                self.seleccionar(d, 0)
+        for previo, objeto in ((23, 25), (25, 23)):
+            for inventario in ((), (23,), (1, 23), (23, 3, 1)):
+                for puntos in (0, 65535):
+                    d = bytearray(base)
+                    for i in range(10):
+                        guardar(d, 0x5225 + i * 2, inventario[i] if i < len(inventario) else 0xFFFF)
+                    guardar(d, 0x35C7, puntos)
+                    guardar(d, 0xB60C, 0x3B53)
+                    guardar(d, 0xB620, objeto + 0x1A)
+                    guardar(d, 0xB634, 1)
+                    guardar(d, 0xB638, previo)
+                    self.seleccionar(d, 0)
 
     # Compara el rechazo sin tiburón y la activación de la picana con las dos orientaciones de Brad.
     def variantes_picana(self, base):

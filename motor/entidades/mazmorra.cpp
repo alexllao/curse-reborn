@@ -66,6 +66,23 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 8) {
+    // 1963–1992: la poza crea partículas solo cuando la presentación original está activa.
+    if (!d[0x0def])
+      return true;
+    Palabra valor = 0;
+    if (!generar_aleatorio(azar, 2, valor))
+      return false;
+    if (valor)
+      return true;
+    if (!generar_aleatorio(azar, 200, valor))
+      return false;
+    guardar(d, 0x1301, static_cast<Palabra>(valor + 50));
+    if (!generar_aleatorio(azar, 10, valor))
+      return false;
+    guardar(d, 0x1303, static_cast<Palabra>(valor - 20));
+    return crear_entidad(d, azar, recursos, 0x12fe).valido;
+  }
   if (palabra(d, 0x8082) != 3)
     return actualizar_rutina_escena(d);
   const auto izquierda = static_cast<Palabra>(palabra(d, 0x3591) + palabra(d, 0x2e3d) - 11);

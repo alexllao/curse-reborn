@@ -282,6 +282,10 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
       return ejecutar_interaccion_inicial(d, 0x9aa8, objeto, sonido);
     } else if (palabra(d, 0xb634) == 6 && objeto == 22 && previo == 18) {
       return ejecutar_interaccion_inicial(d, 0x9b86, objeto, sonido);
+    } else if (palabra(d, 0xb634) == 1 &&
+               ((objeto == 25 && previo == 23) || (objeto == 23 && previo == 25))) {
+      // 3D72–3D89: insertar picana y tapón admite ambos órdenes de selección.
+      return ejecutar_interaccion_inicial(d, 0x9bb8, objeto, sonido);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
         return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);
