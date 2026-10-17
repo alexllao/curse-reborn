@@ -6,6 +6,12 @@ El análisis estático permite separar el arranque de un bucle central con cabec
 
 Las direcciones se refieren a la copia identificada en [el análisis inicial](analisis_ejecutable.md). Sigue pendiente comprobar este recorrido durante una ejecución real en DOSBox.
 
+## Reloj y presentación
+
+En `01A6`–`01B9` el ejecutable programa el canal cero del temporizador con divisor `4250h` (16.976). La interrupción incrementa el contador `CS:0275` en `0255`. En `EB33`–`EB39`, la presentación espera hasta acumular cinco pulsos; después sincroniza el cambio de página con el estado de retrazo vertical del puerto `03DAh` y pone el contador a cero en `EBAB`. Esta evidencia no corresponde a un límite de 60 FPS. Con el reloj PIT del PC, los cinco pulsos suponen unos 71 ms, antes de añadir las esperas de vídeo y el tiempo de cálculo. No se ha medido aún la cadencia efectiva de una partida en DOSBox.
+
+La ventana SDL limita su presentación a 70 FPS nominales, mediante plazos acumulados y una espera precisa. El contador F12 mide esas presentaciones, incluidas las que repiten una imagen, y no los pasos lógicos de la escena. El máximo de presentación y su interruptor interno están separados de la lógica y del audio en `plataformas/sdl/principal.cpp`; por ahora no hay una tecla para desactivarlo. Las capturas automatizadas omiten esta espera. Este límite no acredita por sí solo una equivalencia temporal exacta con DOS.
+
 ## Desde el arranque hasta el bucle
 
 | Tramo                   | Evidencias observadas                                                                                                                                                                                                                              |

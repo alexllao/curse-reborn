@@ -23,6 +23,10 @@
 #include "contador_fps.hpp"
 
 namespace {
+// Límite de presentación independiente del reloj lógico; permite desactivarlo en el futuro.
+constexpr bool limitar_presentacion = true;
+constexpr Uint64 intervalo_presentacion_ns = 1000000000ull / 70u;
+
 // Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
 void configurar_consola() {
 #ifdef _WIN32
@@ -322,6 +326,7 @@ int main(int argc, char *argv[]) {
   unsigned short paso_fundido = 0;
   Uint64 inicio_pantalla = SDL_GetTicksNS(), inicio_fundido = 0;
   Uint64 ultimo_paso_escena = inicio_pantalla;
+  Uint64 siguiente_presentacion = inicio_pantalla;
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
@@ -991,8 +996,15 @@ int main(int argc, char *argv[]) {
     }
     if (!SDL_RenderPresent(presentacion.dibujante))
       return fallo("No se ha podido presentar el título");
-    if (!salir)
-      SDL_Delay(8);
+    if (!salir && !comprobar && limitar_presentacion) {
+      siguiente_presentacion += intervalo_presentacion_ns;
+      const Uint64 fin = SDL_GetTicksNS();
+      if (siguiente_presentacion > fin)
+        SDL_DelayPrecise(siguiente_presentacion - fin);
+      else
+        // Tras una carga o pausa, reanuda sin acumular fotogramas atrasados.
+        siguiente_presentacion = fin;
+    }
   }
   return 0;
 }
