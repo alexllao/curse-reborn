@@ -52,13 +52,40 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 
 ## Organización del repositorio
 
-Actualmente el repositorio contiene la presentación del proyecto y sus normas de trabajo. La estructura del código y las instrucciones de compilación se añadirán cuando exista la primera implementación.
+El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas compartirán este repositorio y su historial. Las carpetas iniciales contienen un archivo `.gitkeep` para conservar su estructura en Git; todavía no incluyen implementaciones. Las instrucciones de compilación se añadirán cuando exista la primera implementación.
+
+```text
+curse-reborn/
+├── motor/              # Motor del juego basado en SDL
+├── herramientas/       # Análisis, extracción y conversión de recursos
+├── documentacion/      # Formatos, investigación y decisiones del proyecto
+├── pruebas/            # Comprobaciones del motor y las herramientas
+└── datos_originales/   # Copia local del juego; solo se versiona .gitkeep
+```
 
 | Archivo | Contenido |
 | --- | --- |
 | [README.md](README.md) | Propósito, estado y hoja de ruta |
 | [AGENTS.md](AGENTS.md) | Instrucciones para asistentes que trabajen en el repositorio |
 | [.gitignore](.gitignore) | Exclusiones de archivos locales y recursos originales |
+
+### Dónde colocar el juego original
+
+Coloca los archivos de tu copia para DOS dentro de `datos_originales/`, de modo que el ejecutable y los datos queden así:
+
+```text
+datos_originales/
+├── .gitkeep
+├── CURSE.EXE
+├── CURSE.CFG
+├── SETUP.EXE
+└── DATA/
+    └── ...
+```
+
+En el ZIP examinado, esos archivos están dentro de `CURSE/`: copia **el contenido de esa carpeta** a `datos_originales/`. Conserva los nombres originales de los archivos y las subcarpetas.
+
+Git conservará únicamente el archivo vacío `.gitkeep`. El resto del contenido de `datos_originales/`, incluidas sus subcarpetas, queda excluido para que puedas trabajar con tu copia local sin publicarla.
 
 ## Desarrollo en castellano
 
