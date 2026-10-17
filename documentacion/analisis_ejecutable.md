@@ -99,4 +99,4 @@ La dependencia usada es Capstone 5.0.7, mediante su [interfaz oficial para Pytho
 
 ## Siguiente trabajo
 
-El recorrido desde `0000:0276`, el bucle y cinco tablas indirectas ya se han estudiado en [la ampliación del análisis](bucle_principal.md). La [construcción de la tabla dinámica de `0000:DE2B`](tabla_acciones.md) también está documentada, trasladada como bloque a C++ y contrastada con sus instrucciones originales. El siguiente trabajo es ampliar los contratos de las rutinas de acciones y estudiar el nuevo destino indirecto de `0000:B7F2`.
+El recorrido desde `0000:0276`, el bucle y cinco tablas indirectas ya se han estudiado en [la ampliación del análisis](bucle_principal.md). La [construcción de la tabla dinámica de `0000:DE2B`](tabla_acciones.md), la [selección de `0000:B7F2` y el retorno de acciones](contrato_acciones.md) están documentados y trasladados como bloques a C++. El siguiente trabajo es ampliar el C++ con el generador de valores acotados y continuar el traslado de los manejadores.

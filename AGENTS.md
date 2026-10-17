@@ -12,6 +12,8 @@ Curse Reborn reconstruye primero el funcionamiento de Curse of Enchantia para DO
 
 La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y documentar las rutinas originales antes de trasladarlas a C++ y sustituir el acceso a DOS y al hardware por SDL. Investigar los recursos a través de las rutinas originales que los leen. Cada rutina trasladada debe indicar su dirección original, las evidencias y las comprobaciones realizadas.
 
+El entregable principal es código C/C++ portable. Conservar el ensamblador comentado como referencia de los traslados: las anotaciones propias se versionan en el mapa y el listado completo se regenera en `trabajo/`. Mantener sincronizadas las referencias entre código original, contratos, C++ y comprobaciones.
+
 ## Forma de trabajar
 
 - Trabajar en `development`, salvo indicación expresa del propietario.

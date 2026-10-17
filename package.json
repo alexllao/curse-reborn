@@ -12,6 +12,7 @@
   "scripts": {
     "preparar": "node herramientas/gestionar_proyecto.mjs preparar",
     "analizar": "node herramientas/gestionar_proyecto.mjs analizar",
+    "ensamblador": "node herramientas/gestionar_proyecto.mjs analizar",
     "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar",
     "comparar:acciones": "node herramientas/gestionar_proyecto.mjs comparar:acciones",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"

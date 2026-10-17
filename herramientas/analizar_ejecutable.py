@@ -202,6 +202,38 @@ def seguir_flujo(imagen, raices, limite=100000, resoluciones=None):
     }
 
 
+def crear_listado(metadatos, flujo, anotaciones=()):
+    comentarios = {}
+    for anotacion in anotaciones:
+        clave = direccion(anotacion['direccion'])
+        if clave in comentarios:
+            raise ErrorAnalisis('Hay dos anotaciones para la misma dirección.')
+        comentarios[clave] = anotacion
+    lineas = [
+        '; Listado reconstruido del ejecutable, con anotaciones propias en castellano.',
+        '; Conserva direcciones y bytes como referencia para el traslado a C/C++.',
+        '; No es el fuente original ni un archivo listo para ensamblar.',
+        '; Direcciones relativas a la imagen MZ sin reubicar; no son direcciones de ejecución DOS.',
+        '; El recorrido estático no demuestra cobertura completa ni ejecución del juego.',
+    ]
+    for r in flujo['instrucciones']:
+        anotacion = comentarios.pop((r['segmento'], r['desplazamiento']), None)
+        if anotacion:
+            lineas.extend(['', '; ' + anotacion['nombre']])
+            lineas.extend('; ' + parte for parte in anotacion['comentario'].splitlines())
+            if anotacion.get('traslado'):
+                lineas.append('; Traslado C++: ' + anotacion['traslado'])
+        archivo = metadatos['bytes_cabecera'] + r['posicion_imagen']
+        destino = ' ; destino ' + r['destino'] if 'destino' in r else ''
+        if r.get('tabla_anotada'):
+            destino += ' ; candidatos según tabla anotada en analisis.json'
+        lineas.append(f"{etiqueta(r['segmento'], r['desplazamiento'])} archivo={archivo:06X} "
+                      f"{r['bytes']:<44} {r['operacion']:<9} {r['operandos']}{destino}")
+    for clave, anotacion in comentarios.items():
+        lineas.append(f'; Anotación no alcanzada en esta pasada: {etiqueta(*clave)} — {anotacion["nombre"]}')
+    return '\n'.join(lineas) + '\n'
+
+
 def analizar(ruta, salida, raices_adicionales=(), mapa=None):
     metadatos, imagen = leer_mz(ruta.read_bytes())
     raices = [(metadatos['entrada_cs'], metadatos['entrada_ip']), *raices_adicionales]
@@ -210,27 +242,18 @@ def analizar(ruta, salida, raices_adicionales=(), mapa=None):
         entradas, tablas, resoluciones = leer_mapa(mapa, metadatos, imagen)
         raices.extend(entradas)
     flujo = seguir_flujo(imagen, list(dict.fromkeys(raices)), resoluciones=resoluciones)
-    informe = {'cabecera': metadatos, 'flujo': flujo, 'tablas_anotadas': tablas}
+    anotaciones = mapa.get('anotaciones', []) if mapa else []
+    listado = crear_listado(metadatos, flujo, anotaciones)
+    informe = {'cabecera': metadatos, 'flujo': flujo, 'tablas_anotadas': tablas, 'anotaciones': anotaciones}
     salida.mkdir(parents=True, exist_ok=True)
     (salida / 'analisis.json').write_text(json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    lineas = [
-        '; Desensamblado estático provisional. Los destinos indirectos requieren revisión.',
-        '; Direcciones relativas a la imagen MZ sin reubicar; no son direcciones de ejecución DOS.',
-        '; No implica cobertura completa ni verificación del comportamiento.',
-    ]
-    for r in flujo['instrucciones']:
-        archivo = metadatos['bytes_cabecera'] + r['posicion_imagen']
-        destino = ' ; destino ' + r['destino'] if 'destino' in r else ''
-        if r.get('tabla_anotada'):
-            destino += ' ; destinos según tabla anotada en analisis.json'
-        lineas.append(f"{etiqueta(r['segmento'], r['desplazamiento'])} archivo={archivo:06X} "
-                      f"{r['bytes']:<44} {r['operacion']:<9} {r['operandos']}{destino}")
-    (salida / 'desensamblado.asm').write_text('\n'.join(lineas) + '\n', encoding='utf-8')
+    (salida / 'desensamblado.asm').write_text(listado, encoding='utf-8')
     print(f"Ejecutable: {ruta}")
     print(f"SHA-256: {metadatos['sha256']}")
     print(f"Instrucciones alcanzadas: {len(flujo['instrucciones'])}")
     print(f"Destinos de llamada directa: {len(flujo['destinos_llamada'])}")
     print(f'Tablas y fuentes de destinos anotadas: {len(tablas)}')
+    print(f'Comentarios de código conservados: {len(anotaciones)}')
     print(f"Incidencias pendientes de revisión: {len(flujo['incidencias'])}")
     print(f'Resultados locales: {salida}')
     return informe

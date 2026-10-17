@@ -6,7 +6,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'herramientas'))
-from analizar_ejecutable import ErrorAnalisis, leer_mapa, leer_mz, seguir_flujo
+from analizar_ejecutable import ErrorAnalisis, crear_listado, leer_mapa, leer_mz, seguir_flujo
 
 
 def crear_mz(imagen, reubicaciones=()):
@@ -153,6 +153,29 @@ class ComprobarMapa(unittest.TestCase):
             {'destino': '0000:FFFF', 'evidencia': 'Escritura de prueba.'}]
         with self.assertRaises(ErrorAnalisis):
             leer_mapa(self.mapa, self.cabecera, self.imagen)
+
+
+class ComprobarComentarios(unittest.TestCase):
+    def setUp(self):
+        self.flujo = seguir_flujo(b'\xc3', [(0, 0)])
+        self.anotacion = {'direccion': '0000:0000', 'nombre': 'Retorno de prueba',
+                          'comentario': 'Conserva el comentario al regenerar.',
+                          'traslado': 'motor/ejemplo.cpp'}
+
+    def test_conserva_comentarios_referencias_y_bytes(self):
+        listado = crear_listado({'bytes_cabecera': 32}, self.flujo, [self.anotacion])
+        self.assertIn('; Retorno de prueba', listado)
+        self.assertIn('; Traslado C++: motor/ejemplo.cpp', listado)
+        self.assertIn('archivo=000020 c3', listado)
+
+    def test_informa_anotacion_no_alcanzada(self):
+        self.anotacion['direccion'] = '0000:0010'
+        listado = crear_listado({'bytes_cabecera': 32}, self.flujo, [self.anotacion])
+        self.assertIn('Anotación no alcanzada en esta pasada: 0000:0010', listado)
+
+    def test_no_admite_dos_anotaciones_para_una_direccion(self):
+        with self.assertRaises(ErrorAnalisis):
+            crear_listado({'bytes_cabecera': 32}, self.flujo, [self.anotacion, self.anotacion])
 
 
 if __name__ == '__main__':

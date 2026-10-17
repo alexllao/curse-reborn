@@ -19,11 +19,13 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Desensamblado y primer bloque C++ contrastado con el original. Todavía no hay una versión jugable ni integración con SDL.**
+**Desensamblado y tres bloques C++ contrastados con el original. Todavía no hay una versión jugable ni integración con SDL.**
 
-Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, cinco tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.724 instrucciones candidatas y 113 destinos de llamada directa**, y señala **tres transferencias indirectas pendientes**. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
+Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
-El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. La [tabla dinámica de acciones](documentacion/tabla_acciones.md) incluye el primer bloque trasladado a C++: sus escrituras coinciden con las instrucciones originales en **548 casos**, ejecutados en un emulador de CPU. Además, hay **21 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
+El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El C++ reconstruido incluye el constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md): pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **24 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
+
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 37 anotaciones propias y enlaces a los bloques trasladados.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -49,6 +51,8 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Localizar y documentar el recorrido estático del bucle central y la selección de escenas.
 - [x] Reconstruir la construcción de la tabla dinámica de acciones y anotar sus fuentes de destinos.
 - [x] Trasladar el primer bloque a C++ con referencia a su dirección y comparar sus escrituras con las instrucciones originales.
+- [x] Trasladar la selección de seis resultados y la decisión del retorno de acciones; contrastar los tres bloques en 1.120 casos.
+- [x] Conservar comentarios de ensamblador y referencias a C++ al regenerar el análisis.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -61,11 +65,11 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** documentar los contratos de los manejadores de acciones y estudiar la nueva tabla indirecta localizada en `0000:B7F2` antes de ampliar el traslado a C++.
+**Siguiente hito de reconstrucción:** trasladar el generador de `0000:788E` con su estado y sus límites, y seguir ampliando los manejadores de acciones en C++ con comprobaciones contra el original.
 
 ## Organización del repositorio
 
-El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Ya hay una herramienta de análisis, el primer bloque C++ y sus comprobaciones. Las carpetas vacías conservan un archivo `.gitkeep`. Todavía no hay una compilación del juego completo; el comando de comparación compila únicamente el bloque trasladado.
+El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Ya hay una herramienta de análisis, tres bloques C++ y sus comprobaciones. Las carpetas vacías conservan un archivo `.gitkeep`. Todavía no hay una compilación del juego completo; el comando de comparación compila únicamente los bloques trasladados.
 
 ```text
 curse-reborn/
@@ -103,12 +107,13 @@ pnpm comprobar
 | `pnpm preparar` | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez. |
 | `pnpm estado` | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error. |
 | `pnpm analizar` | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
+| `pnpm ensamblador` | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa. |
 | `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
-| `pnpm comparar:acciones` | Compila el bloque C++ de la tabla de acciones y compara sus escrituras con las instrucciones originales en 548 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
+| `pnpm comparar:acciones` | Compila los tres bloques C++ y compara sus escrituras o decisiones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
-Para comprobar el primer bloque trasladado, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar ese bloque original aislado. Consulta [los requisitos y límites de la comparación](documentacion/tabla_acciones.md).
+Para comprobar los bloques trasladados, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar los tramos originales aislados. Consulta [los requisitos de compilación](documentacion/tabla_acciones.md) y [el alcance de las comparaciones](documentacion/contrato_acciones.md).
 
 Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar --raiz 0000:0276`. Los comandos de gestión contemplan Windows, Linux y macOS; por ahora se han comprobado en Windows. Todavía no existe un comando para compilar o arrancar el motor, porque el motor SDL está pendiente de implementar.
 

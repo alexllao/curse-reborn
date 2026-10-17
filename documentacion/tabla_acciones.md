@@ -52,9 +52,9 @@ En `DE10`–`DE23`, el consumidor divide entre 32 el campo `DS:B60A`, lo convier
 
 ## Comparación contra las instrucciones originales
 
-Se ha preparado `pnpm comparar:acciones`, que:
+Se ha preparado `pnpm comparar:acciones`, que, para este bloque:
 
-1. Compila únicamente el bloque C++ y un pequeño puente de prueba en una biblioteca local.
+1. Compila los bloques C++ disponibles y un pequeño puente de prueba en una biblioteca local.
 2. Comprueba la huella del ejecutable original.
 3. Carga su imagen MZ en Unicorn, en modo x86 de 16 bits y con base de carga cero.
 4. Prepara `CS:0000` como lo deja el arranque y ejecuta desde `DF15` hasta antes de `DF4E`.
@@ -79,4 +79,4 @@ La preparación instala Unicorn 2.1.4 junto a Capstone. No es necesario activar 
 
 Este traslado reproduce las escrituras de `DF15`–`DF4D` con `DF=0`. No sustituye los registros, los indicadores, el dibujo posterior, los manejadores de acciones ni la emulación de DOS. El juego completo sigue pendiente de ejecución y contraste.
 
-Al ampliar el recorrido con estos candidatos se alcanzan 18.724 instrucciones y 113 destinos de llamada directa. Las incidencias sin candidatos incorporados quedan en `0264`, `8C81` y una nueva tabla indirecta localizada en `B7F2`. Las dos primeras encadenan vectores de DOS; la nueva requiere estudiar su índice y sus límites antes de anotarla.
+La primera ampliación con estos candidatos alcanzó 18.724 instrucciones y 113 destinos de llamada directa, con una nueva tabla en `B7F2`. Esa tabla y el contrato de retorno ya están estudiados y trasladados como bloques a C++ en [contrato_acciones.md](contrato_acciones.md). El comando conjunto compara ahora 1.120 casos; los 548 descritos aquí corresponden exclusivamente al constructor de la tabla.

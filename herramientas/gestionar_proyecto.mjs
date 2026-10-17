@@ -88,8 +88,10 @@ function compararAcciones() {
   } else {
     opciones.push('-shared', '-fPIC');
   }
-  console.log('Compilando el bloque C++ de construcción de la tabla de acciones…');
+  console.log('Compilando los bloques C++ de acciones…');
   ejecutar(compilador, [...opciones, join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
+    join(raiz, 'motor', 'acciones', 'seleccionar_coincidencias.cpp'),
+    join(raiz, 'motor', 'acciones', 'retorno_accion.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
   ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_acciones.py'), '--biblioteca', biblioteca]);
 }

@@ -3,6 +3,7 @@
 import argparse
 import ctypes
 import hashlib
+from itertools import product
 import json
 from pathlib import Path
 import random
@@ -13,11 +14,31 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'herramientas'))
 from analizar_ejecutable import ErrorAnalisis, leer_mz
 
 
+def comparar_memoria(maquina, segmento, datos, inicio, fin, registros, funcion, nombre):
+    from unicorn.x86_const import (UC_X86_REG_CS, UC_X86_REG_DS, UC_X86_REG_ES,
+                                  UC_X86_REG_IP, UC_X86_REG_EFLAGS)
+    maquina.mem_write(segmento, bytes(datos))
+    for registro, valor in {UC_X86_REG_CS: 0, UC_X86_REG_DS: 0x0F31,
+                            UC_X86_REG_ES: 0x0F31, UC_X86_REG_EFLAGS: 2,
+                            **registros}.items():
+        maquina.reg_write(registro, valor)
+    maquina.emu_start(inicio, fin, timeout=1_000_000, count=10000)
+    if maquina.reg_read(UC_X86_REG_IP) != fin:
+        raise ErrorAnalisis(f'El original no alcanzó el límite del bloque: {nombre}.')
+    esperado = bytes(maquina.mem_read(segmento, 65536))
+    obtenido = bytearray(datos)
+    memoria_nativa = (ctypes.c_ubyte * 65536).from_buffer(obtenido)
+    funcion(memoria_nativa)
+    if esperado != obtenido:
+        primera = next(i for i, (a, b) in enumerate(zip(esperado, obtenido)) if a != b)
+        raise ErrorAnalisis(f'Diferencia en DS:{primera:04X}: {nombre}.')
+
+
 def comparar(ejecutable, biblioteca, salida, mapa):
     try:
         import unicorn
         from unicorn.x86_const import (UC_X86_REG_CS, UC_X86_REG_DS, UC_X86_REG_ES,
-                                      UC_X86_REG_IP, UC_X86_REG_EFLAGS)
+                                      UC_X86_REG_AX, UC_X86_REG_DX, UC_X86_REG_EFLAGS)
     except ImportError as error:
         raise ErrorAnalisis('Falta Unicorn. Ejecuta «pnpm preparar».') from error
     cabecera, imagen = leer_mz(ejecutable.read_bytes())
@@ -35,6 +56,11 @@ def comparar(ejecutable, biblioteca, salida, mapa):
     nativa = ctypes.CDLL(str(biblioteca.resolve()))
     nativa.reconstruir_tabla.argtypes = [ctypes.POINTER(ctypes.c_ubyte)]
     nativa.reconstruir_tabla.restype = None
+    nativa.seleccionar_coincidencias.argtypes = [ctypes.POINTER(ctypes.c_ubyte),
+        ctypes.c_ubyte, ctypes.c_ubyte, ctypes.c_ubyte]
+    nativa.seleccionar_coincidencias.restype = ctypes.c_int
+    nativa.interpretar_retorno.argtypes = [ctypes.c_ushort, ctypes.c_uint]
+    nativa.interpretar_retorno.restype = ctypes.c_uint
     generador = random.Random(0xC0DE)
     casos = []
     for casilla in range(10):
@@ -59,33 +85,65 @@ def comparar(ejecutable, biblioteca, salida, mapa):
         datos[0xB686:0xB686 + 46] = tabla_base
         struct.pack_into('<10H', datos, 0xB620, *indices)
         struct.pack_into('<H', datos, 0xB636, respaldo)
-        maquina.mem_write(segmento_datos, bytes(datos))
-        for registro, valor in [(UC_X86_REG_CS, 0), (UC_X86_REG_DS, 0x1234),
-                                 (UC_X86_REG_ES, 0x5678), (UC_X86_REG_EFLAGS, 2)]:
-            maquina.reg_write(registro, valor)
-        maquina.emu_start(0xDF15, 0xDF4E, timeout=1_000_000, count=10000)
-        if maquina.reg_read(UC_X86_REG_IP) != 0xDF4E:
-            raise ErrorAnalisis(f'El original no alcanzó el límite del bloque: {nombre}.')
-        esperado = bytes(maquina.mem_read(segmento_datos, 65536))
-        obtenido = bytearray(datos)
-        memoria_nativa = (ctypes.c_ubyte * 65536).from_buffer(obtenido)
-        nativa.reconstruir_tabla(memoria_nativa)
-        if esperado != obtenido:
-            primera = next(i for i, (a, b) in enumerate(zip(esperado, obtenido)) if a != b)
-            raise ErrorAnalisis(f'Diferencia en DS:{primera:04X}: {nombre}.')
+        comparar_memoria(maquina, segmento_datos, datos, 0xDF15, 0xDF4E,
+                         {UC_X86_REG_DS: 0x1234, UC_X86_REG_ES: 0x5678},
+                         nativa.reconstruir_tabla, nombre)
+
+    casos_coincidencias = 0
+    for primero, segundo, tercero in product(range(6), repeat=3):
+        for aleatorio in (False, True):
+            datos = bytearray(generador.randbytes(65536) if aleatorio else datos_originales)
+            def trasladar(memoria):
+                if nativa.seleccionar_coincidencias(memoria, primero, segundo, tercero) != 1:
+                    raise ErrorAnalisis('El bloque C++ rechazó una combinación válida.')
+            comparar_memoria(maquina, segmento_datos, datos, 0xB7D1, 0xB8A3,
+                             {UC_X86_REG_AX: tercero, UC_X86_REG_DX: primero | (segundo << 8)},
+                             trasladar, f'Coincidencias {primero}, {segundo}, {tercero}')
+            casos_coincidencias += 1
+
+    destinos_retorno = {0xDE2F: 0, 0xDE5B: 1, 0xDE5E: 2}
+    observados = []
+    def detener_en_decision(emulador, posicion, tamano, contexto):
+        if posicion in destinos_retorno:
+            observados.append(posicion)
+            emulador.emu_stop()
+    gancho = maquina.hook_add(unicorn.UC_HOOK_CODE, detener_en_decision)
+    casos_retorno = 0
+    valores_ax = [0, 1, 0x7FFF, 0x8000, 0x8001, 0xFFFF] + [generador.randrange(65536) for _ in range(64)]
+    try:
+        for ax, acarreo in product(valores_ax, (0, 1)):
+            observados.clear()
+            maquina.reg_write(UC_X86_REG_CS, 0)
+            maquina.reg_write(UC_X86_REG_AX, ax)
+            maquina.reg_write(UC_X86_REG_EFLAGS, 2 | acarreo)
+            maquina.emu_start(0xDE2D, 0xDE80, timeout=1_000_000, count=100)
+            if len(observados) != 1:
+                raise ErrorAnalisis('No se pudo observar la decisión del llamador de acciones.')
+            if nativa.interpretar_retorno(ax, acarreo) != destinos_retorno[observados[0]]:
+                raise ErrorAnalisis(f'Diferencia al interpretar AX={ax:04X}, acarreo={acarreo}.')
+            casos_retorno += 1
+    finally:
+        maquina.hook_del(gancho)
 
     informe = {
-        'sha256_ejecutable': cabecera['sha256'], 'bloque_original': '0000:DF15–DF4D',
+        'sha256_ejecutable': cabecera['sha256'],
         'sha256_biblioteca_comparada': hashlib.sha256(biblioteca.read_bytes()).hexdigest(),
-        'version_unicorn': unicorn.__version__, 'casos_comparados': len(casos),
-        'bytes_comparados_por_caso': 65536, 'resultado': 'coinciden',
-        'limites': 'Se comparan escrituras en DS con DF=0; no registros, indicadores, dibujo ni el juego completo.',
+        'version_unicorn': unicorn.__version__,
+        'casos_comparados': len(casos) + casos_coincidencias + casos_retorno,
+        'bloques': [
+            {'original': '0000:DF15–DF4D', 'casos': len(casos), 'comprobacion': 'Segmento DS completo, DF=0.'},
+            {'original': '0000:B7D1–B8A2', 'casos': casos_coincidencias, 'comprobacion': 'Segmento DS completo; 216 combinaciones con dos estados de memoria.'},
+            {'original': '0000:DE2D–DE59', 'casos': casos_retorno, 'comprobacion': 'Destino de continuación según AX y acarreo.'},
+        ],
+        'resultado': 'coinciden',
+        'limites': 'No reproduce todos los registros e indicadores, el dibujo, la generación aleatoria ni el juego completo.',
     }
     salida.parent.mkdir(parents=True, exist_ok=True)
     salida.write_text(json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    print(f'Bloque original: {informe["bloque_original"]}')
-    print(f'Casos comparados contra instrucciones originales: {len(casos)}')
-    print('Resultado: coinciden los 65.536 bytes del segmento de datos en todos los casos.')
+    for bloque in informe['bloques']:
+        print(f'Bloque original: {bloque["original"]}; casos: {bloque["casos"]}')
+    print(f'Total de casos comparados: {informe["casos_comparados"]}')
+    print('Resultado: coinciden las escrituras en DS y las decisiones comprobadas.')
     print(f'Informe local: {salida}')
 
 
