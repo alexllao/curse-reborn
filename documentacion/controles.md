@@ -1,6 +1,6 @@
 # Teclas y controles
 
-Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añadirá aquí.
+Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añade aquí. Las asignaciones actuales podrán reorganizarse durante el desarrollo.
 
 ## Sonido
 
@@ -22,6 +22,10 @@ El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificació
 
 El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.
 
+**F12** muestra u oculta el contador de FPS y registra el cambio en consola. Arranca visible, en una placa pequeña en la esquina superior derecha, con tamaño fijo en píxeles de ventana. Se coloca sobre la banda negra si la hay. Actualiza el valor cada medio segundo y mide el dibujo de fotogramas, independiente del reloj del juego. En las capturas de referencia queda oculto salvo al comprobar expresamente F12.
+
+Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no está implementado: actualmente esa información se registra en consola.
+
 ## Jugar
 
 | Control                                              | Función                                                            |
@@ -33,7 +37,7 @@ El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa 
 | **← / →**, con el menú abierto                       | Cambiar de casilla.                                                |
 | **Intro**, con el menú abierto                       | Confirmar la casilla seleccionada.                                 |
 
-En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido y F11 funcionan sin avanzar la presentación.
+En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido, F11 y F12 funcionan sin avanzar la presentación.
 
 **Escape cierra el programa en Core, título e introducción.** Dentro de una escena jugable abre o cierra el menú. El botón de cierre de la ventana termina el programa desde cualquier vista.
 

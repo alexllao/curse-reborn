@@ -193,6 +193,7 @@ try {
     case 'comprobar:jugabilidad':
     case 'comprobar:menu':
     case 'comprobar:introduccion':
+    case 'comprobar:fps':
     case 'comprobar:filtros':
     case 'comprobar:ventana':
     case 'comprobar:escena':

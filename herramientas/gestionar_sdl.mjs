@@ -170,6 +170,7 @@ async function compilar() {
       join(mt32, 'include'),
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
@@ -505,7 +506,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración; F11 cambia el filtro de pantalla. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
+      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración; F11 cambia el filtro de pantalla y F12 muestra/oculta los FPS. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
     );
     ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
     return;
@@ -545,6 +546,51 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:fps') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_fps');
+    mkdirSync(carpeta, { recursive: true });
+    const prefijo = join(carpeta, 'fps');
+    ejecutar(programa, [datos, '--comprobar-fps', prefijo], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    const capturas = Array.from({ length: 3 }, (_, i) =>
+      leerCaptura(`${prefijo}.${i}.bmp`, 1000, 700),
+    );
+    for (const indice of [0, 2]) {
+      let cambios = 0;
+      for (let y = 0; y < 700; y++)
+        for (let x = 0; x < 1000; x++)
+          for (let c = 0; c < 3; c++) {
+            const p = (y * 1000 + x) * 3 + c;
+            if (capturas[indice][p] !== capturas[1][p]) {
+              cambios++;
+              if (x < 912 || x >= 992 || y < 8 || y >= 26)
+                throw new Error('El contador FPS modifica el juego fuera de su placa.');
+            }
+          }
+      if (!cambios) throw new Error('F12 no cambia la visibilidad del contador.');
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          tecla: 'F12',
+          capturas: 3,
+          resolucion: [1000, 700],
+          juego_y_bandas_conservados: true,
+          contador: 'fotogramas de presentación por segundo; no modifica el reloj del juego',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'FPS SDL: F12 muestra y oculta el indicador; juego y bandas negras se conservan fuera de la placa.',
+    );
     return;
   }
   if (accion === 'comprobar:filtros') {

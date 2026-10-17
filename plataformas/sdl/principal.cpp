@@ -20,6 +20,7 @@
 #include "introduccion.hpp"
 #include "registro.hpp"
 #include "filtros.hpp"
+#include "contador_fps.hpp"
 
 namespace {
 // Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
@@ -225,6 +226,7 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
+  const bool comprobar_fps = opcion == "--comprobar-fps";
   const bool comprobar_filtros = opcion == "--comprobar-filtros";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
@@ -255,14 +257,16 @@ int main(int argc, char *argv[]) {
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
-      argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
-                    comprobar_transicion || comprobar_introduccion || comprobar_filtros);
+      argc == 4 &&
+      (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
+       comprobar_transicion || comprobar_introduccion || comprobar_filtros || comprobar_fps);
   if (argc == 4 && !comprobar) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
   }
   const std::string carpeta = argv[1];
   Presentacion presentacion;
+  ContadorFps contador_fps(!comprobar || comprobar_fps);
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
   if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
@@ -271,9 +275,13 @@ int main(int argc, char *argv[]) {
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
   if (!SDL_CreateWindowAndRenderer("Curse Reborn — Pantalla de título",
-                                   comprobar && !comprobar_filtros ? 320 : 960,
-                                   comprobar && !comprobar_filtros ? 200 : 600, opciones,
-                                   &presentacion.ventana, &presentacion.dibujante)) {
+                                   comprobar && !comprobar_filtros && !comprobar_fps ? 320
+                                   : comprobar_fps                                   ? 1000
+                                                                                     : 960,
+                                   comprobar && !comprobar_filtros && !comprobar_fps ? 200
+                                   : comprobar_fps                                   ? 700
+                                                                                     : 600,
+                                   opciones, &presentacion.ventana, &presentacion.dibujante)) {
     return fallo("No se ha podido crear la ventana");
   }
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
@@ -314,7 +322,7 @@ int main(int argc, char *argv[]) {
   unsigned short paso_fundido = 0;
   Uint64 inicio_pantalla = SDL_GetTicksNS(), inicio_fundido = 0;
   Uint64 ultimo_paso_escena = inicio_pantalla;
-  unsigned int paso_vistas = 0, paso_filtros = 0;
+  unsigned int paso_vistas = 0, paso_aspecto = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
       return fallo("No se ha podido actualizar el audio del juego");
@@ -341,6 +349,10 @@ int main(int argc, char *argv[]) {
           const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
+          continue;
+        }
+        if (evento.key.key == SDLK_F12) {
+          contador_fps.alternar();
           continue;
         }
         if (evento.key.key == SDLK_F11) {
@@ -931,8 +943,19 @@ int main(int argc, char *argv[]) {
     if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
+    if (!contador_fps.dibujar(presentacion.dibujante))
+      return fallo("No se ha podido dibujar el contador FPS");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
+      // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.
+      if (comprobar_fps && !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 0, 0,
+                                                             SDL_LOGICAL_PRESENTATION_DISABLED))
+        return fallo("No se ha podido preparar la captura completa del contador");
       SDL_Surface *captura = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
+      if (comprobar_fps && !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
+                                                             SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
+        SDL_DestroySurface(captura);
+        return fallo("No se ha podido recuperar el encuadre después de capturar el contador");
+      }
       if (!captura)
         return fallo("No se ha podido capturar el fotograma");
       SDL_Surface *rgb = SDL_ConvertSurface(captura, SDL_PIXELFORMAT_RGB24);
@@ -940,21 +963,22 @@ int main(int argc, char *argv[]) {
       if (!rgb)
         return fallo("No se ha podido convertir la captura");
       const std::string ruta_captura =
-          comprobar_filtros ? std::string(argv[3]) + "." + std::to_string(paso_filtros) + ".bmp"
-                            : argv[3];
+          comprobar_filtros || comprobar_fps
+              ? std::string(argv[3]) + "." + std::to_string(paso_aspecto) + ".bmp"
+              : argv[3];
       const bool guardado = SDL_SaveBMP(rgb, ruta_captura.c_str());
       SDL_DestroySurface(rgb);
       if (!guardado)
         return fallo("No se ha podido guardar el fotograma");
       if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
         return fallo("No se ha podido guardar el estado diagnóstico de la captura");
-      if (comprobar_filtros && paso_filtros < 4) {
-        ++paso_filtros;
+      if ((comprobar_filtros && paso_aspecto < 4) || (comprobar_fps && paso_aspecto < 2)) {
+        ++paso_aspecto;
         SDL_Event filtro{};
         filtro.type = SDL_EVENT_KEY_DOWN;
-        filtro.key.key = SDLK_F11;
+        filtro.key.key = comprobar_fps ? SDLK_F12 : SDLK_F11;
         if (!SDL_PushEvent(&filtro))
-          return fallo("No se ha podido comprobar F11");
+          return fallo("No se ha podido comprobar el atajo de presentación");
       } else {
         capturada = true;
         // La comprobación termina por el mismo tratamiento de Escape que la ventana normal.
