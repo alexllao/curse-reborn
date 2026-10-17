@@ -37,7 +37,7 @@ void actualizar_escena_cinco(unsigned char *datos) {
 // La tabla CS:17A3 contiene cero para la mazmorra (índice 0) y 183F para el índice 5.
 bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
-  if (escena == 0 || escena == 2)
+  if (escena == 0 || escena == 2 || escena == 4)
     return true;
   if (escena == 1) {
     // BEA8–BEFC: reacción del corredor en sus ventanas 24 y cero, con coordenadas con signo.

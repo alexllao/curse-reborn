@@ -1,5 +1,6 @@
 #include "corredor.hpp"
 #include "lago.hpp"
+#include "poza.hpp"
 #include "menu.hpp"
 #include "construir_tabla.hpp"
 #include "objetos_cercanos.hpp"
@@ -77,6 +78,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
   }
   if (palabra(d, 0x8082) == 3)
     return ejecutar_interaccion_lago(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 8)
+    return ejecutar_interaccion_poza(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 1)
     return ejecutar_interaccion_corredor(d, manejador, id, sonido);
   if (palabra(d, 0x8082) != 0)
@@ -276,6 +279,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9994, objeto, sonido);
       if (accion == 2 && objeto == 15)
         return ejecutar_interaccion_inicial(d, 0x9a48, objeto, sonido);
+      if (accion == 2 && objeto == 48)
+        return ejecutar_interaccion_inicial(d, 0x9de4, objeto, sonido);
       if (accion == 2 && objeto == 2)
         return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido);
     } else if (palabra(d, 0xb634) == 6 && objeto == 20 && previo == 17) {
@@ -293,7 +298,9 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido);
     }
     if ((palabra(d, 0x8082) == 0 && objeto <= 5 && (previo == 0xffff || previo <= 5)) ||
-        (palabra(d, 0x8082) == 1 && objeto <= 14 && (previo == 0xffff || previo <= 14))) {
+        (palabra(d, 0x8082) == 1 && objeto <= 14 && (previo == 0xffff || previo <= 14)) ||
+        (palabra(d, 0x8082) == 8 && (objeto == 3 || (objeto >= 48 && objeto <= 50)) &&
+         (previo == 0xffff || previo == 3 || (previo >= 48 && previo <= 50)))) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }

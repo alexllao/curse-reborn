@@ -8,7 +8,7 @@ from pathlib import Path
 from comparar_puzle import ComparacionPuzle, ErrorAnalisis
 from comparar_objetos import ComparacionObjetos, guardar, palabra
 
-BANCOS_ESCENA = {0: 'DUNGEON', 1: 'CORRIDOR', 2: 'DROP', 3: 'LAKEBED', 8: 'POOL'}
+BANCOS_ESCENA = {0: 'DUNGEON', 1: 'CORRIDOR', 2: 'DROP', 3: 'LAKEBED', 4: 'CAVECOR', 8: 'POOL'}
 
 
 class ComparacionCorredor(ComparacionPuzle):

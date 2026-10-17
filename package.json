@@ -72,7 +72,9 @@
     "comparar:lago": "node herramientas/gestionar_proyecto.mjs comparar:lago",
     "comprobar:lago": "node herramientas/gestionar_proyecto.mjs comprobar:lago",
     "comprobar:filtros": "node herramientas/gestionar_proyecto.mjs comprobar:filtros",
-    "comprobar:fps": "node herramientas/gestionar_proyecto.mjs comprobar:fps"
+    "comprobar:fps": "node herramientas/gestionar_proyecto.mjs comprobar:fps",
+    "comparar:poza": "node herramientas/gestionar_proyecto.mjs comparar:poza",
+    "comprobar:poza": "node herramientas/gestionar_proyecto.mjs comprobar:poza"
   },
   "repository": {
     "type": "git",

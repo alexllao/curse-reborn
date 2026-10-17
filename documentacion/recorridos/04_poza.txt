@@ -1,0 +1,43 @@
+CURSE REBORN — POZA Y PUERTA SECRETA
+Autor del port: Àlex Llaó
+
+La partida llega por el tapón del lago conservando el clip y consumiendo
+la picana. Esperar a que Brad termine de emerger y recupere el control.
+F5/F6 reinician las vistas de desarrollo; no conservan la partida anterior.
+Las casillas se cuentan desde uno y las coordenadas usan 320 x 200.
+
+1. ACERCARSE A LAS ALGAS
+   Caminar hacia la parte inferior derecha de la poza.
+   La prueba utiliza los clics (280, 180), (305, 195) y después (180, 100).
+   Las ocultaciones de Brad proceden del orden original de los elementos.
+
+2. RECOGER LAS ALGAS
+   Abrir recoger (2) y elegir las algas que están junto a la pared.
+   Se añaden al inventario si queda sitio y queda habilitado el botón.
+   Si el inventario está lleno, el original rechaza la recogida.
+
+3. EXAMINAR Y ACERCARSE AL BOTÓN
+   Se puede examinar (4) la zona clara de la pared.
+   En nuestro ejecutable, este examen no añade otra mutación: el botón
+   se habilita al recoger las algas. La guía aportada corresponde a Amiga.
+   Cerrar el menú y acercarse al botón, aproximadamente a (115, 114).
+
+4. ABRIR LA PUERTA
+   Manipular objetos (3), empujar o tirar (3) y elegir el botón.
+   Esperar la animación de Brad y la apertura de la puerta de la izquierda.
+   Pulsarlo de nuevo cuando la puerta ya está abierta se rechaza.
+
+5. ENTRAR EN EL CORREDOR DE LAS CUEVAS
+   Caminar hacia (90, 110) y después (80, 80), por la puerta abierta.
+   El cambio de escena conserva el inventario, incluidas las algas.
+   Esperar la entrada hasta que Brad vuelva a tener el control.
+
+COMPROBACIONES
+pnpm comparar:poza --muestra
+pnpm comprobar:poza
+
+PENDIENTE
+Los puzles y las demás salidas posteriores del corredor de las cuevas.
+
+Redacción propia a partir de la guía de Sophie Cheshire (falsehead),
+28/03/2003, aportada por Àlex y contrastada con nuestro ejecutable DOS.

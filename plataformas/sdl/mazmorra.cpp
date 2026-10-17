@@ -207,7 +207,8 @@ bool Mazmorra::avanzar() {
     if ((resultado.acciones == 2 || resultado.acciones == 16) &&
         ((actual == 0 && resultado.parametro == 0) ||
          (actual == 1 && (resultado.parametro == 1 || resultado.parametro == 2)) ||
-         (actual == 2 && resultado.parametro == 3) || (actual == 3 && resultado.parametro == 4))) {
+         (actual == 2 && resultado.parametro == 3) || (actual == 3 && resultado.parametro == 4) ||
+         (actual == 8 && resultado.parametro == 17))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -443,7 +444,7 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 4)
+  if (salida > 4 && salida != 17)
     return false;
   unsigned short ancho = 32, alto = 48;
   if ((salida == 3 || salida == 4) &&
@@ -454,7 +455,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
                                          ancho, alto) ||
       !motor::preparar_vista_escena(datos))
     return false;
-  constexpr const char *bancos[] = {"DUNGEON", "CORRIDOR", "DROP",  "LAKEBED", nullptr,
+  constexpr const char *bancos[] = {"DUNGEON", "CORRIDOR", "DROP",  "LAKEBED", "CAVECOR",
                                     nullptr,   nullptr,    nullptr, "POOL"};
   const auto actual = escena_actual();
   if (actual > 8 || !bancos[actual] ||
@@ -514,12 +515,16 @@ bool Mazmorra::iniciar_caida(const std::string &ruta, const motor::ImagenIndexad
 // partida.
 bool Mazmorra::iniciar_vista(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo,
                              unsigned short escena_vista) {
-  if (escena_vista > 4 || !iniciar(ruta, imagen_fondo))
+  if (escena_vista > 5 || !iniciar(ruta, imagen_fondo))
     return false;
   if (!escena_vista)
     return true;
   if (escena_vista == 1)
     return cambiar_habitacion(0);
+  if (escena_vista == 5) {
+    motor::guardar(datos, 0x8082, 8);
+    return cambiar_habitacion(17);
+  }
   motor::guardar(datos, 0x8082, escena_vista == 2 ? 1 : escena_vista == 3 ? 2 : 3);
   return cambiar_habitacion(escena_vista == 2 ? 1 : escena_vista == 3 ? 3 : 4);
 }

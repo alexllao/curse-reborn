@@ -8,7 +8,7 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                 unsigned short referencia_modelo, unsigned short ancho,
                                 unsigned short alto) {
   constexpr unsigned short origenes[] = {0, 1, 1, 2, 3};
-  if (salida > 4 || palabra(d, 0x8082) != origenes[salida])
+  if (salida == 17 ? palabra(d, 0x8082) != 8 : salida > 4 || palabra(d, 0x8082) != origenes[salida])
     return false;
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
   const auto modelo = d[static_cast<Palabra>(descriptor + 13)];

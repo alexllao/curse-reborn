@@ -222,6 +222,11 @@ class ComparacionLago(ComparacionCorredor):
         ):
             raise ErrorAnalisis('La llegada a la cueva no conserva el consumo de la picana.')
         self.resumen['salida_lago'] = 1
+        self.despues_lago(datos, semilla, carpeta)
+
+    # Permite prolongar la misma partida en las cuevas sin inventar un estado de entrada.
+    def despues_lago(self, datos, semilla, carpeta):
+        pass
 
     # 1963–1992: activa la presentación solo en copias para cubrir creación y ausencia de partículas.
     def variantes_poza(self, base, semilla):

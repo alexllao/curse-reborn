@@ -50,7 +50,7 @@ En Core y título, una tecla o un clic izquierdo permite avanzar. En la introduc
 | **F5** | Ir directamente a la vista anterior.  |
 | **F6** | Ir directamente a la vista siguiente. |
 
-Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → entrada a las cuevas**. En los extremos no hay otra vista a la que saltar. La vista de la cueva reproduce la llegada; sus puzles siguen pendientes.
+Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → corredor de las cuevas**. En los extremos no hay otra vista a la que saltar. La poza permite recoger algas, pulsar el botón y atravesar la puerta secreta; los puzles posteriores del corredor siguen pendientes.
 
 **Al entrar en una vista jugable mediante F5/F6 se prepara una sesión nueva.** Estos saltos sirven para probar pantallas: no conservan el progreso ni resuelven los puzles anteriores. Para continuar la misma partida, utiliza las salidas normales del escenario.
 

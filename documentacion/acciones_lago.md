@@ -38,3 +38,15 @@ Quedan pendientes la revisión exhaustiva de opciones y rechazos de manipulació
 La reacción al hablar de la tienda estaba desensamblada y faltaba en el despacho C++. La corrección compara los dos temas a ambos lados del límite de proximidad (63, 64 y 65 píxeles), cerca y lejos, y conserva la aritmética de 16 bits. Añade una rama desde la llegada real a Mr. Fish con su imagen tras ocho pasos; el recorrido del gusano continúa desde una copia anterior a esa conversación opcional.
 
 Se contrastan también los retornos comunes de examinar sin una respuesta especial y los rechazos de usar o atacar objetos sin una acción aplicable. La almeja añade modelos 0, 11, 12, 13 y 255 y puntuación con desbordamiento; el tapón cubre ambos órdenes de selección, inventarios con y sin los identificadores retirados y puntuación con desbordamiento. Siguen pendientes otras combinaciones de manipulación. La casilla E126 ofrece las operaciones de partida (E19F/E325/E793), por lo que no debe confundirse con un salto genérico.
+
+## Poza y puerta secreta
+
+La escena ocho `POOL` continúa la misma partida. `59B5–59C9` recoge las algas (identificador 49), retira su descriptor persistente y asigna el identificador 48 al botón. Conserva el límite de diez objetos, el ajuste de pies de nueve píxeles y las secuencias de recogida normal o de Brad pequeño. Examinar la zona clara (50) retorna sin cambios por `3B4F`: en este ejecutable DOS la habilitación del botón procede de recoger las algas; no se añade una condición tomada de la guía de Amiga.
+
+Empujar el botón entra en `9DE4–9E20`. Solo acepta el modelo cerrado seis de la puerta, programa la aproximación y sus canales, sincroniza la apertura con AL+12 y suma cinco puntos con aritmética de 16 bits. Tras abrirla, las colisiones originales solicitan la salida 17 hacia la escena cuatro `CAVECOR`. La entrada utiliza `STD.BRD`; la lista persistente, inventario, música y servicios de sonido continúan compartidos. La rutina particular de la escena cuatro es nula en `CS:17A3`.
+
+`pnpm comparar:poza --muestra` prolonga el recorrido completo desde la mazmorra. Se han contrastado **7.996 casos y pasos**: memoria DS completa y generador, recogida, apertura, inventario lleno, puntuación desbordada, puerta cerrada o abierta, conversación, examen, uso, combate y combinaciones de manipulación antes y después de abrir. No se introducen objetos para resolver la ruta. Las variantes aisladas modifican copias expresamente para comprobar sus límites.
+
+`pnpm comprobar:poza` compila y agrupa esa comparación con **cuatro capturas SDL**: algas recogidas, puerta abierta, entrada al corredor y devolución del control. Sus 64.000 píxeles RGB coinciden con la composición de referencia. Se han ejecutado la comparación completa y las capturas por separado para reutilizar los binarios compilados. F5/F6 incluyen el corredor y se han comprobado sus doce cambios de vista.
+
+Los puzles posteriores del corredor y del resto de las cuevas siguen pendientes. No se da por terminada la zona de cuevas. [Recorrido de la poza](recorridos/04_poza.txt).

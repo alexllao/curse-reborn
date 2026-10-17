@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <string>
+#include <utility>
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -25,6 +26,15 @@
 namespace {
 // Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
 constexpr Uint64 intervalo_presentacion_ns = 1000000000ull / 70u;
+
+// Relaciona el índice DOS con las vistas disponibles, cuyo orden difiere del de los recursos.
+int vista_de_escena(unsigned short escena) {
+  constexpr unsigned short escenas[] = {0, 1, 2, 3, 8, 4};
+  for (unsigned int i = 0; i < 6; ++i)
+    if (escenas[i] == escena)
+      return static_cast<int>(i) + 3;
+  return -1;
+}
 
 // Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
 void configurar_consola() {
@@ -149,7 +159,8 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
                                           : pantalla == 4 ? "corredor"
                                           : pantalla == 5 ? "caída"
                                           : pantalla == 6 ? "lago"
-                                                          : "entrada a las cuevas");
+                                          : pantalla == 7 ? "poza de las cuevas"
+                                                          : "corredor de las cuevas");
   mazmorra.desconectar_audio();
   const bool cargada =
       pantalla >= 3   ? cargar_mazmorra(carpeta, static_cast<unsigned short>(pantalla - 3))
@@ -160,16 +171,17 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
   return actualizar_textura(presentacion) &&
-         SDL_SetWindowTitle(presentacion.ventana,
-                            pantalla == 0   ? "Curse Reborn — Core Design"
-                            : pantalla == 1 ? "Curse Reborn — Pantalla de título"
-                            : pantalla == 2 ? "Curse Reborn — Introducción original"
-                            : pantalla == 4 ? "Curse Reborn — Corredor (vista de desarrollo)"
-                            : pantalla == 5 ? "Curse Reborn — Caída (vista de desarrollo)"
-                            : pantalla == 6 ? "Curse Reborn — Lago (vista de desarrollo)"
-                            : pantalla == 7
-                                ? "Curse Reborn — Entrada a las cuevas (vista de desarrollo)"
-                                : "Curse Reborn — Mazmorra (reconstrucción)");
+         SDL_SetWindowTitle(
+             presentacion.ventana,
+             pantalla == 0   ? "Curse Reborn — Core Design"
+             : pantalla == 1 ? "Curse Reborn — Pantalla de título"
+             : pantalla == 2 ? "Curse Reborn — Introducción original"
+             : pantalla == 4 ? "Curse Reborn — Corredor (vista de desarrollo)"
+             : pantalla == 5 ? "Curse Reborn — Caída (vista de desarrollo)"
+             : pantalla == 6 ? "Curse Reborn — Lago (vista de desarrollo)"
+             : pantalla == 7 ? "Curse Reborn — Entrada a las cuevas (vista de desarrollo)"
+             : pantalla == 8 ? "Curse Reborn — Corredor de las cuevas (vista de desarrollo)"
+                             : "Curse Reborn — Mazmorra (reconstrucción)");
 }
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
@@ -237,8 +249,11 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
+  const bool comprobar_poza =
+      opcion == "--comprobar-poza-algas" || opcion == "--comprobar-poza-puerta" ||
+      opcion == "--comprobar-cuevas-corredor-entrada" || opcion == "--comprobar-cuevas-corredor";
   const bool lago_tercera_parte =
-      opcion == "--comprobar-lago-almeja" || opcion == "--comprobar-lago-tapon" ||
+      comprobar_poza || opcion == "--comprobar-lago-almeja" || opcion == "--comprobar-lago-tapon" ||
       opcion == "--comprobar-cueva-entrada" || opcion == "--comprobar-cueva-emergida";
   const bool lago_segunda_parte =
       lago_tercera_parte || opcion == "--comprobar-lago-concha" ||
@@ -434,9 +449,8 @@ int main(int argc, char *argv[]) {
           }
         }
         const int vista_actual =
-            pantalla >= 3 ? (mazmorra.escena_actual() == 8 ? 7 : 3 + mazmorra.escena_actual())
-                          : pantalla;
-        const bool avanzar = vista_actual < 7 && evento.key.key == SDLK_F6;
+            pantalla >= 3 ? vista_de_escena(mazmorra.escena_actual()) : pantalla;
+        const bool avanzar = vista_actual >= 0 && vista_actual < 8 && evento.key.key == SDLK_F6;
         const bool retroceder = vista_actual > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
           pantalla = vista_actual + (avanzar ? 1 : -1);
@@ -507,12 +521,12 @@ int main(int argc, char *argv[]) {
     if (salir)
       break;
     if (comprobar_vistas && !capturada) {
-      constexpr unsigned short escenas[] = {0, 1, 0, 1, 2, 1, 2, 3, 8, 3, 2};
-      constexpr SDL_Keycode teclas[] = {SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5,
-                                        SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5};
+      constexpr unsigned short escenas[] = {0, 1, 0, 1, 2, 1, 2, 3, 8, 4, 8, 3, 2};
+      constexpr SDL_Keycode teclas[] = {SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F6,
+                                        SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5, SDLK_F5};
       if (mazmorra.escena_actual() != escenas[paso_vistas])
         return fallo("F5/F6 no han respetado el orden de las escenas");
-      if (paso_vistas < 10) {
+      if (paso_vistas < 12) {
         SDL_Event tecla{};
         tecla.type = SDL_EVENT_KEY_DOWN;
         tecla.key.key = teclas[paso_vistas++];
@@ -520,8 +534,7 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido comprobar la navegación de desarrollo");
         continue;
       }
-      std::printf(
-          "F5/F6: diez cambios comprobados entre mazmorra, corredor, caída, lago y cueva.\n");
+      std::printf("F5/F6: doce cambios comprobados hasta el corredor de las cuevas.\n");
     }
     if (comprobar_introduccion && !introduccion_comprobada) {
       const unsigned int limite = opcion == "--comprobar-caldero"   ? 33
@@ -582,8 +595,7 @@ int main(int argc, char *argv[]) {
         for (unsigned int i = 0; i < cantidad; ++i) {
           if (!mazmorra.actualizar_audio() || !mazmorra.avanzar())
             return false;
-          const bool camara =
-              comprobar_lago && mazmorra.escena_actual() == 3 && mazmorra.camara_en_presentacion();
+          const bool camara = comprobar_lago && mazmorra.camara_en_presentacion();
           if (!mazmorra.avanzar_presentacion(SDL_GetTicksNS() * 70u / 1000000000u + 100u))
             return false;
           // EAD5 termina el desplazamiento antes de ejecutar la iteración lógica del mismo ciclo.
@@ -884,8 +896,42 @@ int main(int argc, char *argv[]) {
                         if (!avanzar(1))
                           return fallo("No se ha podido seguir el desagüe hacia las cuevas");
                       if (mazmorra.escena_actual() != 8 || mazmorra.conserva_objeto(23) ||
-                          (opcion == "--comprobar-cueva-emergida" && !avanzar(96)))
+                          ((opcion == "--comprobar-cueva-emergida" || comprobar_poza) &&
+                           !avanzar(96)))
                         return fallo("No se ha podido completar la llegada a las cuevas");
+                      if (comprobar_poza) {
+                        for (const auto destino :
+                             {std::pair{280, 180}, std::pair{305, 195}, std::pair{180, 100}})
+                          if (!mazmorra.mover_a(static_cast<unsigned short>(destino.first),
+                                                static_cast<unsigned short>(destino.second)) ||
+                              !avanzar(96))
+                            return fallo("No se ha podido alcanzar las algas de la poza");
+                        if (!abrir() || !elegir(1) || !objeto(49) || !avanzar(96) ||
+                            !mazmorra.conserva_objeto(49))
+                          return fallo("No se han podido recoger las algas");
+                        if (opcion != "--comprobar-poza-algas") {
+                          if (!abrir() || !elegir(3) || !objeto(50) ||
+                              !mazmorra.entrada_menu(152, 92, false, true) ||
+                              !mazmorra.posicion_objeto(48, x, y, alto) ||
+                              !mazmorra.mover_a(static_cast<unsigned short>(x - 15),
+                                                static_cast<unsigned short>(y + 33)) ||
+                              !avanzar(96) || !abrir() || !elegir(2) || !elegir(2) || !objeto(48) ||
+                              !avanzar(96))
+                            return fallo("No se ha podido pulsar el botón y abrir la puerta");
+                          if (opcion != "--comprobar-poza-puerta") {
+                            if (!mazmorra.mover_a(90, 110) || !avanzar(96) ||
+                                !mazmorra.mover_a(80, 80))
+                              return fallo("No se ha podido alcanzar la salida secreta");
+                            for (unsigned int i = 0; i < 96 && mazmorra.escena_actual() == 8; ++i)
+                              if (!avanzar(1))
+                                return fallo("No se ha podido atravesar la puerta secreta");
+                            if (mazmorra.escena_actual() != 4 || !mazmorra.conserva_objeto(49) ||
+                                (opcion == "--comprobar-cuevas-corredor" && !avanzar(96)))
+                              return fallo(
+                                  "No se ha podido completar la entrada al corredor de las cuevas");
+                          }
+                        }
+                      }
                     }
                   }
                 }

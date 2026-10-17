@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:59B5",
+      "nombre": "Recogida de las algas y habilitación del botón de la poza",
+      "comentario": "59B5–59C9: identificador 31h, escribe 30h como identificador de la entidad 2C6D y recoge 2C8E con ajuste +5/-9 mediante 61A7. 623D retira su descriptor persistente. Conserva 96CF/96D8 o 9705/970E para Brad pequeño y demora AL+6. Traslado motor/acciones/poza.cpp; prueba de inventario lleno y recorrido desde el lago. Examinar la zona 32h retorna por 3B4F sin otra mutación."
+    },
+    {
+      "direccion": "0000:9DE4",
+      "nombre": "Botón y puerta secreta de la poza",
+      "comentario": "3BA3–3BA8: empujar 30h entra en 9DE4. Exige modelo seis de la puerta (2C4D), prepara secuencia 9DC0, destino del botón -15/+33 y canales 9D91/9DB2; demora AL+12 y cinco puntos. El guion abre la puerta; la geometría solicita salida 17 hacia escena cuatro CAVECOR. Traslado motor/acciones/poza.cpp, entrada compartida y plataforma SDL."
+    },
+    {
       "direccion": "0000:1963",
       "nombre": "Partículas de la poza de entrada a las cuevas",
       "comentario": "1963–1992: escena ocho, recurso POOL. Si 0DEF es cero retorna sin consumir azar. En otro caso genera módulo dos; si sale cero prepara descriptor 12FE con x aleatoria módulo 200 más 50 e y módulo diez menos 20 y llama a 8B6F. La salida cuatro del lago selecciona esta escena mediante DS:7482, no la escena cuatro CAVECOR. Traslado motor/entidades/mazmorra.cpp."

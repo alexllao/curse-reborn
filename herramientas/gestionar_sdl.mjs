@@ -423,6 +423,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
+      accion === 'comprobar:poza' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
@@ -432,7 +433,8 @@ export async function gestionarSdl(accion, argumentos) {
         ...(accion === 'ventana' ||
         accion === 'comprobar:caida' ||
         accion === 'comprobar:corredor' ||
-        accion === 'comprobar:lago'
+        accion === 'comprobar:lago' ||
+        accion === 'comprobar:poza'
           ? ['CORRIDOR.MAP', 'CORRIDOR.SPR']
           : []),
         'MANA.BRD',
@@ -451,6 +453,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
+      accion === 'comprobar:poza' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -463,7 +466,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'ventana' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
-      accion === 'comprobar:lago'
+      accion === 'comprobar:lago' ||
+      accion === 'comprobar:poza'
     )
       necesarios.push(
         'DROP.MAP',
@@ -473,6 +477,10 @@ export async function gestionarSdl(accion, argumentos) {
         'PLUNGE.BRD',
         'PLOK.BRD',
       );
+    if (accion === 'ventana' || accion === 'comprobar:lago' || accion === 'comprobar:poza')
+      necesarios.push('POOL.MAP', 'POOL.SPR', 'EMERGE.BRD');
+    if (accion === 'ventana' || accion === 'comprobar:poza')
+      necesarios.push('CAVECOR.MAP', 'CAVECOR.SPR');
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
@@ -484,6 +492,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
+      accion === 'comprobar:poza' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -638,6 +647,56 @@ export async function gestionarSdl(accion, argumentos) {
     );
     console.log(
       'Filtros SDL: cuatro modos diferentes, ciclo F11 reversible y 64.000 píxeles originales conservados.',
+    );
+    return;
+  }
+  if (accion === 'comprobar:poza') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:poza',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_poza_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const capturas = [
+      ['--comprobar-poza-algas', 'poza_algas'],
+      ['--comprobar-poza-puerta', 'poza_puerta'],
+      ['--comprobar-cuevas-corredor-entrada', 'cuevas_corredor_entrada'],
+      ['--comprobar-cuevas-corredor', 'cuevas_corredor'],
+    ];
+    for (const [opcion, nombre] of capturas) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, opcion, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_poza', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la partida original.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: capturas.length,
+          pixeles_por_captura: 64000,
+          limite:
+            'Algas, botón, puerta secreta y entrada al corredor; puzles posteriores pendientes.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Poza SDL: coinciden cuatro capturas hasta atravesar la puerta secreta y entrar al corredor de las cuevas.',
     );
     return;
   }
