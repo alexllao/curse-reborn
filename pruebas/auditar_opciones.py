@@ -9,6 +9,38 @@ from comparar_final_cuevas import ComparacionFinalCuevas, ErrorAnalisis
 from comparar_objetos import palabra
 
 
+# Explora las listas reales de un estado, sin ejecutar los paneles de plataforma.
+def auditar_estado(comparacion, datos, nombre):
+    pendientes = []
+    comparacion.nativa.procesar_menu(0, (ctypes.c_ubyte * 65536).from_buffer(datos), 152, 92)
+    cola = [(datos, ())]
+    vistos = set()
+    while cola:
+        base, ruta = cola.pop()
+        clave = bytes(base[0xB60C:0xB63A])
+        if clave in vistos or len(ruta) > 6:
+            continue
+        vistos.add(clave)
+        for casilla in range(10):
+            if palabra(base, 0xB620 + casilla * 2) == 65535:
+                continue
+            manejador = palabra(base, 0xB60C + casilla * 2)
+            if manejador in (0xE19F, 0xE325, 0xE793, 0xE160):
+                continue
+            copia = bytearray(base)
+            try:
+                comparacion.seleccionar(copia, casilla)
+            except ErrorAnalisis as error:
+                pendientes.append(
+                    {'estado': nombre, 'casillas': ruta + (casilla,), 'error': str(error)}
+                )
+                comparacion.retomar_recursos(base)
+                continue
+            if not (comparacion.maquina.reg_read(comparacion.r.UC_X86_REG_EFLAGS) & 1):
+                cola.append((copia, ruta + (casilla,)))
+    return pendientes
+
+
 # Recorre verbos, inventarios y destinos por las listas reales; las ventanas de plataforma se prueban aparte.
 def auditar(raiz, biblioteca):
     comparacion = ComparacionFinalCuevas(raiz, biblioteca, True)
@@ -26,32 +58,7 @@ def auditar(raiz, biblioteca):
             continue
         estados += 1
         comparacion.retomar_recursos(datos)
-        comparacion.nativa.procesar_menu(0, (ctypes.c_ubyte * 65536).from_buffer(datos), 152, 92)
-        cola = [(datos, ())]
-        vistos = set()
-        while cola:
-            base, ruta = cola.pop()
-            clave = bytes(base[0xB60C:0xB63A])
-            if clave in vistos or len(ruta) > 6:
-                continue
-            vistos.add(clave)
-            for casilla in range(10):
-                if palabra(base, 0xB620 + casilla * 2) == 65535:
-                    continue
-                manejador = palabra(base, 0xB60C + casilla * 2)
-                if manejador in (0xE19F, 0xE325, 0xE793, 0xE160):
-                    continue
-                copia = bytearray(base)
-                try:
-                    comparacion.seleccionar(copia, casilla)
-                except ErrorAnalisis as error:
-                    pendientes.append(
-                        {'estado': fichero.name, 'casillas': ruta + (casilla,), 'error': str(error)}
-                    )
-                    comparacion.retomar_recursos(base)
-                    continue
-                if not (comparacion.maquina.reg_read(comparacion.r.UC_X86_REG_EFLAGS) & 1):
-                    cola.append((copia, ruta + (casilla,)))
+        pendientes.extend(auditar_estado(comparacion, datos, fichero.name))
     informe = {
         'resultado': 'pendientes' if pendientes else 'coinciden',
         'estados': estados,

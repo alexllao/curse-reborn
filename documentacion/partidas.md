@@ -28,7 +28,7 @@ El formato puro está en `motor/estado/partidas.*`, sin acceso al disco. Se reco
 
 El adaptador prepara un estado temporal y comprueba sus recursos antes de sustituir la sesión activa. Conserva los objetos, animaciones, inventario, puntuación y control del personaje guardados. Sigue la rama AL=1 del cargador: **513F–5143 salta a 5185**, por lo que no debe ejecutar el reinicio de 5145 ni recrear entidades mediante 8AA6. E28B–E2B3 adapta los segmentos de los actores y superposiciones a las referencias de los recursos portables; el cursor y Brad reciben sus bancos correspondientes.
 
-Se reconocen las zonas integradas, incluida la entrada a COUNTRY1. Una partida de una zona posterior puede importarse y conservarse, pero no se carga hasta implementar esa zona. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
+Se reconocen las zonas integradas, incluida la salida al campo COUNTRY1 y la entrada a COUNTRY2; los puzles de esta última siguen pendientes. Una partida de una zona posterior puede importarse y conservarse, pero no se carga hasta implementar esa zona. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
 
 ## Comprobaciones
 

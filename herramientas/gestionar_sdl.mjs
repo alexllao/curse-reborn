@@ -430,6 +430,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
+      accion === 'comprobar:campo' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -437,6 +438,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion) ||
@@ -454,6 +456,7 @@ export async function gestionarSdl(accion, argumentos) {
         [
           'comprobar:cuevas',
           'comprobar:catapulta',
+          'comprobar:campo',
           'comprobar:final-cuevas',
           'comprobar:partidas',
         ].includes(accion)
@@ -474,6 +477,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
+      accion === 'comprobar:campo' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -481,6 +485,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion) ||
@@ -501,6 +506,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -520,6 +526,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -531,6 +538,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -541,6 +549,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         'comprobar:cuevas',
         'comprobar:catapulta',
+        'comprobar:campo',
         'comprobar:final-cuevas',
         'comprobar:partidas',
       ].includes(accion)
@@ -548,7 +557,12 @@ export async function gestionarSdl(accion, argumentos) {
       necesarios.push('WELL.MAP', 'WELL.SPR', 'CAVERBMI.MAP', 'CAVERBMI.SPR');
     if (
       accion === 'ventana' ||
-      ['comprobar:catapulta', 'comprobar:final-cuevas', 'comprobar:partidas'].includes(accion)
+      [
+        'comprobar:campo',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion)
     )
       necesarios.push(
         'SEESAW.MAP',
@@ -559,6 +573,8 @@ export async function gestionarSdl(accion, argumentos) {
         'SHAFT.SPR',
         'COUNTRY1.MAP',
         'COUNTRY1.SPR',
+        'COUNTRY2.MAP',
+        'COUNTRY2.SPR',
       );
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
@@ -569,6 +585,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
       accion === 'comprobar:informacion' ||
+      accion === 'comprobar:campo' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -895,6 +912,68 @@ export async function gestionarSdl(accion, argumentos) {
         null,
         2,
       ) + '\n',
+    );
+    return;
+  }
+  if (accion === 'comprobar:campo') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:campo',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_campo_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const capturas = [
+      ['0', 'campo_0'],
+      ['32', 'campo_32'],
+      ['64', 'campo_64'],
+      ['96', 'campo_96'],
+      ['160', 'campo_160'],
+      ['camino-120', 'campo_camino_120'],
+      ['camino-150', 'campo_camino_150'],
+      ['sendero', 'campo_sendero'],
+      ['salida', 'campo_salida'],
+    ];
+    for (const [opcion, nombre] of capturas) {
+      const captura = join(carpeta, nombre + '.bmp');
+      const registro = ejecutar(
+        programa,
+        [datos, '--comprobar-final-campo-' + opcion, captura],
+        { ...process.env, SDL_RENDER_DRIVER: 'software' },
+        true,
+      );
+      writeFileSync(join(carpeta, nombre + '.log'), registro + '\n');
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_campo', nombre + '_cpp.png'),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la referencia original.`);
+    }
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'vistas.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: capturas.length,
+          pixeles_por_captura: 64000,
+          vistas_jugables: 16,
+          cambios_de_vista: 32,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      `Campo: nueve capturas SDL coincidentes y dieciséis vistas F5/F6. Resultados: ${carpeta}`,
     );
     return;
   }

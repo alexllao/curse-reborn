@@ -40,6 +40,14 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
       escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15)
     return true;
+  if (escena == 16) {
+    // 1993–19A6: conserva la franja de proximidad del asaltante en la entrada siguiente.
+    if (datos[0x2c4c]) {
+      guardar(datos, 0x18f9, 228);
+      guardar(datos, 0x18fb, 199);
+    }
+    return true;
+  }
   if (escena == 1) {
     // BEA8–BEFC: reacción del corredor en sus ventanas 24 y cero, con coordenadas con signo.
     if (datos[0x3597] == 24 && (datos[0x2cf1] & 2)) {

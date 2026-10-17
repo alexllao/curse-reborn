@@ -1,6 +1,6 @@
 # Quince escenas y salida de las cuevas
 
-Las vistas F5/F6 abarcan las escenas originales 0–14. La ruta jugable ya llega por las salidas normales hasta COUNTRY1, escena 15, que sirve de entrada al siguiente tramo aún pendiente. Las quince escenas incluyen la caída y corredores que comparten recursos; no son quince fondos diferentes. Core, título e introducción no cuentan en esas quince.
+Este tramo comprende las escenas originales 0–14. Las vistas F5/F6 se han ampliado después a dieciséis con COUNTRY1. La ruta jugable ya llega por las salidas normales hasta COUNTRY1, escena 15, cuyo recorrido posterior está documentado en [salida al campo](salida_al_campo.md). Las quince escenas incluyen la caída y corredores que comparten recursos; no son quince fondos diferentes. Core, título e introducción no cuentan en esas quince.
 
 ## Bloques reconstruidos
 
@@ -34,6 +34,6 @@ El núcleo de acciones está repartido en `motor/acciones/cuevas.cpp`, `catapult
 
 `pnpm comparar:opciones` recorre las listas reales de inventario, verbos y destinos de **47 estados**, con **5.642 selecciones coincidentes** y sin manejadores pendientes en las listas exploradas. Excluye momentos en que el original no permite abrir el menú. Guardar, cargar, borrar e información se atienden en la plataforma y se comprueban por separado.
 
-Estas pruebas cubren el recorrido y las opciones ofrecidas en sus estados y posiciones. No acreditan de manera exhaustiva todos los tiempos, posiciones, partidas posibles o plataformas. La comparación visual se refiere a las imágenes originales; los filtros, marcos y paneles añadidos son opciones de la plataforma. La jugabilidad posterior a la salida de las cuevas sigue pendiente.
+Estas pruebas cubren el recorrido y las opciones ofrecidas en sus estados y posiciones. No acreditan de manera exhaustiva todos los tiempos, posiciones, partidas posibles o plataformas. La comparación visual se refiere a las imágenes originales; los filtros, marcos y paneles añadidos son opciones de la plataforma. La continuación de COUNTRY1 ya está integrada; los puzles posteriores a la explanada siguen pendientes.
 
 Véanse [el recorrido de esta parte](recorridos/07_final_cuevas.txt) y [las partidas](partidas.md).

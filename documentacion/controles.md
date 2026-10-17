@@ -84,3 +84,5 @@ En el panel de partidas, usar ratón o flechas arriba/abajo para seleccionar una
 ### Fichas de información
 
 El último icono del menú abre las cuatro páginas originales con puntuación y créditos. Clic izquierdo, Intro o Espacio avanzan; después de la cuarta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.
+
+La última vista F5/F6 es **salida al campo (COUNTRY1)**, después del cubo: dieciséis escenas jugables. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.

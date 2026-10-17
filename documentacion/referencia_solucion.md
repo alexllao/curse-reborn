@@ -8,20 +8,20 @@ La guía corresponde a Amiga; su autora indica que también sirve para DOS, salv
 
 El audio común ya está integrado. La prioridad actual es completar la jugabilidad pantalla por pantalla, contrastar cada tramo y subir los cambios comprobados a development. Seguir el lago antes de avanzar por los demás capítulos.
 
-| Tramo de la referencia | Estado del port                                                                             |
-| ---------------------- | ------------------------------------------------------------------------------------------- |
-| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                 |
-| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
-| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
-| Caída                  | Animación y enlace automático con el lago comparados                                        |
-| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente               |
-| Cuevas                 | Poza y ruta de doce piedras hasta la cuerda comparadas; pozo y otras acciones pendientes    |
-| Paso del dragón        | Pendiente                                                                                   |
-| Confín del mundo       | Pendiente                                                                                   |
-| Valle de lo perdido    | Pendiente                                                                                   |
-| Hielo y nieve          | Pendiente                                                                                   |
-| Muertos vivientes      | Pendiente                                                                                   |
-| Enfrentamiento final   | Pendiente                                                                                   |
+| Tramo de la referencia | Estado del port                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                        |
+| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                                 |
+| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara        |
+| Caída                  | Animación y enlace automático con el lago comparados                                               |
+| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente                      |
+| Cuevas                 | Poza y ruta de doce piedras hasta la cuerda comparadas; pozo y otras acciones pendientes           |
+| Paso del dragón        | Salida del pozo y sendero de COUNTRY1 contrastados; asaltante, población y demás puzles pendientes |
+| Confín del mundo       | Pendiente                                                                                          |
+| Valle de lo perdido    | Pendiente                                                                                          |
+| Hielo y nieve          | Pendiente                                                                                          |
+| Muertos vivientes      | Pendiente                                                                                          |
+| Enfrentamiento final   | Pendiente                                                                                          |
 
 ## Correcciones que deben conservarse
 

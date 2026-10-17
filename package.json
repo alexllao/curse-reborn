@@ -86,7 +86,9 @@
     "comprobar:partidas": "node herramientas/gestionar_proyecto.mjs comprobar:partidas",
     "comparar:opciones": "node herramientas/gestionar_proyecto.mjs comparar:opciones",
     "comparar:informacion": "node herramientas/gestionar_proyecto.mjs comparar:informacion",
-    "comprobar:informacion": "node herramientas/gestionar_proyecto.mjs comprobar:informacion"
+    "comprobar:informacion": "node herramientas/gestionar_proyecto.mjs comprobar:informacion",
+    "comparar:campo": "node herramientas/gestionar_proyecto.mjs comparar:campo",
+    "comprobar:campo": "node herramientas/gestionar_proyecto.mjs comprobar:campo"
   },
   "repository": {
     "type": "git",

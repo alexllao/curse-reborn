@@ -220,7 +220,8 @@ bool Mazmorra::avanzar() {
          (actual == 11 && resultado.parametro == 20) ||
          (actual == 12 && (resultado.parametro == 21 || resultado.parametro == 24)) ||
          (actual == 13 && resultado.parametro == 22) ||
-         (actual == 14 && resultado.parametro == 23))) {
+         (actual == 14 && resultado.parametro == 23) ||
+         (actual == 15 && resultado.parametro == 25))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -452,11 +453,11 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
     return false;
   const auto salida = motor::palabra(candidata.datos, 0x3598);
-  if (salida != 0xffff && salida > 24)
+  if (salida != 0xffff && salida > 25)
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 15)
+  if (escena_guardada > 16)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;
@@ -579,7 +580,7 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 24)
+  if (salida > 25)
     return false;
   unsigned short ancho = 32, alto = 48;
   const auto modelo_entrada = datos[0x85ac + salida * 14 + 13];
@@ -598,7 +599,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
 bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_sonido,
                                         bool reconstruir_entidades) {
   const auto actual = escena_actual();
-  const char *nombre_banco = actual == 15 ? "COUNTRY1" : nullptr;
+  const char *nombre_banco = actual == 16 ? "COUNTRY2" : nullptr;
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == actual)
       nombre_banco = vista.banco;

@@ -25,6 +25,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {13, 7, 15, "cueva del monitor", "CAVE"},
     {14, 7, 16, "cueva de los cuatro agujeros", "CAVE"},
     {12, 6, 13, "pozo de extracción y cubo", "SHAFT"},
+    {15, 12, 24, "salida al campo", "COUNTRY1"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);

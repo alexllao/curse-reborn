@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:53B4",
+      "nombre": "Acceso al sendero y perspectiva de COUNTRY1",
+      "comentario": "53B4–53E6, tipo BOXDET 3/id0: AD7=93DC, ADC=944D, AE1=94B9, destino100/122; 886B y limpieza2C0B/2C1A. 0AC8 retorna a0BA0. Paso_escena.cpp conserva el flujo hasta actualizar historial y entidades; comparar:campo desde la salida real de las cuevas."
+    },
+    {
+      "direccion": "0000:1993",
+      "nombre": "Franja del asaltante en la entrada COUNTRY2",
+      "comentario": "1993–19A6: si DS:2C4C está activo, escribe18F9=228 y18FB=199. Adaptada para admitir la llegada desde COUNTRY1; no supone completar los puzles de COUNTRY2."
+    },
+    {
       "direccion": "0000:E160",
       "nombre": "Cuatro fichas de puntuación y créditos",
       "comentario": "E160–E19E: formatea DS:35C7 en B772 y su porcentaje entero /478 en B78C; recorre B74E con páginas B758, B804, B8BA, B90B y fin FFFF. motor/video/menu.cpp y panel SDL; textos originales locales."

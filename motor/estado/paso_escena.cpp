@@ -1,6 +1,7 @@
 #include "paso_escena.hpp"
 #include "segmento.hpp"
 #include "../acciones/menu.hpp"
+#include "../acciones/iniciar_accion.hpp"
 #include "../movimiento/direccion.hpp"
 #include "../entidades/mazmorra.hpp"
 namespace motor {
@@ -25,7 +26,21 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
     return {true, 16, escena};
   }
   const auto colision = resolver_colision_personaje(d, azar, geometria, longitud);
-  if (!colision.valida || colision.acciones != 0)
+  if (colision.valida && colision.acciones == 8 && colision.parametro == 0 &&
+      palabra(d, 0x8082) == 15) {
+    // 0AC8 -> 53B4–53E6: entrar en el sendero prepara las tres secuencias de perspectiva.
+    guardar(d, 0x0ad7, 0x93dc);
+    guardar(d, 0x0adc, 0x944d);
+    guardar(d, 0x0ae1, 0x94b9);
+    guardar(d, 0x1a38, 100);
+    guardar(d, 0x1a3a, 122);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return {false, 0, 0};
+    d[0x2c0b] = 0;
+    guardar(d, 0x2c1a, 0);
+    guardar(d, 0x359c, 2);
+  } else if (!colision.valida || colision.acciones != 0)
     return colision;
   actualizar_historial_personaje(d);
   if (!actualizar_entidades(d, azar, entidades) || !actualizar_rutina_escena(d, azar, entidades))
