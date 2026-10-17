@@ -66,16 +66,18 @@ Con el punto de entrada y los tres manejadores anteriores como raíces:
 
 Dos transferencias identificadas, `0000:0264` y `0000:8C81`, encadenan vectores anteriores guardados en memoria. No debe asumirse que todos los demás destinos indirectos pertenecen al ejecutable: algunos podrían depender de memoria cargada o de servicios externos. Hace falta seguir cada caso.
 
-## Cómo reproducirlo en Windows
+## Cómo reproducirlo con pnpm
 
-Se necesita Python 3.9 o posterior y la copia original en `datos_originales/`. Desde la raíz del repositorio, en PowerShell:
+Se necesitan Node 22 o posterior, pnpm 11.18.0, Python 3.9 o posterior y la copia original en `datos_originales/`. Desde la raíz del repositorio:
 
-```powershell
-python -m venv trabajo/entorno
-trabajo/entorno/Scripts/python.exe -m pip install -r herramientas/requisitos.txt
-trabajo/entorno/Scripts/python.exe herramientas/analizar_ejecutable.py --raiz 0000:0238 --raiz 0000:6A8C --raiz 0000:8C51
-trabajo/entorno/Scripts/python.exe pruebas/comprobar_analisis.py
+```sh
+pnpm install --frozen-lockfile
+pnpm preparar
+pnpm analizar
+pnpm comprobar
 ```
+
+`pnpm preparar` crea el entorno Python local e instala las dependencias fijadas. `pnpm analizar` añade automáticamente las raíces `0000:0238`, `0000:6A8C` y `0000:8C51`. El punto de entrada siempre se obtiene de la cabecera MZ. Para añadir otras entradas confirmadas, usa `pnpm analizar --raiz segmento:desplazamiento`.
 
 La herramienta escribe `analisis.json` y `desensamblado.asm` en `trabajo/analisis_ejecutable/`, que está excluida de Git. El JSON conserva la cabecera, las reubicaciones, las instrucciones candidatas, sus enlaces y las incidencias. El listado incluye posiciones de archivo y direcciones relativas. El ejecutable original se lee sin modificarlo.
 

@@ -1,0 +1,22 @@
+{
+  "name": "curse-reborn",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reconstrucción de Curse of Enchantia desde su ejecutable DOS y futura remasterización con SDL.",
+  "type": "module",
+  "packageManager": "pnpm@11.18.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "preparar": "node herramientas/gestionar_proyecto.mjs preparar",
+    "analizar": "node herramientas/gestionar_proyecto.mjs analizar",
+    "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar",
+    "estado": "node herramientas/gestionar_proyecto.mjs estado"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexllao/curse-reborn.git"
+  }
+}

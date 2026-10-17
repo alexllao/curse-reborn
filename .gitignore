@@ -9,6 +9,9 @@
 *.sav
 
 # Resultados de compilación
+/node_modules/
+**/node_modules/
+/.pnpm-store/
 /compilacion/
 /build/
 /cmake-build-*/

@@ -77,6 +77,33 @@ curse-reborn/
 | [README.md](README.md) | Propósito, estado y hoja de ruta |
 | [AGENTS.md](AGENTS.md) | Instrucciones para asistentes que trabajen en el repositorio |
 | [.gitignore](.gitignore) | Exclusiones de archivos locales y recursos originales |
+| [package.json](package.json) | Gestión del proyecto y comandos de pnpm |
+| [pnpm-lock.yaml](pnpm-lock.yaml) | Archivo de bloqueo de pnpm |
+
+## Puesta en marcha con pnpm
+
+Se utiliza **Node 22 o posterior y pnpm 11.18.0**. La versión de Node está indicada en `.nvmrc` y el gestor en `package.json`. El análisis utiliza además Python 3.9 o posterior, disponible como `py`, `python` o `python3`. Si necesitas seleccionar un ejecutable concreto, indica su ruta en la variable de entorno `PYTHON`.
+
+Desde la raíz del repositorio:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm preparar
+pnpm estado
+pnpm analizar
+pnpm comprobar
+```
+
+| Comando | Qué hace |
+| --- | --- |
+| `pnpm preparar` | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez. |
+| `pnpm estado` | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error. |
+| `pnpm analizar` | Sigue el punto de entrada y los tres manejadores identificados; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
+| `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
+
+La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
+
+Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar --raiz 0000:0276`. Los comandos de gestión contemplan Windows, Linux y macOS; por ahora se han comprobado en Windows. Todavía no existe un comando para compilar o arrancar el motor, porque el motor SDL está pendiente de implementar.
 
 ### Dónde colocar el juego original
 
