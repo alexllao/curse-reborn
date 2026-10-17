@@ -2,6 +2,47 @@
 #include "segmento.hpp"
 
 namespace motor {
+// Traduce los fragmentos de estado del cargador sin ejecutar sus servicios de memoria y vídeo DOS.
+bool preparar_transicion_mazmorra(unsigned char *d, unsigned short salida,
+                                  unsigned short referencia_estandar) {
+  if ((salida != 0 && salida != 2) || palabra(d, 0x8082) != (salida == 0 ? 0 : 1))
+    return false;
+  const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
+  if (d[static_cast<Palabra>(descriptor + 13)] != 0xff)
+    return false;
+  guardar(d, 0x3598, salida);
+  d[0x2c0b] = 0;
+  guardar(d, 0x2c1a, 0);
+  for (unsigned int i = 0; i < 6; ++i)
+    d[0x2c2b + i] = d[descriptor + i];
+  guardar(d, 0x2c31, 32);
+  guardar(d, 0x2c33, 48);
+  guardar(d, 0x2c35, 0);
+  guardar(d, 0x2c37, 0);
+  guardar(d, 0x2c39, 0);
+  for (unsigned int c = 0; c < 3; ++c) {
+    const auto destino = static_cast<Palabra>(0x2c3b + c * 5);
+    guardar(d, destino, palabra(d, static_cast<Palabra>(descriptor + 6 + c * 2)));
+    d[destino + 2] = 0;
+    d[destino + 3] = d[destino + 4] = 1;
+  }
+  d[0x3597] = d[descriptor + 12];
+  guardar(d, 0x3591, static_cast<Palabra>(d[0x3597] << 5));
+  for (unsigned int i = 0; i < 10; ++i)
+    guardar(d, static_cast<Palabra>(0x35b3 + i * 2), palabra(d, 0x2c2d));
+  d[0x358c] = 0xff;
+  guardar(d, 0x2c4a, referencia_estandar);
+  guardar(d, 0x8082, palabra(d, static_cast<Palabra>(0x7482 + salida * 2)));
+  guardar(d, 0x358d, 64);
+  guardar(d, 0x358f, 223);
+  d[0x3594] = d[0x3595] = d[0x3596] = d[0x3593] = 0;
+  guardar(d, 0x359a, 0);
+  guardar(d, 0x35b0, 0);
+  guardar(d, 0x35ae, 0);
+  guardar(d, 0x0dfa, 0);
+  d[0x0def] = 0;
+  return true;
+}
 // La copia inicial acaba en el archivo; el resto de DS corresponde a memoria reservada a cero.
 bool leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,
                           unsigned char *datos) {

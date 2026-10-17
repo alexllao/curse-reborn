@@ -1,6 +1,10 @@
 #pragma once
 
 namespace motor {
+// 4B05–4B0E, 4C43–4C98, 4D2B–4D40 y 5145–5181: entradas 0/2 entre celda y pasillo.
+// Ambas usan STD.BRD; la carga de bancos, fondo, geometría y entidades pertenece al llamador.
+bool preparar_transicion_mazmorra(unsigned char *datos, unsigned short salida,
+                                  unsigned short referencia_estandar);
 // Lee únicamente el segmento de datos de la versión MZ estudiada; no interpreta instrucciones.
 // La herramienta de lanzamiento debe comprobar antes la huella del EXE. Destino: 65.536 bytes.
 bool leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,

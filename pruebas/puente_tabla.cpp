@@ -580,6 +580,8 @@ extern "C" EXPORTAR int procesar_menu(unsigned int operacion, unsigned char *dat
     return static_cast<int>(motor::ejecutar_interaccion_inicial(datos, parametro, otro));
   if (operacion == 3)
     return motor::avanzar_accion_pendiente(datos) ? 0 : 3;
+  if (operacion == 4)
+    return motor::preparar_transicion_mazmorra(datos, parametro, otro) ? 0 : 3;
   return 3;
 }
 

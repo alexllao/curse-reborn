@@ -43,7 +43,7 @@ Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 162 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 168 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -202,6 +202,14 @@ En la mazmorra, Escape o botón derecho abre/cierra el menú. El ratón y el bot
 `pnpm comparar:jugabilidad` contrasta el movimiento y la liberación; `pnpm comprobar:jugabilidad` comprueba sus dos capturas SDL.
 
 `pnpm comparar:menu` agrupa las comparaciones de menú; `pnpm comprobar:menu` verifica panel, primera interacción y colores de depuración en SDL. Consulta [rutinas, alcance y controles](documentacion/menu_e_interacciones.md).
+
+### Recorrido de la mazmorra
+
+Ya se puede actuar sobre el guardia, recoger la segunda llave y combinarla con la puerta para abrirla. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La transición visual al corredor y su cámara todavía están pendientes: abrir la puerta no equivale a tener la siguiente habitación jugable.
+
+[Guía paso a paso en texto](documentacion/recorridos/00_mazmorra.txt). Se ampliará al validar cada pantalla. Las instrucciones usan las casillas reales del menú y el mismo orden que la comparación automática.
+
+`pnpm comparar:puzle` contrasta las acciones correctas e incorrectas y el recorrido persistente hasta la puerta abierta; `pnpm comprobar:puzle` comprueba también su captura SDL. [Evidencias, bloques y límites](documentacion/puzle_mazmorra.md).
 
 ### Dónde colocar el juego original
 

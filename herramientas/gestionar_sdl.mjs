@@ -258,6 +258,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
       necesarios.push(
@@ -276,6 +277,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
       necesarios.push('CAULDRN.PAL', 'BALCONY.PAL', 'BASEBALL.PAL', 'BASEBAT.DAT');
@@ -291,6 +293,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
       const ejecutable = join(datos, '..', 'CURSE.EXE');
@@ -315,6 +318,39 @@ export async function gestionarSdl(accion, argumentos) {
       'Core, título, introducción y mazmorra: F5/F6 recorren las vistas; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; otras acciones y transiciones siguen pendientes.',
     );
     ejecutar(programa, [datos], process.env, false, false);
+    return;
+  }
+  if (accion === 'comprobar:puzle') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:puzle',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_puzle_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const captura = join(carpeta, 'puerta_abierta.bmp');
+    ejecutar(programa, [datos, '--comprobar-puzle', captura], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    if (
+      !leerCaptura(captura).equals(
+        leerReferencia(
+          false,
+          false,
+          join(raiz, 'trabajo', 'comparacion_puzle', 'interaccion_32_cpp.png'),
+        ),
+      )
+    )
+      throw new Error('La apertura de la puerta en SDL difiere del recorrido original.');
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify({ resultado: 'coinciden', capturas: 1, pixeles_por_captura: 64000 }, null, 2) +
+        '\n',
+    );
+    console.log(
+      'Puzle SDL: coincide la imagen tras liberar a Brad, actuar sobre el guardia, recoger la segunda llave y abrir la puerta.',
+    );
     return;
   }
   if (accion === 'comprobar:jugabilidad') {

@@ -145,8 +145,9 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
-  const bool comprobar_jugabilidad =
-      opcion == "--comprobar-liberacion" || opcion == "--comprobar-movimiento";
+  const bool comprobar_jugabilidad = opcion == "--comprobar-liberacion" ||
+                                     opcion == "--comprobar-movimiento" ||
+                                     opcion == "--comprobar-puzle";
   const bool comprobar_menu = opcion == "--comprobar-menu" || opcion == "--comprobar-orden" ||
                               opcion == "--comprobar-depuracion";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
@@ -379,7 +380,7 @@ int main(int argc, char *argv[]) {
       for (const auto casilla : {2, 0, 0, 0, 1})
         if (!elegir(static_cast<unsigned short>(casilla)))
           return fallo("No se ha podido combinar la llave y las esposas");
-      if (mazmorra.menu_abierto() || !avanzar(80))
+      if (mazmorra.menu_abierto() || !avanzar(opcion == "--comprobar-puzle" ? 192 : 80))
         return fallo("La liberación no ha terminado correctamente");
       if (opcion == "--comprobar-movimiento") {
         for (const auto bit : {4, 8, 2, 1}) {
@@ -394,6 +395,19 @@ int main(int argc, char *argv[]) {
         for (const auto &destino : destinos)
           if (!mazmorra.mover_a(destino[0], destino[1]) || !avanzar(48))
             return fallo("No se ha podido caminar hacia el destino del ratón");
+      }
+      if (opcion == "--comprobar-puzle") {
+        if (!mazmorra.mover_a(210, 157) || !avanzar(96) ||
+            !mazmorra.entrada_menu(152, 92, false, true) || !elegir(2) || !elegir(2) ||
+            !elegir(1) || !avanzar(192) || !mazmorra.entrada_menu(152, 92, false, true) ||
+            !elegir(1) || !elegir(0) || !avanzar(192) || !mazmorra.mover_a(55, 157) ||
+            !avanzar(96) || !mazmorra.entrada_menu(152, 92, false, true))
+          return fallo("No se ha podido completar la acción del guardia y recoger la llave");
+        for (const auto casilla : {2, 0, 0, 1, 1})
+          if (!elegir(static_cast<unsigned short>(casilla)))
+            return fallo("No se ha podido usar la segunda llave en la puerta");
+        if (mazmorra.menu_abierto() || !avanzar(192))
+          return fallo("No ha terminado la apertura de la puerta");
       }
       if (!mazmorra.dibujar(imagen))
         return fallo("No se ha podido dibujar el estado jugable");

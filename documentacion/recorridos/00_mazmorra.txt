@@ -1,0 +1,77 @@
+CURSE REBORN — RECORRIDO DE LA MAZMORRA
+Autor del port: Àlex Llaó
+
+Propósito: describir una ruta reproducible y convertirla en una prueba
+comparada con CURSE.EXE. No es una guía completa del juego todavía.
+Las casillas se cuentan desde la izquierda, empezando por UNO.
+
+ANTES DE LA MAZMORRA
+- Core: esperar o pulsar una tecla/botón para avanzar con el fundido.
+- Título: pulsar una tecla o botón para iniciar la presentación.
+- Presentación: esperar a que termine o pulsar para omitirla.
+  La partida comienza con Brad encadenado en la mazmorra.
+
+CONTROLES
+- Botón derecho o Escape: abrir/cerrar el menú.
+- Botón izquierdo: elegir una casilla; con el menú cerrado, caminar.
+- Flechas: caminar cuando el guion devuelve el control a Brad.
+- Esperar a que termine cada acción antes de empezar la siguiente.
+- F7: depuración; F8: entidades; F9: proximidad; F10: paredes/salidas.
+- F5/F6 cambian vistas de desarrollo y reinician la mazmorra: no usarlos
+  durante la comprobación de una partida persistente.
+
+1. LLAMAR AL GUARDIA
+   Abrir el menú. Elegir la casilla 5 (conversación) y después la 2.
+   Esperar a que termine la secuencia del guardia.
+   Resultado esperado: aparece la primera llave junto a Brad.
+
+2. RECOGER LA PRIMERA LLAVE
+   Abrir el menú. Elegir la casilla 2 (recoger) y después la 1.
+   Esperar a que termine la recogida.
+   Resultado esperado: la primera llave queda en el inventario.
+
+3. LIBERARSE DE LAS ESPOSAS
+   Abrir el menú. Elegir sucesivamente: 3, 1, 1, 1, 2.
+   Equivale a: acciones secundarias, combinar, inventario,
+   primera llave y esposas.
+   Esperar a que termine la animación.
+   Resultado esperado: Brad puede caminar y la puerta física conserva
+   su posición. Esta acción no abre todavía la salida.
+
+4. ACERCARSE AL GUARDIA
+   Caminar hacia el guardia de la derecha.
+   La prueba automática hace clic en (210, 157), en coordenadas 320 x 200.
+   Abrir el menú. Elegir sucesivamente: 3, 3, 2.
+   Son la tercera acción secundaria y el guardia entre sus destinos.
+   Esperar a que termine la acción.
+   Resultado esperado: queda disponible la segunda llave.
+
+5. RECOGER LA SEGUNDA LLAVE
+   Abrir el menú. Elegir: 2, 1.
+   Esperar a que termine la recogida.
+   Resultado esperado: el inventario contiene las dos llaves.
+
+6. ABRIR LA PUERTA
+   Caminar junto a la puerta de la izquierda.
+   La prueba automática hace clic en (55, 157).
+   Abrir el menú. Elegir sucesivamente: 3, 1, 1, 2, 2.
+   Equivale a: acciones secundarias, combinar, inventario,
+   segunda llave y puerta.
+   Esperar a que termine la animación.
+   Resultado esperado: la entrada adopta el fotograma 16 y el detector
+   original permite la salida hacia el corredor.
+
+7. SALIR AL CORREDOR
+   Atravesar el umbral de la puerta abierta.
+   Pendiente de completar la integración y la comparación de la transición
+   visual, la cámara del corredor y el regreso. No dar este paso por validado
+   solo porque se haya abierto la puerta.
+
+COMPROBACIÓN
+pnpm comparar:puzle
+pnpm comprobar:puzle
+
+La comparación usa las casillas originales, inventario persistente, pasos
+con colisiones y composición de imagen. También contrasta las selecciones
+incorrectas y los fragmentos de entrada entre celda y corredor.
+Las demás pantallas se añadirán al reconstruir y comprobar sus acciones.

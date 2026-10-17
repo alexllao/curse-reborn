@@ -50,7 +50,9 @@
     "comparar:menu": "node herramientas/gestionar_proyecto.mjs comparar:menu",
     "comprobar:menu": "node herramientas/gestionar_proyecto.mjs comprobar:menu",
     "comparar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comparar:jugabilidad",
-    "comprobar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comprobar:jugabilidad"
+    "comprobar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comprobar:jugabilidad",
+    "comparar:puzle": "node herramientas/gestionar_proyecto.mjs comparar:puzle",
+    "comprobar:puzle": "node herramientas/gestionar_proyecto.mjs comprobar:puzle"
   },
   "repository": {
     "type": "git",

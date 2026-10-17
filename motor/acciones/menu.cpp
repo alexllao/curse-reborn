@@ -99,8 +99,11 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     d[0x3607] = d[0x3622] = 0;
     return comenzar(d);
   }
-  if (manejador == 0x563a && (id == 1 || id == 3)) {
-    if (!insertar_identificador(d, id)) {
+  if (manejador == 0x563a && (id == 1 || id == 3 || id == 5)) {
+    const auto icono = d[0x524e + id * 2];
+    if (icono == 0x1f || icono == 0x22)
+      guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + (icono == 0x1f ? 1 : 2)));
+    else if (!insertar_identificador(d, id)) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }
@@ -111,14 +114,75 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
       d[0x2d88] = 3;
       d[0x2d89] = 1;
       guardar(d, 0x2c3b, 0x9723);
-    } else {
+    } else if (id == 3) {
       d[0x3610] = d[0x2d33] = 0;
       guardar(d, 0x1a38, 0xc8);
       guardar(d, 0x1a3a, 0x9d);
       guardar(d, 0x0ad7, 0x972c);
       guardar(d, 0x0adc, 0x9738);
     }
+    if (id == 5) {
+      // 56CB y 615C–61A6: conserva el objeto hasta que su canal de recogida lo desactive.
+      guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2cd2) + 5));
+      guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2cd4) + palabra(d, 0x2cd8) - 2));
+      // 623D: anula la entrada persistente de la lista de entidades, no solo su dibujo actual.
+      const auto lista = palabra(d, 0x53b5);
+      d[static_cast<Palabra>(lista + ((0x2cd0 - 0x2c0a) / 33 - 2) * 9 + 1)] = 0;
+      guardar(d, 0x2ce0, 0x1a2e);
+      d[0x2ce2] = 0;
+      d[0x2ce4] = 1;
+      guardar(d, 0x0ad7, d[0x358c] == 0x14 ? 0x96f6 : 0x96c0);
+      guardar(d, 0x0adc, d[0x358c] == 0x14 ? 0x96ff : 0x96c9);
+      unsigned short pasos = 0;
+      if (!iniciar_accion(d, pasos))
+        return ResultadoMenu::error;
+      d[0x2ce3] = static_cast<unsigned char>(pasos + 6);
+      return ResultadoMenu::accion;
+    }
     return comenzar(d);
+  }
+  if (manejador == 0x9900) {
+    // 9900–9951: el guion del guardia solo acepta su fotograma tres.
+    if (d[0x2c8f] != 3) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    guardar(d, 0x2c9e, 0x9a59);
+    d[0x2ca1] = 10;
+    guardar(d, 0x2ca8, 0x9a64);
+    d[0x2cab] = 10;
+    d[0x35e4] = 10;
+    guardar(d, 0x35e7, static_cast<Palabra>(palabra(d, 0x35e7) + 27));
+    d[0x3611] = 0x2a;
+    d[0x2d33] = 1;
+    guardar(d, 0x1a38, 210);
+    guardar(d, 0x1a3a, 157);
+    guardar(d, 0x0ad7, 0x9a14);
+    guardar(d, 0x0adc, 0x9a26);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if (manejador == 0x9954) {
+    // 9954–9993: programa la apertura de la puerta al terminar el desplazamiento de Brad.
+    d[0x35ed] = 0x10;
+    guardar(d, 0x35ee, static_cast<Palabra>(palabra(d, 0x35ee) + 17));
+    guardar(d, 0x1a38, 55);
+    guardar(d, 0x1a3a, 156);
+    guardar(d, 0x0ad7, 0x9a2c);
+    guardar(d, 0x0adc, 0x9a46);
+    guardar(d, 0x009c, 0x2caf);
+    guardar(d, 0x009e, 0x0215);
+    guardar(d, 0x00a0, 0x9a6c);
+    guardar(d, 0x00a2, 0x9a73);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if ((manejador == 0x2fca || manejador == 0x3143 || manejador == 0x384a) && id <= 5) {
+    // 3B4F no altera el estado y devuelve sin acarreo; 313E y 32D9 marcan el rechazo.
+    if (manejador == 0x384a)
+      return ResultadoMenu::actualizado;
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
   }
   if (manejador == 0x989e) {
     if (d[0x358c] != 0) {
@@ -196,11 +260,21 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla) {
         guardar(d, 0xb638, objeto);
         return preparar_destinos(d) ? ResultadoMenu::actualizado : ResultadoMenu::error;
       }
-    } else if (palabra(d, 0xb634) == 0 &&
-               ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0)))
-      return ejecutar_interaccion_inicial(d, 0x989e, objeto);
+      if (accion == 2 && objeto == 2)
+        return ejecutar_interaccion_inicial(d, 0x9900, objeto);
+    } else if (palabra(d, 0xb634) == 0) {
+      if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
+        return ejecutar_interaccion_inicial(d, 0x989e, objeto);
+      if ((objeto == 3 && previo == 4) || (objeto == 4 && previo == 3))
+        return ejecutar_interaccion_inicial(d, 0x9954, objeto);
+    }
+    if (palabra(d, 0x8082) == 0 && objeto <= 5 && (previo == 0xffff || previo <= 5)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
     return ResultadoMenu::pendiente;
-  } else if (manejador == 0x32de || manejador == 0x563a)
+  } else if (manejador == 0x32de || manejador == 0x563a || manejador == 0x2fca ||
+             manejador == 0x3143 || manejador == 0x384a)
     return ejecutar_interaccion_inicial(
         d, manejador, static_cast<Palabra>(id - (manejador == 0x32de ? 0x17 : 0x1a)));
   else

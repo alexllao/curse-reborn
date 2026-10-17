@@ -1,5 +1,7 @@
 #include "mazmorra.hpp"
 #include "../estado/segmento.hpp"
+#include "../acciones/lista_identificadores.hpp"
+#include "../movimiento/planificar.hpp"
 
 namespace motor {
 namespace {
@@ -36,6 +38,24 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 0)
     return true;
+  if (escena == 1) {
+    // BEA8–BEFC: reacción del corredor en sus ventanas 24 y cero, con coordenadas con signo.
+    if (datos[0x3597] == 24 && (datos[0x2cf1] & 2)) {
+      datos[0x2cf1] &= 0xfd;
+      guardar(datos, 0x2d01, 0xadd3);
+    }
+    if (datos[0x3597] == 0 && datos[0x3594] && con_signo(palabra(datos, 0x2c2d)) < 90) {
+      retirar_identificador(datos, 1);
+      guardar(datos, 0x1a38, 55);
+      guardar(datos, 0x1a3a, 173);
+      guardar(datos, 0x0dfa, 0x1a36);
+      unsigned short pasos = 0;
+      if (!planificar_movimiento(datos, 0x1a36, pasos))
+        return false;
+      datos[0x3594] = datos[0x3595] = 0;
+    }
+    return true;
+  }
   if (escena == 5) {
     actualizar_escena_cinco(datos);
     return true;
