@@ -6,17 +6,17 @@ El comando `pnpm titulo` ya genera el título con descompresión, subida a cuatr
 
 ## Relación con las instrucciones originales
 
-| Original | Traslado |
-| --- | --- |
-| `64EE`–`6515`, `6676`–`6691` | Identificación `RNC`/método uno, longitudes de cabecera y lectura de palabras grandes. |
-| `6518`–`6580` | El original protege ciertos solapamientos trasladando la entrada por párrafos. La API C++ utiliza búferes separados y evita esa dependencia de segmentos. |
-| `6581`–`65BE` | Inicialización de ventana de bits y tablas de literales, distancias y repeticiones. |
-| `65C4`–`65E8` | Copia una repetición hacia delante; permite que los bytes recién escritos sean origen de los siguientes. |
-| `65EA`–`661A` | Copia literales y reconstruye la ventana de bits después de los bytes sin comprimir. |
-| `661E`–`665C` | Repite grupos y bloques; los ajustes de segmentos se sustituyen por posiciones lineales explícitas. |
-| `6692`–`66CD` | Busca el código en la tabla y lee los bits adicionales del valor. |
-| `66CE`–`672D` | Ventana de dos palabras con consumo por bits bajos. |
-| `672E`–`67AC` | Construye códigos canónicos, invierte el orden de bits y conserva la tabla anterior si el recuento es cero. |
+| Original                     | Traslado                                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `64EE`–`6515`, `6676`–`6691` | Identificación `RNC`/método uno, longitudes de cabecera y lectura de palabras grandes.                                                                    |
+| `6518`–`6580`                | El original protege ciertos solapamientos trasladando la entrada por párrafos. La API C++ utiliza búferes separados y evita esa dependencia de segmentos. |
+| `6581`–`65BE`                | Inicialización de ventana de bits y tablas de literales, distancias y repeticiones.                                                                       |
+| `65C4`–`65E8`                | Copia una repetición hacia delante; permite que los bytes recién escritos sean origen de los siguientes.                                                  |
+| `65EA`–`661A`                | Copia literales y reconstruye la ventana de bits después de los bytes sin comprimir.                                                                      |
+| `661E`–`665C`                | Repite grupos y bloques; los ajustes de segmentos se sustituyen por posiciones lineales explícitas.                                                       |
+| `6692`–`66CD`                | Busca el código en la tabla y lee los bits adicionales del valor.                                                                                         |
+| `66CE`–`672D`                | Ventana de dos palabras con consumo por bits bajos.                                                                                                       |
+| `672E`–`67AC`                | Construye códigos canónicos, invierte el orden de bits y conserva la tabla anterior si el recuento es cero.                                               |
 
 La ventana conserva dos palabras, el número de bits disponibles y la posición de lectura. Los literales comparten el flujo con palabras adelantadas: después de copiarlos, se preservan los bits todavía pendientes y se combinan con las palabras siguientes. No basta con alinear el lector al siguiente byte.
 
@@ -38,13 +38,13 @@ No se comprueban los CRC de la cabecera, que tampoco se utilizan en el tramo ori
 pnpm comparar:rnc
 ```
 
-| Grupo | Comparación amplia confirmada | Muestra comprobada |
-| --- | ---: | ---: |
-| `CORE.DAT`, `MENU.DAT` y `TITLE.DAT` | 24 | 6 |
-| Literales, repeticiones solapadas y reutilización de tablas sintéticas | 104 | 18 |
-| Ausencia de firma y método diferente | 6 | 6 |
-| Cabeceras truncadas, capacidad y tamaños inválidos de la API | 8 | 8 |
-| **Total** | **142** | **38** |
+| Grupo                                                                  | Comparación amplia confirmada | Muestra comprobada |
+| ---------------------------------------------------------------------- | ----------------------------: | -----------------: |
+| `CORE.DAT`, `MENU.DAT` y `TITLE.DAT`                                   |                            24 |                  6 |
+| Literales, repeticiones solapadas y reutilización de tablas sintéticas |                           104 |                 18 |
+| Ausencia de firma y método diferente                                   |                             6 |                  6 |
+| Cabeceras truncadas, capacidad y tamaños inválidos de la API           |                             8 |                  8 |
+| **Total**                                                              |                       **142** |             **38** |
 
 Unicorn ejecuta la rutina original con origen/destino separados y también con el mismo segmento, ejercitando la protección original del solapamiento. El C++ utiliza siempre búferes separados. Se comparan todos los bytes descomprimidos, se comprueba que la cola nativa permanezca intacta y se verifican retorno, pila y registros conservados del original. Con segmentos separados se compara también el búfer original completo de salida.
 

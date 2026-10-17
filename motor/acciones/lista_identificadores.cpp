@@ -3,7 +3,7 @@
 
 namespace motor {
 
-bool contiene_identificador(const unsigned char* datos, unsigned short identificador) {
+bool contiene_identificador(const unsigned char *datos, unsigned short identificador) {
   // 0000:88BC–88D8. La búsqueda no se detiene en FFFFh.
   for (unsigned int i = 0; i < 10; ++i) {
     if (palabra(datos, static_cast<Palabra>(0x5225 + i * 2)) == identificador) {
@@ -13,7 +13,7 @@ bool contiene_identificador(const unsigned char* datos, unsigned short identific
   return false;
 }
 
-bool insertar_identificador(unsigned char* datos, unsigned short identificador) {
+bool insertar_identificador(unsigned char *datos, unsigned short identificador) {
   // 0000:88D9–88F2. Permite duplicados y conserva el resto de la lista.
   for (unsigned int i = 0; i < 10; ++i) {
     const auto posicion = static_cast<Palabra>(0x5225 + i * 2);
@@ -25,7 +25,7 @@ bool insertar_identificador(unsigned char* datos, unsigned short identificador) 
   return false;
 }
 
-bool retirar_identificador(unsigned char* datos, unsigned short identificador) {
+bool retirar_identificador(unsigned char *datos, unsigned short identificador) {
   // 0000:88F3–891D. Retira solo la primera coincidencia.
   for (unsigned int i = 0; i < 10; ++i) {
     if (palabra(datos, static_cast<Palabra>(0x5225 + i * 2)) != identificador) {
@@ -41,4 +41,4 @@ bool retirar_identificador(unsigned char* datos, unsigned short identificador) {
   return false;
 }
 
-}
+} // namespace motor

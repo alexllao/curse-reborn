@@ -8,12 +8,12 @@ También se ha recuperado y comprobado visualmente la pantalla de título como i
 
 Las instrucciones de `0584`–`0612` leen `TITLE.PAL` y `TITLE.DAT`, llaman a `64E0`, suben la imagen con `7636` y envían la paleta con `787E`. Preparan una imagen de 320 × 200, con un paso de destino de 448 píxeles, equivalente a 112 bytes por plano. La presentación completa incluye además la selección de página, esperas y entrada; ese conjunto aún no está trasladado.
 
-| Rutina original | Traslado C++ | Operación |
-| --- | --- | --- |
-| `7636`–`7674` | `subir_imagen` | Lee cuatro índices consecutivos de una imagen lineal y escribe uno en cada plano de vídeo. |
-| `7679`–`76B7` | `recuperar_imagen` | Selecciona cada plano de lectura y reconstruye los cuatro índices lineales. |
-| `76BC`–`770D` | `copiar_planos` | Copia mediante los cuatro cerrojos VGA en modo de escritura uno, con pasos independientes. |
-| `787E`–`788D` | `enviar_paleta` | Escribe el índice inicial en `3C8h` y los componentes RGB consecutivos en `3C9h`. |
+| Rutina original | Traslado C++       | Operación                                                                                  |
+| --------------- | ------------------ | ------------------------------------------------------------------------------------------ |
+| `7636`–`7674`   | `subir_imagen`     | Lee cuatro índices consecutivos de una imagen lineal y escribe uno en cada plano de vídeo. |
+| `7679`–`76B7`   | `recuperar_imagen` | Selecciona cada plano de lectura y reconstruye los cuatro índices lineales.                |
+| `76BC`–`770D`   | `copiar_planos`    | Copia mediante los cuatro cerrojos VGA en modo de escritura uno, con pasos independientes. |
+| `787E`–`788D`   | `enviar_paleta`    | Escribe el índice inicial en `3C8h` y los componentes RGB consecutivos en `3C9h`.          |
 
 ## Memoria por planos
 
@@ -54,13 +54,13 @@ El [descompresor RNC de método uno](descompresion_rnc.md) ya está trasladado y
 pnpm comparar:video
 ```
 
-| Grupo | Comparación amplia confirmada | Muestra comprobada |
-| --- | ---: | ---: |
-| Subida de imagen | 378 | 24 |
-| Recuperación de imagen | 378 | 24 |
-| Copia de planos y solapamientos | 360 | 24 |
-| Envío de paleta | 64 | 8 |
-| Título original: subida, recuperación y paleta | 3 | 3 |
-| **Total** | **1.183** | **83** |
+| Grupo                                          | Comparación amplia confirmada | Muestra comprobada |
+| ---------------------------------------------- | ----------------------------: | -----------------: |
+| Subida de imagen                               |                           378 |                 24 |
+| Recuperación de imagen                         |                           378 |                 24 |
+| Copia de planos y solapamientos                |                           360 |                 24 |
+| Envío de paleta                                |                            64 |                  8 |
+| Título original: subida, recuperación y paleta |                             3 |                  3 |
+| **Total**                                      |                     **1.183** |             **83** |
 
 Se comprueban también el retorno y el equilibrio de pila. La muestra se ejecuta añadiendo `--muestra`. Los informes separados se guardan en `trabajo/comparacion_video/muestra.json` y `resultado.json`. Este comando requiere también los archivos locales `DATA/TITLE.DAT` y `DATA/TITLE.PAL`.

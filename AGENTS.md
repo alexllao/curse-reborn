@@ -4,6 +4,7 @@
 
 - Escribir en castellano las respuestas, la documentación, los comentarios del código, los textos propios de las herramientas, los mensajes de los cambios y las descripciones de las solicitudes de integración.
 - Usar nombres en castellano para archivos y elementos propios del proyecto cuando sea viable.
+- Añadir encima de cada función nueva un comentario breve en castellano que explique su propósito. En funciones reconstruidas, indicar también la dirección original y los contratos o límites relevantes; evitar comentarios que solo repitan el nombre.
 - Conservar los nombres técnicos exigidos por el lenguaje, las dependencias, los formatos y los recursos originales. La rama solicitada por el propietario se llama `development`.
 
 ## Propósito
@@ -28,6 +29,7 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La primera capa de
 - Priorizar el mapa de código, las referencias y el flujo de control del ejecutable. La extracción de recursos por sí sola no constituye la reconstrucción del motor solicitada.
 - Guardar los desensamblados completos y otros resultados derivados del binario en `trabajo/`; versionar las herramientas propias y la documentación del análisis.
 - Verificar cada cambio de forma proporcionada y explicar los límites de la comprobación.
+- Mantener el formato con `pnpm formatear` y comprobarlo con `pnpm calidad`: Prettier para JavaScript y documentación, clang-format 21 para C++ y Ruff para Python. ESLint y Ruff revisan errores; las compilaciones C++ conservan avisos tratados como errores. Excluir recursos originales, resultados locales y avisos de licencia de terceros.
 - Preferir comprobaciones selectivas para ahorrar ejecuciones y contexto, según la preferencia del propietario. Indicar explícitamente las comparaciones preparadas que aún no se hayan ejecutado y facilitar su comando.
 - Avanzar varios bloques relacionados antes de cerrar una entrega. Agrupar las comparaciones nuevas en un comando cuando sea viable; el propietario puede ejecutar la comparación amplia al final.
 - Mantener actualizados el estado y la hoja de ruta del README cuando cambien las capacidades reales.

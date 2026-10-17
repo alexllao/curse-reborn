@@ -6,16 +6,17 @@ namespace {
 
 using Palabra = unsigned short;
 
-Palabra leer(const unsigned char* datos, unsigned int posicion) {
-  return static_cast<Palabra>(datos[posicion] | (static_cast<unsigned int>(datos[posicion + 1]) << 8));
+Palabra leer(const unsigned char *datos, unsigned int posicion) {
+  return static_cast<Palabra>(datos[posicion] |
+                              (static_cast<unsigned int>(datos[posicion + 1]) << 8));
 }
 
-void escribir(unsigned char* datos, unsigned int posicion, Palabra valor) {
+void escribir(unsigned char *datos, unsigned int posicion, Palabra valor) {
   datos[posicion] = static_cast<unsigned char>(valor & 0xff);
   datos[posicion + 1] = static_cast<unsigned char>(valor >> 8);
 }
 
-void retirar_identificador(unsigned char* datos, Palabra identificador) {
+void retirar_identificador(unsigned char *datos, Palabra identificador) {
   // 88F3 busca la primera coincidencia en las diez posiciones, incluso tras FFFFh.
   for (unsigned int casilla = 0; casilla < 10; ++casilla) {
     if (leer(datos, 0x5225 + casilla * 2) == identificador) {
@@ -28,29 +29,29 @@ void retirar_identificador(unsigned char* datos, Palabra identificador) {
   }
 }
 
-Palabra siguiente(EstadoAleatorio& estado, Palabra limite) {
+Palabra siguiente(EstadoAleatorio &estado, Palabra limite) {
   Palabra resultado = 0;
   generar_aleatorio(estado, limite, resultado); // Solo se utiliza con 6 o 100.
   return resultado;
 }
 
-}
+} // namespace
 
-void preparar_resultados(unsigned char* datos, EstadoAleatorio& estado) {
+void preparar_resultados(unsigned char *datos, EstadoAleatorio &estado) {
   retirar_identificador(datos, 0x008c);
-  constexpr unsigned short marcas[] = {0x4b50, 0x4b3e, 0x4b2c, 0x4b59, 0x4b47,
-    0x4b35, 0x4b88, 0x4b76, 0x4b91, 0x4b7f, 0x4b6d, 0x4bd2, 0x4bdb, 0x4bc9};
+  constexpr unsigned short marcas[] = {0x4b50, 0x4b3e, 0x4b2c, 0x4b59, 0x4b47, 0x4b35, 0x4b88,
+                                       0x4b76, 0x4b91, 0x4b7f, 0x4b6d, 0x4bd2, 0x4bdb, 0x4bc9};
   for (auto posicion : marcas) {
     datos[posicion] = 0;
   }
   const auto primero = static_cast<unsigned char>(siguiente(estado, 6));
   datos[0x2c8f] = static_cast<unsigned char>(primero + 1);
-  const auto segundo = siguiente(estado, 100) < 50
-    ? primero : static_cast<unsigned char>(siguiente(estado, 6));
+  const auto segundo =
+      siguiente(estado, 100) < 50 ? primero : static_cast<unsigned char>(siguiente(estado, 6));
   datos[0x2cb0] = static_cast<unsigned char>(segundo + 1);
   // La tercera decisión reutiliza el primer resultado, no el segundo.
-  const auto tercero = siguiente(estado, 100) < 50
-    ? primero : static_cast<unsigned char>(siguiente(estado, 6));
+  const auto tercero =
+      siguiente(estado, 100) < 50 ? primero : static_cast<unsigned char>(siguiente(estado, 6));
   datos[0x2cd1] = static_cast<unsigned char>(tercero + 1);
   seleccionar_coincidencias(datos, primero, segundo, tercero);
 
@@ -79,4 +80,4 @@ void preparar_resultados(unsigned char* datos, EstadoAleatorio& estado) {
   escribir(datos, 0x00d6, 0xab63);
 }
 
-}
+} // namespace motor

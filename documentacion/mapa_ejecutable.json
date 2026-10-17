@@ -2,140 +2,776 @@
   "sha256": "f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d",
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51"],
   "anotaciones": [
-    {"direccion": "0000:001A", "nombre": "Entrada del programa DOS", "comentario": "Ajusta la memoria reservada y prepara las referencias a los segmentos. No trasladado todavía."},
-    {"direccion": "0000:003C", "nombre": "Lectura de la configuración", "comentario": "Abre curse.cfg mediante DOS. Las lecturas siguientes solicitan ocho bytes y cuatro campos de un byte."},
-    {"direccion": "0000:0081", "nombre": "Inicialización de VGA", "comentario": "Selecciona el modo BIOS 13h y después modifica registros VGA. El formato final requiere estudiar las rutinas gráficas."},
-    {"direccion": "0000:011D", "nombre": "Entrada al directorio de datos", "comentario": "La cadena DS:0083 contiene DATA. Los nombres de recurso posteriores se resuelven desde ese directorio."},
-    {"direccion": "0000:01C0", "nombre": "Entrada a la inicialización y al bucle del juego", "comentario": "Al regresar comienza la restauración del temporizador y de los manejadores DOS."},
-    {"direccion": "0000:0238", "nombre": "Manejador del temporizador", "comentario": "Actualiza contadores y rutas condicionadas por configuración; puede encadenar el vector DOS anterior."},
-    {"direccion": "0000:0276", "nombre": "Inicialización del juego", "comentario": "Reserva memoria y carga recursos iniciales antes de llegar a la cabecera del bucle central."},
-    {"direccion": "0000:06E5", "nombre": "Cabecera del bucle central", "comentario": "Llama a la presentación y copia dos campos de posición. Los retornos habituales vuelven a esta dirección."},
-    {"direccion": "0000:096D", "nombre": "Avance del movimiento con acarreo", "comentario": "Suma las componentes de dieciséis bits a la posición y reduce el contador. El propietario confirmó la coincidencia del conjunto de avance en 10.930 casos.", "traslado": "motor/movimiento/avanzar.cpp"},
-    {"direccion": "0000:0AE5", "nombre": "Ruta observada de cambio de escena", "comentario": "Prepara BX y AL y llama a 4AF0. BX no es directamente el índice final del recurso."},
-    {"direccion": "0000:0BC4", "nombre": "Retorno al comienzo de la iteración", "comentario": "Salto explícito a 06E5."},
-    {"direccion": "0000:0BC7", "nombre": "Salida del recorrido central", "comentario": "Libera bloques de memoria y retorna al código de restauración del arranque."},
-    {"direccion": "0000:0BF8", "nombre": "Selección de modalidad de movimiento", "comentario": "La condición DS:8082=24h y DS:358C=FEh selecciona una de dos tablas de dieciséis combinaciones. El C++ conserva sus retornos anticipados.", "traslado": "motor/movimiento/direccion.cpp"},
-    {"direccion": "0000:0F5F", "nombre": "Planificación de movimiento hacia un nodo", "comentario": "Calcula deltas y contador; llama a la selección de dirección y divide la componente secundaria. AX devuelve el contador, con mínimo uno.", "traslado": "motor/movimiento/planificar.cpp"},
-    {"direccion": "0000:102A", "nombre": "Extensión de signo de la división vertical", "comentario": "El opcode 99h sin prefijo, en este código de dieciséis bits, es CWD. DX recibe el signo de AX antes de sustituir DL por AH.", "traslado": "motor/movimiento/planificar.cpp"},
-    {"direccion": "0000:10B0", "nombre": "Extensión de signo de la división horizontal", "comentario": "CWD, seguido de MOV DL,AH y SHL AX,8, separa las componentes que se guardan como palabras de incremento.", "traslado": "motor/movimiento/planificar.cpp"},
-    {"direccion": "0000:10EC", "nombre": "Preparación del recorrido de entidades", "comentario": "Limpia límites y recorre 68 registros de 33 bytes desde DS:2C4C. El traslado se detiene antes del despacho por escena de 1791.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:1119", "nombre": "Actualización de un registro activo", "comentario": "Procesa el estado uno y despacha catorce comportamientos. Comparación corta coincidente; comparación amplia preparada.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:112C", "nombre": "Comportamiento 0400: posición relativa", "comentario": "Ajusta X respecto al registro anterior y a la distancia del personaje.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:115E", "nombre": "Comportamiento 0401: desplazamientos por imagen", "comentario": "Consulta tablas X/Y según modelo e imagen. CBW extiende con signo los bytes leídos.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:11C0", "nombre": "Comportamiento 0406: límite vertical", "comentario": "Desactiva con Y mayor o igual a 200. En escena ocho puede cambiar secuencias mediante azar.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:121F", "nombre": "Comportamiento 0407: proximidad y creación", "comentario": "La primera fase puede crear desde DS:0FED; otra fase modifica el personaje.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:12C8", "nombre": "Comportamiento 0408: límites y salida", "comentario": "Actualiza límites y desactiva al abandonar el margen izquierdo.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:12F6", "nombre": "Comportamiento 0409: aproximación", "comentario": "Actualiza límites y comprueba distancia horizontal y fase.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:135D", "nombre": "Comportamiento 040A: solapamiento horizontal", "comentario": "El lado de entrada decide las secuencias asignadas al personaje.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:13E6", "nombre": "Comportamiento 040B: fases y diferencia vertical", "comentario": "Cambia secuencias del registro y del personaje según altura y fase.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:14C2", "nombre": "Comportamiento 040C: avance y reacción", "comentario": "Combina desplazamiento horizontal, ajuste vertical y reacción según modelo e imagen.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:15BD", "nombre": "Comportamiento 040D: cinco creaciones aleatorias", "comentario": "Cada iteración elige imagen y posición antes de llamar a 8B6F con DS:132E.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:15FE", "nombre": "Comportamiento 040F: límites o planificación", "comentario": "Puede preparar el nodo DS:1A36 y llamar a la planificación trasladada de 0F5F.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:1673", "nombre": "Comportamiento 0411: transición por proximidad", "comentario": "Comprueba altura y solapamiento horizontal antes de llamar a C4DC.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:16A3", "nombre": "Comportamiento 0410: seguimiento del personaje", "comentario": "Ajusta imagen y posición relativa según intervalos de la imagen del personaje.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:16EE", "nombre": "Comportamiento 0412: tres creaciones", "comentario": "Comprueba imagen 3Ch, distancias y control; crea desde DS:135E y cambia secuencias.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:1786", "nombre": "Siguiente registro de entidad", "comentario": "Suma 21h a SI y repite con LOOP; restaura ES antes del despacho por escena.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:8B6F", "nombre": "Creación dinámica de entidad", "comentario": "Busca hueco entre las 70 posiciones descontando las reservadas, copia definición y consulta dimensiones mediante el recurso. Traslado con lector explícito de dimensiones.", "traslado": "motor/entidades/crear.cpp"},
-    {"direccion": "0000:8C13", "nombre": "Contador aleatorio con AH conservado", "comentario": "MOV AL no limpia AH: el divisor depende también del valor anterior de AX. El C++ conserva este detalle.", "traslado": "motor/entidades/crear.cpp"},
-    {"direccion": "0000:C4DC", "nombre": "Transición de entidades y personaje", "comentario": "Si hay control activo, configura secuencias y posiciones del personaje y dos registros auxiliares.", "traslado": "motor/entidades/actualizar.cpp"},
-    {"direccion": "0000:1791", "nombre": "Rutina particular por escena", "comentario": "Consulta CS:17A3 mediante el índice DS:8082. Una entrada nula hace que retorne."},
-    {"direccion": "0000:4AF0", "nombre": "Selección y carga de escena", "comentario": "Función todavía no trasladada. El recorrido mapea BX a un índice de recurso y puede cargar nuevos archivos."},
-    {"direccion": "0000:4D2B", "nombre": "Obtención del índice final de escena", "comentario": "Consulta DS:7482+BX*2 y compara con DS:8082; solo actualiza el estado si cambia."},
-    {"direccion": "0000:4EC8", "nombre": "Registro de archivos de escenario", "comentario": "Cada registro de DS:784E ocupa ocho bytes. Su primer campo apunta al nombre que abre la llamada DOS."},
-    {"direccion": "0000:6A8C", "nombre": "Manejador de teclado", "comentario": "Lee el código del puerto 60h y actualiza el estado de pulsación o liberación."},
-    {"direccion": "0000:5288", "nombre": "Selección de sonido con entidad", "comentario": "Descarta geometrías fuera de pantalla antes de consultar la modalidad. Traslado hasta retorno o entrada al dispositivo.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:5295", "nombre": "Visibilidad con indicadores de suma", "comentario": "El JLE sigue directamente a ADD: conserva el desbordamiento con signo, además del resultado cero.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:52A4", "nombre": "Despacho de cinco modalidades de sonido", "comentario": "DS:0AD4 elige entre retorno sin orden y tres selectores. Los nombres definitivos de los dispositivos se estudian después.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:52BF", "nombre": "Selector de secuencias de sonido", "comentario": "Registros de tres bytes. FFh omite la orden; otros identificadores seleccionan prioridad y referencia.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:52E7", "nombre": "Lectura de prioridad y referencia sonora", "comentario": "Lee un byte de prioridad y una referencia de dos bytes; una referencia cero no reproduce.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:52FC", "nombre": "Prioridad de secuencia explícita", "comentario": "Guarda prioridad en CS:5306 y llama a 7A46. El C++ conserva prioridad en EstadoSonido y devuelve la orden sin ejecutar el dispositivo.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:5307", "nombre": "Selector de muestras de sonido", "comentario": "Usa recursos general o de escena y registros de cinco bytes, con filtrado por actividad y prioridad.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:5343", "nombre": "Prioridad de muestra", "comentario": "La actividad de CS:8351 condiciona la comparación con CS:5375. Ambos valores son estado explícito en C++.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:5358", "nombre": "Parámetros de reproducción de muestra", "comentario": "Selecciona canal, resta una cantidad a la longitud y lee una referencia mediante el recurso. Frontera de comparación en 7FB3.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:5376", "nombre": "Selector de órdenes de bytes", "comentario": "FFh selecciona DS:8C90; los demás identificadores consultan un byte y pueden omitir la orden si ese byte es FFh.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:53A7", "nombre": "Parámetro de la orden de bytes", "comentario": "Escribe DS:92EC y entrega DS:92E9 a 7D6A. El C++ devuelve esa orden y no ejecuta el dispositivo.", "traslado": "motor/sonido/seleccionar.cpp"},
-    {"direccion": "0000:859E", "nombre": "Recurso de modelo después de la carga", "comentario": "Asigna la referencia de CS:0010 y continúa la secuencia. Se alcanza tras un acierto de caché o un servicio de carga completado.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:0584", "nombre": "Carga de la pantalla de título", "comentario": "Lee TITLE.PAL y TITLE.DAT. El núcleo C++ compone descompresión y copias por planos; la plataforma SDL carga archivos y presenta el título. No es todavía el arranque completo del juego.", "traslado": "motor/recursos/titulo.cpp"},
-    {"direccion": "0000:05BD", "nombre": "Descompresión original del título", "comentario": "Llama a 64E0 con el recurso cargado. La rutina original proporciona la referencia; su método uno ya está trasladado a C++ con comparación propia."},
-    {"direccion": "0000:05D5", "nombre": "Subida del título a memoria por planos", "comentario": "AX=320, BX=200 y CX=448. Los planos usan 112 bytes por fila; llamada a 7636 comparada con C++.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:060F", "nombre": "Envío de la paleta del título", "comentario": "Entrega 256 colores desde DS:0AEF a 787E. La comparación conserva los 768 bytes de componentes.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:64E0", "nombre": "Descompresor con cabecera RNC de método uno", "comentario": "Reconoce RNC de método uno. Traslado C++ con búferes separados, tablas explícitas y comparación con tres archivos reales y programas sintéticos.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:7636", "nombre": "Subida de imagen lineal a cuatro planos", "comentario": "Divide ancho y paso entre cuatro y distribuye los índices mediante máscaras de escritura. Traslado comparado con memoria VGA explícita.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:7657", "nombre": "Grupo de cuatro píxeles de subida", "comentario": "Selecciona máscaras uno, dos, cuatro y ocho para cuatro bytes consecutivos y una posición de cada plano.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:7679", "nombre": "Recuperación de imagen desde cuatro planos", "comentario": "Selecciona el mapa de lectura y produce índices lineales. Traslado comparado también con el título real.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:769C", "nombre": "Selección del plano de lectura", "comentario": "La lectura por planos cero, uno, dos y tres conserva la misma posición hasta completar el grupo.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:76BC", "nombre": "Copia con cerrojos VGA", "comentario": "Activa máscara 0Fh y modo de escritura uno, copia por filas y restaura los bits de modo a cero.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:76EE", "nombre": "Copia de una fila por planos", "comentario": "REP MOVSB carga los cuatro cerrojos de origen y los escribe juntos. El orden hacia delante determina los solapamientos.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:787E", "nombre": "Envío de paleta RGB", "comentario": "Escribe índice inicial en 3C8h y tres componentes por color en 3C9h; no transforma los bytes.", "traslado": "motor/video/planos.cpp"},
-    {"direccion": "0000:6581", "nombre": "Inicialización de bits RNC", "comentario": "Prepara la posición 18, la palabra baja, el contador de bloques y el consumo de dos bits iniciales.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:65A7", "nombre": "Tablas de literales, distancias y cantidades", "comentario": "Construye tres tablas por bloque. El recuento cero conserva la tabla correspondiente del bloque anterior.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:65C4", "nombre": "Repetición RNC hacia delante", "comentario": "Incrementa la distancia en uno y la cantidad en dos. La copia permite reutilizar bytes que acaba de escribir.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:65EA", "nombre": "Literales RNC", "comentario": "Obtiene una cantidad mediante la tabla y copia bytes sin comprimir del flujo compartido.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:65F4", "nombre": "Reconstrucción de la ventana tras literales", "comentario": "Conserva los bits pendientes y los combina con dos palabras del nuevo origen; no equivale a alinear al siguiente byte.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:6625", "nombre": "Normalización de segmentos entre bloques", "comentario": "El original ajusta ES/DI y DS/SI conservando la posición física. El C++ mantiene posiciones lineales explícitas.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:6692", "nombre": "Valor a partir de un código Huffman", "comentario": "Busca máscara y código; consume su longitud y añade bits extra para símbolos iguales o superiores a dos.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:66CE", "nombre": "Consumo de bits de la ventana RNC", "comentario": "Dos palabras y un contador de bits disponibles; recarga una palabra al atravesar el límite.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:672E", "nombre": "Construcción de tabla RNC", "comentario": "Recorre longitudes de uno a dieciséis, invierte códigos canónicos y guarda símbolo y longitud.", "traslado": "motor/recursos/rnc.cpp"},
-    {"direccion": "0000:788E", "nombre": "Generador de valor acotado", "comentario": "Actualiza cuatro palabras y devuelve en AX el resto de dividir por el AX de entrada; conserva BX, CX y DX. El propietario confirmó la coincidencia en 18.816 llamadas.", "traslado": "motor/aleatorio/generador.cpp"},
-    {"direccion": "0000:78A5", "nombre": "Desplazamiento y rotaciones con acarreo", "comentario": "SHL sobre DX, seguido de tres parejas RCL CX/RCL DX. Cada operación utiliza palabras de dieciséis bits."},
-    {"direccion": "0000:78B3", "nombre": "Resta de siete con préstamo", "comentario": "CLC y SUB CX,7; si hay préstamo, DEC DX. Después se mezclan los valores mediante XOR y se reordena el estado."},
-    {"direccion": "0000:78D5", "nombre": "Divisor y valor acotado", "comentario": "Recupera el AX de entrada como divisor en BX y devuelve el resto en AX. El C++ rechaza límite cero; el original provoca una excepción de división."},
-    {"direccion": "0000:7A46", "nombre": "Arranque de secuencia del altavoz", "comentario": "Guarda referencia, contador uno y actividad uno. El C++ conserva la secuencia sin escribir puertos todavía.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7A61", "nombre": "Parada explícita del altavoz", "comentario": "Limpia solo la referencia y apaga los dos bits bajos de 61h. Conserva contador e indicador de actividad.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AC6", "nombre": "Avance del temporizador del altavoz", "comentario": "Con referencia no nula reduce el contador; solo procesa la secuencia si llega a cero.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AD7", "nombre": "Contador de duración de dieciséis bits", "comentario": "DEC desde cero produce FFFFh; no se ha sustituido por un contador saturado.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7ADD", "nombre": "Lectura de duración de nota", "comentario": "Una duración cero termina y apaga; las demás recargan el contador y continúan con el divisor.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AE2", "nombre": "Final de secuencia del altavoz", "comentario": "Limpia actividad y referencia, y apaga la salida preservando los otros bits leídos de 61h.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AF2", "nombre": "Nueva duración del altavoz", "comentario": "Guarda la duración antes de programar el temporizador.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AF5", "nombre": "Programación del temporizador", "comentario": "Escribe B6h en 43h y los dos bytes del divisor en 42h. El C++ conserva la traza mediante servicios de puerto.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7AFF", "nombre": "Referencia de la nota siguiente", "comentario": "Guarda SI después de leer duración y divisor, cuatro bytes por nota.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:7B03", "nombre": "Activación de la salida del altavoz", "comentario": "Lee 61h y activa los dos bits bajos, conservando los restantes.", "traslado": "motor/sonido/altavoz.cpp"},
-    {"direccion": "0000:83DE", "nombre": "Recorrido de secuencias de animación", "comentario": "Selecciona los datos del juego y recorre 70 registros. El traslado distingue órdenes ejecutadas y operaciones externas pendientes.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:83EA", "nombre": "Secuencias de un registro no nulo", "comentario": "Procesa imagen, X e Y. Los estados distintos de cero participan, incluidos los que tienen el bit 02h activo.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:83FC", "nombre": "Contador de imagen de un byte", "comentario": "OR BX,BX ha despejado CF. DEC desde cero produce FFh; no se interpreta hasta llegar a cero.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:840A", "nombre": "Lectura de la secuencia de imagen", "comentario": "Usa el índice anterior al incremento y envuelve el índice a ocho bits.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:841F", "nombre": "Referencia encadenada de secuencia", "comentario": "Suma el índice a BX, lee una palabra de referencia y reinicia el índice.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8434", "nombre": "Desactivación desde una secuencia", "comentario": "Limpia el estado y las tres referencias antes de saltar al siguiente registro.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:846D", "nombre": "Cambio de intervalo de imagen", "comentario": "Consume un byte, lo guarda en intervalo y contador, y continúa leyendo órdenes.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:848A", "nombre": "Espera aleatoria compartida", "comentario": "Calcula una espera y la copia a los tres contadores; omite el resto del registro.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:84E9", "nombre": "Operación de sonido pendiente", "comentario": "Consume un argumento y llama a 5288. Sin servicio, el C++ señala sonido pendiente antes de consumir el argumento. Un servicio que termine permite continuar. Los casos de frontera sin servicio paran aquí.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8515", "nombre": "Selección de modelo desde secuencia", "comentario": "FFh y FEh seleccionan recursos residentes. Otros valores consultan la caché DS:9974.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8574", "nombre": "Frontera de carga DOS pendiente", "comentario": "Con el nuevo modelo ya escrito en DS:9974, prepara apertura, lectura y cierre DOS. Sin servicio, el C++ se detiene antes de esa carga; con servicio solicita 64.000 bytes y continúa al terminar.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:85AC", "nombre": "Imagen aleatoria distinta de la actual", "comentario": "Repite la elección si el byte coincide con la imagen actual; conserva el retroceso del índice durante los intentos.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:85DE", "nombre": "Imagen y dimensiones", "comentario": "Escribe imagen, utiliza sus siete bits bajos y consulta ancho y alto del recurso. El C++ usa un lector explícito.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8600", "nombre": "Canal de desplazamiento horizontal", "comentario": "Temporizador de byte y órdenes comunes; los desplazamientos ordinarios se extienden con signo.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8629", "nombre": "Ampliación de magnitud horizontal", "comentario": "El byte 80h suma cien a DS:9972 y continúa; la magnitud se aplica con el signo del desplazamiento.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:86DC", "nombre": "Canal de desplazamiento vertical", "comentario": "Tercer canal; una espera aleatoria solo modifica su propio contador y termina el registro.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:87B7", "nombre": "Condición vertical peculiar", "comentario": "Solo si Y es mayor o igual a 300 comprueba si Y más alto, envuelto a dieciséis bits, es menor o igual a menos cien. No se ha normalizado esta condición.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:87D1", "nombre": "Inicio de retirada de registros", "comentario": "Omite la cantidad reservada DS:3588 y recorre las posiciones restantes.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:87E4", "nombre": "Retirada fuera de límites", "comentario": "Comprueba X, X más ancho, Y e Y más alto; al retirar limpia las tres referencias.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8820", "nombre": "Retorno del avance de secuencias", "comentario": "Restaura DS y retorna después de las dos pasadas.", "traslado": "motor/entidades/secuencias.cpp"},
-    {"direccion": "0000:8822", "nombre": "Reinicio del estado de acción", "comentario": "Desactiva campos y reinicia fases de tres secuencias; conserva los identificadores de secuencia.", "traslado": "motor/acciones/iniciar_accion.cpp"},
-    {"direccion": "0000:886B", "nombre": "Entrada común de una acción", "comentario": "Reinicia estado, planifica si DS:0AD7 no es cero, prepara el cursor y retorna con acarreo activo. El traslado incluye sus dependencias numéricas.", "traslado": "motor/acciones/iniciar_accion.cpp"},
-    {"direccion": "0000:88A0", "nombre": "Retorno de acción rechazada", "comentario": "Prepara el estado de cursor dos y retorna con acarreo activo; AX no se modifica.", "traslado": "motor/acciones/iniciar_accion.cpp"},
-    {"direccion": "0000:88BC", "nombre": "Consulta de identificador", "comentario": "Busca en las diez palabras, incluidas las situadas después de FFFFh. El C++ devuelve true cuando el original limpia el acarreo.", "traslado": "motor/acciones/lista_identificadores.cpp"},
-    {"direccion": "0000:88D9", "nombre": "Inserción en la primera casilla libre", "comentario": "Escribe AX en la primera palabra FFFFh y no elimina duplicados.", "traslado": "motor/acciones/lista_identificadores.cpp"},
-    {"direccion": "0000:88F3", "nombre": "Retirada de la primera coincidencia de una lista", "comentario": "Busca AX en diez palabras desde DS:5225, desplaza las siguientes y rellena el final con FFFFh.", "traslado": "motor/acciones/lista_identificadores.cpp"},
-    {"direccion": "0000:B740", "nombre": "Preparación y ejecución de la acción de resultados", "comentario": "El propietario confirmó el tramo B740–B939 en 2.048 operaciones. El nuevo C++ continúa por 886B hasta RET: la muestra pasa y la comparación amplia queda pendiente.", "traslado": "motor/acciones/iniciar_accion.cpp"},
-    {"direccion": "0000:B78C", "nombre": "Obtención del primer resultado entre 0 y 5", "comentario": "Solicita un valor con divisor seis. Se guarda en DL y se escribe su representación más uno en el estado."},
-    {"direccion": "0000:B7D1", "nombre": "Selección de coincidencias entre tres resultados", "comentario": "Entrada: DL primero, DH segundo, AL tercero, todos entre cero y cinco. Empieza el segundo bloque de escrituras trasladado.", "traslado": "motor/acciones/seleccionar_coincidencias.cpp"},
-    {"direccion": "0000:B7F2", "nombre": "Tabla de seis resultados repetidos", "comentario": "El valor repetido se duplica y consulta CS:B7F7. Sus seis destinos solo activan marcas de estado."},
-    {"direccion": "0000:B803", "nombre": "Marcas para el resultado cero repetido", "comentario": "Activa tres posiciones de DS. Las otras cinco ramas tienen sus propias posiciones."},
-    {"direccion": "0000:B857", "nombre": "Tres resultados iguales", "comentario": "El bit bajo del resultado selecciona las siete marcas pares o las siete impares."},
-    {"direccion": "0000:B8A3", "nombre": "Fin del bloque aislado de coincidencias", "comentario": "La comparación aislada termina aquí. El nuevo traslado integrado continúa preparando estado hasta B93A; su comparación queda pendiente.", "traslado": "motor/acciones/preparar_resultados.cpp"},
-    {"direccion": "0000:B93A", "nombre": "Límite del nuevo traslado integrado", "comentario": "El bloque C++ prepara el estado hasta antes de este salto a 886B. La ejecución del destino común y su animación sigue pendiente.", "traslado": "motor/acciones/preparar_resultados.cpp"},
-    {"direccion": "0000:DE10", "nombre": "Elección de casilla de acción", "comentario": "Divide DS:B60A entre 32 y utiliza el resultado para consultar DS:B60C."},
-    {"direccion": "0000:DE2B", "nombre": "Llamada a un manejador de acción", "comentario": "AX contiene el destino, BX la casilla y SI su desplazamiento de palabra. El llamador consume el acarreo y, si está activo, AX."},
-    {"direccion": "0000:DE2D", "nombre": "Interpretación del retorno de una acción", "comentario": "Sin acarreo continúa. Con acarreo finaliza; AX=8000h evita la llamada previa de restauración.", "traslado": "motor/acciones/retorno_accion.cpp"},
-    {"direccion": "0000:DE5B", "nombre": "Ruta de finalización con restauración", "comentario": "Se llega con acarreo activo y AX distinto de 8000h. La comparación del contrato se detiene antes de llamar a D99F."},
-    {"direccion": "0000:DE5E", "nombre": "Convergencia de las rutas de finalización", "comentario": "Con AX=8000h se alcanza directamente. El código posterior también es común a la otra ruta después de su llamada."},
-    {"direccion": "0000:DE96", "nombre": "Preparación de la lista inicial de acciones", "comentario": "Prepara diez identificadores de cero a nueve y reconstruye la tabla. Puede sustituir después las casillas uno y dos."},
-    {"direccion": "0000:DF15", "nombre": "Construcción de los diez destinos de acción", "comentario": "Entrada: segmento de datos del juego en CS:0000, DF=0. Lee DS:B620 y escribe DS:B60C.", "traslado": "motor/acciones/construir_tabla.cpp"},
-    {"direccion": "0000:DF28", "nombre": "Lectura del siguiente identificador", "comentario": "FFFFh marca el final y rellena el resto. La comparación siguiente con 17h es con signo."},
-    {"direccion": "0000:DF37", "nombre": "Consulta a la tabla base de acciones", "comentario": "El desplazamiento firmado equivale a B686h. La aritmética del índice y de la dirección envuelve a 16 bits."},
-    {"direccion": "0000:DF40", "nombre": "Manejador alternativo", "comentario": "Los identificadores con signo iguales o superiores a 23 copian el valor actual de DS:B636."},
-    {"direccion": "0000:DF48", "nombre": "Relleno de las casillas restantes", "comentario": "Escribe DE96h hasta agotar CX, sin leer los identificadores posteriores."},
-    {"direccion": "0000:DF4E", "nombre": "Fin del bloque de construcción trasladado", "comentario": "La comparación de memoria termina antes de este punto. El código posterior dibuja la selección y queda pendiente."}
+    {
+      "direccion": "0000:001A",
+      "nombre": "Entrada del programa DOS",
+      "comentario": "Ajusta la memoria reservada y prepara las referencias a los segmentos. No trasladado todavía."
+    },
+    {
+      "direccion": "0000:003C",
+      "nombre": "Lectura de la configuración",
+      "comentario": "Abre curse.cfg mediante DOS. Las lecturas siguientes solicitan ocho bytes y cuatro campos de un byte."
+    },
+    {
+      "direccion": "0000:0081",
+      "nombre": "Inicialización de VGA",
+      "comentario": "Selecciona el modo BIOS 13h y después modifica registros VGA. El formato final requiere estudiar las rutinas gráficas."
+    },
+    {
+      "direccion": "0000:011D",
+      "nombre": "Entrada al directorio de datos",
+      "comentario": "La cadena DS:0083 contiene DATA. Los nombres de recurso posteriores se resuelven desde ese directorio."
+    },
+    {
+      "direccion": "0000:01C0",
+      "nombre": "Entrada a la inicialización y al bucle del juego",
+      "comentario": "Al regresar comienza la restauración del temporizador y de los manejadores DOS."
+    },
+    {
+      "direccion": "0000:0238",
+      "nombre": "Manejador del temporizador",
+      "comentario": "Actualiza contadores y rutas condicionadas por configuración; puede encadenar el vector DOS anterior."
+    },
+    {
+      "direccion": "0000:0276",
+      "nombre": "Inicialización del juego",
+      "comentario": "Reserva memoria y carga recursos iniciales antes de llegar a la cabecera del bucle central."
+    },
+    {
+      "direccion": "0000:06E5",
+      "nombre": "Cabecera del bucle central",
+      "comentario": "Llama a la presentación y copia dos campos de posición. Los retornos habituales vuelven a esta dirección."
+    },
+    {
+      "direccion": "0000:096D",
+      "nombre": "Avance del movimiento con acarreo",
+      "comentario": "Suma las componentes de dieciséis bits a la posición y reduce el contador. El propietario confirmó la coincidencia del conjunto de avance en 10.930 casos.",
+      "traslado": "motor/movimiento/avanzar.cpp"
+    },
+    {
+      "direccion": "0000:0AE5",
+      "nombre": "Ruta observada de cambio de escena",
+      "comentario": "Prepara BX y AL y llama a 4AF0. BX no es directamente el índice final del recurso."
+    },
+    {
+      "direccion": "0000:0BC4",
+      "nombre": "Retorno al comienzo de la iteración",
+      "comentario": "Salto explícito a 06E5."
+    },
+    {
+      "direccion": "0000:0BC7",
+      "nombre": "Salida del recorrido central",
+      "comentario": "Libera bloques de memoria y retorna al código de restauración del arranque."
+    },
+    {
+      "direccion": "0000:0BF8",
+      "nombre": "Selección de modalidad de movimiento",
+      "comentario": "La condición DS:8082=24h y DS:358C=FEh selecciona una de dos tablas de dieciséis combinaciones. El C++ conserva sus retornos anticipados.",
+      "traslado": "motor/movimiento/direccion.cpp"
+    },
+    {
+      "direccion": "0000:0F5F",
+      "nombre": "Planificación de movimiento hacia un nodo",
+      "comentario": "Calcula deltas y contador; llama a la selección de dirección y divide la componente secundaria. AX devuelve el contador, con mínimo uno.",
+      "traslado": "motor/movimiento/planificar.cpp"
+    },
+    {
+      "direccion": "0000:102A",
+      "nombre": "Extensión de signo de la división vertical",
+      "comentario": "El opcode 99h sin prefijo, en este código de dieciséis bits, es CWD. DX recibe el signo de AX antes de sustituir DL por AH.",
+      "traslado": "motor/movimiento/planificar.cpp"
+    },
+    {
+      "direccion": "0000:10B0",
+      "nombre": "Extensión de signo de la división horizontal",
+      "comentario": "CWD, seguido de MOV DL,AH y SHL AX,8, separa las componentes que se guardan como palabras de incremento.",
+      "traslado": "motor/movimiento/planificar.cpp"
+    },
+    {
+      "direccion": "0000:10EC",
+      "nombre": "Preparación del recorrido de entidades",
+      "comentario": "Limpia límites y recorre 68 registros de 33 bytes desde DS:2C4C. El traslado se detiene antes del despacho por escena de 1791.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:1119",
+      "nombre": "Actualización de un registro activo",
+      "comentario": "Procesa el estado uno y despacha catorce comportamientos. Comparación corta coincidente; comparación amplia preparada.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:112C",
+      "nombre": "Comportamiento 0400: posición relativa",
+      "comentario": "Ajusta X respecto al registro anterior y a la distancia del personaje.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:115E",
+      "nombre": "Comportamiento 0401: desplazamientos por imagen",
+      "comentario": "Consulta tablas X/Y según modelo e imagen. CBW extiende con signo los bytes leídos.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:11C0",
+      "nombre": "Comportamiento 0406: límite vertical",
+      "comentario": "Desactiva con Y mayor o igual a 200. En escena ocho puede cambiar secuencias mediante azar.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:121F",
+      "nombre": "Comportamiento 0407: proximidad y creación",
+      "comentario": "La primera fase puede crear desde DS:0FED; otra fase modifica el personaje.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:12C8",
+      "nombre": "Comportamiento 0408: límites y salida",
+      "comentario": "Actualiza límites y desactiva al abandonar el margen izquierdo.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:12F6",
+      "nombre": "Comportamiento 0409: aproximación",
+      "comentario": "Actualiza límites y comprueba distancia horizontal y fase.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:135D",
+      "nombre": "Comportamiento 040A: solapamiento horizontal",
+      "comentario": "El lado de entrada decide las secuencias asignadas al personaje.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:13E6",
+      "nombre": "Comportamiento 040B: fases y diferencia vertical",
+      "comentario": "Cambia secuencias del registro y del personaje según altura y fase.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:14C2",
+      "nombre": "Comportamiento 040C: avance y reacción",
+      "comentario": "Combina desplazamiento horizontal, ajuste vertical y reacción según modelo e imagen.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:15BD",
+      "nombre": "Comportamiento 040D: cinco creaciones aleatorias",
+      "comentario": "Cada iteración elige imagen y posición antes de llamar a 8B6F con DS:132E.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:15FE",
+      "nombre": "Comportamiento 040F: límites o planificación",
+      "comentario": "Puede preparar el nodo DS:1A36 y llamar a la planificación trasladada de 0F5F.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:1673",
+      "nombre": "Comportamiento 0411: transición por proximidad",
+      "comentario": "Comprueba altura y solapamiento horizontal antes de llamar a C4DC.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:16A3",
+      "nombre": "Comportamiento 0410: seguimiento del personaje",
+      "comentario": "Ajusta imagen y posición relativa según intervalos de la imagen del personaje.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:16EE",
+      "nombre": "Comportamiento 0412: tres creaciones",
+      "comentario": "Comprueba imagen 3Ch, distancias y control; crea desde DS:135E y cambia secuencias.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:1786",
+      "nombre": "Siguiente registro de entidad",
+      "comentario": "Suma 21h a SI y repite con LOOP; restaura ES antes del despacho por escena.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:8B6F",
+      "nombre": "Creación dinámica de entidad",
+      "comentario": "Busca hueco entre las 70 posiciones descontando las reservadas, copia definición y consulta dimensiones mediante el recurso. Traslado con lector explícito de dimensiones.",
+      "traslado": "motor/entidades/crear.cpp"
+    },
+    {
+      "direccion": "0000:8C13",
+      "nombre": "Contador aleatorio con AH conservado",
+      "comentario": "MOV AL no limpia AH: el divisor depende también del valor anterior de AX. El C++ conserva este detalle.",
+      "traslado": "motor/entidades/crear.cpp"
+    },
+    {
+      "direccion": "0000:C4DC",
+      "nombre": "Transición de entidades y personaje",
+      "comentario": "Si hay control activo, configura secuencias y posiciones del personaje y dos registros auxiliares.",
+      "traslado": "motor/entidades/actualizar.cpp"
+    },
+    {
+      "direccion": "0000:1791",
+      "nombre": "Rutina particular por escena",
+      "comentario": "Consulta CS:17A3 mediante el índice DS:8082. Una entrada nula hace que retorne."
+    },
+    {
+      "direccion": "0000:4AF0",
+      "nombre": "Selección y carga de escena",
+      "comentario": "Función todavía no trasladada. El recorrido mapea BX a un índice de recurso y puede cargar nuevos archivos."
+    },
+    {
+      "direccion": "0000:4D2B",
+      "nombre": "Obtención del índice final de escena",
+      "comentario": "Consulta DS:7482+BX*2 y compara con DS:8082; solo actualiza el estado si cambia."
+    },
+    {
+      "direccion": "0000:4EC8",
+      "nombre": "Registro de archivos de escenario",
+      "comentario": "Cada registro de DS:784E ocupa ocho bytes. Su primer campo apunta al nombre que abre la llamada DOS."
+    },
+    {
+      "direccion": "0000:6A8C",
+      "nombre": "Manejador de teclado",
+      "comentario": "Lee el código del puerto 60h y actualiza el estado de pulsación o liberación."
+    },
+    {
+      "direccion": "0000:5288",
+      "nombre": "Selección de sonido con entidad",
+      "comentario": "Descarta geometrías fuera de pantalla antes de consultar la modalidad. Traslado hasta retorno o entrada al dispositivo.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:5295",
+      "nombre": "Visibilidad con indicadores de suma",
+      "comentario": "El JLE sigue directamente a ADD: conserva el desbordamiento con signo, además del resultado cero.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:52A4",
+      "nombre": "Despacho de cinco modalidades de sonido",
+      "comentario": "DS:0AD4 elige entre retorno sin orden y tres selectores. Los nombres definitivos de los dispositivos se estudian después.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:52BF",
+      "nombre": "Selector de secuencias de sonido",
+      "comentario": "Registros de tres bytes. FFh omite la orden; otros identificadores seleccionan prioridad y referencia.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:52E7",
+      "nombre": "Lectura de prioridad y referencia sonora",
+      "comentario": "Lee un byte de prioridad y una referencia de dos bytes; una referencia cero no reproduce.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:52FC",
+      "nombre": "Prioridad de secuencia explícita",
+      "comentario": "Guarda prioridad en CS:5306 y llama a 7A46. El C++ conserva prioridad en EstadoSonido y devuelve la orden sin ejecutar el dispositivo.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:5307",
+      "nombre": "Selector de muestras de sonido",
+      "comentario": "Usa recursos general o de escena y registros de cinco bytes, con filtrado por actividad y prioridad.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:5343",
+      "nombre": "Prioridad de muestra",
+      "comentario": "La actividad de CS:8351 condiciona la comparación con CS:5375. Ambos valores son estado explícito en C++.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:5358",
+      "nombre": "Parámetros de reproducción de muestra",
+      "comentario": "Selecciona canal, resta una cantidad a la longitud y lee una referencia mediante el recurso. Frontera de comparación en 7FB3.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:5376",
+      "nombre": "Selector de órdenes de bytes",
+      "comentario": "FFh selecciona DS:8C90; los demás identificadores consultan un byte y pueden omitir la orden si ese byte es FFh.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:53A7",
+      "nombre": "Parámetro de la orden de bytes",
+      "comentario": "Escribe DS:92EC y entrega DS:92E9 a 7D6A. El C++ devuelve esa orden y no ejecuta el dispositivo.",
+      "traslado": "motor/sonido/seleccionar.cpp"
+    },
+    {
+      "direccion": "0000:859E",
+      "nombre": "Recurso de modelo después de la carga",
+      "comentario": "Asigna la referencia de CS:0010 y continúa la secuencia. Se alcanza tras un acierto de caché o un servicio de carga completado.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:0584",
+      "nombre": "Carga de la pantalla de título",
+      "comentario": "Lee TITLE.PAL y TITLE.DAT. El núcleo C++ compone descompresión y copias por planos; la plataforma SDL carga archivos y presenta el título. No es todavía el arranque completo del juego.",
+      "traslado": "motor/recursos/titulo.cpp"
+    },
+    {
+      "direccion": "0000:05BD",
+      "nombre": "Descompresión original del título",
+      "comentario": "Llama a 64E0 con el recurso cargado. La rutina original proporciona la referencia; su método uno ya está trasladado a C++ con comparación propia."
+    },
+    {
+      "direccion": "0000:05D5",
+      "nombre": "Subida del título a memoria por planos",
+      "comentario": "AX=320, BX=200 y CX=448. Los planos usan 112 bytes por fila; llamada a 7636 comparada con C++.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:060F",
+      "nombre": "Envío de la paleta del título",
+      "comentario": "Entrega 256 colores desde DS:0AEF a 787E. La comparación conserva los 768 bytes de componentes.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:64E0",
+      "nombre": "Descompresor con cabecera RNC de método uno",
+      "comentario": "Reconoce RNC de método uno. Traslado C++ con búferes separados, tablas explícitas y comparación con tres archivos reales y programas sintéticos.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:7636",
+      "nombre": "Subida de imagen lineal a cuatro planos",
+      "comentario": "Divide ancho y paso entre cuatro y distribuye los índices mediante máscaras de escritura. Traslado comparado con memoria VGA explícita.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:7657",
+      "nombre": "Grupo de cuatro píxeles de subida",
+      "comentario": "Selecciona máscaras uno, dos, cuatro y ocho para cuatro bytes consecutivos y una posición de cada plano.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:7679",
+      "nombre": "Recuperación de imagen desde cuatro planos",
+      "comentario": "Selecciona el mapa de lectura y produce índices lineales. Traslado comparado también con el título real.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:769C",
+      "nombre": "Selección del plano de lectura",
+      "comentario": "La lectura por planos cero, uno, dos y tres conserva la misma posición hasta completar el grupo.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:76BC",
+      "nombre": "Copia con cerrojos VGA",
+      "comentario": "Activa máscara 0Fh y modo de escritura uno, copia por filas y restaura los bits de modo a cero.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:76EE",
+      "nombre": "Copia de una fila por planos",
+      "comentario": "REP MOVSB carga los cuatro cerrojos de origen y los escribe juntos. El orden hacia delante determina los solapamientos.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:787E",
+      "nombre": "Envío de paleta RGB",
+      "comentario": "Escribe índice inicial en 3C8h y tres componentes por color en 3C9h; no transforma los bytes.",
+      "traslado": "motor/video/planos.cpp"
+    },
+    {
+      "direccion": "0000:6581",
+      "nombre": "Inicialización de bits RNC",
+      "comentario": "Prepara la posición 18, la palabra baja, el contador de bloques y el consumo de dos bits iniciales.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:65A7",
+      "nombre": "Tablas de literales, distancias y cantidades",
+      "comentario": "Construye tres tablas por bloque. El recuento cero conserva la tabla correspondiente del bloque anterior.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:65C4",
+      "nombre": "Repetición RNC hacia delante",
+      "comentario": "Incrementa la distancia en uno y la cantidad en dos. La copia permite reutilizar bytes que acaba de escribir.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:65EA",
+      "nombre": "Literales RNC",
+      "comentario": "Obtiene una cantidad mediante la tabla y copia bytes sin comprimir del flujo compartido.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:65F4",
+      "nombre": "Reconstrucción de la ventana tras literales",
+      "comentario": "Conserva los bits pendientes y los combina con dos palabras del nuevo origen; no equivale a alinear al siguiente byte.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:6625",
+      "nombre": "Normalización de segmentos entre bloques",
+      "comentario": "El original ajusta ES/DI y DS/SI conservando la posición física. El C++ mantiene posiciones lineales explícitas.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:6692",
+      "nombre": "Valor a partir de un código Huffman",
+      "comentario": "Busca máscara y código; consume su longitud y añade bits extra para símbolos iguales o superiores a dos.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:66CE",
+      "nombre": "Consumo de bits de la ventana RNC",
+      "comentario": "Dos palabras y un contador de bits disponibles; recarga una palabra al atravesar el límite.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:672E",
+      "nombre": "Construcción de tabla RNC",
+      "comentario": "Recorre longitudes de uno a dieciséis, invierte códigos canónicos y guarda símbolo y longitud.",
+      "traslado": "motor/recursos/rnc.cpp"
+    },
+    {
+      "direccion": "0000:788E",
+      "nombre": "Generador de valor acotado",
+      "comentario": "Actualiza cuatro palabras y devuelve en AX el resto de dividir por el AX de entrada; conserva BX, CX y DX. El propietario confirmó la coincidencia en 18.816 llamadas.",
+      "traslado": "motor/aleatorio/generador.cpp"
+    },
+    {
+      "direccion": "0000:78A5",
+      "nombre": "Desplazamiento y rotaciones con acarreo",
+      "comentario": "SHL sobre DX, seguido de tres parejas RCL CX/RCL DX. Cada operación utiliza palabras de dieciséis bits."
+    },
+    {
+      "direccion": "0000:78B3",
+      "nombre": "Resta de siete con préstamo",
+      "comentario": "CLC y SUB CX,7; si hay préstamo, DEC DX. Después se mezclan los valores mediante XOR y se reordena el estado."
+    },
+    {
+      "direccion": "0000:78D5",
+      "nombre": "Divisor y valor acotado",
+      "comentario": "Recupera el AX de entrada como divisor en BX y devuelve el resto en AX. El C++ rechaza límite cero; el original provoca una excepción de división."
+    },
+    {
+      "direccion": "0000:7A46",
+      "nombre": "Arranque de secuencia del altavoz",
+      "comentario": "Guarda referencia, contador uno y actividad uno. El C++ conserva la secuencia sin escribir puertos todavía.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7A61",
+      "nombre": "Parada explícita del altavoz",
+      "comentario": "Limpia solo la referencia y apaga los dos bits bajos de 61h. Conserva contador e indicador de actividad.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AC6",
+      "nombre": "Avance del temporizador del altavoz",
+      "comentario": "Con referencia no nula reduce el contador; solo procesa la secuencia si llega a cero.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AD7",
+      "nombre": "Contador de duración de dieciséis bits",
+      "comentario": "DEC desde cero produce FFFFh; no se ha sustituido por un contador saturado.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7ADD",
+      "nombre": "Lectura de duración de nota",
+      "comentario": "Una duración cero termina y apaga; las demás recargan el contador y continúan con el divisor.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AE2",
+      "nombre": "Final de secuencia del altavoz",
+      "comentario": "Limpia actividad y referencia, y apaga la salida preservando los otros bits leídos de 61h.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AF2",
+      "nombre": "Nueva duración del altavoz",
+      "comentario": "Guarda la duración antes de programar el temporizador.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AF5",
+      "nombre": "Programación del temporizador",
+      "comentario": "Escribe B6h en 43h y los dos bytes del divisor en 42h. El C++ conserva la traza mediante servicios de puerto.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7AFF",
+      "nombre": "Referencia de la nota siguiente",
+      "comentario": "Guarda SI después de leer duración y divisor, cuatro bytes por nota.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:7B03",
+      "nombre": "Activación de la salida del altavoz",
+      "comentario": "Lee 61h y activa los dos bits bajos, conservando los restantes.",
+      "traslado": "motor/sonido/altavoz.cpp"
+    },
+    {
+      "direccion": "0000:83DE",
+      "nombre": "Recorrido de secuencias de animación",
+      "comentario": "Selecciona los datos del juego y recorre 70 registros. El traslado distingue órdenes ejecutadas y operaciones externas pendientes.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:83EA",
+      "nombre": "Secuencias de un registro no nulo",
+      "comentario": "Procesa imagen, X e Y. Los estados distintos de cero participan, incluidos los que tienen el bit 02h activo.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:83FC",
+      "nombre": "Contador de imagen de un byte",
+      "comentario": "OR BX,BX ha despejado CF. DEC desde cero produce FFh; no se interpreta hasta llegar a cero.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:840A",
+      "nombre": "Lectura de la secuencia de imagen",
+      "comentario": "Usa el índice anterior al incremento y envuelve el índice a ocho bits.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:841F",
+      "nombre": "Referencia encadenada de secuencia",
+      "comentario": "Suma el índice a BX, lee una palabra de referencia y reinicia el índice.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8434",
+      "nombre": "Desactivación desde una secuencia",
+      "comentario": "Limpia el estado y las tres referencias antes de saltar al siguiente registro.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:846D",
+      "nombre": "Cambio de intervalo de imagen",
+      "comentario": "Consume un byte, lo guarda en intervalo y contador, y continúa leyendo órdenes.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:848A",
+      "nombre": "Espera aleatoria compartida",
+      "comentario": "Calcula una espera y la copia a los tres contadores; omite el resto del registro.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:84E9",
+      "nombre": "Operación de sonido pendiente",
+      "comentario": "Consume un argumento y llama a 5288. Sin servicio, el C++ señala sonido pendiente antes de consumir el argumento. Un servicio que termine permite continuar. Los casos de frontera sin servicio paran aquí.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8515",
+      "nombre": "Selección de modelo desde secuencia",
+      "comentario": "FFh y FEh seleccionan recursos residentes. Otros valores consultan la caché DS:9974.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8574",
+      "nombre": "Frontera de carga DOS pendiente",
+      "comentario": "Con el nuevo modelo ya escrito en DS:9974, prepara apertura, lectura y cierre DOS. Sin servicio, el C++ se detiene antes de esa carga; con servicio solicita 64.000 bytes y continúa al terminar.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:85AC",
+      "nombre": "Imagen aleatoria distinta de la actual",
+      "comentario": "Repite la elección si el byte coincide con la imagen actual; conserva el retroceso del índice durante los intentos.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:85DE",
+      "nombre": "Imagen y dimensiones",
+      "comentario": "Escribe imagen, utiliza sus siete bits bajos y consulta ancho y alto del recurso. El C++ usa un lector explícito.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8600",
+      "nombre": "Canal de desplazamiento horizontal",
+      "comentario": "Temporizador de byte y órdenes comunes; los desplazamientos ordinarios se extienden con signo.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8629",
+      "nombre": "Ampliación de magnitud horizontal",
+      "comentario": "El byte 80h suma cien a DS:9972 y continúa; la magnitud se aplica con el signo del desplazamiento.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:86DC",
+      "nombre": "Canal de desplazamiento vertical",
+      "comentario": "Tercer canal; una espera aleatoria solo modifica su propio contador y termina el registro.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:87B7",
+      "nombre": "Condición vertical peculiar",
+      "comentario": "Solo si Y es mayor o igual a 300 comprueba si Y más alto, envuelto a dieciséis bits, es menor o igual a menos cien. No se ha normalizado esta condición.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:87D1",
+      "nombre": "Inicio de retirada de registros",
+      "comentario": "Omite la cantidad reservada DS:3588 y recorre las posiciones restantes.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:87E4",
+      "nombre": "Retirada fuera de límites",
+      "comentario": "Comprueba X, X más ancho, Y e Y más alto; al retirar limpia las tres referencias.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8820",
+      "nombre": "Retorno del avance de secuencias",
+      "comentario": "Restaura DS y retorna después de las dos pasadas.",
+      "traslado": "motor/entidades/secuencias.cpp"
+    },
+    {
+      "direccion": "0000:8822",
+      "nombre": "Reinicio del estado de acción",
+      "comentario": "Desactiva campos y reinicia fases de tres secuencias; conserva los identificadores de secuencia.",
+      "traslado": "motor/acciones/iniciar_accion.cpp"
+    },
+    {
+      "direccion": "0000:886B",
+      "nombre": "Entrada común de una acción",
+      "comentario": "Reinicia estado, planifica si DS:0AD7 no es cero, prepara el cursor y retorna con acarreo activo. El traslado incluye sus dependencias numéricas.",
+      "traslado": "motor/acciones/iniciar_accion.cpp"
+    },
+    {
+      "direccion": "0000:88A0",
+      "nombre": "Retorno de acción rechazada",
+      "comentario": "Prepara el estado de cursor dos y retorna con acarreo activo; AX no se modifica.",
+      "traslado": "motor/acciones/iniciar_accion.cpp"
+    },
+    {
+      "direccion": "0000:88BC",
+      "nombre": "Consulta de identificador",
+      "comentario": "Busca en las diez palabras, incluidas las situadas después de FFFFh. El C++ devuelve true cuando el original limpia el acarreo.",
+      "traslado": "motor/acciones/lista_identificadores.cpp"
+    },
+    {
+      "direccion": "0000:88D9",
+      "nombre": "Inserción en la primera casilla libre",
+      "comentario": "Escribe AX en la primera palabra FFFFh y no elimina duplicados.",
+      "traslado": "motor/acciones/lista_identificadores.cpp"
+    },
+    {
+      "direccion": "0000:88F3",
+      "nombre": "Retirada de la primera coincidencia de una lista",
+      "comentario": "Busca AX en diez palabras desde DS:5225, desplaza las siguientes y rellena el final con FFFFh.",
+      "traslado": "motor/acciones/lista_identificadores.cpp"
+    },
+    {
+      "direccion": "0000:B740",
+      "nombre": "Preparación y ejecución de la acción de resultados",
+      "comentario": "El propietario confirmó el tramo B740–B939 en 2.048 operaciones. El nuevo C++ continúa por 886B hasta RET: la muestra pasa y la comparación amplia queda pendiente.",
+      "traslado": "motor/acciones/iniciar_accion.cpp"
+    },
+    {
+      "direccion": "0000:B78C",
+      "nombre": "Obtención del primer resultado entre 0 y 5",
+      "comentario": "Solicita un valor con divisor seis. Se guarda en DL y se escribe su representación más uno en el estado."
+    },
+    {
+      "direccion": "0000:B7D1",
+      "nombre": "Selección de coincidencias entre tres resultados",
+      "comentario": "Entrada: DL primero, DH segundo, AL tercero, todos entre cero y cinco. Empieza el segundo bloque de escrituras trasladado.",
+      "traslado": "motor/acciones/seleccionar_coincidencias.cpp"
+    },
+    {
+      "direccion": "0000:B7F2",
+      "nombre": "Tabla de seis resultados repetidos",
+      "comentario": "El valor repetido se duplica y consulta CS:B7F7. Sus seis destinos solo activan marcas de estado."
+    },
+    {
+      "direccion": "0000:B803",
+      "nombre": "Marcas para el resultado cero repetido",
+      "comentario": "Activa tres posiciones de DS. Las otras cinco ramas tienen sus propias posiciones."
+    },
+    {
+      "direccion": "0000:B857",
+      "nombre": "Tres resultados iguales",
+      "comentario": "El bit bajo del resultado selecciona las siete marcas pares o las siete impares."
+    },
+    {
+      "direccion": "0000:B8A3",
+      "nombre": "Fin del bloque aislado de coincidencias",
+      "comentario": "La comparación aislada termina aquí. El nuevo traslado integrado continúa preparando estado hasta B93A; su comparación queda pendiente.",
+      "traslado": "motor/acciones/preparar_resultados.cpp"
+    },
+    {
+      "direccion": "0000:B93A",
+      "nombre": "Límite del nuevo traslado integrado",
+      "comentario": "El bloque C++ prepara el estado hasta antes de este salto a 886B. La ejecución del destino común y su animación sigue pendiente.",
+      "traslado": "motor/acciones/preparar_resultados.cpp"
+    },
+    {
+      "direccion": "0000:DE10",
+      "nombre": "Elección de casilla de acción",
+      "comentario": "Divide DS:B60A entre 32 y utiliza el resultado para consultar DS:B60C."
+    },
+    {
+      "direccion": "0000:DE2B",
+      "nombre": "Llamada a un manejador de acción",
+      "comentario": "AX contiene el destino, BX la casilla y SI su desplazamiento de palabra. El llamador consume el acarreo y, si está activo, AX."
+    },
+    {
+      "direccion": "0000:DE2D",
+      "nombre": "Interpretación del retorno de una acción",
+      "comentario": "Sin acarreo continúa. Con acarreo finaliza; AX=8000h evita la llamada previa de restauración.",
+      "traslado": "motor/acciones/retorno_accion.cpp"
+    },
+    {
+      "direccion": "0000:DE5B",
+      "nombre": "Ruta de finalización con restauración",
+      "comentario": "Se llega con acarreo activo y AX distinto de 8000h. La comparación del contrato se detiene antes de llamar a D99F."
+    },
+    {
+      "direccion": "0000:DE5E",
+      "nombre": "Convergencia de las rutas de finalización",
+      "comentario": "Con AX=8000h se alcanza directamente. El código posterior también es común a la otra ruta después de su llamada."
+    },
+    {
+      "direccion": "0000:DE96",
+      "nombre": "Preparación de la lista inicial de acciones",
+      "comentario": "Prepara diez identificadores de cero a nueve y reconstruye la tabla. Puede sustituir después las casillas uno y dos."
+    },
+    {
+      "direccion": "0000:DF15",
+      "nombre": "Construcción de los diez destinos de acción",
+      "comentario": "Entrada: segmento de datos del juego en CS:0000, DF=0. Lee DS:B620 y escribe DS:B60C.",
+      "traslado": "motor/acciones/construir_tabla.cpp"
+    },
+    {
+      "direccion": "0000:DF28",
+      "nombre": "Lectura del siguiente identificador",
+      "comentario": "FFFFh marca el final y rellena el resto. La comparación siguiente con 17h es con signo."
+    },
+    {
+      "direccion": "0000:DF37",
+      "nombre": "Consulta a la tabla base de acciones",
+      "comentario": "El desplazamiento firmado equivale a B686h. La aritmética del índice y de la dirección envuelve a 16 bits."
+    },
+    {
+      "direccion": "0000:DF40",
+      "nombre": "Manejador alternativo",
+      "comentario": "Los identificadores con signo iguales o superiores a 23 copian el valor actual de DS:B636."
+    },
+    {
+      "direccion": "0000:DF48",
+      "nombre": "Relleno de las casillas restantes",
+      "comentario": "Escribe DE96h hasta agotar CX, sin leer los identificadores posteriores."
+    },
+    {
+      "direccion": "0000:DF4E",
+      "nombre": "Fin del bloque de construcción trasladado",
+      "comentario": "La comparación de memoria termina antes de este punto. El código posterior dibuja la selección y queda pendiente."
+    }
   ],
   "tablas": [
     {
@@ -157,14 +793,20 @@
       "derivada_en_memoria": true,
       "evidencia": "DF15-DF4D transforma diez identificadores de DS:B620: valores con signo menores que 23 consultan DS:B686; los demás usan DS:B636; FFFF rellena el resto con DE96. La lista es una unión de candidatos observados, no una tabla directa ni una prueba de exhaustividad en ejecución.",
       "destinos_adicionales": [
-        {"destino": "0000:DE96", "evidencia": "DF48 y escrituras DEF1/DEF4; respaldo asignado en DFF3."},
-        {"destino": "0000:563A", "evidencia": "E007 asigna este valor a DS:B636."},
-        {"destino": "0000:32DE", "evidencia": "E030 asigna este valor a DS:B636."},
-        {"destino": "0000:3B53", "evidencia": "E0A1 y E0E0 asignan este valor a DS:B636."},
-        {"destino": "0000:384A", "evidencia": "E0F4 asigna este valor a DS:B636."},
-        {"destino": "0000:2FCA", "evidencia": "E11D asigna este valor a DS:B636."},
-        {"destino": "0000:3143", "evidencia": "E155 asigna este valor a DS:B636."},
-        {"destino": "0000:E0C0", "evidencia": "E0B8 sustituye directamente la primera entrada DS:B60C."}
+        {
+          "destino": "0000:DE96",
+          "evidencia": "DF48 y escrituras DEF1/DEF4; respaldo asignado en DFF3."
+        },
+        { "destino": "0000:563A", "evidencia": "E007 asigna este valor a DS:B636." },
+        { "destino": "0000:32DE", "evidencia": "E030 asigna este valor a DS:B636." },
+        { "destino": "0000:3B53", "evidencia": "E0A1 y E0E0 asignan este valor a DS:B636." },
+        { "destino": "0000:384A", "evidencia": "E0F4 asigna este valor a DS:B636." },
+        { "destino": "0000:2FCA", "evidencia": "E11D asigna este valor a DS:B636." },
+        { "destino": "0000:3143", "evidencia": "E155 asigna este valor a DS:B636." },
+        {
+          "destino": "0000:E0C0",
+          "evidencia": "E0B8 sustituye directamente la primera entrada DS:B60C."
+        }
       ]
     },
     {

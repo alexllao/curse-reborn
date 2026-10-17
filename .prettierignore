@@ -1,0 +1,9 @@
+datos_originales/
+recursos_extraidos/
+trabajo/
+node_modules/
+compilacion/
+build/
+cmake-build-*/
+licencias/
+pnpm-lock.yaml

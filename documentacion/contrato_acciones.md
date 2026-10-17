@@ -23,11 +23,11 @@ No se declara que BX, CX, DX, SI o DI se conserven en todos los manejadores. El 
 
 El bloque `0000:DE2D`–`0000:DE59` decide la continuación utilizando el acarreo y AX:
 
-| Estado después del manejador | Primer destino observado | Decisión C++ |
-| --- | --- | --- |
-| Acarreo despejado | `DE2F` | Continuar la selección y su presentación. |
-| Acarreo activo, AX distinto de `8000h` | `DE5B` | Finalizar pasando por la llamada de restauración gráfica `D99F`. |
-| Acarreo activo, AX igual a `8000h` | `DE5E` | Finalizar saltándose esa llamada previa. |
+| Estado después del manejador           | Primer destino observado | Decisión C++                                                     |
+| -------------------------------------- | ------------------------ | ---------------------------------------------------------------- |
+| Acarreo despejado                      | `DE2F`                   | Continuar la selección y su presentación.                        |
+| Acarreo activo, AX distinto de `8000h` | `DE5B`                   | Finalizar pasando por la llamada de restauración gráfica `D99F`. |
+| Acarreo activo, AX igual a `8000h`     | `DE5E`                   | Finalizar saltándose esa llamada previa.                         |
 
 `DE5E` es también la convergencia después de la llamada de `DE5B`; las dos rutas comparten código posterior. El traslado [retorno_accion.cpp](../motor/acciones/retorno_accion.cpp) devuelve una decisión tipada. **No ejecuta** todavía la restauración ni la presentación.
 
@@ -61,12 +61,12 @@ pnpm comparar:acciones
 
 El comando compila los tres bloques C++ y compara:
 
-| Bloque | Casos |
-| --- | --- |
-| Construcción de la tabla de acciones, `DF15`–`DF4D` | 548 |
-| Selección de coincidencias, `B7D1`–`B8A2` | 432 |
-| Decisión del retorno, `DE2D`–`DE59` | 140 |
-| **Total** | **1.120** |
+| Bloque                                              | Casos     |
+| --------------------------------------------------- | --------- |
+| Construcción de la tabla de acciones, `DF15`–`DF4D` | 548       |
+| Selección de coincidencias, `B7D1`–`B8A2`           | 432       |
+| Decisión del retorno, `DE2D`–`DE59`                 | 140       |
+| **Total**                                           | **1.120** |
 
 El informe local conserva la huella del ejecutable y de la biblioteca compilada. Estas comprobaciones acotan bloques concretos; no validan una partida, la generación aleatoria, todos los registros de la CPU ni la integración con SDL.
 

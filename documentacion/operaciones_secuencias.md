@@ -10,12 +10,12 @@ La entrada original recibe SI como registro de entidad y AL como identificador. 
 
 `DS:0AD4` selecciona cinco modalidades observadas. La modalidad uno se ha identificado como altavoz del PC siguiendo las rutinas inferiores. Los otros dispositivos todavía deben estudiarse.
 
-| Modalidad | Código de selección | Comportamiento antes del dispositivo |
-| --- | --- | --- |
-| `0`, `2` | `52BD` | Retorna sin emitir una orden. |
-| `1` | `52BF`–`5305` | Selecciona un registro de tres bytes, filtra referencias nulas y prioridades, y entrega una secuencia a `7A46`. El identificador `FFh` no emite orden. |
-| `3` | `5307`–`5374` | Selecciona un registro de cinco bytes, consulta un recurso de muestras y entrega parámetros a `7FB3`. Un recurso de escena nulo o una prioridad insuficiente puede omitir la orden. `FFh` tampoco emite orden. |
-| `4` | `5376`–`53B2` | Selecciona un byte, omite el valor `FFh` o lo copia a `DS:92EC` y entrega `DS:92E9` a `7D6A`. El identificador de entrada `FFh` entrega directamente `DS:8C90`. |
+| Modalidad | Código de selección | Comportamiento antes del dispositivo                                                                                                                                                                           |
+| --------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`, `2`  | `52BD`              | Retorna sin emitir una orden.                                                                                                                                                                                  |
+| `1`       | `52BF`–`5305`       | Selecciona un registro de tres bytes, filtra referencias nulas y prioridades, y entrega una secuencia a `7A46`. El identificador `FFh` no emite orden.                                                         |
+| `3`       | `5307`–`5374`       | Selecciona un registro de cinco bytes, consulta un recurso de muestras y entrega parámetros a `7FB3`. Un recurso de escena nulo o una prioridad insuficiente puede omitir la orden. `FFh` tampoco emite orden. |
+| `4`       | `5376`–`53B2`       | Selecciona un byte, omite el valor `FFh` o lo copia a `DS:92EC` y entrega `DS:92E9` a `7D6A`. El identificador de entrada `FFh` entrega directamente `DS:8C90`.                                                |
 
 Los identificadores inferiores a quince usan tablas generales. Los demás consultan el grupo de la escena mediante `DS:9048 + byte(DS:8082)`, eligen una tabla de referencias y restan quince al identificador. Se conservan las diferencias entre las tres modalidades.
 
@@ -27,9 +27,9 @@ En la modalidad tres, el registro aporta prioridad, canal, cantidad que restar y
 
 [RecursosSecuencias](../motor/entidades/secuencias.hpp) incorpora dos funciones opcionales, con el mismo contexto que el lector de dimensiones:
 
-| Servicio | Entrada y contrato |
-| --- | --- |
-| `sonido` | Recibe datos, posición de entidad e identificador. Devuelve `true` únicamente cuando se ha atendido la operación y puede continuar la secuencia. |
+| Servicio        | Entrada y contrato                                                                                                                                                                |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sonido`        | Recibe datos, posición de entidad e identificador. Devuelve `true` únicamente cuando se ha atendido la operación y puede continuar la secuencia.                                  |
 | `cargar_modelo` | Recibe datos, referencia del nombre y capacidad 64.000. El servicio coloca el contenido en el recurso de modelos que administra su contexto. Devuelve `true` cuando ha terminado. |
 
 Sin función, o si devuelve `false`, se conserva la parada pendiente. Al atender sonido, se consume el argumento y continúa la interpretación. Un servicio que seleccione una orden de dispositivo debe ejecutarla o conservarla en una cola que garantice su posterior tratamiento antes de dar la operación por atendida. El puente de comparación solo acepta sonidos que el selector original omite, por modalidad desactivada o por quedar fuera de pantalla.
@@ -46,12 +46,12 @@ El [reproductor del altavoz](altavoz_pc.md) amplía la modalidad uno con arranqu
 pnpm comparar:operaciones
 ```
 
-| Grupo | Comparación amplia confirmada | Muestra comprobada |
-| --- | ---: | ---: |
-| Cinco modalidades, tablas, prioridades y omisiones | 600 | 120 |
-| Fronteras de visibilidad | 45 | 45 |
-| Secuencias con sonido sin emisión y servicio de modelos | 640 | 80 |
-| **Total** | **1.285** | **245** |
+| Grupo                                                   | Comparación amplia confirmada | Muestra comprobada |
+| ------------------------------------------------------- | ----------------------------: | -----------------: |
+| Cinco modalidades, tablas, prioridades y omisiones      |                           600 |                120 |
+| Fronteras de visibilidad                                |                            45 |                 45 |
+| Secuencias con sonido sin emisión y servicio de modelos |                           640 |                 80 |
+| **Total**                                               |                     **1.285** |            **245** |
 
 El selector original se ejecuta hasta su retorno o hasta la entrada a `7A46`, `7FB3` o `7D6A`. Se comparan DS completo, las prioridades conservadas en CS, la orden y la profundidad de la pila en esa frontera. Las rutinas de dispositivo no se ejecutan ni se sustituyen para declarar que existe audio.
 

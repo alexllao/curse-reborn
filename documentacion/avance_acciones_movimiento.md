@@ -6,18 +6,18 @@ Se ha compilado y enlazado la biblioteca. La muestra de **421 casos** coincide c
 
 ## Código trasladado
 
-| Original | C++ | Comportamiento |
-| --- | --- | --- |
-| `88BC`–`88D8` | `acciones/lista_identificadores.cpp` | Consulta un identificador en diez palabras de `DS:5225`. |
-| `88D9`–`88F2` | Mismo archivo | Inserta en la primera palabra `FFFFh`, permitiendo duplicados. |
-| `88F3`–`891D` | Mismo archivo | Retira la primera coincidencia, desplaza las siguientes y termina con `FFFFh`. |
-| `0BF8`–`0F5E` | `movimiento/direccion.cpp` | Selecciona secuencias de dirección según cuatro bits, estado previo y modalidad. |
-| `0F5F`–`10EB` | `movimiento/planificar.cpp` | Calcula deltas, pasos e incrementos de movimiento hacia un nodo. |
-| `096D`–`0999` | `movimiento/avanzar.cpp` | Aplica un paso con acarreo y decide entre las continuaciones `099A` y `0A59`. |
-| `8822`–`886A` | `acciones/iniciar_accion.cpp` | Reinicia campos de control y fases. |
-| `88A0`–`88BB` | Mismo archivo | Prepara el estado de rechazo; el original retorna con acarreo activo. |
-| `886B`–`889F` | Mismo archivo | Reinicia, planifica si hay una acción pendiente, prepara estado del cursor y retorna. |
-| `B740` hasta su `RET` común | Mismo archivo | Une preparación, generador, coincidencias e inicio común de la acción. |
+| Original                    | C++                                  | Comportamiento                                                                        |
+| --------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------- |
+| `88BC`–`88D8`               | `acciones/lista_identificadores.cpp` | Consulta un identificador en diez palabras de `DS:5225`.                              |
+| `88D9`–`88F2`               | Mismo archivo                        | Inserta en la primera palabra `FFFFh`, permitiendo duplicados.                        |
+| `88F3`–`891D`               | Mismo archivo                        | Retira la primera coincidencia, desplaza las siguientes y termina con `FFFFh`.        |
+| `0BF8`–`0F5E`               | `movimiento/direccion.cpp`           | Selecciona secuencias de dirección según cuatro bits, estado previo y modalidad.      |
+| `0F5F`–`10EB`               | `movimiento/planificar.cpp`          | Calcula deltas, pasos e incrementos de movimiento hacia un nodo.                      |
+| `096D`–`0999`               | `movimiento/avanzar.cpp`             | Aplica un paso con acarreo y decide entre las continuaciones `099A` y `0A59`.         |
+| `8822`–`886A`               | `acciones/iniciar_accion.cpp`        | Reinicia campos de control y fases.                                                   |
+| `88A0`–`88BB`               | Mismo archivo                        | Prepara el estado de rechazo; el original retorna con acarreo activo.                 |
+| `886B`–`889F`               | Mismo archivo                        | Reinicia, planifica si hay una acción pendiente, prepara estado del cursor y retorna. |
+| `B740` hasta su `RET` común | Mismo archivo                        | Une preparación, generador, coincidencias e inicio común de la acción.                |
 
 Las rutas de C++ de la tabla son relativas a `motor/`. Las funciones trabajan con el estado y un segmento de datos explícitos; no realizan llamadas DOS ni acceden al hardware.
 
@@ -46,15 +46,15 @@ Los bloques que actualizan memoria no prometen reproducir todos los registros o 
 pnpm comparar:avance
 ```
 
-| Grupo | Casos preparados |
-| --- | ---: |
-| Listas | 210 |
-| Direcciones | 6.240 |
-| Planificación | 2.048 |
-| Avance de pasos | 1.024 |
-| Reinicio, rechazo e inicio común | 384 |
-| Acción completa, con semillas persistentes | 1.024 |
-| **Total** | **10.930** |
+| Grupo                                      | Casos preparados |
+| ------------------------------------------ | ---------------: |
+| Listas                                     |              210 |
+| Direcciones                                |            6.240 |
+| Planificación                              |            2.048 |
+| Avance de pasos                            |            1.024 |
+| Reinicio, rechazo e inicio común           |              384 |
+| Acción completa, con semillas persistentes |            1.024 |
+| **Total**                                  |       **10.930** |
 
 La muestra ejecutada con `pnpm comparar:avance --muestra` contiene 421 casos. Su informe se escribe en `trabajo/comparacion_avance/muestra.json`; el informe de la comparación completa se guarda por separado en `resultado.json`, para evitar presentar una muestra como validación amplia.
 

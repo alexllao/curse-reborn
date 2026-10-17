@@ -6,16 +6,15 @@ namespace {
 using Palabra = unsigned short;
 static_assert(static_cast<Palabra>(-1) == 0xffff, "Se necesitan palabras de 16 bits.");
 
-void rotar_con_acarreo(Palabra& valor, bool& acarreo) {
+void rotar_con_acarreo(Palabra &valor, bool &acarreo) {
   const bool siguiente = (valor & 0x8000) != 0;
   valor = static_cast<Palabra>((valor << 1) | (acarreo ? 1 : 0));
   acarreo = siguiente;
 }
 
-}
+} // namespace
 
-bool generar_aleatorio(EstadoAleatorio& estado, unsigned short limite,
-                      unsigned short& resultado) {
+bool generar_aleatorio(EstadoAleatorio &estado, unsigned short limite, unsigned short &resultado) {
   if (limite == 0) {
     return false;
   }
@@ -40,4 +39,4 @@ bool generar_aleatorio(EstadoAleatorio& estado, unsigned short limite,
   return true;
 }
 
-}
+} // namespace motor

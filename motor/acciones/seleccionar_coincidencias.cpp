@@ -3,14 +3,10 @@
 namespace motor {
 namespace {
 
-void marcar_resultado(unsigned char* datos, unsigned char resultado) {
+void marcar_resultado(unsigned char *datos, unsigned char resultado) {
   constexpr unsigned short posiciones[6][3] = {
-    {0x4b50, 0x4b88, 0x4bd2},
-    {0x4b3e, 0x4b76, 0},
-    {0x4b2c, 0, 0},
-    {0x4b59, 0x4b91, 0x4bdb},
-    {0x4b47, 0x4b7f, 0x4bc9},
-    {0x4b35, 0x4b6d, 0},
+      {0x4b50, 0x4b88, 0x4bd2}, {0x4b3e, 0x4b76, 0},      {0x4b2c, 0, 0},
+      {0x4b59, 0x4b91, 0x4bdb}, {0x4b47, 0x4b7f, 0x4bc9}, {0x4b35, 0x4b6d, 0},
   };
   for (auto posicion : posiciones[resultado]) {
     if (posicion != 0) {
@@ -19,10 +15,10 @@ void marcar_resultado(unsigned char* datos, unsigned char resultado) {
   }
 }
 
-}
+} // namespace
 
-bool seleccionar_coincidencias(unsigned char* datos, unsigned char primero,
-                              unsigned char segundo, unsigned char tercero) {
+bool seleccionar_coincidencias(unsigned char *datos, unsigned char primero, unsigned char segundo,
+                               unsigned char tercero) {
   if (primero >= 6 || segundo >= 6 || tercero >= 6) {
     return false;
   }
@@ -40,4 +36,4 @@ bool seleccionar_coincidencias(unsigned char* datos, unsigned char primero,
   return true;
 }
 
-}
+} // namespace motor

@@ -12,8 +12,8 @@ struct EstadoSonido {
 };
 
 struct LecturaSonido {
-  void* contexto;
-  bool (*palabra)(void*, unsigned short recurso, unsigned short posicion, unsigned short& valor);
+  void *contexto;
+  bool (*palabra)(void *, unsigned short recurso, unsigned short posicion, unsigned short &valor);
 };
 
 // La orden describe la entrada a la rutina de dispositivo, sin ejecutarla.
@@ -27,7 +27,8 @@ struct OrdenSonido {
 };
 
 // 5288–53B2, hasta RET o entrada a 7A46/7FB3/7D6A.
-OrdenSonido seleccionar_sonido(unsigned char* datos, EstadoSonido& estado,
-    const LecturaSonido& lectura, unsigned short entidad, unsigned char identificador);
+OrdenSonido seleccionar_sonido(unsigned char *datos, EstadoSonido &estado,
+                               const LecturaSonido &lectura, unsigned short entidad,
+                               unsigned char identificador);
 
-}
+} // namespace motor

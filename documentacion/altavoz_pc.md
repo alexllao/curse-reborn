@@ -6,12 +6,12 @@ Se han compilado los bloques con avisos tratados como errores. Una muestra de **
 
 ## Tramos trasladados
 
-| Original | Función | Comportamiento |
-| --- | --- | --- |
-| `7A46`–`7A60` | `iniciar_altavoz` | Guarda referencia en `DS:9920`, contador uno en `9922` y actividad uno en `9924`. |
-| `7A61`–`7A76` | `detener_altavoz` | Limpia la referencia, lee `61h` y escribe el valor con máscara `FCh`. |
-| `7AC6`–`7B0C` | `avanzar_altavoz` | Reduce el contador; al agotarlo lee duración, divisor y programa la salida, o termina la secuencia. |
-| Selector `5288` y llamada `7A46` | `atender_orden_altavoz` junto al selector | Atiende una orden nula o una secuencia del altavoz; otras modalidades continúan pendientes. |
+| Original                         | Función                                   | Comportamiento                                                                                      |
+| -------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `7A46`–`7A60`                    | `iniciar_altavoz`                         | Guarda referencia en `DS:9920`, contador uno en `9922` y actividad uno en `9924`.                   |
+| `7A61`–`7A76`                    | `detener_altavoz`                         | Limpia la referencia, lee `61h` y escribe el valor con máscara `FCh`.                               |
+| `7AC6`–`7B0C`                    | `avanzar_altavoz`                         | Reduce el contador; al agotarlo lee duración, divisor y programa la salida, o termina la secuencia. |
+| Selector `5288` y llamada `7A46` | `atender_orden_altavoz` junto al selector | Atiende una orden nula o una secuencia del altavoz; otras modalidades continúan pendientes.         |
 
 La parada explícita **conserva el contador y el indicador de actividad**. El final de secuencia sí limpia la actividad. El traslado mantiene esa diferencia, aunque pueda parecer una reinicialización incompleta.
 
@@ -45,16 +45,16 @@ El llamador debe aportar un segmento de 65.536 bytes y servicios de puerto váli
 pnpm comparar:altavoz
 ```
 
-| Grupo | Comparación amplia confirmada | Muestra comprobada |
-| --- | ---: | ---: |
-| Arranque | 80 | 10 |
-| Parada y 256 valores del puerto de control | 512 | 16 |
-| Temporizador, duración, divisor y envolvimiento | 1.152 | 144 |
-| Arranque de secuencias persistentes | 64 | 4 |
-| Pasos consecutivos con paradas intercaladas | 1.024 | 64 |
-| Selector conectado al reproductor | 240 | 36 |
-| Animación conectada al selector y reproductor | 240 | 36 |
-| **Total** | **3.312** | **310** |
+| Grupo                                           | Comparación amplia confirmada | Muestra comprobada |
+| ----------------------------------------------- | ----------------------------: | -----------------: |
+| Arranque                                        |                            80 |                 10 |
+| Parada y 256 valores del puerto de control      |                           512 |                 16 |
+| Temporizador, duración, divisor y envolvimiento |                         1.152 |                144 |
+| Arranque de secuencias persistentes             |                            64 |                  4 |
+| Pasos consecutivos con paradas intercaladas     |                         1.024 |                 64 |
+| Selector conectado al reproductor               |                           240 |                 36 |
+| Animación conectada al selector y reproductor   |                           240 |                 36 |
+| **Total**                                       |                     **3.312** |            **310** |
 
 Unicorn ejecuta las instrucciones originales. Sus entradas y salidas de puerto se registran y reciben el mismo valor inicial de control que las funciones nativas. Se compara la traza completa en orden, el control final, DS completo, la prioridad guardada en CS, la pila y SI donde se declara conservado. No se compara una grabación de audio ni la temporización del hardware.
 

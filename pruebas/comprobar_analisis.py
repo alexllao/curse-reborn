@@ -13,9 +13,25 @@ def crear_mz(imagen, reubicaciones=()):
     cabecera = max(32, ((28 + len(reubicaciones) * 4 + 15) // 16) * 16)
     tamano = cabecera + len(imagen)
     contenido = bytearray(cabecera) + imagen
-    struct.pack_into('<14H', contenido, 0, 0x5A4D, tamano % 512,
-                     (tamano + 511) // 512, len(reubicaciones), cabecera // 16,
-                     0, 65535, 0, 0, 0, 0, 0, 28, 0)
+    struct.pack_into(
+        '<14H',
+        contenido,
+        0,
+        0x5A4D,
+        tamano % 512,
+        (tamano + 511) // 512,
+        len(reubicaciones),
+        cabecera // 16,
+        0,
+        65535,
+        0,
+        0,
+        0,
+        0,
+        0,
+        28,
+        0,
+    )
     for indice, (desplazamiento, segmento) in enumerate(reubicaciones):
         struct.pack_into('<HH', contenido, 28 + indice * 4, desplazamiento, segmento)
     return contenido
@@ -102,9 +118,16 @@ class ComprobarMapa(unittest.TestCase):
         self.mapa = {
             'sha256': 'huella-de-prueba',
             'raices': ['0000:0000'],
-            'tablas': [{'nombre': 'Prueba', 'origen': '0000:0000',
-                        'ubicacion': '0000:0004', 'cantidad': 2,
-                        'segmento_destino': 0, 'omitir_cero': False}],
+            'tablas': [
+                {
+                    'nombre': 'Prueba',
+                    'origen': '0000:0000',
+                    'ubicacion': '0000:0004',
+                    'cantidad': 2,
+                    'segmento_destino': 0,
+                    'omitir_cero': False,
+                }
+            ],
         }
 
     def test_resuelve_salto_sin_interpretar_la_tabla_como_codigo(self):
@@ -147,14 +170,16 @@ class ComprobarMapa(unittest.TestCase):
     def test_destino_adicional_aparece_en_el_recorrido(self):
         self.mapa['tablas'][0]['cantidad'] = 1
         self.mapa['tablas'][0]['destinos_adicionales'] = [
-            {'destino': '0000:000A', 'evidencia': 'Escritura de prueba.'}]
+            {'destino': '0000:000A', 'evidencia': 'Escritura de prueba.'}
+        ]
         raices, _, resoluciones = leer_mapa(self.mapa, self.cabecera, self.imagen)
         flujo = seguir_flujo(self.imagen, raices, resoluciones=resoluciones)
         self.assertEqual([i['desplazamiento'] for i in flujo['instrucciones']], [0, 8, 10])
 
     def test_rechaza_destino_adicional_fuera_de_la_imagen(self):
         self.mapa['tablas'][0]['destinos_adicionales'] = [
-            {'destino': '0000:FFFF', 'evidencia': 'Escritura de prueba.'}]
+            {'destino': '0000:FFFF', 'evidencia': 'Escritura de prueba.'}
+        ]
         with self.assertRaises(ErrorAnalisis):
             leer_mapa(self.mapa, self.cabecera, self.imagen)
 
@@ -162,9 +187,12 @@ class ComprobarMapa(unittest.TestCase):
 class ComprobarComentarios(unittest.TestCase):
     def setUp(self):
         self.flujo = seguir_flujo(b'\xc3', [(0, 0)])
-        self.anotacion = {'direccion': '0000:0000', 'nombre': 'Retorno de prueba',
-                          'comentario': 'Conserva el comentario al regenerar.',
-                          'traslado': 'motor/ejemplo.cpp'}
+        self.anotacion = {
+            'direccion': '0000:0000',
+            'nombre': 'Retorno de prueba',
+            'comentario': 'Conserva el comentario al regenerar.',
+            'traslado': 'motor/ejemplo.cpp',
+        }
 
     def test_conserva_comentarios_referencias_y_bytes(self):
         listado = crear_listado({'bytes_cabecera': 32}, self.flujo, [self.anotacion])

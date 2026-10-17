@@ -1,0 +1,11 @@
+target-version = "py39"
+line-length = 100
+extend-exclude = ["datos_originales", "recursos_extraidos", "trabajo", "licencias", "node_modules", "build", "compilacion"]
+
+[lint]
+select = ["E4", "E7", "E9", "F"]
+# Los comparadores cargan el analizador local después de preparar su ruta de importación.
+ignore = ["E402"]
+
+[format]
+quote-style = "single"

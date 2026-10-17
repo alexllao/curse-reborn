@@ -26,8 +26,12 @@ class Comparacion:
         self.raiz = raiz
         self.muestra = muestra
         self.biblioteca = biblioteca
-        self.cabecera, imagen = leer_mz((raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes())
-        mapa = json.loads((raiz / 'documentacion' / 'mapa_ejecutable.json').read_text(encoding='utf-8'))
+        self.cabecera, imagen = leer_mz(
+            (raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes()
+        )
+        mapa = json.loads(
+            (raiz / 'documentacion' / 'mapa_ejecutable.json').read_text(encoding='utf-8')
+        )
         if self.cabecera['sha256'] != mapa['sha256']:
             raise ErrorAnalisis('El ejecutable no corresponde a la copia trasladada.')
         self.maquina = unicorn.Uc(unicorn.UC_ARCH_X86, unicorn.UC_MODE_16)
@@ -35,7 +39,7 @@ class Comparacion:
         self.maquina.mem_write(0, imagen)
         self.segmento = 0x0F31 * 16
         self.maquina.mem_write(0, struct.pack('<H', 0x0F31))
-        self.base = imagen[self.segmento:self.segmento + 65536].ljust(65536, b'\0')
+        self.base = imagen[self.segmento : self.segmento + 65536].ljust(65536, b'\0')
         self.semilla_original = struct.unpack_from('<4H', imagen, 0x78DE)
         self.azar = random.Random(0x886B)
         self.alternativa = self.azar.randbytes(65536)
@@ -80,15 +84,35 @@ class Comparacion:
         escribir(datos, nodo + 2, x + 15 + dx)
         escribir(datos, nodo + 4, y + 47 + dy)
 
-    def caso(self, grupo, datos, entrada, funcion, registros=None, semilla=None, verificar_ax=False,
-             verificar_cf=None, lista=False, conservar_si=False, destinos=None):
+    def caso(
+        self,
+        grupo,
+        datos,
+        entrada,
+        funcion,
+        registros=None,
+        semilla=None,
+        verificar_ax=False,
+        verificar_cf=None,
+        lista=False,
+        conservar_si=False,
+        destinos=None,
+    ):
         r = self.r
-        contexto = {r.UC_X86_REG_CS: 0, r.UC_X86_REG_DS: 0x0F31, r.UC_X86_REG_ES: 0x4567,
-                    r.UC_X86_REG_SS: 0x8000, r.UC_X86_REG_SP: 0xFF00,
-                    r.UC_X86_REG_AX: 0x5555, r.UC_X86_REG_BX: 0x1234,
-                    r.UC_X86_REG_CX: 0x5678, r.UC_X86_REG_DX: 0x1357,
-                    r.UC_X86_REG_SI: 0x6000, r.UC_X86_REG_EFLAGS: 2,
-                    **(registros or {})}
+        contexto = {
+            r.UC_X86_REG_CS: 0,
+            r.UC_X86_REG_DS: 0x0F31,
+            r.UC_X86_REG_ES: 0x4567,
+            r.UC_X86_REG_SS: 0x8000,
+            r.UC_X86_REG_SP: 0xFF00,
+            r.UC_X86_REG_AX: 0x5555,
+            r.UC_X86_REG_BX: 0x1234,
+            r.UC_X86_REG_CX: 0x5678,
+            r.UC_X86_REG_DX: 0x1357,
+            r.UC_X86_REG_SI: 0x6000,
+            r.UC_X86_REG_EFLAGS: 2,
+            **(registros or {}),
+        }
         self.maquina.mem_write(self.segmento, bytes(datos))
         if semilla is not None:
             self.maquina.mem_write(0x78DE, struct.pack('<4H', *semilla))
@@ -96,10 +120,12 @@ class Comparacion:
             self.maquina.reg_write(registro, valor)
         self.maquina.mem_write(0x8FF00, struct.pack('<H', 0x7000))
         observados = []
+
         def detener(emulador, posicion, tamano, contexto):
             if posicion in destinos:
                 observados.append(posicion)
                 emulador.emu_stop()
+
         gancho = self.maquina.hook_add(self.unicorn.UC_HOOK_CODE, detener) if destinos else None
         try:
             self.maquina.emu_start(entrada, 0x7000, timeout=1_000_000, count=20000)
@@ -107,9 +133,11 @@ class Comparacion:
             if gancho is not None:
                 self.maquina.hook_del(gancho)
         llegada = observados[0] if len(observados) == 1 else None
-        if ((destinos and llegada is None) or
-            (not destinos and self.maquina.reg_read(r.UC_X86_REG_IP) != 0x7000) or
-            self.maquina.reg_read(r.UC_X86_REG_SP) != (0xFF00 if destinos else 0xFF02)):
+        if (
+            (destinos and llegada is None)
+            or (not destinos and self.maquina.reg_read(r.UC_X86_REG_IP) != 0x7000)
+            or self.maquina.reg_read(r.UC_X86_REG_SP) != (0xFF00 if destinos else 0xFF02)
+        ):
             raise ErrorAnalisis(f'{grupo}: el original no retornó con la pila equilibrada.')
         esperado_ax = self.maquina.reg_read(r.UC_X86_REG_AX)
         esperado_cf = self.maquina.reg_read(r.UC_X86_REG_EFLAGS) & 1
@@ -131,7 +159,9 @@ class Comparacion:
             if esperado_ax != contexto[r.UC_X86_REG_AX]:
                 raise ErrorAnalisis('La operación original de lista modificó AX.')
         elif resultado == 0:
-            raise ErrorAnalisis(f'{grupo}, caso {numero}: el C++ rechazó una entrada del dominio preparado.')
+            raise ErrorAnalisis(
+                f'{grupo}, caso {numero}: el C++ rechazó una entrada del dominio preparado.'
+            )
         if verificar_ax and salida_ax.value != esperado_ax:
             raise ErrorAnalisis(f'{grupo}, caso {numero}: AX diferente.')
         if verificar_cf is not None and esperado_cf != verificar_cf:
@@ -147,8 +177,7 @@ class Comparacion:
 
     def ejecutar(self):
         r, n = self.r, self.nativa
-        listas = [[0xFFFF] * 10, list(range(10)), [0xFFFF, 42, 42] + [0xFFFF] * 7,
-                  [0x8C] * 10]
+        listas = [[0xFFFF] * 10, list(range(10)), [0xFFFF, 42, 42] + [0xFFFF] * 7, [0x8C] * 10]
         for posicion in range(10):
             valores = [0x100 + i for i in range(10)]
             valores[posicion] = 0x8C
@@ -159,12 +188,25 @@ class Comparacion:
             for lista, valor in product(listas, (0, 1, 0xFFFF, 0x8C, 42)):
                 datos = self.datos(operacion)
                 struct.pack_into('<10H', datos, 0x5225, *lista)
-                self.caso('listas', datos, entrada,
+                self.caso(
+                    'listas',
+                    datos,
+                    entrada,
                     lambda m, ax, e: n.gestionar_lista(operacion, m, valor),
-                    {r.UC_X86_REG_AX: valor}, lista=True)
+                    {r.UC_X86_REG_AX: valor},
+                    lista=True,
+                )
 
-        imagenes = (0, 9, 18, 128, 255) if self.muestra else (0, 1, 8, 9, 17, 18, 26, 27, 127, 128, 136, 137, 255)
-        anteriores = (0, 0xA97) if self.muestra else (0, 0xA97, 0xA7E, 0xA8E, 0xA82, 0xAA9, 0xA86, 0xAA0, 0xA8A, 0x1234)
+        imagenes = (
+            (0, 9, 18, 128, 255)
+            if self.muestra
+            else (0, 1, 8, 9, 17, 18, 26, 27, 127, 128, 136, 137, 255)
+        )
+        anteriores = (
+            (0, 0xA97)
+            if self.muestra
+            else (0, 0xA97, 0xA7E, 0xA8E, 0xA82, 0xAA9, 0xA86, 0xAA0, 0xA8A, 0x1234)
+        )
         indices = (0, 1, 2, 4, 8, 9, 10, 15) if self.muestra else range(16)
         for indice, imagen, anterior, modo in product(indices, imagenes, anteriores, range(3)):
             datos = self.datos(indice)
@@ -173,41 +215,87 @@ class Comparacion:
             escribir(datos, 0x2C3B, anterior)
             escribir(datos, 0x2C40, (0, 0xAC2, 0xAC4)[anterior % 3])
             escribir(datos, 0x2C45, (0xAC6, 0xAC9, 0xACC, 0x7777)[anterior % 4])
-            self.caso('direcciones', datos, 0x0BF8,
-                lambda m, ax, e: n.seleccionar_direccion(m, indice), {r.UC_X86_REG_SI: indice})
+            self.caso(
+                'direcciones',
+                datos,
+                0x0BF8,
+                lambda m, ax, e: n.seleccionar_direccion(m, indice),
+                {r.UC_X86_REG_SI: indice},
+            )
 
         for numero in range(75 if self.muestra else 2048):
             datos = self.datos(numero)
             nodo = 0xFFFC if numero % 31 == 0 else 0x6000
             self.geometria(datos, numero, nodo)
-            self.caso('planificacion', datos, 0x0F5F,
+            self.caso(
+                'planificacion',
+                datos,
+                0x0F5F,
                 lambda m, ax, e: n.planificar_movimiento(m, nodo, ctypes.byref(ax)),
-                {r.UC_X86_REG_SI: nodo}, verificar_ax=True, verificar_cf=0)
+                {r.UC_X86_REG_SI: nodo},
+                verificar_ax=True,
+                verificar_cf=0,
+            )
 
         for numero in range(16 if self.muestra else 1024):
             datos = self.datos(numero)
-            escribir(datos, 0x359A, (0, 1, 2, 0xFFFF)[numero] if numero < 4 else self.azar.randrange(65536))
+            escribir(
+                datos,
+                0x359A,
+                (0, 1, 2, 0xFFFF)[numero] if numero < 4 else self.azar.randrange(65536),
+            )
             for posicion in (0x359E, 0x35A6, 0x2C2D, 0x35A8, 0x35A2, 0x35AA, 0x2C2F, 0x35AC):
-                escribir(datos, posicion, self.azar.choice((0, 1, 0xFFFF, 0x7FFF, 0x8000, self.azar.randrange(65536))))
-            self.caso('pasos', datos, 0x096D, lambda m, ax, e: n.avanzar_movimiento(m),
-                destinos={0x099A: 0, 0x0A59: 1})
+                escribir(
+                    datos,
+                    posicion,
+                    self.azar.choice((0, 1, 0xFFFF, 0x7FFF, 0x8000, self.azar.randrange(65536))),
+                )
+            self.caso(
+                'pasos',
+                datos,
+                0x096D,
+                lambda m, ax, e: n.avanzar_movimiento(m),
+                destinos={0x099A: 0, 0x0A59: 1},
+            )
 
         for numero in range(6 if self.muestra else 128):
-            for grupo, entrada in (('reinicio', 0x8822), ('rechazo', 0x88A0), ('inicio_accion', 0x886B)):
+            for grupo, entrada in (
+                ('reinicio', 0x8822),
+                ('rechazo', 0x88A0),
+                ('inicio_accion', 0x886B),
+            ):
                 datos = self.datos(numero)
                 self.geometria(datos, numero, 0x1A36)
                 escribir(datos, 0x0AD7, 0 if numero % 2 == 0 else 0xAB1E)
                 if grupo == 'reinicio':
-                    funcion = lambda m, ax, e: n.reiniciar_accion(m)
+                    # Adapta la firma común del comparador al reinicio de la acción.
+                    def funcion(m, ax, e):
+                        return n.reiniciar_accion(m)
                 elif grupo == 'rechazo':
-                    funcion = lambda m, ax, e: n.rechazar_accion(m)
+                    # Adapta la firma común del comparador al rechazo de la acción.
+                    def funcion(m, ax, e):
+                        return n.rechazar_accion(m)
                 else:
-                    funcion = lambda m, ax, e: n.iniciar_accion(m, ctypes.byref(ax))
-                self.caso(grupo, datos, entrada, funcion, verificar_ax=grupo == 'inicio_accion',
-                    verificar_cf=1 if grupo != 'reinicio' else None, conservar_si=True)
+                    # Entrega AX por referencia al inicio reconstruido de la acción.
+                    def funcion(m, ax, e):
+                        return n.iniciar_accion(m, ctypes.byref(ax))
+
+                self.caso(
+                    grupo,
+                    datos,
+                    entrada,
+                    funcion,
+                    verificar_ax=grupo == 'inicio_accion',
+                    verificar_cf=1 if grupo != 'reinicio' else None,
+                    conservar_si=True,
+                )
 
         for numero in range(3 if self.muestra else 64):
-            semilla = self.semilla_original if numero == 0 else tuple(self.azar.randrange(65536) for _ in range(4))
+            semilla = (
+                self.semilla_original
+                if numero == 0
+                else tuple(self.azar.randrange(65536) for _ in range(4))
+            )
             for patron in range(2):
                 datos = self.datos(patron)
                 self.geometria(datos, numero)
@@ -215,24 +303,42 @@ class Comparacion:
                 struct.pack_into('<10H', datos, 0x5225, 0xFFFF, 0x8C, 0x100, 0x8C, 1, 2, 3, 4, 5, 6)
                 estado = semilla
                 for paso in range(2 if self.muestra else 8):
-                    estado = self.caso('accion_completa', datos, 0xB740,
+                    estado = self.caso(
+                        'accion_completa',
+                        datos,
+                        0xB740,
                         lambda m, ax, e: n.ejecutar_accion_resultados(m, e, ctypes.byref(ax)),
-                        semilla=estado, verificar_ax=True, verificar_cf=1, conservar_si=True)
+                        semilla=estado,
+                        verificar_ax=True,
+                        verificar_cf=1,
+                        conservar_si=True,
+                    )
 
         informe = {
             'sha256_ejecutable': self.cabecera['sha256'],
             'sha256_biblioteca_comparada': hashlib.sha256(self.biblioteca.read_bytes()).hexdigest(),
-            'version_unicorn': self.unicorn.__version__, 'casos_por_grupo': self.resumen,
-            'casos_totales': sum(self.resumen.values()), 'resultado': 'coinciden',
+            'version_unicorn': self.unicorn.__version__,
+            'casos_por_grupo': self.resumen,
+            'casos_totales': sum(self.resumen.values()),
+            'resultado': 'coinciden',
             'muestra': self.muestra,
             'alcance': 'DS completo, AX y acarreo en los contratos declarados, estado aleatorio de la acción completa y equilibrio de pila original. Sin dibujo, partida completa ni divisiones inválidas.',
         }
-        salida = self.raiz / 'trabajo' / 'comparacion_avance' / ('muestra.json' if self.muestra else 'resultado.json')
+        salida = (
+            self.raiz
+            / 'trabajo'
+            / 'comparacion_avance'
+            / ('muestra.json' if self.muestra else 'resultado.json')
+        )
         salida.parent.mkdir(parents=True, exist_ok=True)
-        salida.write_text(json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        salida.write_text(
+            json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
+        )
         for grupo, cantidad in self.resumen.items():
             print(f'{grupo}: {cantidad} casos coincidentes.')
-        print(f'Total: {informe["casos_totales"]} casos. Coinciden las escrituras y los contratos comprobados.')
+        print(
+            f'Total: {informe["casos_totales"]} casos. Coinciden las escrituras y los contratos comprobados.'
+        )
         print(f'Informe local: {salida}')
 
 
@@ -244,11 +350,19 @@ def escribir(datos, posicion, valor):
 
 
 if __name__ == '__main__':
-    argumentos = argparse.ArgumentParser(description='Compara el avance conjunto de acciones y movimiento.')
+    argumentos = argparse.ArgumentParser(
+        description='Compara el avance conjunto de acciones y movimiento.'
+    )
     argumentos.add_argument('--biblioteca', type=Path, required=True)
-    argumentos.add_argument('--muestra', action='store_true', help='Ejecuta solo una muestra corta; no sustituye la comparación completa.')
+    argumentos.add_argument(
+        '--muestra',
+        action='store_true',
+        help='Ejecuta solo una muestra corta; no sustituye la comparación completa.',
+    )
     opciones = argumentos.parse_args()
     try:
-        Comparacion(Path(__file__).resolve().parents[1], opciones.biblioteca, opciones.muestra).ejecutar()
+        Comparacion(
+            Path(__file__).resolve().parents[1], opciones.biblioteca, opciones.muestra
+        ).ejecutar()
     except (OSError, ErrorAnalisis) as error:
         argumentos.exit(1, f'Error: {error}\n')

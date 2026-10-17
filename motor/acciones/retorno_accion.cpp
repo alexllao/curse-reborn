@@ -10,4 +10,4 @@ ContinuacionAccion interpretar_retorno_accion(unsigned short ax, bool acarreo) {
                       : ContinuacionAccion::finalizar_con_restauracion;
 }
 
-}
+} // namespace motor

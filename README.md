@@ -2,7 +2,7 @@
 
 **Volver a Enchantia. Recuperar el juego original. Darle una nueva vida.**
 
-Curse Reborn es un port creado por **Àlex Llaó**. Nace de un recuerdo muy concreto: *Curse of Enchantia* fue el primer juego al que jugó en un **PC 286**. Este proyecto es una forma de regresar a aquella aventura, entender cómo funcionaba y construir una base que permita disfrutarla y remasterizarla con cuidado.
+Curse Reborn es un port creado por **Àlex Llaó**. Nace de un recuerdo muy concreto: _Curse of Enchantia_ fue el primer juego al que jugó en un **PC 286**. Este proyecto es una forma de regresar a aquella aventura, entender cómo funcionaba y construir una base que permita disfrutarla y remasterizarla con cuidado.
 
 La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar su lógica a C++ con SDL**. Los recursos originales acompañarán esa reconstrucción. Sobre esa base queremos desarrollar una remasterización que conserve su identidad y abra la puerta a mejoras gráficas, sonoras y de uso.
 
@@ -43,13 +43,13 @@ El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserv
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
-| Elemento | Resultado comprobado |
-| --- | --- |
-| Archivos examinados | 196, incluidos el juego, el instalador y los datos |
-| Ejecutable principal | `CURSE.EXE`, formato DOS MZ de 16 bits, 111.606 bytes |
-| Recursos separados | Archivos `.MAP`, `.SPR`, `.BRD`, `.DAT`, `.PAL` y `.SFX`, entre otros |
-| Compresión identificada | RNC de métodos 1 y 2; método 1 trasladado y comparado con `CORE.DAT`, `MENU.DAT` y `TITLE.DAT` |
-| Pantalla de título | Imagen de 320 × 200 generada por C++ y contrastada con la descompresión original, las copias por planos y la paleta |
+| Elemento                | Resultado comprobado                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Archivos examinados     | 196, incluidos el juego, el instalador y los datos                                                                  |
+| Ejecutable principal    | `CURSE.EXE`, formato DOS MZ de 16 bits, 111.606 bytes                                                               |
+| Recursos separados      | Archivos `.MAP`, `.SPR`, `.BRD`, `.DAT`, `.PAL` y `.SFX`, entre otros                                               |
+| Compresión identificada | RNC de métodos 1 y 2; método 1 trasladado y comparado con `CORE.DAT`, `MENU.DAT` y `TITLE.DAT`                      |
+| Pantalla de título      | Imagen de 320 × 200 generada por C++ y contrastada con la descompresión original, las copias por planos y la paleta |
 
 Estas observaciones permiten comenzar el trabajo, pero todavía falta determinar la estructura de buena parte de los recursos y reconstruir las rutinas del juego. Las extensiones y los nombres de archivo son pistas; su significado debe confirmarse mediante análisis.
 
@@ -112,17 +112,19 @@ curse-reborn/
 └── datos_originales/   # Copia local del juego; solo se versiona .gitkeep
 ```
 
-| Archivo | Contenido |
-| --- | --- |
-| [README.md](README.md) | Propósito, estado y hoja de ruta |
-| [AGENTS.md](AGENTS.md) | Instrucciones para asistentes que trabajen en el repositorio |
-| [.gitignore](.gitignore) | Exclusiones de archivos locales y recursos originales |
-| [package.json](package.json) | Gestión del proyecto y comandos de pnpm |
-| [pnpm-lock.yaml](pnpm-lock.yaml) | Archivo de bloqueo de pnpm |
+| Archivo                          | Contenido                                                    |
+| -------------------------------- | ------------------------------------------------------------ |
+| [README.md](README.md)           | Propósito, estado y hoja de ruta                             |
+| [AGENTS.md](AGENTS.md)           | Instrucciones para asistentes que trabajen en el repositorio |
+| [.gitignore](.gitignore)         | Exclusiones de archivos locales y recursos originales        |
+| [package.json](package.json)     | Gestión del proyecto y comandos de pnpm                      |
+| [pnpm-lock.yaml](pnpm-lock.yaml) | Archivo de bloqueo de pnpm                                   |
 
 ## Puesta en marcha con pnpm
 
-Se utiliza **Node 22 o posterior y pnpm 11.18.0**. La versión de Node está indicada en `.nvmrc` y el gestor en `package.json`. El análisis utiliza además Python 3.9 o posterior, disponible como `py`, `python` o `python3`. Si necesitas seleccionar un ejecutable concreto, indica su ruta en la variable de entorno `PYTHON`.
+Se utiliza **Node 22.13 o posterior y pnpm 11.18.0**. La versión de Node está indicada en `.nvmrc` y el gestor en `package.json`. El análisis utiliza además Python 3.9 o posterior, disponible como `py`, `python` o `python3`. Si necesitas seleccionar un ejecutable concreto, indica su ruta en la variable de entorno `PYTHON`.
+
+Para mantener el código uniforme: `pnpm formatear` aplica Prettier, clang-format 21 y Ruff; `pnpm calidad` comprueba el formato y ejecuta ESLint y Ruff. Consulta la [preparación y el alcance de estas herramientas](documentacion/calidad_codigo.md). Cada función nueva llevará un comentario breve sobre su propósito y, cuando proceda, su dirección en el ejecutable original.
 
 Desde la raíz del repositorio:
 
@@ -134,29 +136,29 @@ pnpm analizar
 pnpm comprobar
 ```
 
-| Comando | Qué hace |
-| --- | --- |
-| `pnpm preparar` | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez. |
-| `pnpm estado` | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error. |
-| `pnpm analizar` | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
-| `pnpm ensamblador` | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa. |
-| `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
-| `pnpm comparar:acciones` | Compila la biblioteca C++ y compara tres bloques de acciones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
-| `pnpm comparar:aleatorio` | Compara 18.816 llamadas al generador; el propietario ya ha confirmado su coincidencia. |
-| `pnpm comparar:resultados` | Compara las 2.048 operaciones del tramo integrado de preparación; el propietario ha confirmado su coincidencia. |
-| `pnpm comparar:avance` | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos. |
-| `pnpm comparar:entidades` | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos. |
-| `pnpm comparar:secuencias` | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos. |
-| `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos. |
-| `pnpm comparar:altavoz` | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos. |
-| `pnpm comparar:video` | Compara 1.183 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
-| `pnpm comparar:rnc` | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos. |
-| `pnpm titulo` | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida. |
-| `pnpm comparar:graficos` | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos. |
-| `pnpm ventana` | Prepara SDL en Windows si falta, compila y abre el título calculado por C++. Escape o cerrar terminan la aplicación. |
-| `pnpm sdl:preparar` | Descarga y verifica el paquete oficial SDL3 fijado para Windows de 64 bits. |
-| `pnpm sdl:compilar` | Compila la presentación sin abrir una ventana. |
-| `pnpm comprobar:ventana` | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape. |
+| Comando                     | Qué hace                                                                                                                                                                    |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm preparar`             | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez.                                       |
+| `pnpm estado`               | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error.                     |
+| `pnpm analizar`             | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original.                                            |
+| `pnpm ensamblador`          | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa.                                                                          |
+| `pnpm comprobar`            | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego.                                                                                  |
+| `pnpm comparar:acciones`    | Compila la biblioteca C++ y compara tres bloques de acciones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits.      |
+| `pnpm comparar:aleatorio`   | Compara 18.816 llamadas al generador; el propietario ya ha confirmado su coincidencia.                                                                                      |
+| `pnpm comparar:resultados`  | Compara las 2.048 operaciones del tramo integrado de preparación; el propietario ha confirmado su coincidencia.                                                             |
+| `pnpm comparar:avance`      | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos.                                    |
+| `pnpm comparar:entidades`   | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos.                             |
+| `pnpm comparar:secuencias`  | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos.                                                  |
+| `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos.                          |
+| `pnpm comparar:altavoz`     | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos.                                            |
+| `pnpm comparar:video`       | Compara 1.183 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
+| `pnpm comparar:rnc`         | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos.                                                          |
+| `pnpm titulo`               | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida.     |
+| `pnpm comparar:graficos`    | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos.                                                 |
+| `pnpm ventana`              | Prepara SDL en Windows si falta, compila y abre el título calculado por C++. Escape o cerrar terminan la aplicación.                                                        |
+| `pnpm sdl:preparar`         | Descarga y verifica el paquete oficial SDL3 fijado para Windows de 64 bits.                                                                                                 |
+| `pnpm sdl:compilar`         | Compila la presentación sin abrir una ventana.                                                                                                                              |
+| `pnpm comprobar:ventana`    | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape.                                                                |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
@@ -197,7 +199,7 @@ Los avances se documentarán con claridad: qué se ha comprobado, qué sigue sie
 
 El creador del port **Curse Reborn** es **Àlex Llaó**. Contacto: [alexllao@me.com](mailto:alexllao@me.com).
 
-*Curse of Enchantia* es una obra de Core Design. Curse Reborn es un proyecto independiente y no oficial, y reconoce el trabajo de quienes crearon el juego original.
+_Curse of Enchantia_ es una obra de Core Design. Curse Reborn es un proyecto independiente y no oficial, y reconoce el trabajo de quienes crearon el juego original.
 
 El repositorio no incluye el ejecutable ni los archivos comerciales del juego. Para las pruebas con recursos originales será necesario aportar una copia propia. Los archivos del juego, los recursos extraídos y las partidas deben permanecer fuera del historial del repositorio.
 

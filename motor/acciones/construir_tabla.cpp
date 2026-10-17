@@ -8,19 +8,20 @@ static_assert(sizeof(Palabra) == 2, "Se necesitan palabras de 16 bits.");
 static_assert(static_cast<unsigned char>(-1) == 0xff, "Se necesitan bytes de 8 bits.");
 static_assert(static_cast<Palabra>(-1) == 0xffff, "Se necesitan palabras de 16 bits.");
 
-Palabra leer_palabra(const unsigned char* datos, Palabra posicion) {
-  return static_cast<Palabra>(datos[posicion] |
-    (static_cast<unsigned int>(datos[static_cast<Palabra>(posicion + 1)]) << 8));
+Palabra leer_palabra(const unsigned char *datos, Palabra posicion) {
+  return static_cast<Palabra>(
+      datos[posicion] |
+      (static_cast<unsigned int>(datos[static_cast<Palabra>(posicion + 1)]) << 8));
 }
 
-void escribir_palabra(unsigned char* datos, Palabra posicion, Palabra valor) {
+void escribir_palabra(unsigned char *datos, Palabra posicion, Palabra valor) {
   datos[posicion] = static_cast<unsigned char>(valor & 0xff);
   datos[static_cast<Palabra>(posicion + 1)] = static_cast<unsigned char>(valor >> 8);
 }
 
-}
+} // namespace
 
-void construir_tabla_acciones(unsigned char* datos) {
+void construir_tabla_acciones(unsigned char *datos) {
   bool terminar_lista = false;
   for (Palabra casilla = 0; casilla < 10; ++casilla) {
     Palabra destino = 0xde96;
@@ -41,4 +42,4 @@ void construir_tabla_acciones(unsigned char* datos) {
   }
 }
 
-}
+} // namespace motor

@@ -11,8 +11,27 @@ import struct
 from comparar_avance import Comparacion, ErrorAnalisis, escribir
 
 
-TIPOS = (0x400, 0x401, 0x406, 0x407, 0x408, 0x409, 0x40A, 0x40B,
-         0x40C, 0x40D, 0x40F, 0x410, 0x411, 0x412, 0x3FF, 0x402, 0x40E, 0x413, 0xFFFF)
+TIPOS = (
+    0x400,
+    0x401,
+    0x406,
+    0x407,
+    0x408,
+    0x409,
+    0x40A,
+    0x40B,
+    0x40C,
+    0x40D,
+    0x40F,
+    0x410,
+    0x411,
+    0x412,
+    0x3FF,
+    0x402,
+    0x40E,
+    0x413,
+    0xFFFF,
+)
 
 
 class ComparacionEntidades(Comparacion):
@@ -20,17 +39,26 @@ class ComparacionEntidades(Comparacion):
         super().__init__(raiz, biblioteca, muestra)
         memoria = ctypes.POINTER(ctypes.c_ubyte)
         palabras = ctypes.POINTER(ctypes.c_ushort)
-        self.nativa.procesar_entidades.argtypes = [ctypes.c_uint, memoria, palabras, palabras,
-                                                   ctypes.c_ushort, palabras]
+        self.nativa.procesar_entidades.argtypes = [
+            ctypes.c_uint,
+            memoria,
+            palabras,
+            palabras,
+            ctypes.c_ushort,
+            palabras,
+        ]
         self.nativa.procesar_entidades.restype = ctypes.c_int
         self.dimensiones = (ctypes.c_ushort * 256)(
-            *(valor for i in range(128) for valor in (8 + i % 41, 6 + i % 53)))
+            *(valor for i in range(128) for valor in (8 + i % 41, 6 + i % 53))
+        )
         self.maquina.mem_write(0x4AEE, struct.pack('<H', 0x4000))
         for i in range(128):
             desplazamiento = 0x100 + i
             self.maquina.mem_write(0x40000 + i * 2, struct.pack('<H', desplazamiento))
-            self.maquina.mem_write(0x40000 + desplazamiento * 16,
-                struct.pack('<2H', self.dimensiones[i * 2], self.dimensiones[i * 2 + 1]))
+            self.maquina.mem_write(
+                0x40000 + desplazamiento * 16,
+                struct.pack('<2H', self.dimensiones[i * 2], self.dimensiones[i * 2 + 1]),
+            )
 
     def preparar(self, numero):
         datos = self.datos(numero)
@@ -51,13 +79,23 @@ class ComparacionEntidades(Comparacion):
         escribir(datos, 0x8082, 8 if numero % 2 == 0 else 0)
         escribir(datos, 0x99B8, numero % 13)
         # Definición de 18 bytes: tipo inerte y tres secuencias con terminadores.
-        struct.pack_into('<9H', datos, 0x9000, 0, 0, 0xFFFF, 0x9100,
-                         0x0203, 0x9110, 0x0104, 0x9120, 0x0205)
+        struct.pack_into(
+            '<9H', datos, 0x9000, 0, 0, 0xFFFF, 0x9100, 0x0203, 0x9110, 0x0104, 0x9120, 0x0205
+        )
         for posicion in (0x9100, 0x9110, 0x9120):
-            datos[posicion:posicion + 7] = bytes((1, 2, 3, 4, 5, 6, 0x7F))
+            datos[posicion : posicion + 7] = bytes((1, 2, 3, 4, 5, 6, 0x7F))
         for descriptor in (0x0FED, 0x132E, 0x135E, 0x9400):
-            struct.pack_into('<BBB3H', datos, descriptor, (0, 2, 4, 6)[numero % 4],
-                             1, numero % 256, 120, 90, 0x9000)
+            struct.pack_into(
+                '<BBB3H',
+                datos,
+                descriptor,
+                (0, 2, 4, 6)[numero % 4],
+                1,
+                numero % 256,
+                120,
+                90,
+                0x9000,
+            )
         for modelo in (0, 2, 8, 0x14, 0xFE, 0xFF):
             indice = ((modelo + 1) & 0xFF) * 4
             escribir(datos, 0x0E56 + indice, 0x9200)
@@ -70,11 +108,34 @@ class ComparacionEntidades(Comparacion):
         # Variantes dirigidas alrededor de los límites observados en las ramas.
         datos[posicion] = 1
         datos[posicion + 1] = 0x3C if numero % 3 else 0x3B
-        delta = (-145, -124, -96, -51, -28, -24, -16, -1, 0, 1, 16, 20,
-                 24, 28, 50, 96, 124, 144, 145, 200)[numero % 20]
+        delta = (
+            -145,
+            -124,
+            -96,
+            -51,
+            -28,
+            -24,
+            -16,
+            -1,
+            0,
+            1,
+            16,
+            20,
+            24,
+            28,
+            50,
+            96,
+            124,
+            144,
+            145,
+            200,
+        )[numero % 20]
         escribir(datos, posicion + 2, 200 + delta)
-        escribir(datos, posicion + 4, (69, 70, 79, 80, 100, 125, 126, 138,
-                                      144, 145, 199, 200, 201, -1)[numero % 14])
+        escribir(
+            datos,
+            posicion + 4,
+            (69, 70, 79, 80, 100, 125, 126, 138, 144, 145, 199, 200, 201, -1)[numero % 14],
+        )
         escribir(datos, posicion + 6, 32)
         escribir(datos, posicion + 8, 48)
         escribir(datos, posicion + 14, tipo)
@@ -97,11 +158,14 @@ class ComparacionEntidades(Comparacion):
         elif tipo == 0x408:
             escribir(datos, posicion + 2, (-97, -96, -95, 320)[numero % 4])
         elif tipo == 0x40B:
-            if numero % 5 == 0: escribir(datos, posicion + 16, 0x1111)
-            if numero % 7 == 0: escribir(datos, posicion + 26, 0x110F)
+            if numero % 5 == 0:
+                escribir(datos, posicion + 16, 0x1111)
+            if numero % 7 == 0:
+                escribir(datos, posicion + 26, 0x110F)
         elif tipo == 0x40C:
             escribir(datos, posicion + 2, (40, 48, 68, 76, 100, 200, 319, 320)[numero % 8])
-            if numero % 5 == 0: escribir(datos, posicion + 16, 0x11C6)
+            if numero % 5 == 0:
+                escribir(datos, posicion + 16, 0x11C6)
         elif tipo == 0x40F:
             datos[0x2C4C] = 2 if numero % 3 == 0 else 0
         elif tipo in (0x411, 0x412):
@@ -114,12 +178,22 @@ class ComparacionEntidades(Comparacion):
         salida = (ctypes.c_ushort * 2)(0xFFFF, 0xFFFF)
         entradas = (0x8B6F, 0x1119, 0x10EC, 0xC4DC)
         destinos = {0x1786: 1} if operacion == 1 else {0x1791: 1} if operacion == 2 else None
-        self.caso(grupo, datos, entradas[operacion],
-            lambda m, ax, e: self.nativa.procesar_entidades(operacion, m, e,
-                self.dimensiones, posicion, salida),
-            {r.UC_X86_REG_ES: 0x0F31, r.UC_X86_REG_SI: posicion,
-             r.UC_X86_REG_BX: posicion, r.UC_X86_REG_CX: 68},
-            semilla=semilla, destinos=destinos)
+        self.caso(
+            grupo,
+            datos,
+            entradas[operacion],
+            lambda m, ax, e: self.nativa.procesar_entidades(
+                operacion, m, e, self.dimensiones, posicion, salida
+            ),
+            {
+                r.UC_X86_REG_ES: 0x0F31,
+                r.UC_X86_REG_SI: posicion,
+                r.UC_X86_REG_BX: posicion,
+                r.UC_X86_REG_CX: 68,
+            },
+            semilla=semilla,
+            destinos=destinos,
+        )
         if self.maquina.reg_read(r.UC_X86_REG_DS) != 0x0F31:
             raise ErrorAnalisis(f'{grupo}: el original no restauró DS.')
         if operacion == 0:
@@ -129,8 +203,9 @@ class ComparacionEntidades(Comparacion):
                 raise ErrorAnalisis(f'{grupo}: destino de creación o rechazo diferente.')
 
     def ejecutar(self):
-        for flags, ocupacion, numero in product((0, 2, 4, 6, 0x80, 0x82, 0x86),
-                                               range(5), range(2 if self.muestra else 8)):
+        for flags, ocupacion, numero in product(
+            (0, 2, 4, 6, 0x80, 0x82, 0x86), range(5), range(2 if self.muestra else 8)
+        ):
             datos = self.preparar(numero)
             datos[0x9400] = flags
             datos[0x0AD6] = numero % 2
@@ -187,27 +262,45 @@ class ComparacionEntidades(Comparacion):
         informe = {
             'sha256_ejecutable': self.cabecera['sha256'],
             'sha256_biblioteca_comparada': hashlib.sha256(self.biblioteca.read_bytes()).hexdigest(),
-            'version_unicorn': self.unicorn.__version__, 'casos_por_grupo': self.resumen,
-            'casos_totales': sum(self.resumen.values()), 'resultado': 'coinciden', 'muestra': self.muestra,
+            'version_unicorn': self.unicorn.__version__,
+            'casos_por_grupo': self.resumen,
+            'casos_totales': sum(self.resumen.values()),
+            'resultado': 'coinciden',
+            'muestra': self.muestra,
             'alcance': 'DS completo, cuatro palabras del generador, pila y retorno de creación. '
-                       'Cabeceras de recursos sintéticas; recorrido detenido antes del despacho por escena. '
-                       'No comprueba dibujo, carga real de recursos, divisiones inválidas ni partida completa.',
+            'Cabeceras de recursos sintéticas; recorrido detenido antes del despacho por escena. '
+            'No comprueba dibujo, carga real de recursos, divisiones inválidas ni partida completa.',
         }
-        salida = self.raiz / 'trabajo' / 'comparacion_entidades' / ('muestra.json' if self.muestra else 'resultado.json')
+        salida = (
+            self.raiz
+            / 'trabajo'
+            / 'comparacion_entidades'
+            / ('muestra.json' if self.muestra else 'resultado.json')
+        )
         salida.parent.mkdir(parents=True, exist_ok=True)
-        salida.write_text(json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        salida.write_text(
+            json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
+        )
         for grupo, cantidad in self.resumen.items():
             print(f'{grupo}: {cantidad} casos coincidentes.')
-        print(f'Total: {informe["casos_totales"]} casos. Coinciden los datos y el estado aleatorio.')
+        print(
+            f'Total: {informe["casos_totales"]} casos. Coinciden los datos y el estado aleatorio.'
+        )
         print(f'Informe local: {salida}')
 
 
 if __name__ == '__main__':
-    argumentos = argparse.ArgumentParser(description='Compara la creación y actualización de entidades.')
+    argumentos = argparse.ArgumentParser(
+        description='Compara la creación y actualización de entidades.'
+    )
     argumentos.add_argument('--biblioteca', type=Path, required=True)
-    argumentos.add_argument('--muestra', action='store_true', help='Ejecuta una muestra corta de cada grupo.')
+    argumentos.add_argument(
+        '--muestra', action='store_true', help='Ejecuta una muestra corta de cada grupo.'
+    )
     opciones = argumentos.parse_args()
     try:
-        ComparacionEntidades(Path(__file__).resolve().parents[1], opciones.biblioteca, opciones.muestra).ejecutar()
+        ComparacionEntidades(
+            Path(__file__).resolve().parents[1], opciones.biblioteca, opciones.muestra
+        ).ejecutar()
     except (OSError, ErrorAnalisis) as error:
         argumentos.exit(1, f'Error: {error}\n')

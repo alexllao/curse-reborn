@@ -11,4 +11,4 @@ enum class ContinuacionAccion : unsigned int {
 // Decisión del llamador en 0000:DE2D–DE59. No ejecuta el dibujo ni la restauración.
 ContinuacionAccion interpretar_retorno_accion(unsigned short ax, bool acarreo);
 
-}
+} // namespace motor

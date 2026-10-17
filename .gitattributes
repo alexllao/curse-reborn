@@ -1,2 +1,4 @@
+* text=auto eol=lf
+
 # Conservar el aviso oficial de SDL con su formato original.
-licencias/SDL3.txt -whitespace
+licencias/SDL3.txt -text -whitespace

@@ -8,18 +8,18 @@ Esta primera entrega es estática. No se ha ejecutado el juego, validado su comp
 
 ## Copia analizada
 
-| Propiedad | Valor |
-| --- | --- |
-| Archivo local | `datos_originales/CURSE/CURSE.EXE` |
-| SHA-256 | `f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d` |
-| Tamaño | 111.606 bytes |
-| Cabecera DOS MZ | 512 bytes |
-| Imagen almacenada tras la cabecera | 111.094 bytes |
-| Entrada relativa CS:IP | `0000:001A` |
-| Posición de entrada en el archivo | `0x021A` |
-| Pila inicial relativa SS:SP | `1B20:0400` |
-| Reubicaciones | 28 |
-| Bytes posteriores al tamaño MZ declarado | 0 |
+| Propiedad                                | Valor                                                              |
+| ---------------------------------------- | ------------------------------------------------------------------ |
+| Archivo local                            | `datos_originales/CURSE/CURSE.EXE`                                 |
+| SHA-256                                  | `f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d` |
+| Tamaño                                   | 111.606 bytes                                                      |
+| Cabecera DOS MZ                          | 512 bytes                                                          |
+| Imagen almacenada tras la cabecera       | 111.094 bytes                                                      |
+| Entrada relativa CS:IP                   | `0000:001A`                                                        |
+| Posición de entrada en el archivo        | `0x021A`                                                           |
+| Pila inicial relativa SS:SP              | `1B20:0400`                                                        |
+| Reubicaciones                            | 28                                                                 |
+| Bytes posteriores al tamaño MZ declarado | 0                                                                  |
 
 Las 28 reubicaciones contienen inicialmente el valor `0F31`. El arranque utiliza ese segmento relativo para inicializar DS. Los datos correspondientes comienzan en la posición de archivo `0xF510`.
 
@@ -27,32 +27,32 @@ Las direcciones de este documento son relativas a la imagen MZ antes de que DOS 
 
 ## Recorrido inicial identificado
 
-| Dirección relativa | Evidencia y función observada |
-| --- | --- |
-| `0000:001A` | Inicio: calcula el tamaño del bloque de memoria y solicita su ajuste mediante `INT 21h`, función `4Ah`. |
-| `0000:0027` | Guarda referencias de segmento en `CS:0000` y `CS:0002`; inicializa DS con el segmento reubicable `0F31`. |
-| `0000:003C` | Abre la cadena `curse.cfg`, situada en `DS:0DFD`, para lectura. Si falla, salta a `0000:007E`. |
-| `0000:0048` | Solicita ocho bytes para `DS:99BA`, seguidos de cuatro lecturas de un byte para `DS:0AD3` a `DS:0AD6`; cierra el archivo. Aún no se han asignado nombres definitivos a esos campos. |
-| `0000:0081` | Selecciona el modo BIOS `13h` y después modifica registros de VGA. La organización final de la imagen debe deducirse de esa configuración y de las rutinas gráficas; el modo BIOS inicial no basta para asumir un búfer lineal. |
-| `0000:00EC` | Consulta el vector `33h`, inspecciona su entrada y, si procede, llama a la interfaz del ratón. |
-| `0000:011D` | Cambia al directorio `DATA`, cuya cadena está en `DS:0083`. |
-| `0000:0124` | Llama a `0000:8C26`, que instala un manejador del vector `08h`. |
-| `0000:012F` | Llama a `0000:6A4E`, que instala un manejador del vector `09h`. |
-| `0000:0132` | Selecciona rutas de inicialización según campos de configuración. Las funciones exactas de cada modalidad siguen pendientes. |
-| `0000:0189` | Conserva el vector `08h` actual e instala el manejador `0000:0238`. Programa el temporizador con el divisor `4250h`. |
-| `0000:01C0` | Llama a `0000:0276`, una entrada importante para continuar el análisis del juego. Todavía no se identifica toda esa rutina como el bucle principal. |
-| `0000:01C3` | Tras regresar, comienza la restauración del temporizador y los manejadores. |
-| `0000:0227` | Cambia al directorio `..`, restaura el modo de texto `03h` y termina mediante `INT 21h`, función `4Ch`. |
+| Dirección relativa | Evidencia y función observada                                                                                                                                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0000:001A`        | Inicio: calcula el tamaño del bloque de memoria y solicita su ajuste mediante `INT 21h`, función `4Ah`.                                                                                                                         |
+| `0000:0027`        | Guarda referencias de segmento en `CS:0000` y `CS:0002`; inicializa DS con el segmento reubicable `0F31`.                                                                                                                       |
+| `0000:003C`        | Abre la cadena `curse.cfg`, situada en `DS:0DFD`, para lectura. Si falla, salta a `0000:007E`.                                                                                                                                  |
+| `0000:0048`        | Solicita ocho bytes para `DS:99BA`, seguidos de cuatro lecturas de un byte para `DS:0AD3` a `DS:0AD6`; cierra el archivo. Aún no se han asignado nombres definitivos a esos campos.                                             |
+| `0000:0081`        | Selecciona el modo BIOS `13h` y después modifica registros de VGA. La organización final de la imagen debe deducirse de esa configuración y de las rutinas gráficas; el modo BIOS inicial no basta para asumir un búfer lineal. |
+| `0000:00EC`        | Consulta el vector `33h`, inspecciona su entrada y, si procede, llama a la interfaz del ratón.                                                                                                                                  |
+| `0000:011D`        | Cambia al directorio `DATA`, cuya cadena está en `DS:0083`.                                                                                                                                                                     |
+| `0000:0124`        | Llama a `0000:8C26`, que instala un manejador del vector `08h`.                                                                                                                                                                 |
+| `0000:012F`        | Llama a `0000:6A4E`, que instala un manejador del vector `09h`.                                                                                                                                                                 |
+| `0000:0132`        | Selecciona rutas de inicialización según campos de configuración. Las funciones exactas de cada modalidad siguen pendientes.                                                                                                    |
+| `0000:0189`        | Conserva el vector `08h` actual e instala el manejador `0000:0238`. Programa el temporizador con el divisor `4250h`.                                                                                                            |
+| `0000:01C0`        | Llama a `0000:0276`, una entrada importante para continuar el análisis del juego. Todavía no se identifica toda esa rutina como el bucle principal.                                                                             |
+| `0000:01C3`        | Tras regresar, comienza la restauración del temporizador y los manejadores.                                                                                                                                                     |
+| `0000:0227`        | Cambia al directorio `..`, restaura el modo de texto `03h` y termina mediante `INT 21h`, función `4Ch`.                                                                                                                         |
 
 Las cadenas mencionadas se han contrastado con las posiciones calculadas desde DS. Las llamadas relativas cuyo destino Capstone expresa con extensión de signo se normalizan a IP de 16 bits: por ejemplo, `0xFFFF8C26` corresponde aquí a `0000:8C26`.
 
 ## Manejadores y referencias comprobadas
 
-| Rutina | Cómo se obtiene su dirección | Comportamiento observado |
-| --- | --- | --- |
+| Rutina      | Cómo se obtiene su dirección                              | Comportamiento observado                                                                                                                                                                       |
+| ----------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `0000:0238` | Instalación de `INT 08h` entre `0000:0199` y `0000:01A4`. | Atiende rutas condicionadas por configuración, incrementa un contador, acumula `4250h` y encadena el manejador anterior o confirma la interrupción. Termina mediante salto indirecto o `IRET`. |
-| `0000:6A8C` | Instalación de `INT 09h` en `0000:6A69` a `0000:6A6F`. | Lee el puerto `60h`, distingue pulsación y liberación y actualiza una tabla de estado. Confirma la interrupción y termina con `IRET`. |
-| `0000:8C51` | Instalación de `INT 08h` en `0000:8C36` a `0000:8C40`. | Actualiza campos de entrada bajo una condición de configuración y encadena el manejador anterior. La semántica completa de esos campos sigue pendiente. |
+| `0000:6A8C` | Instalación de `INT 09h` en `0000:6A69` a `0000:6A6F`.    | Lee el puerto `60h`, distingue pulsación y liberación y actualiza una tabla de estado. Confirma la interrupción y termina con `IRET`.                                                          |
+| `0000:8C51` | Instalación de `INT 08h` en `0000:8C36` a `0000:8C40`.    | Actualiza campos de entrada bajo una condición de configuración y encadena el manejador anterior. La semántica completa de esos campos sigue pendiente.                                        |
 
 Estas entradas se incluyen explícitamente en el análisis porque las llamadas DOS que instalan vectores no equivalen a instrucciones `CALL` hacia el manejador.
 

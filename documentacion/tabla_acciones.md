@@ -8,12 +8,12 @@ Se ha trasladado ese bloque a [motor/acciones/construir_tabla.cpp](../motor/acci
 
 ## Datos que utiliza
 
-| Dirección relativa en DS | Contenido observado |
-| --- | --- |
-| `B60C`–`B61F` | Diez destinos de acción, una palabra por casilla. |
-| `B620`–`B633` | Diez identificadores que describen las casillas actuales. |
-| `B636` | Manejador alternativo para identificadores con valor con signo igual o superior a 23. |
-| `B686`–`B6B3` | Tabla base de 23 destinos para los identificadores ordinarios de 0 a 22. |
+| Dirección relativa en DS | Contenido observado                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| `B60C`–`B61F`            | Diez destinos de acción, una palabra por casilla.                                     |
+| `B620`–`B633`            | Diez identificadores que describen las casillas actuales.                             |
+| `B636`                   | Manejador alternativo para identificadores con valor con signo igual o superior a 23. |
+| `B686`–`B6B3`            | Tabla base de 23 destinos para los identificadores ordinarios de 0 a 22.              |
 
 El bloque empieza cargando DS y ES desde `CS:0000`. A continuación establece SI en `B620`, DI en `B60C` y CX en 10. Se ha analizado suponiendo el indicador de dirección despejado (`DF=0`), de modo que `LODSW` y `STOSW` avanzan.
 
@@ -36,15 +36,15 @@ El análisis incorpora las fuentes observadas de los destinos:
 - `DFD3`, `E010`, `E039`, `E05B`, `E0E9`, `E0FD`, `E126` y `E14A` preparan listas de identificadores o cambian el manejador alternativo antes de reconstruir.
 - `E0B8` sustituye directamente el primer destino por `E0C0` después de reconstruir una de las listas.
 
-| Escritura | Valor asignado a `DS:B636` |
-| --- | --- |
-| `0000:DFF3` | `DE96` |
-| `0000:E007` | `563A` |
-| `0000:E030` | `32DE` |
-| `0000:E0A1`, `0000:E0E0` | `3B53` |
-| `0000:E0F4` | `384A` |
-| `0000:E11D` | `2FCA` |
-| `0000:E155` | `3143` |
+| Escritura                | Valor asignado a `DS:B636` |
+| ------------------------ | -------------------------- |
+| `0000:DFF3`              | `DE96`                     |
+| `0000:E007`              | `563A`                     |
+| `0000:E030`              | `32DE`                     |
+| `0000:E0A1`, `0000:E0E0` | `3B53`                     |
+| `0000:E0F4`              | `384A`                     |
+| `0000:E11D`              | `2FCA`                     |
+| `0000:E155`              | `3143`                     |
 
 La unión de la tabla base y estas sustituciones aporta 23 destinos distintos al recorrido. El mapa los marca como **candidatos de una tabla dinámica**: el índice de la tabla fuente no se confunde con la casilla de la interfaz, y la lista no se presenta como prueba de exhaustividad para todos los estados posibles.
 

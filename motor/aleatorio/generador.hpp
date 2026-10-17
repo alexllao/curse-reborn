@@ -12,7 +12,6 @@ struct EstadoAleatorio {
 
 // Traslado de 0000:788E–78DD. Devuelve un valor entre cero y limite-1.
 // Un límite cero se rechaza sin modificar estado ni resultado; en DOS provoca DIV/0.
-bool generar_aleatorio(EstadoAleatorio& estado, unsigned short limite,
-                      unsigned short& resultado);
+bool generar_aleatorio(EstadoAleatorio &estado, unsigned short limite, unsigned short &resultado);
 
-}
+} // namespace motor

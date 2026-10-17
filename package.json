@@ -10,10 +10,15 @@
   "type": "module",
   "packageManager": "pnpm@11.18.0",
   "engines": {
-    "node": ">=22",
+    "node": ">=22.13.0",
     "pnpm": ">=11 <12"
   },
   "scripts": {
+    "formatear": "prettier --write . && node herramientas/gestionar_calidad.mjs formatear",
+    "formato:comprobar": "prettier --check . && node herramientas/gestionar_calidad.mjs comprobar",
+    "lint": "eslint . && node herramientas/gestionar_calidad.mjs revisar",
+    "lint:corregir": "eslint . --fix && node herramientas/gestionar_calidad.mjs revisar",
+    "calidad": "pnpm formato:comprobar && pnpm lint",
     "preparar": "node herramientas/gestionar_proyecto.mjs preparar",
     "analizar": "node herramientas/gestionar_proyecto.mjs analizar",
     "ensamblador": "node herramientas/gestionar_proyecto.mjs analizar",
@@ -39,5 +44,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/alexllao/curse-reborn.git"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "prettier": "3.9.10"
   }
 }

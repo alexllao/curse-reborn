@@ -7,9 +7,10 @@ import { gestionarSdl } from './gestionar_sdl.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const entorno = join(raiz, 'trabajo', 'entorno');
-const pythonLocal = process.platform === 'win32'
-  ? join(entorno, 'Scripts', 'python.exe')
-  : join(entorno, 'bin', 'python');
+const pythonLocal =
+  process.platform === 'win32'
+    ? join(entorno, 'Scripts', 'python.exe')
+    : join(entorno, 'bin', 'python');
 const variables = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' };
 
 function ejecutar(programa, argumentos) {
@@ -31,28 +32,46 @@ function buscarPython() {
   const candidatos = process.env.PYTHON
     ? [[process.env.PYTHON, []]]
     : process.platform === 'win32'
-      ? [['py', ['-3']], ['python', []], ['python3', []]]
-      : [['python3', []], ['python', []]];
+      ? [
+          ['py', ['-3']],
+          ['python', []],
+          ['python3', []],
+        ]
+      : [
+          ['python3', []],
+          ['python', []],
+        ];
   for (const [programa, argumentos] of candidatos) {
-    const resultado = spawnSync(programa, [...argumentos, '-c',
-      'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)'],
-    { cwd: raiz, env: variables, encoding: 'utf8', windowsHide: true });
+    const resultado = spawnSync(
+      programa,
+      [...argumentos, '-c', 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)'],
+      { cwd: raiz, env: variables, encoding: 'utf8', windowsHide: true },
+    );
     if (!resultado.error && resultado.status === 0) {
       return [programa, argumentos];
     }
   }
-  throw new Error('No se encuentra Python 3.9 o posterior. Instálalo o indica la ruta del ejecutable en la variable PYTHON.');
+  throw new Error(
+    'No se encuentra Python 3.9 o posterior. Instálalo o indica la ruta del ejecutable en la variable PYTHON.',
+  );
 }
 
 function comprobarEntorno(requiereEmulador = false) {
   if (!existsSync(pythonLocal)) {
     throw new Error('Falta el entorno de análisis. Ejecuta «pnpm preparar».');
   }
-  const paquetes = requiereEmulador ? { capstone: '5.0.7', unicorn: '2.1.4' } : { capstone: '5.0.7' };
-  const resultado = spawnSync(pythonLocal, ['-c',
-    'import importlib.metadata, json, sys; paquetes = json.loads(sys.argv[1]); sys.exit(0 if all(importlib.metadata.version(n) == v for n, v in paquetes.items()) else 1)',
-    JSON.stringify(paquetes)],
-  { cwd: raiz, env: variables, stdio: 'ignore', windowsHide: true });
+  const paquetes = requiereEmulador
+    ? { capstone: '5.0.7', unicorn: '2.1.4' }
+    : { capstone: '5.0.7' };
+  const resultado = spawnSync(
+    pythonLocal,
+    [
+      '-c',
+      'import importlib.metadata, json, sys; paquetes = json.loads(sys.argv[1]); sys.exit(0 if all(importlib.metadata.version(n) == v for n, v in paquetes.items()) else 1)',
+      JSON.stringify(paquetes),
+    ],
+    { cwd: raiz, env: variables, stdio: 'ignore', windowsHide: true },
+  );
   if (resultado.error || resultado.status !== 0) {
     throw new Error('Las dependencias de análisis no están preparadas. Ejecuta «pnpm preparar».');
   }
@@ -65,8 +84,15 @@ function preparar() {
     ejecutar(programa, [...argumentos, '-m', 'venv', entorno]);
   }
   console.log('Instalando las dependencias del desensamblador…');
-  ejecutar(pythonLocal, ['-m', 'pip', '--isolated', 'install',
-    '--disable-pip-version-check', '-r', join(raiz, 'herramientas', 'requisitos.txt')]);
+  ejecutar(pythonLocal, [
+    '-m',
+    'pip',
+    '--isolated',
+    'install',
+    '--disable-pip-version-check',
+    '-r',
+    join(raiz, 'herramientas', 'requisitos.txt'),
+  ]);
   comprobarEntorno();
   console.log('Preparación completada. Puedes ejecutar «pnpm analizar» y «pnpm comprobar».');
 }
@@ -74,14 +100,29 @@ function preparar() {
 function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   comprobarEntorno(tipo !== 'titulo');
   if (process.platform === 'win32' && process.arch !== 'x64') {
-    throw new Error('La compilación de esta comparación en Windows requiere Node y Python de 64 bits.');
+    throw new Error(
+      'La compilación de esta comparación en Windows requiere Node y Python de 64 bits.',
+    );
   }
   const carpeta = join(raiz, 'trabajo', 'comparacion_acciones');
   mkdirSync(carpeta, { recursive: true });
-  const biblioteca = join(carpeta, process.platform === 'win32' ? 'tabla_acciones.dll' : 'tabla_acciones.so');
+  const biblioteca = join(
+    carpeta,
+    process.platform === 'win32' ? 'tabla_acciones.dll' : 'tabla_acciones.so',
+  );
   const compilador = process.env.CXX || 'clang++';
-  const opciones = ['-std=c++17', '-O2', '-Wall', '-Wextra', '-Werror',
-    '-fno-exceptions', '-fno-rtti', '-fno-builtin', '-fno-stack-protector', '-nostdlib'];
+  const opciones = [
+    '-std=c++17',
+    '-O2',
+    '-Wall',
+    '-Wextra',
+    '-Werror',
+    '-fno-exceptions',
+    '-fno-rtti',
+    '-fno-builtin',
+    '-fno-stack-protector',
+    '-nostdlib',
+  ];
   if (process.platform === 'win32') {
     opciones.push('--target=x86_64-pc-windows-msvc', '-shared', '-fuse-ld=lld', '-Wl,/noentry');
   } else if (process.platform === 'darwin') {
@@ -90,7 +131,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     opciones.push('-shared', '-fPIC');
   }
   console.log('Compilando los bloques C++ reconstruidos…');
-  ejecutar(compilador, [...opciones, join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
+  ejecutar(compilador, [
+    ...opciones,
+    join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
     join(raiz, 'motor', 'acciones', 'seleccionar_coincidencias.cpp'),
     join(raiz, 'motor', 'acciones', 'retorno_accion.cpp'),
     join(raiz, 'motor', 'acciones', 'preparar_resultados.cpp'),
@@ -108,14 +151,31 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     join(raiz, 'motor', 'recursos', 'rnc.cpp'),
     join(raiz, 'motor', 'recursos', 'titulo.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
-    join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
-  const comparadores = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
-    resultados: 'comparar_resultados.py', avance: 'comparar_avance.py', entidades: 'comparar_entidades.py',
-    secuencias: 'comparar_secuencias.py', operaciones: 'comparar_operaciones.py', altavoz: 'comparar_altavoz.py',
-    video: 'comparar_video.py', rnc: 'comparar_rnc.py', titulo: 'generar_titulo.py',
-    graficos: ['comparar_video.py', 'comparar_rnc.py'] }[tipo];
+    join(raiz, 'pruebas', 'puente_tabla.cpp'),
+    '-o',
+    biblioteca,
+  ]);
+  const comparadores = {
+    acciones: 'comparar_acciones.py',
+    aleatorio: 'comparar_aleatorio.py',
+    resultados: 'comparar_resultados.py',
+    avance: 'comparar_avance.py',
+    entidades: 'comparar_entidades.py',
+    secuencias: 'comparar_secuencias.py',
+    operaciones: 'comparar_operaciones.py',
+    altavoz: 'comparar_altavoz.py',
+    video: 'comparar_video.py',
+    rnc: 'comparar_rnc.py',
+    titulo: 'generar_titulo.py',
+    graficos: ['comparar_video.py', 'comparar_rnc.py'],
+  }[tipo];
   for (const comparador of Array.isArray(comparadores) ? comparadores : [comparadores]) {
-    ejecutar(pythonLocal, [join(raiz, tipo === 'titulo' ? 'herramientas' : 'pruebas', comparador), '--biblioteca', biblioteca, ...opcionesComparacion]);
+    ejecutar(pythonLocal, [
+      join(raiz, tipo === 'titulo' ? 'herramientas' : 'pruebas', comparador),
+      '--biblioteca',
+      biblioteca,
+      ...opcionesComparacion,
+    ]);
   }
 }
 
@@ -133,8 +193,12 @@ try {
       break;
     case 'analizar':
       comprobarEntorno();
-      ejecutar(pythonLocal, [join(raiz, 'herramientas', 'analizar_ejecutable.py'),
-        '--mapa', join(raiz, 'documentacion', 'mapa_ejecutable.json'), ...argumentos]);
+      ejecutar(pythonLocal, [
+        join(raiz, 'herramientas', 'analizar_ejecutable.py'),
+        '--mapa',
+        join(raiz, 'documentacion', 'mapa_ejecutable.json'),
+        ...argumentos,
+      ]);
       break;
     case 'comprobar':
       comprobarEntorno();
@@ -179,9 +243,15 @@ try {
     case 'estado':
       console.log(`Node: ${process.version}`);
       console.log(`Carpeta del proyecto: ${raiz}`);
-      console.log(`Ejecutable original: ${existsSync(join(raiz, 'datos_originales', 'CURSE', 'CURSE.EXE')) ? 'disponible' : 'pendiente de copiar a datos_originales/CURSE/'}`);
-      console.log(`Carpeta de ROM del MT-32: ${existsSync(join(raiz, 'datos_originales', 'ROMS')) ? 'disponible (contenido sin verificar)' : 'no disponible; el análisis estático no la necesita'}`);
-      console.log(`Entorno local de Python: ${existsSync(pythonLocal) ? 'disponible' : 'pendiente de preparar'}`);
+      console.log(
+        `Ejecutable original: ${existsSync(join(raiz, 'datos_originales', 'CURSE', 'CURSE.EXE')) ? 'disponible' : 'pendiente de copiar a datos_originales/CURSE/'}`,
+      );
+      console.log(
+        `Carpeta de ROM del MT-32: ${existsSync(join(raiz, 'datos_originales', 'ROMS')) ? 'disponible (contenido sin verificar)' : 'no disponible; el análisis estático no la necesita'}`,
+      );
+      console.log(
+        `Entorno local de Python: ${existsSync(pythonLocal) ? 'disponible' : 'pendiente de preparar'}`,
+      );
       comprobarEntorno();
       console.log('Dependencias de análisis: preparadas.');
       break;
