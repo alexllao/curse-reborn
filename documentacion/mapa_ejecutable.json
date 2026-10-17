@@ -1031,6 +1031,24 @@
       "nombre": "Instrumentos y encendido de nota AdLib",
       "comentario": "902E–90BA escribe diez registros de operadores, realimentación y dos de frecuencia. 90C4 apaga la nota anterior. Conserva el orden original de escrituras.",
       "traslado": "motor/sonido/musica.cpp"
+    },
+    {
+      "direccion": "0000:4DD5",
+      "nombre": "Selección del banco musical de escena",
+      "comentario": "En modalidad cuatro consulta DS:80CD y los cinco descriptores DS:80B9. Conserva el banco si coincide; si cambia solicita parada antes de cargar tempo y recurso.",
+      "traslado": "motor/sonido/musica_rs.cpp"
+    },
+    {
+      "direccion": "0000:7D5D",
+      "nombre": "Petición de parada musical",
+      "comentario": "Activa DS:9955. La siguiente petición de pista envía 00 FC; al recibir FC se ejecuta la parada MPU 05 desde DS:995B. No contiene rampa de volumen.",
+      "traslado": "plataformas/sdl/musica_mt32.cpp"
+    },
+    {
+      "direccion": "0000:7E3B",
+      "nombre": "Alimentación de paquetes musicales RS",
+      "comentario": "Lee desde DS:9928/9926, resuelve FF como salto absoluto y conserva el estado MIDI implícito en CS:7EED. Comparado con los bytes enviados a puerto y DS completo.",
+      "traslado": "motor/sonido/musica_rs.cpp"
     }
   ],
   "tablas": [

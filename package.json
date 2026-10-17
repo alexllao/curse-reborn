@@ -61,7 +61,9 @@
     "comprobar:audio": "node herramientas/gestionar_proyecto.mjs comprobar:audio",
     "comprobar:vistas": "node herramientas/gestionar_proyecto.mjs comprobar:vistas",
     "comparar:musica": "node herramientas/gestionar_proyecto.mjs comparar:musica",
-    "comprobar:musica": "node herramientas/gestionar_proyecto.mjs comprobar:musica"
+    "comprobar:musica": "node herramientas/gestionar_proyecto.mjs comprobar:musica",
+    "comprobar:mt32": "node herramientas/gestionar_proyecto.mjs comprobar:mt32",
+    "comparar:musica-rs": "node herramientas/gestionar_proyecto.mjs comparar:musica-rs"
   },
   "repository": {
     "type": "git",

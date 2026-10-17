@@ -2,43 +2,100 @@
 #include <cstdio>
 #include <vector>
 
-// El tema arranca antes de Core, como 048A; SDL adapta el formato al dispositivo real.
+// Abre dos flujos del mismo dispositivo: música autónoma y efectos atendidos por el juego.
 bool Audio::abrir(const std::string &carpeta) {
   if (flujo)
     return true;
   if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
     return false;
-  const SDL_AudioSpec formato{SDL_AUDIO_S16, 1, static_cast<int>(motor::AltavozPcm::frecuencia)};
-  flujo = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato, nullptr, nullptr);
-  if (!flujo)
+  const SDL_AudioSpec formato{SDL_AUDIO_S16, 1, 48000};
+  dispositivo = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato);
+  if (!dispositivo)
     return false;
+  flujo = SDL_CreateAudioStream(&formato, &formato);
+  if (!flujo || !SDL_BindAudioStream(dispositivo, flujo)) {
+    cerrar();
+    return false;
+  }
   size_t longitud = 0;
   void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
   const bool preparada = archivo && longitud <= 0xffffffffu &&
                          musica.iniciar(static_cast<const unsigned char *>(archivo),
                                         static_cast<unsigned int>(longitud));
+  if (preparada && mt32.iniciar(carpeta, static_cast<const unsigned char *>(archivo),
+                                static_cast<unsigned int>(longitud)))
+    perfil = 2;
+  else {
+    perfil = 1;
+    std::printf(
+        "MT-32 no disponible: revisa MT32_CONTROL.ROM y MT32_PCM.ROM en datos_originales/ROMS.\n");
+  }
   SDL_free(archivo);
-  ultimo = SDL_GetTicksNS();
-  resto = 0;
-  if (!preparada || !SDL_ResumeAudioStreamDevice(flujo)) {
+  if (!preparada) {
     cerrar();
     return false;
   }
-  std::printf("Audio: AdLib (música) + PC Speaker (efectos). F4 cambia la opción; M silencia.\n"
-              "SB16 y MT-32: pendientes de integrar.\n");
+  flujo_musical = SDL_CreateAudioStream(&formato, &formato);
+  if (!flujo_musical || !SDL_SetAudioStreamGetCallback(flujo_musical, alimentar_musica, this) ||
+      !SDL_BindAudioStream(dispositivo, flujo_musical)) {
+    cerrar();
+    return false;
+  }
+  ultimo = SDL_GetTicksNS();
+  resto = 0;
+  fallo_musical.store(false);
+  muestras_producidas.store(0);
+  if (!SDL_ResumeAudioDevice(dispositivo)) {
+    cerrar();
+    return false;
+  }
+  std::printf("Audio: %s + PC Speaker (efectos). F4 cambia la opción; M silencia.\nSB16 digital: "
+              "pendiente.\n",
+              perfil == 2 ? "MT-32 (música por escena)" : "AdLib (presentación)");
   std::fflush(stdout);
   return true;
 }
 
-// El flujo posee su dispositivo, por lo que destruirlo libera también la salida asociada.
+// SDL espera al callback antes de liberar su sintetizador y el dispositivo compartido.
 void Audio::cerrar() {
+  if (flujo_musical)
+    SDL_DestroyAudioStream(flujo_musical);
+  flujo_musical = nullptr;
   if (flujo)
     SDL_DestroyAudioStream(flujo);
   flujo = nullptr;
   datos = nullptr;
+  if (dispositivo)
+    SDL_CloseAudioDevice(dispositivo);
+  dispositivo = 0;
+  mt32.cerrar();
 }
 
-// Las comparaciones gráficas conservan la modalidad cero al no abrir un dispositivo.
+// El callback tiene el bloqueo del flujo: los cambios de banco y perfil usan el mismo bloqueo.
+void Audio::alimentar_musica(void *contexto, SDL_AudioStream *salida, int adicional, int) {
+  auto &audio = *static_cast<Audio *>(contexto);
+  int pendientes = (adicional + 1) / 2;
+  short fm[512], roland[512];
+  while (pendientes > 0) {
+    const auto cantidad = static_cast<unsigned int>(pendientes > 512 ? 512 : pendientes);
+    bool correcto = audio.musica.generar(fm, cantidad);
+    if (audio.mt32.disponible())
+      correcto = correcto && audio.mt32.generar(roland, cantidad);
+    for (unsigned int i = 0; i < cantidad; ++i)
+      fm[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
+              : audio.perfil == 2                              ? roland[i]
+              : audio.presentacion                             ? fm[i]
+                                                               : 0;
+    if (!correcto || !SDL_PutAudioStreamData(salida, fm, static_cast<int>(cantidad * 2))) {
+      audio.fallo_musical.store(true);
+      return;
+    }
+    audio.muestras_producidas.fetch_add(cantidad);
+    pendientes -= static_cast<int>(cantidad);
+  }
+}
+
+// Prepara efectos de una sesión nueva sin reiniciar ni vaciar la música en curso.
 bool Audio::conectar(unsigned char *segmento) {
   if (!flujo)
     return true;
@@ -50,60 +107,65 @@ bool Audio::conectar(unsigned char *segmento) {
     return false;
   datos[0x9924] = 0;
   datos[0x0ad4] = 1;
-  datos[0x0ad3] = musica_audible ? 2 : 0;
-  return SDL_ResumeAudioStreamDevice(flujo);
+  return cambiar_escena(static_cast<unsigned short>(datos[0x8082] | (datos[0x8083] << 8)));
 }
 
-// Las vistas de desarrollo reinician la sesión; no deben dejar notas de otra vista sonando.
+// Desconecta solo los efectos: la música mantiene su búfer y su reloj durante la carga de imágenes.
 void Audio::desconectar() {
   if (datos) {
     altavoz.detener(datos);
-    datos[0x0ad4] = 0;
-    datos[0x0ad3] = 0;
+    datos[0x0ad4] = datos[0x0ad3] = 0;
   }
   datos = nullptr;
-  if (flujo)
-    SDL_ClearAudioStream(flujo);
 }
 
-// Limita la cola a unos cien milisegundos sin ejecutar el motor desde el hilo de audio de SDL.
+// Toda escena consulta las mismas tablas; los bancos repetidos no se reinician.
+bool Audio::cambiar_escena(unsigned short escena) {
+  if (!flujo_musical)
+    return true;
+  if (!SDL_LockAudioStream(flujo_musical))
+    return false;
+  presentacion = escena == 0xffff;
+  const bool correcto = !mt32.disponible() || mt32.cambiar_escena(escena);
+  if (datos)
+    datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
+  if (!presentacion && perfil == 1)
+    std::printf("AdLib: arreglo de esta zona pendiente; no se reutiliza el tema de presentación. "
+                "Usa MT-32.\n");
+  SDL_UnlockAudioStream(flujo_musical);
+  return correcto;
+}
+
+// Solo los efectos acceden a DS desde el hilo principal; las imágenes no detienen el flujo musical.
 bool Audio::actualizar() {
   if (!flujo)
     return true;
+  if (fallo_musical.load())
+    return false;
   const auto ahora = SDL_GetTicksNS();
   auto transcurrido = ahora - ultimo;
   ultimo = ahora;
-  // Tras una suspensión prolongada se descarta el efecto que habría terminado fuera de pantalla.
   if (transcurrido > 5000000000ull) {
-    if ((datos && !altavoz.detener(datos)) || !SDL_ClearAudioStream(flujo))
-      return false;
-    if (datos)
+    if (datos) {
+      altavoz.detener(datos);
       datos[0x9924] = 0;
+    }
     transcurrido = resto = 0;
   }
-  const auto reloj = transcurrido * motor::AltavozPcm::frecuencia + resto;
+  const auto reloj = transcurrido * 48000u + resto;
   auto pendientes = reloj / 1000000000u;
   resto = reloj % 1000000000u;
-  const auto en_cola = SDL_GetAudioStreamQueued(flujo);
-  if (en_cola < 0)
+  if (SDL_GetAudioStreamQueued(flujo) > 9600 && !SDL_ClearAudioStream(flujo))
     return false;
-  if (en_cola > 9600 && !SDL_ClearAudioStream(flujo))
-    return false;
-  short muestras[1024], melodia[1024];
+  short muestras[1024];
   while (pendientes) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 1024 ? 1024 : pendientes);
-    if (!musica.generar(melodia, cantidad) ||
-        (datos && !altavoz.generar(datos, muestras, cantidad)))
+    if (datos && !altavoz.generar(datos, muestras, cantidad))
       return false;
-    for (unsigned int i = 0; i < cantidad; ++i) {
-      const int mezcla = (musica_audible ? melodia[i] : 0) + (datos ? muestras[i] : 0);
-      muestras[i] = static_cast<short>(mezcla < -32768 ? -32768 : mezcla > 32767 ? 32767 : mezcla);
-    }
-    pendientes -= cantidad;
-    if (silencio)
+    if (!datos || silencio)
       for (unsigned int i = 0; i < cantidad; ++i)
         muestras[i] = 0;
-    // Al recuperar un cuadro lento solo se presenta su final, pero todas las IRQ se consumen.
+    pendientes -= cantidad;
     if (pendientes < 2400 &&
         !SDL_PutAudioStreamData(flujo, muestras, static_cast<int>(cantidad * 2)))
       return false;
@@ -111,7 +173,7 @@ bool Audio::actualizar() {
   return true;
 }
 
-// El segmento debe pertenecer a la sesión conectada, para no mezclar partidas de desarrollo.
+// El segmento debe pertenecer a la sesión conectada para no mezclar partidas de desarrollo.
 bool Audio::reproducir(unsigned char *segmento, unsigned short entidad,
                        unsigned char identificador) {
   if (segmento[0x0ad4] == 0)
@@ -119,31 +181,36 @@ bool Audio::reproducir(unsigned char *segmento, unsigned short entidad,
   return datos == segmento && actualizar() && altavoz.reproducir(datos, entidad, identificador);
 }
 
-// M es un control de plataforma; no cambia la modalidad DOS ni el resultado de los guiones.
+// El cambio de ganancia evita vaciar muestras y mantiene la continuidad del dispositivo.
 bool Audio::alternar_silencio() {
+  if (flujo_musical && !SDL_LockAudioStream(flujo_musical))
+    return false;
   silencio = !silencio;
+  if (flujo_musical)
+    SDL_UnlockAudioStream(flujo_musical);
   std::printf("Audio: %s.\n", silencio ? "silenciado" : "reactivado");
   std::fflush(stdout);
-  return !flujo || SDL_ClearAudioStream(flujo);
+  return !flujo || SDL_SetAudioStreamGain(flujo, silencio ? 0.0f : 1.0f);
 }
 
-// Mantiene el tema en curso: cambiar de opción modifica la mezcla, sin reiniciar canales.
+// F4 solo ofrece dispositivos preparados; cada cambio se informa por consola.
 bool Audio::alternar_dispositivo() {
-  if (!flujo) {
-    std::printf("Audio desactivado o sin dispositivo; inicia sin --sin-sonido para cambiarlo.\n");
-    std::fflush(stdout);
+  if (!flujo_musical) {
+    std::printf("Audio desactivado o sin dispositivo.\n");
     return true;
   }
-  if (!actualizar() || !SDL_ClearAudioStream(flujo))
+  if (!SDL_LockAudioStream(flujo_musical))
     return false;
-  musica_audible = !musica_audible;
+  perfil = (perfil + 1) % (mt32.disponible() ? 3u : 2u);
   if (datos)
-    datos[0x0ad3] = musica_audible ? 2 : 0;
+    datos[0x0ad3] = perfil == 2 ? 4 : perfil == 1 ? 2 : 0;
   std::printf("Audio cambiado a %s%s.\n",
-              musica_audible ? "AdLib (música) + PC Speaker (efectos)"
-                             : "PC Speaker (efectos; sin música)",
+              perfil == 2   ? "MT-32 (música por escena) + PC Speaker"
+              : perfil == 1 ? "AdLib (presentación; arreglos de zona pendientes) + PC Speaker"
+                            : "PC Speaker (efectos; sin música)",
               silencio ? " [silenciado con M]" : "");
   std::fflush(stdout);
+  SDL_UnlockAudioStream(flujo_musical);
   return true;
 }
 
@@ -157,7 +224,7 @@ void campo_wav(unsigned char *cabecera, unsigned int posicion, unsigned int valo
 } // namespace
 
 // Contrasta ocho segundos de música real en un bloque y en fragmentos de tamaños distintos.
-bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta) {
+bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsigned short tema) {
   size_t longitud = 0;
   void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
   if (!archivo || longitud > 0xffffffffu) {
@@ -166,9 +233,9 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta) {
   }
   static MusicaAdlib continua, fragmentada;
   const bool preparadas = continua.iniciar(static_cast<const unsigned char *>(archivo),
-                                           static_cast<unsigned int>(longitud)) &&
+                                           static_cast<unsigned int>(longitud), tema) &&
                           fragmentada.iniciar(static_cast<const unsigned char *>(archivo),
-                                              static_cast<unsigned int>(longitud));
+                                              static_cast<unsigned int>(longitud), tema);
   SDL_free(archivo);
   if (!preparadas)
     return false;
@@ -217,15 +284,22 @@ bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta) {
   if (!guardado || !cerrado || !audio.abrir(carpeta))
     return false;
   SDL_Delay(25);
-  bool integrada = audio.actualizar() && audio.conectar(segmento) && segmento[0x0ad3] == 2 &&
-                   audio.alternar_dispositivo() && segmento[0x0ad3] == 0 &&
-                   audio.alternar_silencio();
+  bool integrada = audio.actualizar() && audio.conectar(segmento);
+  const bool con_mt32 = segmento[0x0ad3] == 4;
+  integrada = integrada && (segmento[0x0ad3] == 2 || con_mt32) && audio.alternar_dispositivo() &&
+              segmento[0x0ad3] == 0 && audio.alternar_silencio();
   SDL_Delay(25);
   integrada =
       integrada && audio.actualizar() && audio.alternar_dispositivo() && segmento[0x0ad3] == 2;
+  if (con_mt32)
+    integrada = integrada && audio.alternar_dispositivo() && segmento[0x0ad3] == 4;
+  integrada = integrada && audio.alternar_silencio();
   audio.desconectar();
+  const auto antes_de_carga = audio.muestras_musicales();
+  SDL_Delay(150);
+  integrada = integrada && audio.muestras_musicales() > antes_de_carga;
   SDL_Delay(25);
-  integrada = integrada && audio.actualizar() && audio.alternar_silencio();
+  integrada = integrada && audio.actualizar();
   audio.cerrar();
   if (!integrada)
     return false;
@@ -258,4 +332,64 @@ bool comprobar_salida_audio(const char *ruta) {
   if (correcto)
     std::printf("Salida SDL: PCM mono de 48.000 Hz aceptado por el dispositivo.\n");
   return correcto;
+}
+
+// Los cinco bancos deben producir audio; las transiciones que comparten banco no deben reiniciarlo.
+bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
+  size_t longitud = 0;
+  void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
+  static MusicaMt32 sintetizador;
+  const bool preparado = archivo && longitud <= 0xffffffffu &&
+                         sintetizador.iniciar(carpeta, static_cast<const unsigned char *>(archivo),
+                                              static_cast<unsigned int>(longitud));
+  SDL_free(archivo);
+  if (!preparado)
+    return false;
+  constexpr unsigned short escenas[] = {0, 64, 3, 15, 0xffff};
+  constexpr unsigned int cantidad = 48000 * 8;
+  std::vector<short> muestras(cantidad);
+  bool guardado = false;
+  for (unsigned int banco = 0; banco < 5; ++banco) {
+    if (!sintetizador.cambiar_escena(escenas[banco]) || sintetizador.banco() != banco ||
+        !sintetizador.generar(muestras.data(), cantidad)) {
+      sintetizador.cerrar();
+      return false;
+    }
+    unsigned int audibles = 0;
+    for (const auto valor : muestras)
+      audibles += valor > 64 || valor < -64 ? 1u : 0u;
+    if (audibles < 100) {
+      sintetizador.cerrar();
+      return false;
+    }
+    std::printf("MT-32: CURSE.RS%u genera %u muestras con señal.\n", banco + 1, audibles);
+    if (banco == 0) {
+      if (!sintetizador.cambiar_escena(1) || sintetizador.banco() != 0 ||
+          !sintetizador.cambiar_escena(2) || sintetizador.banco() != 0) {
+        sintetizador.cerrar();
+        return false;
+      }
+      unsigned char cabecera[44] = {'R', 'I', 'F', 'F', 0,   0,   0,   0, 'W', 'A', 'V',
+                                    'E', 'f', 'm', 't', ' ', 16,  0,   0, 0,   1,   0,
+                                    1,   0,   0,   0,   0,   0,   0,   0, 0,   0,   2,
+                                    0,   16,  0,   'd', 'a', 't', 'a', 0, 0,   0,   0};
+      campo_wav(cabecera, 4, cantidad * 2 + 36, 4);
+      campo_wav(cabecera, 24, 48000, 4);
+      campo_wav(cabecera, 28, 96000, 4);
+      campo_wav(cabecera, 40, cantidad * 2, 4);
+      std::vector<unsigned char> bytes(cantidad * 2);
+      for (unsigned int i = 0; i < cantidad; ++i)
+        campo_wav(bytes.data(), i * 2, static_cast<unsigned short>(muestras[i]), 2);
+      auto *salida = SDL_IOFromFile(ruta, "wb");
+      if (!salida) {
+        sintetizador.cerrar();
+        return false;
+      }
+      guardado = SDL_WriteIO(salida, cabecera, 44) == 44 &&
+                 SDL_WriteIO(salida, bytes.data(), bytes.size()) == bytes.size();
+      guardado = SDL_CloseIO(salida) && guardado;
+    }
+  }
+  sintetizador.cerrar();
+  return guardado;
 }

@@ -1,3 +1,4 @@
+#include "../motor/estado/segmento.hpp"
 #include "../motor/video/camara.hpp"
 #include "../motor/movimiento/geometria.hpp"
 #include "../motor/estado/paso_escena.hpp"
@@ -20,6 +21,7 @@
 #include "../motor/sonido/altavoz.hpp"
 #include "../motor/sonido/pcm.hpp"
 #include "../motor/sonido/musica.hpp"
+#include "../motor/sonido/musica_rs.hpp"
 #include "../motor/video/planos.hpp"
 #include "../motor/recursos/rnc.hpp"
 #include "../motor/recursos/escena.hpp"
@@ -58,6 +60,32 @@ bool sonido_pcm(void *, unsigned char *datos, unsigned short entidad, unsigned c
   return altavoz_pcm.reproducir(datos, entidad, identificador);
 }
 } // namespace
+
+// Contrasta paquetes RS con el alimentador MPU original y conserva el puntero de DS:9926.
+extern "C" EXPORTAR int procesar_musica_rs(unsigned char *datos, const unsigned char *banco,
+                                           unsigned int longitud, unsigned char *estado,
+                                           unsigned short *salida) {
+  auto posicion = motor::palabra(datos, 0x9926);
+  motor::EventoMusicaRS evento{};
+  if (!motor::leer_evento_musica_rs(banco, longitud, posicion, *estado, evento))
+    return 0;
+  datos[0x994a] = 1;
+  motor::guardar(datos, 0x9926, posicion);
+  salida[0] = evento.cantidad;
+  for (unsigned int i = 0; i < evento.cantidad; ++i)
+    salida[i + 1] = evento.bytes[i];
+  return 1;
+}
+
+// Expone la selección común sin introducir una tabla paralela de pistas en la plataforma.
+extern "C" EXPORTAR int seleccionar_musica_rs(const unsigned char *datos, unsigned short escena,
+                                              unsigned short *salida) {
+  const auto referencia = motor::seleccionar_musica_rs(datos, escena);
+  salida[0] = referencia.banco;
+  salida[1] = referencia.tempo;
+  salida[2] = referencia.nombre;
+  return referencia.valida;
+}
 
 // Expone estado CS y registros AdLib, sin incluir el sintetizador externo en la comparación DOS.
 extern "C" EXPORTAR int procesar_musica(unsigned int operacion, unsigned char *codigo,

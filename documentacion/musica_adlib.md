@@ -16,7 +16,7 @@ La música se reconstruye desde el reproductor interno de `CURSE.EXE`, conservan
 
 El estado musical reside en **CS**, no en el DS del juego. Los nueve registros ocupan 17 bytes desde 8CE2. El traslado conserva las escrituras parciales de bytes, los signos de la repetición y las envolturas de palabra. Los contadores globales 8E5B/8E5D conservan su decremento original; la cadencia inicial es siete IRQ. Las listas de patrones admiten FFFE para repetir, FFFD para saltar y FFFF para terminar.
 
-La llamada encontrada al iniciador musical elige el tema uno antes de Core. Esta ruta AdLib continúa por título, introducción y escenas; no se han encontrado llamadas por habitación al iniciador 8DB0. No asignar una pista distinta a cada habitación por intuición. La tabla contiene también un tema cero, que se conserva y compara, aunque no se selecciona en el arranque reconstruido. La ruta MT-32 es independiente y sigue pendiente.
+La llamada encontrada al iniciador musical elige el tema uno antes de Core. El arranque reconstruido conserva ese tema en Core, título e introducción. No se han encontrado llamadas por habitación al iniciador 8DB0; para evitar repetir la presentación en la mazmorra, la mezcla AdLib queda en silencio en las escenas jugables hasta reconstruir sus arreglos. No asignar una pista distinta a cada habitación por intuición. La tabla contiene también un tema cero, que se conserva y compara, aunque no se selecciona en el arranque reconstruido. La ruta [MT-32](musica_mt32.md) es independiente y ya utiliza los bancos RS originales por zona.
 
 ## Síntesis y reloj
 
@@ -26,14 +26,15 @@ La fuente externa se conserva sin cambios en `terceros/nuked_opl3`, con su licen
 
 Se genera PCM mono a 48.000 Hz, con el reloj nominal del PIT de 14.318.180/12 Hz y divisor 4250h. Las órdenes se aplican al terminar la muestra que cruza la IRQ, con una precisión de una muestra. La calibración DOS de esperas de puerto no se emula: el chip recibe las órdenes por su cola temporal. El volumen musical deja margen para mezclar efectos PC Speaker y la suma se limita al rango de 16 bits.
 
-La salida es común durante Core, título, introducción, menús, fundidos y escenas. Cambiar de vista o habitación conserva el tema. Tras una suspensión de más de cinco segundos se descarta audio atrasado y se continúa desde el estado musical conservado; no se afirma sincronía exacta con el tiempo de suspensión.
+El flujo musical se alimenta desde el callback de SDL, separado del hilo que carga imágenes. Dos flujos comparten un dispositivo: música autónoma y efectos de la partida. El cambio de vista conserva el búfer musical; los cambios de banco y perfil se serializan mediante el bloqueo del flujo. Una prueba bloquea el hilo principal 150 ms y comprueba que se siguen produciendo muestras; no mide cortes acústicos en un dispositivo físico.
 
 ## Controles y consola
 
-- **F4** alterna PC Speaker (efectos sin música) y AdLib (música con efectos PC Speaker). La consola indica la opción efectiva. Cambiarla conserva el avance musical, aunque su mezcla no sea audible.
-- **M** silencia o reactiva toda la mezcla; el reloj sigue avanzando. La consola también avisa si se cambia de opción estando silenciado.
-- SB16 digital y MT-32 se anuncian como pendientes; no aparecen como dispositivos funcionales. Àlex ha indicado que las ROM MT-32 estarán en `datos_originales/ROMS/`, siempre locales y excluidas de Git.
+- **F4** recorre PC Speaker (efectos), AdLib (presentación con efectos) y MT-32 (música por zona con efectos). Omite MT-32 cuando no se puede preparar. Los relojes musicales siguen avanzando al cambiar de perfil.
+- **M** silencia o reactiva toda la mezcla sin detener los secuenciadores.
+- SB16 digital sigue pendiente. Los arreglos de zona AdLib también; la mazmorra ya tiene su música correcta mediante MT-32.
 - `pnpm ventana --sin-sonido` desactiva el dispositivo desde el arranque.
+- En Windows se configura la consola como UTF-8 antes de imprimir los mensajes propios con tildes.
 
 La consola registra apertura y cierre del menú, selecciones y resultado del despacho, destinos de ratón, pulsación y liberación de flechas, bloqueos de movimiento, inventario, cambios de escena y opciones de depuración. Incluye identificador y manejador originales en las selecciones para facilitar su investigación. Una acción despachada puede ser rechazada por el guion original; el registro no implica que el puzle esté resuelto. No se imprimen los fotogramas de animación ni los movimientos del puntero.
 

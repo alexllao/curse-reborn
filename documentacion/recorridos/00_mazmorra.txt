@@ -17,7 +17,7 @@ CONTROLES
 - Flechas: caminar cuando el guion devuelve el control a Brad.
 - Esperar a que termine cada acción antes de empezar la siguiente.
 - F7: depuración; F8: entidades; F9: proximidad; F10: paredes/salidas.
-- F4: alternar PC Speaker y AdLib con efectos PC Speaker; se anuncia en consola.
+- F4: recorrer PC Speaker, AdLib y MT-32 (con ROM válidas), con efectos PC Speaker; se anuncia en consola.
 - M: silenciar o reactivar la música y los efectos.
 - F5/F6 cambian vistas de desarrollo y abren sesiones nuevas: no usarlos
   durante la comprobación de una partida persistente.

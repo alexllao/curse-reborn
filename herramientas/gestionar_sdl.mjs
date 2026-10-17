@@ -1,4 +1,5 @@
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
+import { prepararMt32 } from './gestionar_mt32.mjs';
 /** Compilación y comprobación de la presentación SDL y la mazmorra, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -136,6 +137,8 @@ async function compilar() {
     return existsSync(directo) ? directo : join(aplicacion, 'Release', 'curse-reborn');
   }
   const sdl = await preparar();
+  const variables = entornoCompilador();
+  const mt32 = await prepararMt32(raiz, ejecutar, variables);
   console.log('Compilando la presentación SDL y la mazmorra…');
   ejecutar(
     process.env.CXX || 'clang++',
@@ -153,18 +156,30 @@ async function compilar() {
       '/subsystem:console',
       '-I',
       join(sdl, 'include'),
+      '-I',
+      join(mt32, 'include'),
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
       join(raiz, 'plataformas', 'sdl', 'musica_adlib.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'musica_mt32.cpp'),
       join(raiz, 'plataformas', 'sdl', 'opl.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
       join(aplicacion, 'curse-reborn.exe'),
     ],
-    entornoCompilador(),
+    variables,
+  );
+  copyFileSync(join(mt32, 'bin', 'mt32emu-2.dll'), join(aplicacion, 'mt32emu.dll'));
+  copyFileSync(
+    join(mt32, 'share', 'doc', 'munt', 'libmt32emu', 'COPYING.txt'),
+    join(aplicacion, 'LICENCIA_GPL_MT32EMU.txt'),
+  );
+  copyFileSync(
+    join(mt32, 'share', 'doc', 'munt', 'libmt32emu', 'COPYING.LESSER.txt'),
+    join(aplicacion, 'LICENCIA_MT32EMU.txt'),
   );
   copyFileSync(join(sdl, 'lib', 'x64', 'SDL3.dll'), join(aplicacion, 'SDL3.dll'));
   copyFileSync(join(sdl, 'LICENSE.txt'), join(aplicacion, 'LICENCIA_SDL3.txt'));
@@ -267,6 +282,16 @@ export async function gestionarSdl(accion, argumentos) {
     ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'ultimo_fotograma.bmp')], {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
+    });
+    return;
+  }
+  if (accion === 'comprobar:mt32') {
+    const programa = await compilar();
+    const carpeta = join(raiz, 'trabajo', 'comparacion_musica_rs');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-mt32', join(carpeta, 'mazmorra_mt32.wav')], {
+      ...process.env,
+      SDL_AUDIO_DRIVER: 'dummy',
     });
     return;
   }

@@ -35,5 +35,6 @@
   "motor/estado/paso_escena.cpp",
   "motor/video/camara.cpp",
   "motor/sonido/pcm.cpp",
-  "motor/sonido/musica.cpp"
+  "motor/sonido/musica.cpp",
+  "motor/sonido/musica_rs.cpp"
 ]

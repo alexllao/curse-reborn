@@ -6,7 +6,7 @@
 class MusicaAdlib {
 public:
   // Lee el segmento CS del MZ como datos e inicia el tema uno, elegido por 0487–048A.
-  bool iniciar(const unsigned char *ejecutable, unsigned int longitud);
+  bool iniciar(const unsigned char *ejecutable, unsigned int longitud, unsigned short tema = 1);
   // Produce muestras mono de 48 kHz; el reloj musical mantiene el divisor PIT original.
   bool generar(short *salida, unsigned int cantidad);
   // Permite comprobar que los saltos de vista y cambios de habitación conservan la música.

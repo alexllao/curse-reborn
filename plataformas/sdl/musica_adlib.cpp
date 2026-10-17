@@ -9,7 +9,8 @@ void MusicaAdlib::escribir(void *contexto, unsigned short registro, unsigned cha
 }
 
 // La copia incluye tablas y patrones originales; su uso se limita a lecturas y al estado musical.
-bool MusicaAdlib::iniciar(const unsigned char *ejecutable, unsigned int longitud) {
+bool MusicaAdlib::iniciar(const unsigned char *ejecutable, unsigned int longitud,
+                          unsigned short tema) {
   preparada = false;
   if (!ejecutable || longitud < 512 + 65536 || ejecutable[0] != 'M' || ejecutable[1] != 'Z' ||
       motor::palabra(ejecutable, 8) != 32)
@@ -20,8 +21,8 @@ bool MusicaAdlib::iniciar(const unsigned char *ejecutable, unsigned int longitud
   fraccion = 0;
   hasta_interrupcion = 0x4250;
   interrupciones = 0;
-  preparada =
-      motor::inicializar_chip_adlib(codigo, {this, escribir}) && motor::iniciar_musica(codigo, 1);
+  preparada = motor::inicializar_chip_adlib(codigo, {this, escribir}) &&
+              motor::iniciar_musica(codigo, tema);
   return preparada;
 }
 

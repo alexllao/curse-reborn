@@ -64,6 +64,10 @@ public:
   bool actualizar_audio() {
     return audio.actualizar();
   }
+  // Vuelve a la música de presentación, conservando el dispositivo y el búfer.
+  bool audio_presentacion() {
+    return audio.cambiar_escena(0xffff);
+  }
   // Alterna las opciones de audio disponibles e informa por consola.
   bool alternar_dispositivo_audio() {
     return audio.alternar_dispositivo();

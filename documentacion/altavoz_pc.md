@@ -68,7 +68,7 @@ La inicialización original 01A8–01B9 programa 4250h en el canal cero y la IRQ
 
 La plataforma `plataformas/sdl/audio.cpp` mantiene una salida compartida y procesa las secuencias en el hilo principal. SDL recibe únicamente muestras; su hilo de dispositivo nunca escribe DS. Cambiar de habitación conserva dispositivo y prioridad; abrir otra vista de desarrollo limpia los efectos de la sesión anterior. El menú pausa la lógica, pero no la IRQ de sonido. La tecla M silencia las muestras sin cambiar el modo del juego. Tras una suspensión superior a cinco segundos se descarta el efecto interrumpido; los cuadros lentos descartan audio atrasado para limitar la latencia.
 
-Los servicios FB, las respuestas de menú de 3545/37FF y el burbujeo BF3C–BF41 del lago utilizan el mismo selector 5288. No se añaden pitidos de prueba a las acciones del juego. La música tiene su propia modalidad 0AD3 y ahora usa el [reproductor AdLib](musica_adlib.md), también durante la presentación. SB16 digital y MT-32 siguen pendientes.
+Los servicios FB, las respuestas de menú de 3545/37FF y el burbujeo BF3C–BF41 del lago utilizan el mismo selector 5288. No se añaden pitidos de prueba a las acciones del juego. La música tiene su propia modalidad 0AD3: [AdLib](musica_adlib.md) conserva la presentación y [MT-32](musica_mt32.md) reproduce los bancos por zona. SB16 digital sigue pendiente.
 
 ## Comprobación de PCM y SDL
 

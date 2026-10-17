@@ -472,7 +472,7 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   direccion = 0xffff;
   registrar_accion("Escena cargada: %s (índice %u, salida %u)", bancos[actual], actual, salida);
   registrar_estado();
-  return true;
+  return audio.cambiar_escena(actual);
 }
 
 // El original detiene la lógica durante el fundido y los ocho retrazos del movimiento de cámara.

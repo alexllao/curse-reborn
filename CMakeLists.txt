@@ -12,7 +12,7 @@ foreach(INDICE RANGE ${ULTIMA_FUENTE})
   list(APPEND FUENTES_MOTOR "${FUENTE}")
 endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS herramientas/fuentes_motor.json)
-add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/opl.cpp ${FUENTES_MOTOR})
+add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)
@@ -29,3 +29,33 @@ endif()
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${CMAKE_CURRENT_SOURCE_DIR}/terceros/nuked_opl3/LICENSE"
   "$<TARGET_FILE_DIR:curse-reborn>/LICENCIA_NUKED_OPL3.txt")
+
+find_path(MT32EMU_INCLUDE_DIR mt32emu/mt32emu.h
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/include" REQUIRED)
+target_include_directories(curse-reborn PRIVATE "${MT32EMU_INCLUDE_DIR}")
+
+# La carga es dinámica; conservar un nombre estable y permitir reemplazar la biblioteca.
+if(WIN32)
+  set(NOMBRE_MT32EMU mt32emu.dll)
+  set(CANDIDATOS_MT32EMU mt32emu-2.dll mt32emu.dll)
+elseif(APPLE)
+  set(NOMBRE_MT32EMU libmt32emu.dylib)
+  set(CANDIDATOS_MT32EMU libmt32emu.dylib)
+else()
+  set(NOMBRE_MT32EMU libmt32emu.so)
+  set(CANDIDATOS_MT32EMU libmt32emu.so)
+endif()
+find_file(MT32EMU_BIBLIOTECA NAMES ${CANDIDATOS_MT32EMU}
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/bin"
+        "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/lib")
+if(MT32EMU_BIBLIOTECA)
+  add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${MT32EMU_BIBLIOTECA}" "$<TARGET_FILE_DIR:curse-reborn>/${NOMBRE_MT32EMU}")
+endif()
+set(CARPETA_LICENCIA_MT32EMU "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/share/doc/munt/libmt32emu")
+foreach(LICENCIA COPYING.LESSER.txt COPYING.txt)
+  if(EXISTS "${CARPETA_LICENCIA_MT32EMU}/${LICENCIA}")
+    add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${CARPETA_LICENCIA_MT32EMU}/${LICENCIA}" "$<TARGET_FILE_DIR:curse-reborn>/MT32EMU_${LICENCIA}")
+  endif()
+endforeach()

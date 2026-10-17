@@ -3,6 +3,15 @@
 
 #include <cstdio>
 #include <string>
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 #include "../../motor/recursos/titulo.hpp"
 #include "../../motor/recursos/escena.hpp"
 #include "../../motor/video/sprites.hpp"
@@ -12,6 +21,14 @@
 #include "registro.hpp"
 
 namespace {
+// Interpreta como UTF-8 los mensajes propios, también al heredar una consola OEM de Windows.
+void configurar_consola() {
+#ifdef _WIN32
+  SetConsoleOutputCP(CP_UTF8);
+  SetConsoleCP(CP_UTF8);
+#endif
+}
+
 motor::ImagenTitulo imagen;
 unsigned char planos[262144];
 unsigned char pixeles[64000 * 4];
@@ -130,7 +147,7 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
       pantalla >= 3   ? cargar_mazmorra(carpeta, static_cast<unsigned short>(pantalla - 3))
       : pantalla == 2 ? (cargar_imagen(carpeta, "TITLE") && introduccion.iniciar(carpeta, imagen))
                       : cargar_imagen(carpeta, pantalla == 0 ? "CORE" : "TITLE");
-  if (!cargada)
+  if (!cargada || (pantalla < 3 && !mazmorra.audio_presentacion()))
     return false;
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
@@ -147,6 +164,7 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
+  configurar_consola();
   if (argc != 2 && argc != 3 && argc != 4) {
     std::fprintf(
         stderr,
@@ -159,9 +177,17 @@ int main(int argc, char *argv[]) {
     std::fprintf(stderr, "La opción de ejecución debe ser --sin-sonido.\n");
     return 1;
   }
-  if (opcion == "--comprobar-musica" && argc == 4) {
+  if (opcion == "--comprobar-mt32" && argc == 4) {
     Presentacion limpieza;
-    if (!SDL_Init(0) || !comprobar_musica_adlib(argv[1], argv[3]) ||
+    if (!SDL_Init(0) || !comprobar_musica_mt32(argv[1], argv[3]) ||
+        !comprobar_salida_audio(argv[3]))
+      return fallo("No se ha podido comprobar la música MT-32");
+    return 0;
+  }
+  if ((opcion == "--comprobar-musica" || opcion == "--muestra-musica-0") && argc == 4) {
+    Presentacion limpieza;
+    if (!SDL_Init(0) ||
+        !comprobar_musica_adlib(argv[1], argv[3], opcion == "--muestra-musica-0" ? 0 : 1) ||
         !comprobar_salida_audio(argv[3]))
       return fallo("No se ha podido comprobar la música AdLib");
     return 0;
