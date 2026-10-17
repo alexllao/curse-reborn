@@ -158,7 +158,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   if (manejador == 0x9900) {
-    // 9900–9951: el guion del guardia solo acepta su fotograma tres.
+    // 9900–9951: empujar la pared exige el fotograma tres de la entidad.
     if (d[0x2c8f] != 3) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;

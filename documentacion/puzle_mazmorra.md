@@ -1,26 +1,26 @@
 # Puzle de la mazmorra
 
-La ruta reconstruida parte del estado inicial y pasa por la conversación, primera llave, liberación, acción del guardia, segunda llave y apertura de la puerta. El comparador ejecuta las mismas selecciones del menú que el adaptador SDL, sin introducir objetos en el inventario ni colocar a Brad directamente en los destinos.
+La ruta reconstruida parte del estado inicial y pasa por la conversación, primera llave, liberación, acción sobre la pared, clip y apertura de la puerta. El comparador ejecuta las mismas selecciones del menú que el adaptador SDL, sin introducir objetos en el inventario ni colocar a Brad directamente en los destinos.
 
 ## Bloques trasladados
 
-| Original                                   | Comportamiento                                                                                      | Fuente                         |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------ |
-| 563A–5678                                  | Puntuación por icono 1F/22; inserción y rechazo del inventario lleno                                | `motor/acciones/menu.cpp`      |
-| 56CB–56DB, 615C–61A6                       | Recogida del objeto cinco, modelo normal/especial y contador de pasos + 6                           | `motor/acciones/menu.cpp`      |
-| 623D–625F                                  | Baja en la lista persistente de objetos                                                             | `motor/acciones/menu.cpp`      |
-| 3B53–3D68                                  | Despacho de la acción dos sobre el guardia y combinación simétrica 3/4; rechazos del ámbito inicial | `motor/acciones/menu.cpp`      |
-| 9900–9953                                  | Condición de fotograma del guardia, secuencias, activación de la segunda llave y puntuación         | `motor/acciones/menu.cpp`      |
-| 9954–9993                                  | Aproximación y apertura de la puerta mediante canales diferidos                                     | `motor/acciones/menu.cpp`      |
-| 2FCA, 3143, 384A                           | Para identificadores 0–5: rechazo de los dos primeros; retorno sin cambio ni acarreo de 384A        | `motor/acciones/menu.cpp`      |
-| 4B05–4B0E, 4C43–4C98, 4D2B–4D40, 5145–5181 | Preparación de las entradas 0/2 entre celda y corredor con STD.BRD                                  | `motor/estado/inicializar.cpp` |
-| BEA8–BEFC                                  | Rutina de la escena uno según ventana, estado de Brad y entidad                                     | `motor/entidades/mazmorra.cpp` |
+| Original                                   | Comportamiento                                                                                  | Fuente                         |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------- | ------------------------------ |
+| 563A–5678                                  | Puntuación por icono 1F/22; inserción y rechazo del inventario lleno                            | `motor/acciones/menu.cpp`      |
+| 56CB–56DB, 615C–61A6                       | Recogida del objeto cinco, modelo normal/especial y contador de pasos + 6                       | `motor/acciones/menu.cpp`      |
+| 623D–625F                                  | Baja en la lista persistente de objetos                                                         | `motor/acciones/menu.cpp`      |
+| 3B53–3D68                                  | Despacho de empujar la pared y desbloqueo con pareja simétrica 3/4; rechazos del ámbito inicial | `motor/acciones/menu.cpp`      |
+| 9900–9953                                  | Condición de fotograma de la entidad, secuencias, activación del clip y puntuación              | `motor/acciones/menu.cpp`      |
+| 9954–9993                                  | Aproximación y apertura de la puerta mediante canales diferidos                                 | `motor/acciones/menu.cpp`      |
+| 2FCA, 3143, 384A                           | Para identificadores 0–5: rechazo de los dos primeros; retorno sin cambio ni acarreo de 384A    | `motor/acciones/menu.cpp`      |
+| 4B05–4B0E, 4C43–4C98, 4D2B–4D40, 5145–5181 | Preparación de las entradas 0/2 entre celda y corredor con STD.BRD                              | `motor/estado/inicializar.cpp` |
+| BEA8–BEFC                                  | Rutina de la escena uno según ventana, estado de Brad y entidad                                 | `motor/entidades/mazmorra.cpp` |
 
 ## Comparaciones
 
 Verificados localmente: **1.834 casos/pasos** en la comparación amplia y **64.000 píxeles RGB** en la captura SDL. La muestra actual contiene 1.582 casos/pasos. También pasó la regresión de menú de 91 casos y la revisión de formato y lint.
 
-- `pnpm comparar:puzle`: compara DS completo, azar en los pasos de juego y composición final contra instrucciones del EXE. Incluye 336 combinaciones de acción, objeto previo y destino; inventario lleno; las 256 fases posibles del guardia; 1.161 pasos persistentes; dos fragmentos de entrada y 18 estados del corredor. La opción `--muestra` reduce las fases del guardia a cuatro conservando el recorrido entero.
+- `pnpm comparar:puzle`: compara DS completo, azar en los pasos de juego y composición final contra instrucciones del EXE. Incluye 336 combinaciones de acción, objeto previo y destino; inventario lleno; las 256 fases posibles de la entidad; 1.161 pasos persistentes; dos fragmentos de entrada y 18 estados del corredor. La opción `--muestra` reduce las fases de la entidad a cuatro conservando el recorrido entero.
 - `pnpm comprobar:puzle`: compila SDL, ejecuta la muestra anterior y recorre los mismos clics desde el adaptador de plataforma. Compara los 64.000 píxeles RGB de la puerta abierta con la composición original. La ejecución de comprobación avanza sin esperar tiempo real.
 
 La apertura debe dejar el fotograma de DS:2CB0 en 10 hexadecimal. Esto habilita el detector original de salida cero; no se fuerza ese fotograma desde el menú ni desde la plataforma.

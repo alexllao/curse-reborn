@@ -944,14 +944,14 @@
     },
     {
       "direccion": "0000:9900",
-      "nombre": "Acción sobre el guardia de la mazmorra",
-      "comentario": "Solo acepta el fotograma tres. Programa los canales del guardia y de Brad, activa el objeto tres y suma cinco puntos. Contraste de aceptación y rechazo más recorrido persistente.",
+      "nombre": "Empujar la pared de la mazmorra",
+      "comentario": "Solo acepta el fotograma tres. Programa los canales de la entidad y de Brad, activa el clip (objeto tres) y suma cinco puntos. Contraste de aceptación y rechazo más recorrido persistente.",
       "traslado": "motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:9954",
-      "nombre": "Segunda llave y puerta de la mazmorra",
-      "comentario": "La combinación simétrica de identificadores tres y cuatro programa la puerta mediante la cola de canales 009C y suma cinco puntos. La comparación persistente verifica el fotograma final 10 hexadecimal.",
+      "nombre": "Desbloqueo de la puerta con el clip",
+      "comentario": "El desbloqueo acepta los identificadores tres y cuatro en ambos órdenes y programa la puerta mediante la cola de canales 009C y suma cinco puntos. La comparación persistente verifica el fotograma final 10 hexadecimal.",
       "traslado": "motor/acciones/menu.cpp"
     },
     {

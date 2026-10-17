@@ -33,6 +33,6 @@ La muestra verificada contiene **2.429 casos/pasos**, con regresión y capturas 
 
 ## Límite de jugabilidad
 
-La entidad del corredor bloquea el avance hacia la izquierda en el estado de partida comprobado. Se conserva ese bloqueo del original. Las pruebas sintéticas de cámara no desbloquean ni resuelven su puzle. Faltan otras acciones del corredor y el recorrido completo hasta su salida uno. El enlace de esa salida con [DROP](caida_y_agua.md) está conectado y tiene una vista de desarrollo separada.
+En la prueba corta, una entidad detiene el movimiento hacia la izquierda. Eso no valida el recorrido completo: la guía aportada por Àlex exige recoger la pecera y continuar pasando las estatuas y los guardias. Queda por reconstruir y comprobar esa secuencia completa. Las pruebas sintéticas de cámara no desbloquean ni resuelven su puzle. Faltan otras acciones del corredor y el recorrido completo hasta su salida uno. El enlace de esa salida con [DROP](caida_y_agua.md) está conectado y tiene una vista de desarrollo separada.
 
 [Guía de la partida y regreso](recorridos/01_corredor.txt).

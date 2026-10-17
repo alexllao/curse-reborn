@@ -206,7 +206,7 @@ En la mazmorra, Escape o botón derecho abre/cierra el menú. El ratón y el bot
 
 ### Recorrido de la mazmorra
 
-Ya se puede actuar sobre el guardia, recoger la segunda llave y combinarla con la puerta para abrirla. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La puerta permite entrar al corredor y regresar con el estado conservado. Se mantienen las restricciones de sus entidades; el resto de su puzle sigue pendiente.
+Ya se puede empujar la pared, recoger el clip y desbloquear la puerta con él. Se mantienen las condiciones y los rechazos originales, incluida la recogida del objeto de puntuación. La puerta permite entrar al corredor y regresar con el estado conservado. Faltan la recogida de la pecera y el recorrido completo entre estatuas y guardias.
 
 [Guía paso a paso en texto](documentacion/recorridos/00_mazmorra.txt). Se ampliará al validar cada pantalla. Las instrucciones usan las casillas reales del menú y el mismo orden que la comparación automática.
 
@@ -262,3 +262,5 @@ La licencia del código nuevo está pendiente de definir. Antes de incorporar c�
 ---
 
 Este proyecto empieza con el deseo de volver al primer juego de ordenador de su creador y darle un futuro sin perder aquello que lo hizo especial.
+
+La solución de referencia y el seguimiento por tramos están en [referencia de solución](documentacion/referencia_solucion.md), a partir de la guía de Sophie Cheshire aportada por Àlex.

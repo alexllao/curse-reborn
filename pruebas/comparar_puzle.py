@@ -1,4 +1,4 @@
-"""Contrasta acciones del guardia, recogida y apertura de puerta con el ejecutable original."""
+"""Contrasta acciones de la pared, recogida y apertura de puerta con el ejecutable original."""
 
 import argparse
 import ctypes
@@ -123,7 +123,7 @@ class ComparacionPuzle(ComparacionJugabilidad):
                     guardar(d, 0xB60C, manejador)
                     guardar(d, 0xB620, id + 0x1A)
                     self.seleccionar(d, 0)
-        # El despacho combina ambos órdenes, rechaza parejas incorrectas y distingue la fase del guardia.
+        # El despacho combina ambos órdenes, rechaza parejas incorrectas y distingue la fase de la entidad.
         for accion in range(8):
             for previo in (0xFFFF, *range(6)):
                 for objeto in range(6):

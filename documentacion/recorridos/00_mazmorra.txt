@@ -32,31 +32,31 @@ CONTROLES
 
 3. LIBERARSE DE LAS ESPOSAS
    Abrir el menú. Elegir sucesivamente: 3, 1, 1, 1, 2.
-   Equivale a: acciones secundarias, combinar, inventario,
-   primera llave y esposas.
+   Equivale a: manipular, desbloquear, inventario,
+   llave y cadenas.
    Esperar a que termine la animación.
    Resultado esperado: Brad puede caminar y la puerta física conserva
    su posición. Esta acción no abre todavía la salida.
 
-4. ACERCARSE AL GUARDIA
-   Caminar hacia el guardia de la derecha.
+4. ABRIR EL HUECO EN LA PARED
+   Caminar hacia el pilar de la derecha y examinar la pared a su izquierda.
    La prueba automática hace clic en (210, 157), en coordenadas 320 x 200.
    Abrir el menú. Elegir sucesivamente: 3, 3, 2.
-   Son la tercera acción secundaria y el guardia entre sus destinos.
+   Son empujar/tirar y la zona de pared entre los destinos.
    Esperar a que termine la acción.
-   Resultado esperado: queda disponible la segunda llave.
+   Resultado esperado: queda disponible el clip.
 
-5. RECOGER LA SEGUNDA LLAVE
+5. RECOGER EL CLIP
    Abrir el menú. Elegir: 2, 1.
    Esperar a que termine la recogida.
-   Resultado esperado: el inventario contiene las dos llaves.
+   Resultado esperado: el clip encontrado en el hueco queda en el inventario.
 
 6. ABRIR LA PUERTA
    Caminar junto a la puerta de la izquierda.
    La prueba automática hace clic en (55, 157).
    Abrir el menú. Elegir sucesivamente: 3, 1, 1, 2, 2.
-   Equivale a: acciones secundarias, combinar, inventario,
-   segunda llave y puerta.
+   Equivale a: manipular, desbloquear, inventario,
+   clip y puerta.
    Esperar a que termine la animación.
    Resultado esperado: la entrada adopta el fotograma 16 y el detector
    original permite la salida hacia el corredor.
@@ -64,7 +64,7 @@ CONTROLES
 7. SALIR AL CORREDOR
    Atravesar el umbral de la puerta abierta.
    Puede hacerse clic en (45, 152), en coordenadas lógicas de 320 x 200.
-   Resultado esperado: fundido y entrada al corredor, conservando las llaves.
+   Resultado esperado: fundido y entrada al corredor, conservando los objetos del inventario.
    Continuar con 01_corredor.txt.
 
 COMPROBACIÓN
@@ -75,3 +75,9 @@ La comparación usa las casillas originales, inventario persistente, pasos
 con colisiones y composición de imagen. También contrasta las selecciones
 incorrectas y los fragmentos de entrada entre celda y corredor.
 Las demás pantallas se añadirán al reconstruir y comprobar sus acciones.
+
+Referencia de solución: Curse of Enchantia: Walkthru, Sophie Cheshire
+(falsehead), versión final de 28/03/2003, aportada por Àlex. La guía se
+redacta de nuevo en castellano; los pasos comprobados se distinguen de
+los puzles pendientes. Los números del comparador no identifican por sí
+solos el nombre narrativo de un objeto.

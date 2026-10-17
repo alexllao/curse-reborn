@@ -412,7 +412,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido preparar la liberación desde el menú");
       for (const auto casilla : {2, 0, 0, 0, 1})
         if (!elegir(static_cast<unsigned short>(casilla)))
-          return fallo("No se ha podido combinar la llave y las esposas");
+          return fallo("No se ha podido desbloquear las esposas con la llave");
       if (mazmorra.menu_abierto() ||
           !avanzar(opcion == "--comprobar-puzle" || comprobar_corredor ? 192 : 80))
         return fallo("La liberación no ha terminado correctamente");
@@ -436,10 +436,10 @@ int main(int argc, char *argv[]) {
             !elegir(1) || !avanzar(192) || !mazmorra.entrada_menu(152, 92, false, true) ||
             !elegir(1) || !elegir(0) || !avanzar(192) || !mazmorra.mover_a(55, 157) ||
             !avanzar(96) || !mazmorra.entrada_menu(152, 92, false, true))
-          return fallo("No se ha podido completar la acción del guardia y recoger la llave");
+          return fallo("No se ha podido completar la acción sobre la pared y recoger el clip");
         for (const auto casilla : {2, 0, 0, 1, 1})
           if (!elegir(static_cast<unsigned short>(casilla)))
-            return fallo("No se ha podido usar la segunda llave en la puerta");
+            return fallo("No se ha podido usar el clip en la puerta");
         if (mazmorra.menu_abierto() || !avanzar(192))
           return fallo("No ha terminado la apertura de la puerta");
       }

@@ -21,8 +21,8 @@ pnpm comparar:caida
 pnpm comprobar:caida
 
 Se comparan dos fases de DROP, la salida automática y la entrada al agua,
-incluidos memoria, azar, modelos, burbujas y composición. El lago todavía
-no tiene todas sus acciones o su puzle integrados.
+incluidos memoria, azar, modelos, burbujas y composición. Según la guía,
+al llegar hay que ponerse la pecera. Esa acción y el resto del puzle del lago todavía no están integrados.
 
 Después de este bloque, la prioridad acordada es el audio compartido:
 PC Speaker, AdLib y MT-32, con música y efectos según los recursos del juego.
