@@ -429,6 +429,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:informacion' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -464,6 +465,7 @@ export async function gestionarSdl(accion, argumentos) {
         'MENU.DAT',
         'ICONS.SPR',
         'MOUSE.SPR',
+        'FONT.SPR',
         'BOXDET.DAT',
       );
     if (
@@ -471,6 +473,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:informacion' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -565,6 +568,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
       accion === 'comprobar:menu' ||
+      accion === 'comprobar:informacion' ||
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
@@ -891,6 +895,33 @@ export async function gestionarSdl(accion, argumentos) {
         null,
         2,
       ) + '\n',
+    );
+    return;
+  }
+  if (accion === 'comprobar:informacion') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:informacion',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_informacion_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (let pagina = 0; pagina < 4; ++pagina) {
+      const registro = ejecutar(
+        programa,
+        [datos, `--comprobar-info-${pagina}`, join(carpeta, `pagina_${pagina + 1}.bmp`)],
+        {
+          ...process.env,
+          SDL_RENDER_DRIVER: 'software',
+          CURSE_REBORN_PARTIDAS: join(carpeta, 'no_debe_crearse.sav'),
+        },
+        true,
+      );
+      writeFileSync(join(carpeta, `pagina_${pagina + 1}.log`), registro + '\n');
+    }
+    if (existsSync(join(carpeta, 'no_debe_crearse.sav')))
+      throw new Error('Información ha creado un perfil de partidas.');
+    console.log(
+      `Información: último icono, cuatro páginas, cierres y estado conservado. Capturas: ${carpeta}`,
     );
     return;
   }

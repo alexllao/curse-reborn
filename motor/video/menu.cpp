@@ -53,4 +53,69 @@ void componer_menu(const unsigned char *d, const unsigned char *panel, unsigned 
     destino[(y + 3 + i) * 320 + x + 25] = 255;
   }
 }
+// 7970–79B7 con BX=10 y CX=3: alinea el decimal y conserva el truncado de palabras DOS.
+static void decimal_informacion(unsigned char *destino, Palabra valor) {
+  const bool negativo = con_signo(valor) < 0;
+  unsigned int magnitud = negativo ? static_cast<Palabra>(-valor) : valor;
+  unsigned int restantes = negativo ? 2 : 3;
+  int posicion = 2;
+  do {
+    destino[posicion--] = static_cast<unsigned char>('0' + magnitud % 10);
+    magnitud /= 10;
+    --restantes;
+  } while (magnitud && restantes);
+  if (magnitud)
+    return;
+  if (negativo)
+    destino[posicion--] = '-';
+  while (posicion >= 0)
+    destino[posicion--] = ' ';
+}
+
+// E160–E19E: tabla DS:B74E, divisoria 478 y textos terminados en FE; FF cambia de línea.
+bool componer_informacion(const unsigned char *datos, const unsigned char *fuente,
+                          unsigned int longitud, unsigned int pagina, unsigned char *destino,
+                          unsigned int &x, unsigned int &y, unsigned int &ancho,
+                          unsigned int &alto) {
+  if (!datos || !fuente || !destino || pagina >= 4)
+    return false;
+  const unsigned int inicio = palabra(datos, static_cast<Palabra>(0xb74e + pagina * 2));
+  if (inicio + 4 >= 65536)
+    return false;
+  ancho = palabra(datos, static_cast<Palabra>(inicio));
+  alto = palabra(datos, static_cast<Palabra>(inicio + 2));
+  if (!ancho || ancho > 320 || !alto || alto > 200)
+    return false;
+  x = (320 - ancho) / 2;
+  y = (200 - alto) / 2;
+  for (unsigned int fila = y; fila < y + alto; ++fila)
+    for (unsigned int columna = x; columna < x + ancho; ++columna)
+      destino[fila * 320 + columna] = 0;
+  unsigned char puntos[3]{}, porcentaje[3]{};
+  const auto puntuacion = palabra(datos, 0x35c7);
+  decimal_informacion(puntos, puntuacion);
+  decimal_informacion(porcentaje, static_cast<Palabra>(puntuacion * 100u / 478u));
+  int columna = static_cast<int>(x) + 8, fila = static_cast<int>(y) + 5;
+  for (unsigned int posicion = inicio + 4; posicion < 65536; ++posicion) {
+    auto letra = datos[posicion];
+    if (posicion >= 0xb772 && posicion < 0xb775)
+      letra = puntos[posicion - 0xb772];
+    if (posicion >= 0xb78c && posicion < 0xb78f)
+      letra = porcentaje[posicion - 0xb78c];
+    if (letra == 0xfe)
+      return true;
+    if (letra == 0xff) {
+      columna = static_cast<int>(x) + 8;
+      fila += 10;
+      continue;
+    }
+    // D897 interpreta el carácter con signo antes de consultar su índice en DS:B6B4.
+    const int caracter = letra < 128 ? letra : static_cast<int>(letra) - 256;
+    const auto indice = datos[0xb6b4 + caracter];
+    if (indice < 128 && !dibujar_fotograma(fuente, longitud, indice, destino, columna, fila, false))
+      return false;
+    columna += 8;
+  }
+  return false;
+}
 } // namespace motor

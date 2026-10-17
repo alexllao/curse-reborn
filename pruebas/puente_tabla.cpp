@@ -907,3 +907,14 @@ extern "C" EXPORTAR int nombre_sfx(const unsigned char *datos, unsigned short es
                                    char *nombre) {
   return motor::nombre_banco_sonido(datos, escena, nombre) ? 1 : 0;
 }
+
+// Expone las cuatro fichas originales para contrastar números, glifos y los 64.000 píxeles.
+extern "C" EXPORTAR int componer_informacion(const unsigned char *datos,
+                                             const unsigned char *fuente, unsigned int longitud,
+                                             unsigned int pagina, unsigned char *destino,
+                                             unsigned int *rectangulo) {
+  return motor::componer_informacion(datos, fuente, longitud, pagina, destino, rectangulo[0],
+                                     rectangulo[1], rectangulo[2], rectangulo[3])
+             ? 1
+             : 0;
+}

@@ -285,8 +285,9 @@ int main(int argc, char *argv[]) {
   const bool comprobar_jugabilidad = opcion == "--comprobar-liberacion" ||
                                      opcion == "--comprobar-movimiento" ||
                                      opcion == "--comprobar-puzle" || comprobar_corredor;
-  const bool comprobar_menu = opcion == "--comprobar-menu" || opcion == "--comprobar-orden" ||
-                              opcion == "--comprobar-depuracion";
+  const bool comprobar_informacion = opcion.rfind("--comprobar-info-", 0) == 0;
+  const bool comprobar_menu = comprobar_informacion || opcion == "--comprobar-menu" ||
+                              opcion == "--comprobar-orden" || opcion == "--comprobar-depuracion";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
   const bool comprobar_escena =
       argc == 4 && (std::string(argv[2]) == "--comprobar-escena" || comprobar_animacion ||
@@ -393,7 +394,7 @@ int main(int argc, char *argv[]) {
   const auto abrir_partidas = [&](unsigned int modo) {
     for (const auto bit : {1, 2, 4, 8})
       mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
-    partidas.abrir(modo, presentacion.ventana, mazmorra.puntuacion());
+    partidas.abrir(modo, presentacion.ventana);
   };
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
@@ -1107,6 +1108,10 @@ int main(int argc, char *argv[]) {
         paleta_visible[i] = imagen.paleta[i];
       if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar la interacción");
+      if (comprobar_informacion &&
+          !comprobar_informacion_sdl(partidas, presentacion.ventana, presentacion.dibujante,
+                                     mazmorra, static_cast<unsigned int>(opcion.back() - '0')))
+        return fallo("No se ha podido comprobar el último icono de información");
       menu_comprobado = true;
     }
     if (comprobar_animacion && pantalla >= 3 && !animacion_preparada) {
@@ -1210,7 +1215,7 @@ int main(int argc, char *argv[]) {
       return fallo("No se han podido dibujar las cajas de depuración");
     if (!contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
-    if (!partidas.dibujar(presentacion.dibujante))
+    if (!partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.

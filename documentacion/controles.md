@@ -80,3 +80,7 @@ Abrir el menú con Escape o botón derecho y elegir el octavo icono, **partidas*
 En el panel de partidas, usar ratón o flechas arriba/abajo para seleccionar una de siete ranuras; Intro o **Aceptar** confirma. Escape o **Cancelar** vuelve al juego. Al guardar, escribir el nombre (hasta trece caracteres ASCII); Ctrl+A limpia el campo y Retroceso borra. Reemplazar una ranura o borrarla exige confirmar; mantener Intro pulsado no confirma automáticamente. El juego queda pausado y la música continúa.
 
 **Importar DOS**, dentro de Cargar, abre el selector de archivos. También se puede arrastrar un CURSE.SAV sobre ese panel. Se añaden sus partidas en ranuras libres; no se sobrescriben las existentes ni se modifica el archivo importado. Se pueden conservar partidas de zonas posteriores, pero solo se cargan las zonas ya integradas. El archivo del perfil y su copia anterior se indican por consola. Véanse [formato y comprobaciones](partidas.md).
+
+### Fichas de información
+
+El último icono del menú abre las cuatro páginas originales con puntuación y créditos. Clic izquierdo, Intro o Espacio avanzan; después de la cuarta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.

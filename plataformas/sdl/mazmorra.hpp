@@ -64,6 +64,9 @@ public:
   // Restaura el fondo y compone todas las entidades en el orden reconstruido.
   bool dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu = 0);
 
+  // E160/D623: prepara una ficha con los textos y tipografía originales, sin alterar DS.
+  bool dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &imagen,
+                           SDL_FRect &placa) const;
   // Abre/cierra el menú original y procesa sus casillas desde entrada SDL en coordenadas lógicas.
   bool entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar);
   // El clic izquierdo propone un destino; el control y las paredes originales deciden el avance.
@@ -155,7 +158,7 @@ private:
   unsigned long long inicio_animacion = 0;
   motor::EstadoAleatorio aleatorio{};
   std::string carpeta;
-  std::vector<unsigned char> escena, personaje, modelo, iconos, raton, geometria, mapa;
+  std::vector<unsigned char> escena, personaje, modelo, iconos, raton, geometria, mapa, fuente;
   unsigned char fondo_menu[10240]{}, panel_menu[64000]{};
   bool menu_visible = false;
   unsigned int solicitud_partidas = 0;

@@ -1,6 +1,6 @@
 # Partidas, menús e importación DOS
 
-El octavo icono del menú de acciones abre Cargar, Guardar y Borrar. El décimo abre una ficha informativa con puntuación y créditos. Los paneles SDL tienen textos propios en castellano y pausan la lógica, manteniendo la música. Su presentación es una adaptación de plataforma; no se afirma equivalencia visual con los diálogos DOS.
+El octavo icono del menú de acciones abre Cargar, Guardar y Borrar. El décimo y último icono abre las cuatro fichas de información del original, con puntuación, porcentaje y créditos. Todos estos menús pausan la lógica y mantienen la música. Los paneles de partidas son una adaptación de plataforma en castellano; las fichas informativas utilizan los textos y la tipografía originales del EXE y FONT.SPR.
 
 ## Uso
 
@@ -37,3 +37,11 @@ Se reconocen las zonas integradas, incluida la entrada a COUNTRY1. Una partida d
 `pnpm comprobar:partidas` compila SDL y prueba guardar, volver a una sesión inicial, restaurar inventario y escena, rechazar una zona pendiente sin cambiar la partida, cargar desde el panel, confirmar el borrado e importar la referencia DOS en otra ranura sin sobrescribir la existente. Tras importar se verifica también que Brad conserva el control. El panel final se captura en un BMP local.
 
 La compatibilidad comprobada corresponde al EXE con la huella del proyecto y a archivos escritos por sus rutinas. No se ha validado una colección de partidas de otras ediciones ni el recorrido de ida y vuelta con una sesión interactiva DOSBox.
+
+## Información del último icono
+
+Un clic izquierdo pasa a la página siguiente; el cuarto vuelve al juego. Intro, Intro numérico y Espacio también avanzan, como comodidad de plataforma. Escape, cualquier otra tecla o clic derecho cierran la información directamente. La repetición automática de una tecla no salta páginas. Cada apertura comienza por la primera ficha y registra la página en consola. La consulta no abre ni crea el archivo de partidas.
+
+E160–E19E recorre la tabla DS:B74E: B758, B804, B8BA y B90B. Se conservan los créditos originales, distinguiéndolos de la autoría de Curse Reborn. La puntuación procede de DS:35C7 y el porcentaje se calcula mediante división entera por 478. El formato decimal de tres posiciones sigue 7970–79B7. La composición reconstruye D623 hasta D6A5: placa negra centrada y texto a ocho píxeles por carácter y diez por línea, mediante D87A y la tabla DS:B6B4. No se versionan los textos extraídos ni FONT.SPR.
+
+`pnpm comparar:informacion` compara cuarenta casos con diez puntuaciones entre 0 y 478: números, posiciones y los 64.000 píxeles de cada ficha con las instrucciones originales. `pnpm comprobar:informacion` añade la apertura desde la décima casilla real, navegación, cierres, conservación del estado guardable, ausencia de escritura en el perfil y cuatro capturas SDL en `trabajo/comprobacion_informacion_sdl/`. La adaptación de teclado está descrita arriba; no se afirma identidad de todas las entradas con DOS.

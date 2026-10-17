@@ -84,7 +84,9 @@
     "comprobar:final-cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:final-cuevas",
     "comparar:partidas": "node herramientas/gestionar_proyecto.mjs comparar:partidas",
     "comprobar:partidas": "node herramientas/gestionar_proyecto.mjs comprobar:partidas",
-    "comparar:opciones": "node herramientas/gestionar_proyecto.mjs comparar:opciones"
+    "comparar:opciones": "node herramientas/gestionar_proyecto.mjs comparar:opciones",
+    "comparar:informacion": "node herramientas/gestionar_proyecto.mjs comparar:informacion",
+    "comprobar:informacion": "node herramientas/gestionar_proyecto.mjs comprobar:informacion"
   },
   "repository": {
     "type": "git",

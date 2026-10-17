@@ -126,7 +126,7 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   SDL_free(archivo);
   if (!valido || !cargar_banco("DUNGEON.SPR", escena) || !cargar_banco("STD.BRD", personaje) ||
       !cargar_banco("MANA.BRD", modelo) || !cargar_banco("ICONS.SPR", iconos) ||
-      !cargar_banco("MOUSE.SPR", raton))
+      !cargar_banco("MOUSE.SPR", raton) || !cargar_banco("FONT.SPR", fuente))
     return false;
   unsigned short ancho = 0, alto = 0;
   if (!dimensiones(this, referencia_modelo, 0, ancho, alto))
@@ -267,6 +267,19 @@ bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
   return true;
 }
 
+// D623 centra la placa negra; D87A usa FONT.SPR con pasos de ocho píxeles y diez por línea.
+bool Mazmorra::dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &imagen,
+                                   SDL_FRect &placa) const {
+  imagen = fondo;
+  unsigned int x = 0, y = 0, ancho = 0, alto = 0;
+  if (!motor::componer_informacion(datos, fuente.data(), static_cast<unsigned int>(fuente.size()),
+                                   pagina, imagen.indices, x, y, ancho, alto))
+    return false;
+  placa = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(ancho),
+           static_cast<float>(alto)};
+  return true;
+}
+
 // 8B6F: los fragmentos del pozo usan el mismo creador de entidades que las animaciones.
 bool Mazmorra::crear_desde_menu(void *contexto, unsigned char *datos, unsigned short descriptor,
                                 unsigned short &posicion) {
@@ -315,6 +328,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
                          : manejador == 0xe010 || manejador == 0x32de ? "hablar"
                          : manejador == 0xe14a || manejador == 0x3143 ? "atacar"
                          : manejador == 0xe0fd || manejador == 0x2fca ? "usar objeto"
+                         : manejador == 0xe160                        ? "información"
                          : manejador == 0xe126                        ? "partidas"
                                                                       : "elegir objeto o submenú";
     constexpr const char *manipulaciones[] = {"desbloquear",   "insertar",       "empujar o tirar",

@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:E160",
+      "nombre": "Cuatro fichas de puntuación y créditos",
+      "comentario": "E160–E19E: formatea DS:35C7 en B772 y su porcentaje entero /478 en B78C; recorre B74E con páginas B758, B804, B8BA, B90B y fin FFFF. motor/video/menu.cpp y panel SDL; textos originales locales."
+    },
+    {
+      "direccion": "0000:D623",
+      "nombre": "Placa informativa centrada y espera de entrada",
+      "comentario": "D623–D6A5: ancho y alto iniciales del texto; centra en 320x200, guarda fondo y rellena negro con 7714, dibuja D87A a izquierda+8 y arriba+5. SDL conserva el fondo por composición y adapta la espera sin tocar DS."
+    },
+    {
+      "direccion": "0000:D87A",
+      "nombre": "Texto con glifos del banco FONT.SPR",
+      "comentario": "D87A–D8C3: FF nueva línea con paso 10, FE termina; carácter con signo consulta DS:B6B4, índice >=80 no dibuja; glifos por 6D8C y avance horizontal de 8. Reconstruido para las cuatro fichas."
+    },
+    {
       "direccion": "0000:E824",
       "nombre": "Borrado lógico de una ranura",
       "comentario": "E824–E84D: limpia su bit con XOR 7F y AND, escribe solo el byte de máscara. Los bytes de las ranuras se conservan. Panel SDL solicita confirmación y mantiene copia anterior."

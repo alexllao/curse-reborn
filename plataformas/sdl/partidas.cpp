@@ -4,6 +4,11 @@
 #include <cstdint>
 #include <cstdio>
 
+// El panel se destruye antes que Presentacion y su dibujante.
+PartidasSDL::~PartidasSDL() {
+  SDL_DestroyTexture(textura_informacion);
+}
+
 // Lee el perfil del usuario; la variable de pruebas permite aislarlo dentro de trabajo/.
 void PartidasSDL::preparar() {
   if (!ruta.empty())
@@ -73,25 +78,35 @@ void PartidasSDL::seleccionar(unsigned int ranura) {
 }
 
 // Inicia la edición únicamente al guardar y conserva el juego detenido detrás del panel.
-void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana, unsigned short puntuacion) {
+void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana) {
   if (accion != 4)
     preparar();
-  puntos = puntuacion;
+  SDL_DestroyTexture(textura_informacion);
+  textura_informacion = nullptr;
+  pagina_informacion = 0;
+  pagina_preparada = 4;
   modo = accion;
   seleccion = 0;
   confirmacion = false;
-  if (disponible) {
+  if (disponible && modo != 4) {
     mensaje.clear();
     seleccionar(0);
   }
-  if (!evento_importacion)
+  if (modo != 4 && !evento_importacion)
     evento_importacion = SDL_RegisterEvents(1);
   if (modo == 2)
     SDL_StartTextInput(ventana);
+  if (modo == 4)
+    registrar_accion("Información: página 1 de 4; clic o Intro avanza, Escape vuelve");
 }
 
 // Devuelve la entrada al juego sin que Escape se propague al menú de acciones.
 void PartidasSDL::cerrar(SDL_Window *ventana) {
+  if (modo == 4)
+    registrar_accion("Información: volver al juego");
+  SDL_DestroyTexture(textura_informacion);
+  textura_informacion = nullptr;
+  pagina_preparada = 4;
   SDL_StopTextInput(ventana);
   modo = 0;
   confirmacion = false;
@@ -202,7 +217,7 @@ bool PartidasSDL::aceptar(SDL_Window *ventana, Mazmorra &partida, bool &redibuja
 bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra &partida,
                          bool &redibujar) {
   if (evento_importacion && entrada.type == evento_importacion) {
-    if (abierta() && disponible && entrada.user.data1)
+    if (modo == 1 && disponible && entrada.user.data1)
       importar(static_cast<const char *>(entrada.user.data1));
     SDL_free(entrada.user.data1);
     return true;
@@ -210,9 +225,20 @@ bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra
   if (!abierta())
     return false;
   if (modo == 4) {
-    if ((entrada.type == SDL_EVENT_KEY_DOWN &&
-         (entrada.key.key == SDLK_ESCAPE || entrada.key.key == SDLK_RETURN)) ||
-        entrada.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+    if (entrada.type == SDL_EVENT_KEY_DOWN && entrada.key.repeat)
+      return true;
+    const bool teclado = entrada.type == SDL_EVENT_KEY_DOWN;
+    const bool raton = entrada.type == SDL_EVENT_MOUSE_BUTTON_DOWN;
+    const bool avanzar =
+        (teclado && (entrada.key.key == SDLK_RETURN || entrada.key.key == SDLK_KP_ENTER ||
+                     entrada.key.key == SDLK_SPACE)) ||
+        (raton && entrada.button.button == SDL_BUTTON_LEFT);
+    if (avanzar) {
+      if (++pagina_informacion >= 4)
+        cerrar(ventana);
+      else
+        registrar_accion("Información: página %u de 4", pagina_informacion + 1);
+    } else if (teclado || (raton && entrada.button.button == SDL_BUTTON_RIGHT))
       cerrar(ventana);
     return true;
   }
@@ -270,21 +296,33 @@ bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra
   return true;
 }
 
-// Dibuja un panel metálico discreto sobre el juego; la interfaz no modifica sus píxeles originales.
-bool PartidasSDL::dibujar(SDL_Renderer *dibujante) const {
+// Compone las fichas originales o el panel de ranuras; solo renueva la textura al cambiar de ficha.
+bool PartidasSDL::dibujar(SDL_Renderer *dibujante, const Mazmorra &partida) {
   if (!abierta())
     return true;
   if (modo == 4) {
-    const SDL_FRect placa{24, 12, 272, 180};
-    char informacion[256]{};
-    std::snprintf(informacion, sizeof(informacion),
-                  "CURSE OF ENCHANTIA\n\nCore Design (1992)\n\nCurse Reborn\nReconstruccion para "
-                  "SDL\n\nPuntuacion: %u\nProgreso: %u%%\n\nIntro o Escape para volver",
-                  puntos, static_cast<unsigned int>(puntos) * 100u / 478u);
-    return SDL_SetRenderDrawColor(dibujante, 36, 40, 45, 255) &&
-           SDL_RenderFillRect(dibujante, &placa) &&
-           SDL_SetRenderDrawColor(dibujante, 224, 224, 216, 255) &&
-           SDL_RenderRect(dibujante, &placa) && SDL_RenderDebugText(dibujante, 36, 22, informacion);
+    if (pagina_preparada != pagina_informacion) {
+      motor::ImagenIndexada imagen{};
+      if (!partida.dibujar_informacion(pagina_informacion, imagen, placa_informacion))
+        return false;
+      std::vector<unsigned char> rgba(320 * 200 * 4);
+      for (unsigned int i = 0; i < 64000; ++i) {
+        for (unsigned int c = 0; c < 3; ++c)
+          rgba[i * 4 + c] =
+              static_cast<unsigned char>(imagen.paleta[imagen.indices[i] * 3 + c] * 255u / 63u);
+        rgba[i * 4 + 3] = 255;
+      }
+      SDL_DestroyTexture(textura_informacion);
+      textura_informacion =
+          SDL_CreateTexture(dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
+      if (!textura_informacion ||
+          !SDL_SetTextureScaleMode(textura_informacion, SDL_SCALEMODE_NEAREST) ||
+          !SDL_UpdateTexture(textura_informacion, nullptr, rgba.data(), 320 * 4))
+        return false;
+      pagina_preparada = pagina_informacion;
+    }
+    return SDL_RenderTexture(dibujante, textura_informacion, &placa_informacion,
+                             &placa_informacion);
   }
   const SDL_FRect fondo{24, 12, 272, 180}, borde{26, 14, 268, 176};
   bool correcto =

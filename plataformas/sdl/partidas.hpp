@@ -7,12 +7,14 @@
 // Menús de plataforma para las siete ranuras del formato DOS, separados de la lógica reconstruida.
 class PartidasSDL {
 public:
-  // Abre cargar (1), guardar (2) o borrar (3), sin consumir pasos del juego.
-  void abrir(unsigned int modo, SDL_Window *ventana, unsigned short puntos = 0);
+  // Abre cargar (1), guardar (2), borrar (3) o información (4), sin consumir pasos del juego.
+  void abrir(unsigned int modo, SDL_Window *ventana);
+  // Libera la textura antes de destruir el dibujante SDL.
+  ~PartidasSDL();
   // Consume las entradas del panel; devuelve si la escena necesita dibujarse tras una carga.
   bool evento(const SDL_Event &evento, SDL_Window *ventana, Mazmorra &partida, bool &redibujar);
-  // Presenta las ranuras y los botones en el encuadre lógico del juego.
-  bool dibujar(SDL_Renderer *dibujante) const;
+  // Presenta las fichas originales o las ranuras en el encuadre lógico del juego.
+  bool dibujar(SDL_Renderer *dibujante, const Mazmorra &partida);
   // Permite pausar exclusivamente la lógica mientras la música continúa.
   bool abierta() const {
     return modo != 0;
@@ -20,7 +22,9 @@ public:
 
 private:
   unsigned int modo = 0, seleccion = 0;
-  unsigned short puntos = 0;
+  unsigned int pagina_informacion = 0, pagina_preparada = 4;
+  SDL_Texture *textura_informacion = nullptr;
+  SDL_FRect placa_informacion{};
   Uint32 evento_importacion = 0;
   bool disponible = false, confirmacion = false;
   std::string ruta, nombre, mensaje;

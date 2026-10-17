@@ -313,3 +313,5 @@ La [música MT-32](documentacion/musica_mt32.md) reproduce los cinco bancos CURS
 `pnpm comprobar:musica --muestra` compara el reproductor musical original y comprueba ocho segundos de síntesis y salida SDL de prueba. La comparación amplia queda disponible en `pnpm comparar:musica`.
 
 **Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+
+El último icono del menú de acciones muestra las cuatro fichas originales de información, puntuación y créditos con FONT.SPR. Clic izquierdo o Intro pasan de página; Escape cierra. Comprobación específica: `pnpm comprobar:informacion`. Consulta [partidas e información](documentacion/partidas.md).

@@ -86,9 +86,56 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
   for (unsigned int i = 0; i < 16; ++i)
     if (!partida.avanzar())
       return false;
-  panel.abrir(4, ventana, partida.puntuacion());
+  panel.abrir(4, ventana);
+  tecla.key.key = SDLK_ESCAPE;
   if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
     return false;
   panel.abrir(2, ventana);
   return true;
+}
+
+// Abre el décimo icono real, recorre las fichas y comprueba que no altera la partida ni el perfil.
+inline bool comprobar_informacion_sdl(PartidasSDL &panel, SDL_Window *ventana,
+                                      SDL_Renderer *dibujante, Mazmorra &partida,
+                                      unsigned int pagina_captura) {
+  if (pagina_captura >= 4 || !partida.menu_abierto())
+    return false;
+  std::vector<unsigned char> antes(motor::bytes_archivo_partidas, 0), despues(antes);
+  if (!partida.entrada_menu(304, 92, true, false) || partida.menu_abierto() ||
+      partida.tomar_solicitud_partidas() != 4 || partida.tomar_solicitud_partidas() != 0 ||
+      !partida.guardar_partida(antes.data(), static_cast<unsigned int>(antes.size()), 0, "Info"))
+    return false;
+  panel.abrir(4, ventana);
+  bool redibujar = false;
+  SDL_Event tecla{};
+  tecla.type = SDL_EVENT_KEY_DOWN;
+  tecla.key.key = SDLK_RETURN;
+  // Una pulsación mantenida no debe saltarse varias páginas.
+  tecla.key.repeat = true;
+  if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta())
+    return false;
+  tecla.key.repeat = false;
+  for (unsigned int pagina = 0; pagina < 4; ++pagina)
+    if (!panel.dibujar(dibujante, partida) || !panel.evento(tecla, ventana, partida, redibujar) ||
+        panel.abierta() != (pagina < 3))
+      return false;
+  panel.abrir(4, ventana);
+  tecla.key.key = SDLK_ESCAPE;
+  if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
+    return false;
+  panel.abrir(4, ventana);
+  SDL_Event clic{};
+  clic.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
+  clic.button.button = SDL_BUTTON_RIGHT;
+  if (!panel.evento(clic, ventana, partida, redibujar) || panel.abierta())
+    return false;
+  panel.abrir(4, ventana);
+  clic.button.button = SDL_BUTTON_LEFT;
+  for (unsigned int pagina = 0; pagina < pagina_captura; ++pagina)
+    if (!panel.evento(clic, ventana, partida, redibujar) || !panel.abierta())
+      return false;
+  return !redibujar &&
+         partida.guardar_partida(despues.data(), static_cast<unsigned int>(despues.size()), 0,
+                                 "Info") &&
+         antes == despues;
 }
