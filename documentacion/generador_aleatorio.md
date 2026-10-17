@@ -1,6 +1,6 @@
 # Generador de valores acotados en C++
 
-Se ha trasladado la rutina `0000:788E`–`0000:78DD` a [motor/aleatorio/generador.cpp](../motor/aleatorio/generador.cpp). Se ha comprobado la sintaxis con el compilador y la del comparador; **la comparación contra el original queda preparada para ejecutarla en el equipo del propietario**. No se presenta como un bloque ya validado.
+Se ha trasladado la rutina `0000:788E`–`0000:78DD` a [motor/aleatorio/generador.cpp](../motor/aleatorio/generador.cpp). **El propietario ha confirmado la comparación en su equipo: las 18.816 llamadas coinciden tanto en las secuencias como en las cuatro palabras del estado.** Esta ejecución no se ha repetido en el entorno del asistente.
 
 ## Contrato observado
 

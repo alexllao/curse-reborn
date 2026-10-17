@@ -74,4 +74,4 @@ El informe local conserva la huella del ejecutable y de la biblioteca compilada.
 
 La última pasada alcanza 18.744 instrucciones candidatas, 113 destinos de llamada directa y siete tablas o fuentes de destinos anotadas. Las dos transferencias sin candidatos incorporados encadenan vectores anteriores de DOS. Esto no demuestra que todo el código esté descubierto: aún pueden faltar entradas activadas por datos o por estados no estudiados.
 
-El siguiente paso útil para el C++ es trasladar el generador de `788E` con su estado y sus límites, y continuar ampliando los manejadores sin perder las referencias al original.
+El generador de `788E` ya está trasladado y el propietario ha confirmado su comparación aislada. La [preparación integrada de resultados](preparacion_resultados.md) también está trasladada, con su comparación preparada y pendiente. El siguiente paso es validar esa integración y continuar con la rutina común de animación.

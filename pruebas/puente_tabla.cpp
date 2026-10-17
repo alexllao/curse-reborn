@@ -2,6 +2,7 @@
 #include "../motor/acciones/seleccionar_coincidencias.hpp"
 #include "../motor/acciones/retorno_accion.hpp"
 #include "../motor/aleatorio/generador.hpp"
+#include "../motor/acciones/preparar_resultados.hpp"
 
 #ifdef _WIN32
 #define EXPORTAR __declspec(dllexport)
@@ -34,4 +35,13 @@ extern "C" EXPORTAR int generar_valor(unsigned short* palabras, unsigned short l
   palabras[2] = estado.tercera;
   palabras[3] = estado.cuarta;
   return 1;
+}
+
+extern "C" EXPORTAR void preparar_resultados(unsigned char* datos, unsigned short* palabras) {
+  motor::EstadoAleatorio estado{palabras[0], palabras[1], palabras[2], palabras[3]};
+  motor::preparar_resultados(datos, estado);
+  palabras[0] = estado.primera;
+  palabras[1] = estado.segunda;
+  palabras[2] = estado.tercera;
+  palabras[3] = estado.cuarta;
 }

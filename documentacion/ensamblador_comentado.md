@@ -13,7 +13,7 @@ Es un nombre alternativo del análisis. Tanto ese comando como `pnpm analizar` g
 - `trabajo/analisis_ejecutable/desensamblado.asm`: instrucciones candidatas con direcciones relativas, posiciones en el archivo, bytes y comentarios propios en castellano.
 - `trabajo/analisis_ejecutable/analisis.json`: instrucciones, enlaces, tablas, incidencias y anotaciones estructuradas.
 
-Los comentarios se conservan en [mapa_ejecutable.json](mapa_ejecutable.json), vinculados al SHA-256 del ejecutable. Actualmente hay 40 anotaciones sobre entradas, bucle, recursos, manejadores y tramos trasladados. Las anotaciones de los bloques reconstruidos incluyen su archivo C++ correspondiente. Regenerar el listado conserva esos comentarios. Las direcciones anotadas que no se alcanzan se señalan al final del listado.
+Los comentarios se conservan en [mapa_ejecutable.json](mapa_ejecutable.json), vinculados al SHA-256 del ejecutable. Actualmente hay 43 anotaciones sobre entradas, bucle, recursos, manejadores y tramos trasladados. Las anotaciones de los bloques reconstruidos incluyen su archivo C++ correspondiente. Regenerar el listado conserva esos comentarios. Las direcciones anotadas que no se alcanzan se señalan al final del listado.
 
 ## Alcance
 
