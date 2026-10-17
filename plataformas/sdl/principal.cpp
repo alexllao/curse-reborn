@@ -9,6 +9,7 @@
 #include "../../motor/video/fundido.hpp"
 #include "mazmorra.hpp"
 #include "introduccion.hpp"
+#include "registro.hpp"
 
 namespace {
 motor::ImagenTitulo imagen;
@@ -117,6 +118,13 @@ bool actualizar_textura(SDL_Texture *textura) {
 // Recorre las vistas de desarrollo; cada entrada a la mazmorra prepara una sesión nueva sin
 // guardar.
 bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &presentacion) {
+  registrar_accion("Cambio de vista: %s", pantalla == 0   ? "Core"
+                                          : pantalla == 1 ? "título"
+                                          : pantalla == 2 ? "introducción"
+                                          : pantalla == 3 ? "mazmorra"
+                                          : pantalla == 4 ? "corredor"
+                                          : pantalla == 5 ? "caída"
+                                                          : "lago");
   mazmorra.desconectar_audio();
   const bool cargada =
       pantalla >= 3   ? cargar_mazmorra(carpeta, static_cast<unsigned short>(pantalla - 3))
@@ -150,6 +158,13 @@ int main(int argc, char *argv[]) {
   if (argc == 3 && opcion != "--sin-sonido") {
     std::fprintf(stderr, "La opción de ejecución debe ser --sin-sonido.\n");
     return 1;
+  }
+  if (opcion == "--comprobar-musica" && argc == 4) {
+    Presentacion limpieza;
+    if (!SDL_Init(0) || !comprobar_musica_adlib(argv[1], argv[3]) ||
+        !comprobar_salida_audio(argv[3]))
+      return fallo("No se ha podido comprobar la música AdLib");
+    return 0;
   }
   if (opcion == "--comprobar-audio" && argc == 4) {
     Presentacion limpieza;
@@ -189,7 +204,7 @@ int main(int argc, char *argv[]) {
   Presentacion presentacion;
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
-  if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio())
+  if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
   if (!SDL_CreateWindowAndRenderer("Curse Reborn — Pantalla de título", comprobar ? 320 : 960,
@@ -256,8 +271,16 @@ int main(int argc, char *argv[]) {
           mazmorra.tecla_direccion(bit, evento.type == SDL_EVENT_KEY_DOWN);
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
-        if (evento.key.key == SDLK_M && !mazmorra.alternar_silencio())
-          return fallo("No se ha podido alternar el silencio");
+        if (evento.key.key == SDLK_F4) {
+          if (!mazmorra.alternar_dispositivo_audio())
+            return fallo("No se ha podido cambiar la opción de audio");
+          continue;
+        }
+        if (evento.key.key == SDLK_M) {
+          if (!mazmorra.alternar_silencio())
+            return fallo("No se ha podido alternar el silencio");
+          continue;
+        }
         if (pantalla >= 3) {
           const auto tecla = evento.key.key;
           if (tecla == SDLK_F7)
@@ -274,6 +297,10 @@ int main(int argc, char *argv[]) {
             cajas_limites = !cajas_limites;
             depuracion = true;
           }
+          if (tecla == SDLK_F7 || tecla == SDLK_F8 || tecla == SDLK_F9 || tecla == SDLK_F10)
+            registrar_accion("Depuración: %s; entidades=%s, proximidad=%s, límites=%s",
+                             depuracion ? "activada" : "desactivada", cajas_objetos ? "sí" : "no",
+                             cajas_interaccion ? "sí" : "no", cajas_limites ? "sí" : "no");
           if (mazmorra.menu_abierto()) {
             if (tecla == SDLK_LEFT)
               puntero_x = puntero_x >= 32 ? puntero_x - 32 : 16;

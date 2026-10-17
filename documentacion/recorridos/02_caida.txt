@@ -25,4 +25,5 @@ incluidos memoria, azar, modelos, burbujas y composición. Según la guía,
 al llegar hay que ponerse la pecera. Esa acción y el resto del puzle del lago todavía no están integrados.
 
 Los efectos PC Speaker ya utilizan una salida compartida entre escenas.
-M alterna el silencio. La música, AdLib y MT-32 siguen pendientes.
+La música AdLib continúa entre escenas. F4 cambia la opción y M alterna
+el silencio. SB16 digital y MT-32 siguen pendientes.

@@ -12,7 +12,7 @@ foreach(INDICE RANGE ${ULTIMA_FUENTE})
   list(APPEND FUENTES_MOTOR "${FUENTE}")
 endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS herramientas/fuentes_motor.json)
-add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp ${FUENTES_MOTOR})
+add_executable(curse-reborn plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/opl.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)
@@ -24,3 +24,8 @@ if(WIN32)
   add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:SDL3::SDL3> $<TARGET_FILE_DIR:curse-reborn>)
 endif()
+
+# Acompañar cada compilación con la licencia del sintetizador externo, sin modificar su fuente.
+add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  "${CMAKE_CURRENT_SOURCE_DIR}/terceros/nuked_opl3/LICENSE"
+  "$<TARGET_FILE_DIR:curse-reborn>/LICENCIA_NUKED_OPL3.txt")

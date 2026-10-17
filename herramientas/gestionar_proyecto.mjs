@@ -156,6 +156,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
     audio: ['comparar_altavoz.py', 'comparar_audio.py'],
+    musica: 'comparar_musica.py',
     video: 'comparar_video.py',
     rnc: 'comparar_rnc.py',
     rnc2: 'comparar_rnc2.py',
@@ -230,6 +231,13 @@ try {
       break;
     case 'comparar:operaciones':
       compararAcciones('operaciones', argumentos);
+      break;
+    case 'comprobar:musica':
+      compararAcciones('musica', argumentos);
+      await gestionarSdl('comprobar:musica', []);
+      break;
+    case 'comparar:musica':
+      compararAcciones('musica', argumentos);
       break;
     case 'comprobar:audio':
       compararAcciones('audio', argumentos);

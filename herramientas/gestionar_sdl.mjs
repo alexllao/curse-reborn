@@ -157,6 +157,8 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'musica_adlib.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'opl.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
@@ -166,6 +168,10 @@ async function compilar() {
   );
   copyFileSync(join(sdl, 'lib', 'x64', 'SDL3.dll'), join(aplicacion, 'SDL3.dll'));
   copyFileSync(join(sdl, 'LICENSE.txt'), join(aplicacion, 'LICENCIA_SDL3.txt'));
+  copyFileSync(
+    join(raiz, 'terceros', 'nuked_opl3', 'LICENSE'),
+    join(aplicacion, 'LICENCIA_NUKED_OPL3.txt'),
+  );
   return join(aplicacion, 'curse-reborn.exe');
 }
 
@@ -262,6 +268,18 @@ export async function gestionarSdl(accion, argumentos) {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
     });
+    return;
+  }
+  if (accion === 'comprobar:musica') {
+    const programa = await compilar();
+    const carpeta = join(raiz, 'trabajo', 'comparacion_musica');
+    mkdirSync(carpeta, { recursive: true });
+    const wav = join(carpeta, 'musica_adlib.wav');
+    ejecutar(programa, [datos, '--comprobar-musica', wav], {
+      ...process.env,
+      SDL_AUDIO_DRIVER: 'dummy',
+    });
+    console.log(`Muestra de música: ${wav}`);
     return;
   }
   if (accion === 'comprobar:audio') {
@@ -469,7 +487,7 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log(
-      'Puzle SDL: coincide la imagen tras liberar a Brad, actuar sobre el guardia, recoger la segunda llave y abrir la puerta.',
+      'Puzle SDL: coincide la imagen tras liberar a Brad, empujar la pared, recoger el clip y abrir la puerta.',
     );
     return;
   }

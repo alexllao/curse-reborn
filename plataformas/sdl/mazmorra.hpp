@@ -49,20 +49,24 @@ public:
   bool depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones, bool limites) const;
 
   // Abre la salida común antes de cargar una partida; un fallo de dispositivo no altera los datos.
-  bool abrir_audio() {
-    return audio.abrir();
+  bool abrir_audio(const std::string &carpeta) {
+    return audio.abrir(carpeta);
   }
   // Libera el dispositivo antes de cerrar SDL.
   void cerrar_audio() {
     audio.cerrar();
   }
-  // Apaga efectos al volver a Core, título o introducción.
+  // Desconecta los efectos de la sesión, conservando el tema musical de la presentación.
   void desconectar_audio() {
     audio.desconectar();
   }
   // Mantiene el temporizador audible mientras la lógica está pausada por menús o fundidos.
   bool actualizar_audio() {
     return audio.actualizar();
+  }
+  // Alterna las opciones de audio disponibles e informa por consola.
+  bool alternar_dispositivo_audio() {
+    return audio.alternar_dispositivo();
   }
   // Alterna el silencio de plataforma con la tecla M.
   bool alternar_silencio() {
@@ -71,6 +75,11 @@ public:
 
 private:
   Audio audio;
+  unsigned short inventario_registrado[10]{};
+  unsigned char control_registrado = 0;
+  bool registro_preparado = false;
+  // Informa de cambios reales de inventario y control, sin escribir en el estado original.
+  void registrar_estado();
   unsigned char datos[65536]{};
   motor::ImagenIndexada fondo{}, imagen_anterior{}, imagen_destino{};
   unsigned char planos_fondo[262144]{}, tira_fondo[6400]{};

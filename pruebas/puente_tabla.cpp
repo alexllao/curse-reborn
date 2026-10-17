@@ -19,6 +19,7 @@
 #include "../motor/sonido/seleccionar.hpp"
 #include "../motor/sonido/altavoz.hpp"
 #include "../motor/sonido/pcm.hpp"
+#include "../motor/sonido/musica.hpp"
 #include "../motor/video/planos.hpp"
 #include "../motor/recursos/rnc.hpp"
 #include "../motor/recursos/escena.hpp"
@@ -39,11 +40,41 @@
 
 namespace {
 motor::AltavozPcm altavoz_pcm;
+struct TrazaMusica {
+  unsigned short *salida;
+  unsigned int cantidad;
+};
+// Registra las parejas OPL conservando el orden; la primera palabra cuenta las escrituras.
+void escribir_musica(void *contexto, unsigned short registro, unsigned char valor) {
+  auto &traza = *static_cast<TrazaMusica *>(contexto);
+  if (traza.cantidad >= 1024)
+    return;
+  traza.salida[1 + traza.cantidad * 2] = registro;
+  traza.salida[2 + traza.cantidad * 2] = valor;
+  traza.salida[0] = static_cast<unsigned short>(++traza.cantidad);
+}
 // Permite contrastar las respuestas de menú con el mismo selector que la salida PCM.
 bool sonido_pcm(void *, unsigned char *datos, unsigned short entidad, unsigned char identificador) {
   return altavoz_pcm.reproducir(datos, entidad, identificador);
 }
 } // namespace
+
+// Expone estado CS y registros AdLib, sin incluir el sintetizador externo en la comparación DOS.
+extern "C" EXPORTAR int procesar_musica(unsigned int operacion, unsigned char *codigo,
+                                        unsigned short parametro, unsigned short *registros) {
+  registros[0] = 0;
+  TrazaMusica traza{registros, 0};
+  const motor::SalidaAdlib salida{&traza, escribir_musica};
+  if (operacion == 0)
+    return motor::iniciar_musica(codigo, parametro);
+  if (operacion == 1)
+    return motor::avanzar_musica(codigo, salida);
+  if (operacion == 2)
+    return motor::avanzar_canal_musica(codigo, parametro, salida);
+  if (operacion == 3)
+    return motor::inicializar_chip_adlib(codigo, salida);
+  return 0;
+}
 
 // Expone el reloj PCM por bloques y escrituras de puerto para pruebas contra IRQ originales.
 extern "C" EXPORTAR int procesar_pcm(unsigned int operacion, unsigned char *datos,

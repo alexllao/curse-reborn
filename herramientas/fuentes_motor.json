@@ -34,5 +34,6 @@
   "motor/movimiento/geometria.cpp",
   "motor/estado/paso_escena.cpp",
   "motor/video/camara.cpp",
-  "motor/sonido/pcm.cpp"
+  "motor/sonido/pcm.cpp",
+  "motor/sonido/musica.cpp"
 ]

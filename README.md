@@ -19,13 +19,13 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Core, título, introducción, mazmorra con su ruta inicial, corredor parcial y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos PC Speaker tienen salida audible. Los demás puzles, la música y el juego completo siguen pendientes.**
+**Core, título, introducción, mazmorra con su ruta inicial, corredor parcial y caída hasta el lago, reconstruidos en C++ y mostrados en SDL. Los efectos PC Speaker tienen salida audible. Los demás puzles, el juego completo y el resto de dispositivos de sonido siguen pendientes.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
 El traslado de [operaciones de sonido y modelos](documentacion/operaciones_secuencias.md) selecciona órdenes para las cinco modalidades observadas y permite atender sonido y carga mediante servicios explícitos. El propietario ha confirmado sus **1.285 casos**. La mazmorra ya aporta la carga de modelos desde archivos; el audio sigue desactivado.
 
-El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Los efectos ya generan PCM y se escuchan mediante una salida SDL compartida; música, AdLib y MT-32 siguen pendientes.
+El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Los efectos ya generan PCM y se escuchan mediante una salida SDL compartida; la música AdLib ya está integrada; SB16 digital y MT-32 siguen pendientes.
 
 Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++ y el propietario ha confirmado sus **1.183 casos** de comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
 
@@ -37,7 +37,7 @@ El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
-La prioridad actual es conectar la primera escena jugable con el personaje, movimiento e interacciones y contrastar visualmente la introducción original. Los efectos PC Speaker ya tienen salida común; quedan pendientes la música, AdLib y MT-32. Más adelante se estudiarán marcos y filtros visuales.
+La prioridad de jugabilidad es completar las acciones del corredor y del lago siguiendo la guía aportada por Àlex. La música AdLib y los efectos PC Speaker comparten salida; quedan pendientes SB16 digital y MT-32. Más adelante se estudiarán marcos y filtros visuales.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
@@ -190,7 +190,7 @@ Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar 
 
 ### Introducción original
 
-La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción, mazmorra, corredor, caída y lago como vistas de desarrollo. Los efectos PC Speaker están activos en las escenas jugables; la presentación todavía no tiene audio.
+La [introducción de la bruja](documentacion/introduccion_original.md) ya recorre `CAULDRN`, `BALCONY` y `BASEBAL`/`BASEBAT` desde el bloque original `28B2`. Conserva las cargas, páginas, paletas, controles de omisión y fundidos. Una pulsación en el título inicia la introducción; otra durante ella solicita omitirla en el siguiente control original. Al terminar entra en la mazmorra. F5/F6 recorren Core, título, introducción, mazmorra, corredor, caída y lago como vistas de desarrollo. La música AdLib comienza antes de Core y continúa por las escenas; los efectos PC Speaker están activos en las escenas jugables.
 
 `pnpm comparar:introduccion` contrasta el recorrido y las imágenes contra el ejecutable; `pnpm comprobar:introduccion` compara capturas SDL del caldero, balcón, béisbol y llegada a la mazmorra al terminar y al omitir. Las esperas usan retrazos nominales a 70 Hz; la duración de la E/S DOS y la sincronización física de monitor no se reproducen.
 
@@ -247,7 +247,7 @@ Los avances se documentarán con claridad: qué se ha comprobado, qué sigue sie
 
 `pnpm comprobar:caida` compara dos momentos de `DROP` y la entrada sumergida en `LAKEBED`. Desde la mazmorra, **F6 abre el corredor** y otro F6 abre la caída; F5 retrocede por las escenas integradas. Cada salto prepara una sesión nueva. La caída avanza sola hasta el agua. Estos atajos no resuelven puzles de una partida ni conservan la sesión anterior.
 
-[Guía del corredor](documentacion/recorridos/01_corredor.txt) · [Guía de la caída](documentacion/recorridos/02_caida.txt). La siguiente prioridad acordada es el **audio compartido**, empezando por PC Speaker y continuando con AdLib y MT-32. Los efectos PC Speaker ya siguen las órdenes, prioridades y secuencias originales, con una salida compartida entre escenas. La música, AdLib y MT-32 siguen pendientes.
+[Guía del corredor](documentacion/recorridos/01_corredor.txt) · [Guía de la caída](documentacion/recorridos/02_caida.txt). La siguiente prioridad acordada es el **audio compartido**, empezando por PC Speaker y continuando con AdLib y MT-32. Los efectos PC Speaker ya siguen las órdenes, prioridades y secuencias originales, con una salida compartida entre escenas. La la música AdLib ya está integrada; SB16 digital y MT-32 siguen pendientes.
 
 ## Recursos originales y autoría
 
@@ -272,3 +272,7 @@ La solución de referencia y el seguimiento por tramos están en [referencia de 
 `pnpm comprobar:audio --muestra` agrupa la comparación original del altavoz, la nueva señal PCM y la apertura/alimentación de SDL con un dispositivo de prueba. `pnpm comparar:audio` amplía la comparación. El WAV de prueba se guarda localmente en `trabajo/comparacion_audio/efecto_original.wav`. Esta prueba no escucha ni valida los altavoces físicos. Véanse [detalles y límites](documentacion/altavoz_pc.md).
 
 `pnpm comprobar:vistas` introduce ocho cambios F5/F6 y verifica el orden mazmorra → corredor → caída → lago y el regreso. Estos atajos reinician la sesión; para conservar el inventario hay que atravesar las salidas normales del juego.
+
+La [música AdLib](documentacion/musica_adlib.md) reproduce el tema elegido por el arranque DOS y conserva sus nueve canales. **F4** alterna PC Speaker y AdLib con efectos PC Speaker; la consola describe exactamente qué queda activo. SB16 digital y MT-32 se indican como pendientes. **M** silencia toda la mezcla. Se registran también las acciones del jugador, selecciones, inventario y cambios de escena, sin repetir mensajes por fotograma.
+
+`pnpm comprobar:musica --muestra` compara el reproductor musical original y comprueba ocho segundos de síntesis y salida SDL de prueba. La comparación amplia queda disponible en `pnpm comparar:musica`.

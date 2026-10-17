@@ -6,4 +6,5 @@ compilacion/
 build/
 cmake-build-*/
 licencias/
+terceros/
 pnpm-lock.yaml

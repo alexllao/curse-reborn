@@ -1001,6 +1001,36 @@
       "nombre": "Respuesta sonora de conversación sin animación",
       "comentario": "3545–354A emite cero desde Brad al repetir la llamada; 37FF–3804 emite uno para el otro tema en la mazmorra. Servicio 5288 compartido con secuencias y lago, contrastado en modalidades cero y uno, con visibilidad.",
       "traslado": "motor/acciones/menu.cpp"
+    },
+    {
+      "direccion": "0000:8DB0",
+      "nombre": "Inicio de tema AdLib",
+      "comentario": "8DB0–8DFD reconstruido: nueve registros CS de 17 bytes desde 8CE2. Tablas 8DAC, temas cero y uno. Conserva byte 10h y reloj global. 0487–048A selecciona tema uno antes de Core.",
+      "traslado": "motor/sonido/musica.cpp"
+    },
+    {
+      "direccion": "0000:8DFE",
+      "nombre": "Temporizador musical AdLib",
+      "comentario": "8DFE–8E5A reconstruido: decremento de CS:8E5B, recarga desde 8E5D y nueve canales en orden. Modalidad musical dos, llamada por IRQ 024A–0251.",
+      "traslado": "motor/sonido/musica.cpp"
+    },
+    {
+      "direccion": "0000:8E5F",
+      "nombre": "Intérprete de canal musical",
+      "comentario": "8E5F–8F4E reconstruido: duración, notas/silencios, FE instrumento, FD transposición, FF repetición y lista con FFFE/FFFD/FFFF. Estado CS y escrituras OPL comparados con las instrucciones originales.",
+      "traslado": "motor/sonido/musica.cpp"
+    },
+    {
+      "direccion": "0000:8FFC",
+      "nombre": "Lista inicial de registros AdLib",
+      "comentario": "8FFC–900B recorre parejas desde 9749 y termina en FFFF. Trasladada sin calibración de velocidad DOS.",
+      "traslado": "motor/sonido/musica.cpp"
+    },
+    {
+      "direccion": "0000:902E",
+      "nombre": "Instrumentos y encendido de nota AdLib",
+      "comentario": "902E–90BA escribe diez registros de operadores, realimentación y dos de frecuencia. 90C4 apaga la nota anterior. Conserva el orden original de escrituras.",
+      "traslado": "motor/sonido/musica.cpp"
     }
   ],
   "tablas": [

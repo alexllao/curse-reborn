@@ -2,6 +2,7 @@
 #include "../../motor/video/fundido.hpp"
 #include "../../motor/recursos/escena.hpp"
 #include "mazmorra.hpp"
+#include "registro.hpp"
 #include "../../motor/estado/paso_escena.hpp"
 #include "../../motor/movimiento/geometria.hpp"
 #include "../../motor/movimiento/planificar.hpp"
@@ -155,6 +156,9 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
     return false;
   motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
+  registro_preparado = false;
+  registrar_accion("Inicio de sesión nueva: mazmorra");
+  registrar_estado();
   return audio.conectar(datos);
 }
 
@@ -190,6 +194,7 @@ bool Mazmorra::avanzar() {
                             static_cast<unsigned int>(geometria.size()), direccion);
   if (!resultado.valida)
     return false;
+  registrar_estado();
   if (resultado.acciones) {
     const auto actual = escena_actual();
     if ((resultado.acciones == 2 || resultado.acciones == 16) &&
@@ -197,6 +202,7 @@ bool Mazmorra::avanzar() {
          (actual == 1 && (resultado.parametro == 1 || resultado.parametro == 2)) ||
          (actual == 2 && resultado.parametro == 3))) {
       salida_pendiente = resultado.parametro;
+      registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
       paso_animacion = 0;
       inicio_animacion = SDL_GetTicksNS() * 70u / 1000000000u;
@@ -243,15 +249,22 @@ bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
 
 // DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
 bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar) {
-  if (en_presentacion())
+  if (en_presentacion()) {
+    if (seleccionar || alternar)
+      registrar_accion("Entrada de menú ignorada durante el cambio de pantalla");
     return true;
+  }
   if (alternar) {
     if (menu_visible) {
       menu_visible = false;
+      registrar_accion("Menú cerrado");
       return true;
     }
-    if (datos[0x3595] == 0)
+    if (datos[0x3595] == 0) {
+      registrar_accion("Abrir menú: bloqueado por la secuencia original");
       return true;
+    }
+    registrar_accion("Menú abierto en (%u, %u)", x, y);
     motor::abrir_menu(datos, x, y);
     menu_visible = true;
   }
@@ -260,13 +273,36 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
   casilla_menu = x < 320 ? x / 32 : 9;
   motor::guardar(datos, 0xb60a, x);
   if (seleccionar) {
+    const auto manejador = motor::palabra(datos, 0xb60c + casilla_menu * 2);
+    const char *accion = manejador == 0xdfd3                          ? "inventario"
+                         : manejador == 0xdffc || manejador == 0x563a ? "recoger"
+                         : manejador == 0xe039 || manejador == 0x3b53 ? "manipular objetos"
+                         : manejador == 0xe0e9 || manejador == 0x384a ? "examinar"
+                         : manejador == 0xe010 || manejador == 0x32de ? "hablar"
+                         : manejador == 0xe14a || manejador == 0x3143 ? "atacar"
+                         : manejador == 0xe126                        ? "saltar"
+                                                                      : "elegir objeto o submenú";
+    constexpr const char *manipulaciones[] = {"desbloquear",   "insertar",       "empujar o tirar",
+                                              "comer o beber", "ponerse",        "lanzar",
+                                              "dar",           "unir o combinar"};
+    if (manejador == 0xe05b && casilla_menu < 8)
+      accion = manipulaciones[casilla_menu];
+    registrar_accion("Selección de menú: %s; casilla %u, identificador %04X, manejador %04X",
+                     accion, casilla_menu + 1, motor::palabra(datos, 0xb620 + casilla_menu * 2),
+                     manejador);
     const auto resultado = motor::seleccionar_menu(datos, casilla_menu, {this, reproducir_sonido});
-    if (resultado == motor::ResultadoMenu::error)
+    if (resultado == motor::ResultadoMenu::error) {
+      registrar_accion("Error al despachar la selección del menú");
       return false;
+    }
     if (resultado == motor::ResultadoMenu::accion)
       menu_visible = false;
-    if (resultado == motor::ResultadoMenu::pendiente)
-      SDL_Log("Esta acción todavía está pendiente de integrar.");
+    registrar_accion("Resultado de selección: %s", resultado == motor::ResultadoMenu::accion
+                                                       ? "acción despachada al guion original"
+                                                   : resultado == motor::ResultadoMenu::pendiente
+                                                       ? "acción pendiente de integrar"
+                                                       : "submenú actualizado");
+    registrar_estado();
   }
   return motor::dibujar_menu(datos, fondo_menu, iconos.data(),
                              static_cast<unsigned int>(iconos.size()), panel_menu);
@@ -341,10 +377,13 @@ bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones
 
 // 08C8–08DA: el ratón solo propone rutas cuando el guion original ha habilitado el movimiento.
 bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
-  if (en_presentacion() || menu_visible || !datos[0x3594])
+  if (en_presentacion() || menu_visible || !datos[0x3594]) {
+    registrar_accion("Caminar a (%u, %u): bloqueado por el menú, presentación o guion", x, y);
     return true;
+  }
   if (x >= 320 || y >= 200)
     return true;
+  registrar_accion("Caminar a (%u, %u)", x, y);
   direccion = 0xffff;
   datos[0x0ad5] = 1;
   datos[0x2c0a] = 1;
@@ -358,6 +397,15 @@ bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
 
 // 083D–086D: izquierda=8, derecha=4, arriba=2 y abajo=1; los guiones conservan su bloqueo.
 void Mazmorra::tecla_direccion(unsigned short bit, bool pulsada) {
+  const bool anterior = direccion != 0xffff && (direccion & bit);
+  if (anterior != pulsada)
+    registrar_accion("Flecha %s: %s%s",
+                     bit == 8   ? "izquierda"
+                     : bit == 4 ? "derecha"
+                     : bit == 2 ? "arriba"
+                                : "abajo",
+                     pulsada ? "pulsada" : "soltada",
+                     pulsada && !datos[0x3594] ? " (movimiento bloqueado por el guion)" : "");
   if (!pulsada && direccion == 0xffff)
     return;
   if (direccion == 0xffff)
@@ -422,6 +470,8 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   motor::guardar(datos, 0x0616, 0);
   menu_visible = false;
   direccion = 0xffff;
+  registrar_accion("Escena cargada: %s (índice %u, salida %u)", bancos[actual], actual, salida);
+  registrar_estado();
   return true;
 }
 
@@ -459,4 +509,30 @@ bool Mazmorra::iniciar_vista(const std::string &ruta, const motor::ImagenIndexad
     return cambiar_habitacion(0);
   motor::guardar(datos, 0x8082, escena_vista == 2 ? 1 : 2);
   return cambiar_habitacion(escena_vista == 2 ? 1 : 3);
+}
+
+// Registra solo los cambios de lista y de habilitación de movimiento, conservando todos los datos.
+void Mazmorra::registrar_estado() {
+  bool cambiado = !registro_preparado;
+  for (unsigned int i = 0; i < 10; ++i) {
+    const auto valor = motor::palabra(datos, static_cast<unsigned short>(0x5225 + i * 2));
+    cambiado = cambiado || valor != inventario_registrado[i];
+    inventario_registrado[i] = valor;
+  }
+  if (cambiado) {
+    std::string lista;
+    for (unsigned int i = 0; i < 10 && inventario_registrado[i] != 0xffff; ++i) {
+      if (!lista.empty())
+        lista += ", ";
+      const auto id = inventario_registrado[i];
+      lista += id == 1 ? "llave" : id == 3 ? "clip" : "objeto";
+      lista += " [" + std::to_string(id) + "]";
+    }
+    registrar_accion("Inventario: %s", lista.empty() ? "vacío" : lista.c_str());
+  }
+  if (!registro_preparado || control_registrado != datos[0x3594])
+    registrar_accion("Movimiento de Brad: %s",
+                     datos[0x3594] ? "habilitado" : "bloqueado por el guion");
+  control_registrado = datos[0x3594];
+  registro_preparado = true;
 }

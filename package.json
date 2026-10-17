@@ -59,7 +59,9 @@
     "comprobar:caida": "node herramientas/gestionar_proyecto.mjs comprobar:caida",
     "comparar:audio": "node herramientas/gestionar_proyecto.mjs comparar:audio",
     "comprobar:audio": "node herramientas/gestionar_proyecto.mjs comprobar:audio",
-    "comprobar:vistas": "node herramientas/gestionar_proyecto.mjs comprobar:vistas"
+    "comprobar:vistas": "node herramientas/gestionar_proyecto.mjs comprobar:vistas",
+    "comparar:musica": "node herramientas/gestionar_proyecto.mjs comparar:musica",
+    "comprobar:musica": "node herramientas/gestionar_proyecto.mjs comprobar:musica"
   },
   "repository": {
     "type": "git",
