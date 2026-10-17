@@ -77,7 +77,7 @@ try {
     case 'analizar':
       comprobarEntorno();
       ejecutar(pythonLocal, [join(raiz, 'herramientas', 'analizar_ejecutable.py'),
-        '--raiz', '0000:0238', '--raiz', '0000:6A8C', '--raiz', '0000:8C51', ...argumentos]);
+        '--mapa', join(raiz, 'documentacion', 'mapa_ejecutable.json'), ...argumentos]);
       break;
     case 'comprobar':
       comprobarEntorno();
@@ -86,7 +86,8 @@ try {
     case 'estado':
       console.log(`Node: ${process.version}`);
       console.log(`Carpeta del proyecto: ${raiz}`);
-      console.log(`Ejecutable original: ${existsSync(join(raiz, 'datos_originales', 'CURSE.EXE')) ? 'disponible' : 'pendiente de copiar a datos_originales/'}`);
+      console.log(`Ejecutable original: ${existsSync(join(raiz, 'datos_originales', 'CURSE', 'CURSE.EXE')) ? 'disponible' : 'pendiente de copiar a datos_originales/CURSE/'}`);
+      console.log(`Carpeta de ROM del MT-32: ${existsSync(join(raiz, 'datos_originales', 'ROMS')) ? 'disponible (contenido sin verificar)' : 'no disponible; el análisis estático no la necesita'}`);
       console.log(`Entorno local de Python: ${existsSync(pythonLocal) ? 'disponible' : 'pendiente de preparar'}`);
       comprobarEntorno();
       console.log('Dependencias de análisis: preparadas.');

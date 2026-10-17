@@ -64,7 +64,42 @@ def etiqueta(segmento, desplazamiento):
     return f'{segmento:04X}:{desplazamiento:04X}'
 
 
-def seguir_flujo(imagen, raices, limite=100000):
+def leer_mapa(mapa, metadatos, imagen):
+    """Aplica anotaciones revisadas únicamente a la copia exacta del ejecutable."""
+    if mapa.get('sha256') != metadatos['sha256']:
+        raise ErrorAnalisis('El mapa de código no corresponde al SHA-256 de este ejecutable.')
+    raices = [direccion(texto) for texto in mapa.get('raices', [])]
+    tablas = []
+    resoluciones = {}
+    for tabla in mapa.get('tablas', []):
+        origen = direccion(tabla['origen'])
+        segmento, desplazamiento = direccion(tabla['ubicacion'])
+        cantidad = tabla['cantidad']
+        cs_destino = tabla['segmento_destino']
+        if (type(cantidad) is not int or cantidad < 1 or
+                desplazamiento + cantidad * 2 > 65536 or
+                type(cs_destino) is not int or not 0 <= cs_destino <= 65535):
+            raise ErrorAnalisis('El tamaño o segmento de una tabla de saltos no es válido.')
+        posicion = segmento * 16 + desplazamiento
+        if posicion + cantidad * 2 > len(imagen):
+            raise ErrorAnalisis('Una tabla de saltos queda fuera de la imagen.')
+        if origen in resoluciones:
+            raise ErrorAnalisis('Hay dos tablas para la misma transferencia indirecta.')
+        entradas = []
+        for indice in range(cantidad):
+            ip = struct.unpack_from('<H', imagen, posicion + indice * 2)[0]
+            if ip == 0 and tabla.get('omitir_cero', False):
+                entradas.append({'indice': indice, 'destino': None})
+                continue
+            if cs_destino * 16 + ip >= len(imagen):
+                raise ErrorAnalisis('Un destino de tabla queda fuera de la imagen.')
+            entradas.append({'indice': indice, 'destino': etiqueta(cs_destino, ip)})
+        resoluciones[origen] = entradas
+        tablas.append({**tabla, 'entradas': entradas})
+    return raices, tablas, resoluciones
+
+
+def seguir_flujo(imagen, raices, limite=100000, resoluciones=None):
     try:
         import capstone
         from capstone.x86 import X86_OP_IMM
@@ -78,6 +113,7 @@ def seguir_flujo(imagen, raices, limite=100000):
     enlaces = []
     incidencias = []
     destinos_llamada = set()
+    resoluciones = resoluciones or {}
     while pendientes:
         cs, ip = pendientes.popleft()
         while (cs, ip) not in instrucciones:
@@ -127,6 +163,13 @@ def seguir_flujo(imagen, raices, limite=100000):
                     pendientes.append(destino)
                     if llamada:
                         destinos_llamada.add(destino)
+                elif (cs, ip) in resoluciones:
+                    registro['tabla_anotada'] = True
+                    for entrada in resoluciones[cs, ip]:
+                        if entrada['destino'] is not None:
+                            pendientes.append(direccion(entrada['destino']))
+                            enlaces.append({'origen': origen, 'tipo': 'destino_por_tabla_anotada',
+                                            'indice': entrada['indice'], 'destino': entrada['destino']})
                 else:
                     incidencias.append({'origen': origen, 'motivo': 'Destino indirecto: requiere registros o memoria en ejecución.'})
                 if salto and instruccion.mnemonic in ('jmp', 'ljmp'):
@@ -149,11 +192,15 @@ def seguir_flujo(imagen, raices, limite=100000):
     }
 
 
-def analizar(ruta, salida, raices_adicionales=()):
+def analizar(ruta, salida, raices_adicionales=(), mapa=None):
     metadatos, imagen = leer_mz(ruta.read_bytes())
     raices = [(metadatos['entrada_cs'], metadatos['entrada_ip']), *raices_adicionales]
-    flujo = seguir_flujo(imagen, list(dict.fromkeys(raices)))
-    informe = {'cabecera': metadatos, 'flujo': flujo}
+    tablas, resoluciones = [], {}
+    if mapa is not None:
+        entradas, tablas, resoluciones = leer_mapa(mapa, metadatos, imagen)
+        raices.extend(entradas)
+    flujo = seguir_flujo(imagen, list(dict.fromkeys(raices)), resoluciones=resoluciones)
+    informe = {'cabecera': metadatos, 'flujo': flujo, 'tablas_anotadas': tablas}
     salida.mkdir(parents=True, exist_ok=True)
     (salida / 'analisis.json').write_text(json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     lineas = [
@@ -164,6 +211,8 @@ def analizar(ruta, salida, raices_adicionales=()):
     for r in flujo['instrucciones']:
         archivo = metadatos['bytes_cabecera'] + r['posicion_imagen']
         destino = ' ; destino ' + r['destino'] if 'destino' in r else ''
+        if r.get('tabla_anotada'):
+            destino += ' ; destinos según tabla anotada en analisis.json'
         lineas.append(f"{etiqueta(r['segmento'], r['desplazamiento'])} archivo={archivo:06X} "
                       f"{r['bytes']:<44} {r['operacion']:<9} {r['operandos']}{destino}")
     (salida / 'desensamblado.asm').write_text('\n'.join(lineas) + '\n', encoding='utf-8')
@@ -171,6 +220,7 @@ def analizar(ruta, salida, raices_adicionales=()):
     print(f"SHA-256: {metadatos['sha256']}")
     print(f"Instrucciones alcanzadas: {len(flujo['instrucciones'])}")
     print(f"Destinos de llamada directa: {len(flujo['destinos_llamada'])}")
+    print(f'Tablas de saltos anotadas: {len(tablas)}')
     print(f"Incidencias pendientes de revisión: {len(flujo['incidencias'])}")
     print(f'Resultados locales: {salida}')
     return informe
@@ -179,15 +229,17 @@ def analizar(ruta, salida, raices_adicionales=()):
 def principal():
     raiz = Path(__file__).resolve().parents[1]
     argumentos = argparse.ArgumentParser(description='Analiza un ejecutable DOS MZ siguiendo llamadas y saltos directos.')
-    argumentos.add_argument('--ejecutable', type=Path, default=raiz / 'datos_originales' / 'CURSE.EXE')
+    argumentos.add_argument('--ejecutable', type=Path, default=raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE')
     argumentos.add_argument('--salida', type=Path, default=raiz / 'trabajo' / 'analisis_ejecutable')
     argumentos.add_argument('--raiz', type=direccion, action='append', default=[], help='Entrada adicional confirmada, en hexadecimal.')
+    argumentos.add_argument('--mapa', type=Path, help='Mapa revisado de raíces y tablas, vinculado al SHA-256 del ejecutable.')
     opciones = argumentos.parse_args()
     if opciones.salida.resolve().is_relative_to((raiz / 'datos_originales').resolve()):
         argumentos.error('La salida no puede escribirse sobre la carpeta de originales.')
     try:
-        analizar(opciones.ejecutable, opciones.salida, opciones.raiz)
-    except (OSError, ErrorAnalisis) as error:
+        mapa = json.loads(opciones.mapa.read_text(encoding='utf-8')) if opciones.mapa else None
+        analizar(opciones.ejecutable, opciones.salida, opciones.raiz, mapa)
+    except (OSError, ValueError, KeyError, TypeError, argparse.ArgumentTypeError) as error:
         argumentos.exit(1, f'Error: {error}\n')
 
 

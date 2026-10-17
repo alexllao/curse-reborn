@@ -10,7 +10,7 @@ Esta primera entrega es estática. No se ha ejecutado el juego, validado su comp
 
 | Propiedad | Valor |
 | --- | --- |
-| Archivo local | `datos_originales/CURSE.EXE` |
+| Archivo local | `datos_originales/CURSE/CURSE.EXE` |
 | SHA-256 | `f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d` |
 | Tamaño | 111.606 bytes |
 | Cabecera DOS MZ | 512 bytes |
@@ -58,6 +58,8 @@ Estas entradas se incluyen explícitamente en el análisis porque las llamadas D
 
 ## Resultado de la primera pasada
 
+Las cifras de esta sección corresponden a la pasada inicial sin tablas anotadas. La ampliación actual y el bucle central se documentan en [bucle_principal.md](bucle_principal.md).
+
 Con el punto de entrada y los tres manejadores anteriores como raíces:
 
 - 9.850 instrucciones candidatas alcanzadas por el recorrido estático.
@@ -77,7 +79,9 @@ pnpm analizar
 pnpm comprobar
 ```
 
-`pnpm preparar` crea el entorno Python local e instala las dependencias fijadas. `pnpm analizar` añade automáticamente las raíces `0000:0238`, `0000:6A8C` y `0000:8C51`. El punto de entrada siempre se obtiene de la cabecera MZ. Para añadir otras entradas confirmadas, usa `pnpm analizar --raiz segmento:desplazamiento`.
+`pnpm preparar` crea el entorno Python local e instala las dependencias fijadas. `pnpm analizar` aplica `documentacion/mapa_ejecutable.json`, con las raíces `0000:0238`, `0000:6A8C` y `0000:8C51` y las tablas anotadas. Se comprueba el SHA-256 antes de aplicarlo. El punto de entrada siempre se obtiene de la cabecera MZ. Para añadir otras entradas confirmadas, usa `pnpm analizar --raiz segmento:desplazamiento`.
+
+Para reproducir la pasada inicial sin el mapa, en Windows se puede invocar directamente `trabajo/entorno/Scripts/python.exe herramientas/analizar_ejecutable.py --raiz 0000:0238 --raiz 0000:6A8C --raiz 0000:8C51`. En otros sistemas, el ejecutable del entorno está en `trabajo/entorno/bin/python`.
 
 La herramienta escribe `analisis.json` y `desensamblado.asm` en `trabajo/analisis_ejecutable/`, que está excluida de Git. El JSON conserva la cabecera, las reubicaciones, las instrucciones candidatas, sus enlaces y las incidencias. El listado incluye posiciones de archivo y direcciones relativas. El ejecutable original se lee sin modificarlo.
 
@@ -95,4 +99,4 @@ La dependencia usada es Capstone 5.0.7, mediante su [interfaz oficial para Pytho
 
 ## Siguiente trabajo
 
-Seguir `0000:0276`, separar su inicialización del recorrido de escenas y localizar el bucle principal. Estudiar los destinos indirectos que intervienen en ese recorrido y las estructuras que los alimentan. Para cada rutina se documentarán entradas, salidas, memoria modificada, dependencias y evidencias antes de trasladarla a C++.
+El recorrido desde `0000:0276`, el bucle y cinco tablas indirectas ya se han estudiado en [la ampliación del análisis](bucle_principal.md). El siguiente trabajo es completar las estructuras de estado y la construcción de la tabla dinámica que interviene en `0000:DE2B`. Para cada rutina se documentarán entradas, salidas, memoria modificada, dependencias y evidencias antes de trasladarla a C++.

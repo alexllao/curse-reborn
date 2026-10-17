@@ -1,0 +1,51 @@
+{
+  "sha256": "f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d",
+  "raices": ["0000:0238", "0000:6A8C", "0000:8C51"],
+  "tablas": [
+    {
+      "nombre": "Direcciones de movimiento en la modalidad especial",
+      "origen": "0000:0C0E",
+      "ubicacion": "0000:0C13",
+      "cantidad": 16,
+      "segmento_destino": 0,
+      "omitir_cero": false,
+      "evidencia": "SI reúne cuatro bits en 083D-086D y 0942-096A; 0C0C lo duplica para consultar palabras. La tabla termina donde empieza su primer destino, 0C33."
+    },
+    {
+      "nombre": "Direcciones de movimiento en la modalidad general",
+      "origen": "0000:0D0F",
+      "ubicacion": "0000:0D14",
+      "cantidad": 16,
+      "segmento_destino": 0,
+      "omitir_cero": false,
+      "evidencia": "Recibe el mismo índice de cuatro bits; 0D0D lo duplica. La tabla termina en su primer destino, 0D34."
+    },
+    {
+      "nombre": "Rutinas particulares según el índice de escena",
+      "origen": "0000:17A0",
+      "ubicacion": "0000:17A3",
+      "cantidad": 78,
+      "segmento_destino": 0,
+      "omitir_cero": true,
+      "evidencia": "1791-179E consulta una palabra por índice DS:8082 y retorna si es cero. El límite de 78 posiciones se infiere por la contigüidad con el primer destino 183F; no prueba que todos los índices sean utilizados."
+    },
+    {
+      "nombre": "Selección de salida de sonido según configuración",
+      "origen": "0000:52AD",
+      "ubicacion": "0000:52B2",
+      "cantidad": 5,
+      "segmento_destino": 0,
+      "omitir_cero": false,
+      "evidencia": "52A5-52AB duplica DS:0AD4, un campo de configuración con modalidades 0 a 4. Cinco palabras preceden al código 52BC; las entradas 0 y 2 comparten 52BD. La función concreta de cada modalidad sigue pendiente."
+    },
+    {
+      "nombre": "Selección de rama de presentación",
+      "origen": "0000:EB48",
+      "ubicacion": "0000:EB4D",
+      "cantidad": 3,
+      "segmento_destino": 0,
+      "omitir_cero": false,
+      "evidencia": "EB40-EB46 duplica el byte DS:0DEF; tres palabras preceden al primer destino EB53. El límite se infiere por esa disposición y requiere validación en ejecución."
+    }
+  ]
+}

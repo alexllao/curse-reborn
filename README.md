@@ -21,9 +21,9 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 **Primera fase de desensamblado estático. Todavía no hay una versión jugable ni rutinas trasladadas a SDL.**
 
-Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos directos desde el punto de entrada y las entradas adicionales confirmadas. La primera pasada con tres manejadores de interrupción identificados alcanza **9.850 instrucciones y 101 destinos de llamada directa**, y señala **ocho transferencias indirectas pendientes**. Estas cifras son candidatos obtenidos por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada.
+Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados y cinco tablas de destinos anotadas. La pasada actual alcanza **12.553 instrucciones candidatas y 104 destinos de llamada directa**, y señala **tres transferencias indirectas pendientes**. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada.
 
-El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque, las reubicaciones, las rutinas identificadas, las limitaciones y cómo reproducir el análisis. La herramienta tiene 13 comprobaciones con programas sintéticos que no requieren los archivos originales.
+El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido, la selección de escenas y las tablas indirectas. La herramienta tiene 18 comprobaciones con programas sintéticos que no requieren los archivos originales.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -45,8 +45,10 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Crear el repositorio y establecer la rama `development`.
 - [x] Crear una herramienta de desensamblado por flujo y validación de cabeceras MZ.
 - [x] Documentar el primer mapa de arranque y los manejadores de interrupción identificados.
-- [ ] Resolver las llamadas y los saltos indirectos para ampliar el mapa de código.
-- [ ] Identificar el bucle principal y las estructuras de estado del juego.
+- [x] Incorporar cinco tablas de saltos anotadas y vinculadas a la huella del ejecutable.
+- [x] Localizar y documentar el recorrido estático del bucle central y la selección de escenas.
+- [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
+- [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
 - [ ] Documentar los formatos de escenarios, sprites y animaciones a partir de esas rutinas.
 - [ ] Trasladar las primeras rutinas a C++ con referencias a sus direcciones originales.
@@ -57,7 +59,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Primer hito de reconstrucción:** explicar el recorrido desde el arranque hasta el bucle principal, resolver sus dependencias y preparar una primera rutina para su traslado verificable a C++.
+**Siguiente hito de reconstrucción:** completar las estructuras de estado y la tabla dinámica de llamadas que quedan pendientes, y preparar una primera rutina para su traslado verificable a C++.
 
 ## Organización del repositorio
 
@@ -98,7 +100,7 @@ pnpm comprobar
 | --- | --- |
 | `pnpm preparar` | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez. |
 | `pnpm estado` | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error. |
-| `pnpm analizar` | Sigue el punto de entrada y los tres manejadores identificados; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
+| `pnpm analizar` | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
 | `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
@@ -107,19 +109,22 @@ Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar 
 
 ### Dónde colocar el juego original
 
-Coloca los archivos de tu copia para DOS dentro de `datos_originales/`, de modo que el ejecutable y los datos queden así:
+Conserva la distribución de tu instalación de DOSBox dentro de `datos_originales/`, con el juego en `CURSE/` y las ROM del MT-32 en `ROMS/`:
 
 ```text
 datos_originales/
 ├── .gitkeep
-├── CURSE.EXE
-├── CURSE.CFG
-├── SETUP.EXE
-└── DATA/
-    └── ...
+├── CURSE/
+│   ├── CURSE.EXE
+│   ├── CURSE.CFG
+│   ├── SETUP.EXE
+│   └── DATA/
+│       └── ...
+└── ROMS/
+    └── ...                  # ROM del MT-32 de tu instalación
 ```
 
-En el ZIP examinado, esos archivos están dentro de `CURSE/`: copia **el contenido de esa carpeta** a `datos_originales/`. Conserva los nombres originales de los archivos y las subcarpetas.
+En el ZIP examinado ya existe la carpeta `CURSE/`: cópiala completa a `datos_originales/`. Si utilizas ROM del MT-32, conserva su carpeta `ROMS/` al mismo nivel. El desensamblado estático no necesita las ROM y todavía no hay integración del MT-32 en el motor. Conserva los nombres originales de los archivos y las subcarpetas.
 
 Git conservará únicamente el archivo vacío `.gitkeep`. El resto del contenido de `datos_originales/`, incluidas sus subcarpetas, queda excluido para que puedas trabajar con tu copia local sin publicarla.
 

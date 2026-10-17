@@ -6,7 +6,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'herramientas'))
-from analizar_ejecutable import ErrorAnalisis, leer_mz, seguir_flujo
+from analizar_ejecutable import ErrorAnalisis, leer_mapa, leer_mz, seguir_flujo
 
 
 def crear_mz(imagen, reubicaciones=()):
@@ -88,6 +88,48 @@ class ComprobarFlujo(unittest.TestCase):
     def test_limite_impide_presentar_analisis_incompleto(self):
         with self.assertRaises(ErrorAnalisis):
             seguir_flujo(b'\x90\xc3', [(0, 0)], limite=1)
+
+
+class ComprobarMapa(unittest.TestCase):
+    def setUp(self):
+        # Salto indirecto, dos punteros intercalados y dos destinos con RET.
+        self.imagen = bytes.fromhex('ff 26 04 00 08 00 0a 00 c3 90 c3')
+        self.cabecera = {'sha256': 'huella-de-prueba'}
+        self.mapa = {
+            'sha256': 'huella-de-prueba',
+            'raices': ['0000:0000'],
+            'tablas': [{'nombre': 'Prueba', 'origen': '0000:0000',
+                        'ubicacion': '0000:0004', 'cantidad': 2,
+                        'segmento_destino': 0, 'omitir_cero': False}],
+        }
+
+    def test_resuelve_salto_sin_interpretar_la_tabla_como_codigo(self):
+        raices, tablas, resoluciones = leer_mapa(self.mapa, self.cabecera, self.imagen)
+        flujo = seguir_flujo(self.imagen, raices, resoluciones=resoluciones)
+        self.assertEqual([i['desplazamiento'] for i in flujo['instrucciones']], [0, 8, 10])
+        self.assertEqual(flujo['incidencias'], [])
+        self.assertEqual(tablas[0]['entradas'][1]['destino'], '0000:000A')
+
+    def test_rechaza_mapa_de_otra_version(self):
+        with self.assertRaises(ErrorAnalisis):
+            leer_mapa(self.mapa, {'sha256': 'otra-huella'}, self.imagen)
+
+    def test_rechaza_tabla_truncada(self):
+        self.mapa['tablas'][0]['cantidad'] = 100
+        with self.assertRaises(ErrorAnalisis):
+            leer_mapa(self.mapa, self.cabecera, self.imagen)
+
+    def test_rechaza_destino_fuera_de_la_imagen(self):
+        imagen = self.imagen[:4] + bytes.fromhex('ff ff') + self.imagen[6:]
+        with self.assertRaises(ErrorAnalisis):
+            leer_mapa(self.mapa, self.cabecera, imagen)
+
+    def test_cero_omitido_no_se_convierte_en_entrada_de_codigo(self):
+        self.mapa['tablas'][0]['omitir_cero'] = True
+        imagen = self.imagen[:4] + b'\0\0' + self.imagen[6:]
+        _, tablas, resoluciones = leer_mapa(self.mapa, self.cabecera, imagen)
+        self.assertIsNone(tablas[0]['entradas'][0]['destino'])
+        self.assertIsNone(resoluciones[0, 0][0]['destino'])
 
 
 if __name__ == '__main__':
