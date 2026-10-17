@@ -131,6 +131,29 @@ class ComprobarMapa(unittest.TestCase):
         self.assertIsNone(tablas[0]['entradas'][0]['destino'])
         self.assertIsNone(resoluciones[0, 0][0]['destino'])
 
+    def test_candidatos_dinamicos_conservan_su_procedencia(self):
+        self.mapa['tablas'][0]['derivada_en_memoria'] = True
+        raices, _, resoluciones = leer_mapa(self.mapa, self.cabecera, self.imagen)
+        flujo = seguir_flujo(self.imagen, raices, resoluciones=resoluciones)
+        candidatos = [e for e in flujo['enlaces'] if e['tipo'] == 'candidato_de_tabla_dinamica']
+        self.assertEqual(len(candidatos), 2)
+        self.assertIn('indice_fuente', candidatos[0])
+        self.assertNotIn('indice', candidatos[0])
+
+    def test_destino_adicional_aparece_en_el_recorrido(self):
+        self.mapa['tablas'][0]['cantidad'] = 1
+        self.mapa['tablas'][0]['destinos_adicionales'] = [
+            {'destino': '0000:000A', 'evidencia': 'Escritura de prueba.'}]
+        raices, _, resoluciones = leer_mapa(self.mapa, self.cabecera, self.imagen)
+        flujo = seguir_flujo(self.imagen, raices, resoluciones=resoluciones)
+        self.assertEqual([i['desplazamiento'] for i in flujo['instrucciones']], [0, 8, 10])
+
+    def test_rechaza_destino_adicional_fuera_de_la_imagen(self):
+        self.mapa['tablas'][0]['destinos_adicionales'] = [
+            {'destino': '0000:FFFF', 'evidencia': 'Escritura de prueba.'}]
+        with self.assertRaises(ErrorAnalisis):
+            leer_mapa(self.mapa, self.cabecera, self.imagen)
+
 
 if __name__ == '__main__':
     unittest.main()

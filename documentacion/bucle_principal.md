@@ -66,6 +66,8 @@ El índice de las dos tablas de movimiento se construye con cuatro bits en `083D
 
 ## Resultado y límites
 
+Las cifras de esta sección corresponden a la etapa con cinco tablas estáticas. La ampliación posterior, con la tabla dinámica y el primer bloque C++, está en [tabla_acciones.md](tabla_acciones.md).
+
 Con las cinco tablas anotadas, el recorrido alcanza 12.553 instrucciones candidatas y 104 destinos de llamada directa. Ninguna instrucción de esta pasada se inicia en el interior de los cinco tramos de tabla anotados. No se debe interpretar esta cifra como porcentaje de motor recuperado.
 
 Quedan tres transferencias indirectas sin destinos incorporados:
@@ -73,4 +75,4 @@ Quedan tres transferencias indirectas sin destinos incorporados:
 - `0000:0264` y `0000:8C81`: encadenan vectores de interrupción anteriores, cuyos segmentos dependen del entorno DOS.
 - `0000:DE2B`: llama a una entrada de la tabla de trabajo `DS:B60C`. Su contenido inicial es nulo y hay código que lo modifica. Usar los ceros del archivo como si fueran una tabla definitiva ocultaría comportamiento del juego. El siguiente paso es seguir cómo se construye esa tabla en memoria.
 
-Todavía no se ha trasladado ninguna de estas rutinas a C++. Antes de hacerlo hay que completar las estructuras que leen y escriben, y preparar una comparación con el comportamiento original.
+El bloque que construye la tabla de `DE2B` ya se ha trasladado a C++ y contrastado contra sus instrucciones originales. El [análisis de esa tabla](tabla_acciones.md) documenta las nuevas fuentes de destinos, las comprobaciones y los límites. El resto de las rutinas continúa pendiente de traslado.

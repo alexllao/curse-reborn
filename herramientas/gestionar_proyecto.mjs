@@ -1,5 +1,5 @@
 /** Entrada común desde pnpm; las herramientas de análisis usan un Python local. */
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -43,12 +43,14 @@ function buscarPython() {
   throw new Error('No se encuentra Python 3.9 o posterior. Instálalo o indica la ruta del ejecutable en la variable PYTHON.');
 }
 
-function comprobarEntorno() {
+function comprobarEntorno(requiereEmulador = false) {
   if (!existsSync(pythonLocal)) {
     throw new Error('Falta el entorno de análisis. Ejecuta «pnpm preparar».');
   }
+  const paquetes = requiereEmulador ? { capstone: '5.0.7', unicorn: '2.1.4' } : { capstone: '5.0.7' };
   const resultado = spawnSync(pythonLocal, ['-c',
-    'import importlib.metadata, sys; sys.exit(0 if importlib.metadata.version("capstone") == "5.0.7" else 1)'],
+    'import importlib.metadata, json, sys; paquetes = json.loads(sys.argv[1]); sys.exit(0 if all(importlib.metadata.version(n) == v for n, v in paquetes.items()) else 1)',
+    JSON.stringify(paquetes)],
   { cwd: raiz, env: variables, stdio: 'ignore', windowsHide: true });
   if (resultado.error || resultado.status !== 0) {
     throw new Error('Las dependencias de análisis no están preparadas. Ejecuta «pnpm preparar».');
@@ -68,6 +70,30 @@ function preparar() {
   console.log('Preparación completada. Puedes ejecutar «pnpm analizar» y «pnpm comprobar».');
 }
 
+function compararAcciones() {
+  comprobarEntorno(true);
+  if (process.platform === 'win32' && process.arch !== 'x64') {
+    throw new Error('La compilación de esta comparación en Windows requiere Node y Python de 64 bits.');
+  }
+  const carpeta = join(raiz, 'trabajo', 'comparacion_acciones');
+  mkdirSync(carpeta, { recursive: true });
+  const biblioteca = join(carpeta, process.platform === 'win32' ? 'tabla_acciones.dll' : 'tabla_acciones.so');
+  const compilador = process.env.CXX || 'clang++';
+  const opciones = ['-std=c++17', '-O2', '-Wall', '-Wextra', '-Werror',
+    '-fno-exceptions', '-fno-rtti', '-fno-builtin', '-fno-stack-protector', '-nostdlib'];
+  if (process.platform === 'win32') {
+    opciones.push('--target=x86_64-pc-windows-msvc', '-shared', '-fuse-ld=lld', '-Wl,/noentry');
+  } else if (process.platform === 'darwin') {
+    opciones.push('-dynamiclib', '-fPIC');
+  } else {
+    opciones.push('-shared', '-fPIC');
+  }
+  console.log('Compilando el bloque C++ de construcción de la tabla de acciones…');
+  ejecutar(compilador, [...opciones, join(raiz, 'motor', 'acciones', 'construir_tabla.cpp'),
+    join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
+  ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_acciones.py'), '--biblioteca', biblioteca]);
+}
+
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
@@ -83,6 +109,9 @@ try {
       comprobarEntorno();
       ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comprobar_analisis.py'), ...argumentos]);
       break;
+    case 'comparar:acciones':
+      compararAcciones();
+      break;
     case 'estado':
       console.log(`Node: ${process.version}`);
       console.log(`Carpeta del proyecto: ${raiz}`);
@@ -93,7 +122,7 @@ try {
       console.log('Dependencias de análisis: preparadas.');
       break;
     default:
-      throw new Error('Acción desconocida. Usa «pnpm preparar», «pnpm analizar», «pnpm comprobar» o «pnpm estado».');
+      throw new Error('Acción desconocida. Usa «pnpm preparar», «pnpm analizar», «pnpm comprobar», «pnpm comparar:acciones» o «pnpm estado».');
   }
 } catch (error) {
   console.error(`Error: ${error.message}`);

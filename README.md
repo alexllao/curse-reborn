@@ -19,11 +19,11 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Primera fase de desensamblado estático. Todavía no hay una versión jugable ni rutinas trasladadas a SDL.**
+**Desensamblado y primer bloque C++ contrastado con el original. Todavía no hay una versión jugable ni integración con SDL.**
 
-Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados y cinco tablas de destinos anotadas. La pasada actual alcanza **12.553 instrucciones candidatas y 104 destinos de llamada directa**, y señala **tres transferencias indirectas pendientes**. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada.
+Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, cinco tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.724 instrucciones candidatas y 113 destinos de llamada directa**, y señala **tres transferencias indirectas pendientes**. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
-El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido, la selección de escenas y las tablas indirectas. La herramienta tiene 18 comprobaciones con programas sintéticos que no requieren los archivos originales.
+El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. La [tabla dinámica de acciones](documentacion/tabla_acciones.md) incluye el primer bloque trasladado a C++: sus escrituras coinciden con las instrucciones originales en **548 casos**, ejecutados en un emulador de CPU. Además, hay **21 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -47,11 +47,13 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Documentar el primer mapa de arranque y los manejadores de interrupción identificados.
 - [x] Incorporar cinco tablas de saltos anotadas y vinculadas a la huella del ejecutable.
 - [x] Localizar y documentar el recorrido estático del bucle central y la selección de escenas.
+- [x] Reconstruir la construcción de la tabla dinámica de acciones y anotar sus fuentes de destinos.
+- [x] Trasladar el primer bloque a C++ con referencia a su dirección y comparar sus escrituras con las instrucciones originales.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
 - [ ] Documentar los formatos de escenarios, sprites y animaciones a partir de esas rutinas.
-- [ ] Trasladar las primeras rutinas a C++ con referencias a sus direcciones originales.
+- [ ] Ampliar el traslado a rutinas completas, con sus contratos de entrada y salida documentados.
 - [ ] Sustituir el acceso gráfico al hardware por SDL y comprobar el resultado.
 - [ ] Trasladar los controles, el movimiento y las interacciones.
 - [ ] Trasladar el inventario, los eventos y los puzles.
@@ -59,11 +61,11 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** completar las estructuras de estado y la tabla dinámica de llamadas que quedan pendientes, y preparar una primera rutina para su traslado verificable a C++.
+**Siguiente hito de reconstrucción:** documentar los contratos de los manejadores de acciones y estudiar la nueva tabla indirecta localizada en `0000:B7F2` antes de ampliar el traslado a C++.
 
 ## Organización del repositorio
 
-El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Ya hay una herramienta de análisis y sus comprobaciones; el motor sigue pendiente. Las carpetas vacías conservan un archivo `.gitkeep`. Las instrucciones de compilación del motor se añadirán cuando exista su primera implementación.
+El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Ya hay una herramienta de análisis, el primer bloque C++ y sus comprobaciones. Las carpetas vacías conservan un archivo `.gitkeep`. Todavía no hay una compilación del juego completo; el comando de comparación compila únicamente el bloque trasladado.
 
 ```text
 curse-reborn/
@@ -102,8 +104,11 @@ pnpm comprobar
 | `pnpm estado` | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error. |
 | `pnpm analizar` | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original. |
 | `pnpm comprobar` | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego. |
+| `pnpm comparar:acciones` | Compila el bloque C++ de la tabla de acciones y compara sus escrituras con las instrucciones originales en 548 casos. Requiere el juego y Clang con LLD en Windows de 64 bits. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
+
+Para comprobar el primer bloque trasladado, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar ese bloque original aislado. Consulta [los requisitos y límites de la comparación](documentacion/tabla_acciones.md).
 
 Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar --raiz 0000:0276`. Los comandos de gestión contemplan Windows, Linux y macOS; por ahora se han comprobado en Windows. Todavía no existe un comando para compilar o arrancar el motor, porque el motor SDL está pendiente de implementar.
 

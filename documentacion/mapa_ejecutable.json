@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51"],
   "tablas": [
     {
+      "nombre": "Candidatos de la tabla dinámica de acciones DS:B60C",
+      "origen": "0000:DE2B",
+      "ubicacion": "0F31:B686",
+      "cantidad": 23,
+      "segmento_destino": 0,
+      "omitir_cero": true,
+      "derivada_en_memoria": true,
+      "evidencia": "DF15-DF4D transforma diez identificadores de DS:B620: valores con signo menores que 23 consultan DS:B686; los demás usan DS:B636; FFFF rellena el resto con DE96. La lista es una unión de candidatos observados, no una tabla directa ni una prueba de exhaustividad en ejecución.",
+      "destinos_adicionales": [
+        {"destino": "0000:DE96", "evidencia": "DF48 y escrituras DEF1/DEF4; respaldo asignado en DFF3."},
+        {"destino": "0000:563A", "evidencia": "E007 asigna este valor a DS:B636."},
+        {"destino": "0000:32DE", "evidencia": "E030 asigna este valor a DS:B636."},
+        {"destino": "0000:3B53", "evidencia": "E0A1 y E0E0 asignan este valor a DS:B636."},
+        {"destino": "0000:384A", "evidencia": "E0F4 asigna este valor a DS:B636."},
+        {"destino": "0000:2FCA", "evidencia": "E11D asigna este valor a DS:B636."},
+        {"destino": "0000:3143", "evidencia": "E155 asigna este valor a DS:B636."},
+        {"destino": "0000:E0C0", "evidencia": "E0B8 sustituye directamente la primera entrada DS:B60C."}
+      ]
+    },
+    {
       "nombre": "Direcciones de movimiento en la modalidad especial",
       "origen": "0000:0C0E",
       "ubicacion": "0000:0C13",

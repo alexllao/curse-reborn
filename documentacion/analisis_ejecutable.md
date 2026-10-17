@@ -99,4 +99,4 @@ La dependencia usada es Capstone 5.0.7, mediante su [interfaz oficial para Pytho
 
 ## Siguiente trabajo
 
-El recorrido desde `0000:0276`, el bucle y cinco tablas indirectas ya se han estudiado en [la ampliación del análisis](bucle_principal.md). El siguiente trabajo es completar las estructuras de estado y la construcción de la tabla dinámica que interviene en `0000:DE2B`. Para cada rutina se documentarán entradas, salidas, memoria modificada, dependencias y evidencias antes de trasladarla a C++.
+El recorrido desde `0000:0276`, el bucle y cinco tablas indirectas ya se han estudiado en [la ampliación del análisis](bucle_principal.md). La [construcción de la tabla dinámica de `0000:DE2B`](tabla_acciones.md) también está documentada, trasladada como bloque a C++ y contrastada con sus instrucciones originales. El siguiente trabajo es ampliar los contratos de las rutinas de acciones y estudiar el nuevo destino indirecto de `0000:B7F2`.

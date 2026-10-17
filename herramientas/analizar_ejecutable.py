@@ -93,7 +93,14 @@ def leer_mapa(mapa, metadatos, imagen):
                 continue
             if cs_destino * 16 + ip >= len(imagen):
                 raise ErrorAnalisis('Un destino de tabla queda fuera de la imagen.')
-            entradas.append({'indice': indice, 'destino': etiqueta(cs_destino, ip)})
+            entradas.append({'indice': indice, 'destino': etiqueta(cs_destino, ip),
+                             'tabla_dinamica': tabla.get('derivada_en_memoria', False)})
+        for adicional in tabla.get('destinos_adicionales', []):
+            cs, ip = direccion(adicional['destino'])
+            if cs * 16 + ip >= len(imagen):
+                raise ErrorAnalisis('Un destino adicional queda fuera de la imagen.')
+            entradas.append({'indice': None, 'destino': etiqueta(cs, ip),
+                             'tabla_dinamica': True, 'evidencia': adicional['evidencia']})
         resoluciones[origen] = entradas
         tablas.append({**tabla, 'entradas': entradas})
     return raices, tablas, resoluciones
@@ -168,8 +175,11 @@ def seguir_flujo(imagen, raices, limite=100000, resoluciones=None):
                     for entrada in resoluciones[cs, ip]:
                         if entrada['destino'] is not None:
                             pendientes.append(direccion(entrada['destino']))
-                            enlaces.append({'origen': origen, 'tipo': 'destino_por_tabla_anotada',
-                                            'indice': entrada['indice'], 'destino': entrada['destino']})
+                            dinamica = entrada.get('tabla_dinamica', False)
+                            enlaces.append({'origen': origen,
+                                            'tipo': 'candidato_de_tabla_dinamica' if dinamica else 'destino_por_tabla_anotada',
+                                            'indice_fuente' if dinamica else 'indice': entrada['indice'],
+                                            'destino': entrada['destino']})
                 else:
                     incidencias.append({'origen': origen, 'motivo': 'Destino indirecto: requiere registros o memoria en ejecución.'})
                 if salto and instruccion.mnemonic in ('jmp', 'ljmp'):
@@ -220,7 +230,7 @@ def analizar(ruta, salida, raices_adicionales=(), mapa=None):
     print(f"SHA-256: {metadatos['sha256']}")
     print(f"Instrucciones alcanzadas: {len(flujo['instrucciones'])}")
     print(f"Destinos de llamada directa: {len(flujo['destinos_llamada'])}")
-    print(f'Tablas de saltos anotadas: {len(tablas)}')
+    print(f'Tablas y fuentes de destinos anotadas: {len(tablas)}')
     print(f"Incidencias pendientes de revisión: {len(flujo['incidencias'])}")
     print(f'Resultados locales: {salida}')
     return informe
