@@ -38,7 +38,7 @@ private:
   decltype(&mt32emu_set_analog_output_mode) fijar_modo_analogico = nullptr;
   decltype(&mt32emu_set_stereo_output_samplerate) fijar_frecuencia = nullptr;
   decltype(&mt32emu_open_synth) abrir_sintesis = nullptr;
-  decltype(&mt32emu_play_msg_now) enviar = nullptr;
+  decltype(&mt32emu_play_msg) enviar = nullptr;
   decltype(&mt32emu_render_bit16s) sintetizar = nullptr;
   unsigned char datos[65536]{};
   std::vector<unsigned char> bancos[5];

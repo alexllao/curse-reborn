@@ -32,7 +32,7 @@ bool MusicaMt32::iniciar(const std::string &carpeta, const unsigned char *ejecut
       !cargar_funcion(biblioteca, "mt32emu_set_analog_output_mode", fijar_modo_analogico) ||
       !cargar_funcion(biblioteca, "mt32emu_set_stereo_output_samplerate", fijar_frecuencia) ||
       !cargar_funcion(biblioteca, "mt32emu_open_synth", abrir_sintesis) ||
-      !cargar_funcion(biblioteca, "mt32emu_play_msg_now", enviar) ||
+      !cargar_funcion(biblioteca, "mt32emu_play_msg", enviar) ||
       !cargar_funcion(biblioteca, "mt32emu_render_bit16s", sintetizar)) {
     cerrar();
     return false;
@@ -91,7 +91,8 @@ bool MusicaMt32::cambiar_escena(unsigned short escena) {
   if (banco_actual == referencia.banco)
     return true;
   for (unsigned int canal = 0; canal < 16; ++canal)
-    enviar(contexto, (0xb0u | canal) | (123u << 8));
+    if (enviar(contexto, (0xb0u | canal) | (123u << 8)) != MT32EMU_RC_OK)
+      return false;
   banco_actual = referencia.banco;
   tempo = referencia.tempo;
   estado = 0;
@@ -102,7 +103,8 @@ bool MusicaMt32::cambiar_escena(unsigned short escena) {
   return preparar_evento();
 }
 
-// Las marcas F9 no son notas; F8 prolonga la espera en 240 pulsos del MPU.
+// Las marcas F9 no son notas; la cola Munt conserva órdenes simultáneas durante la liberación de
+// voces.
 bool MusicaMt32::preparar_evento() {
   const auto &banco = bancos[banco_actual];
   for (unsigned int i = 0; i < 4096; ++i) {
@@ -112,8 +114,8 @@ bool MusicaMt32::preparar_evento() {
     espera = evento.tiempo;
     if (espera)
       return true;
-    if (evento.mensaje)
-      enviar(contexto, evento.mensaje);
+    if (evento.mensaje && enviar(contexto, evento.mensaje) != MT32EMU_RC_OK)
+      return false;
   }
   return false;
 }
@@ -149,8 +151,8 @@ bool MusicaMt32::generar(short *salida, unsigned int cantidad) {
     if (fraccion >= 2880000u) {
       fraccion -= 2880000u;
       if (espera && --espera == 0) {
-        if (evento.mensaje)
-          enviar(contexto, evento.mensaje);
+        if (evento.mensaje && enviar(contexto, evento.mensaje) != MT32EMU_RC_OK)
+          return false;
         if (!preparar_evento())
           return false;
       }

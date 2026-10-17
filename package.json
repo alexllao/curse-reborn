@@ -63,7 +63,8 @@
     "comparar:musica": "node herramientas/gestionar_proyecto.mjs comparar:musica",
     "comprobar:musica": "node herramientas/gestionar_proyecto.mjs comprobar:musica",
     "comprobar:mt32": "node herramientas/gestionar_proyecto.mjs comprobar:mt32",
-    "comparar:musica-rs": "node herramientas/gestionar_proyecto.mjs comparar:musica-rs"
+    "comparar:musica-rs": "node herramientas/gestionar_proyecto.mjs comparar:musica-rs",
+    "comparar:dosbox-midi": "node herramientas/gestionar_proyecto.mjs comparar:dosbox-midi"
   },
   "repository": {
     "type": "git",

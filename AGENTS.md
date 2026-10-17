@@ -19,6 +19,8 @@ El núcleo reconstruido debe mantenerse independiente de SDL. La capa de platafo
 
 ## Forma de trabajar
 
+- Enviar música a Munt con `mt32emu_play_msg` y comprobar su retorno. Evitar `_now`: puede perder órdenes al liberar voces. La prueba debe conservar ocho segundos de presentación antes de cambiar a la mazmorra. Existe captura MIDI real del DOSBox en `trabajo/referencia_dosbox/`; `pnpm comparar:dosbox-midi` contrasta 231 mensajes y hasta 2 ms de desfase observado. Los avisos de percusión no acreditan por sí solos la causa de una diferencia de timbre.
+
 - Mantener `documentacion/controles.md` como referencia común de todos los controles y atajos. Actualizarla al añadir o cambiar una tecla y conservar su enlace visible en el README.
 
 - Registrar por consola las acciones del jugador, selecciones, cambios de inventario y escena y opciones de audio/depuración. No registrar cada fotograma ni el movimiento continuo del puntero. Informar de opciones de sonido pendientes sin simular que funcionan. Las ROM locales MT32_CONTROL.ROM y MT32_PCM.ROM se identifican como MT-32 antiguo 1.07 y pcm_mt32. MT-32 conserva salida estéreo y modo analógico ACCURATE, como mt32.analog=2 del paquete DOSBox. Àlex confirma que el original en DOSBox suena bien; no dar por resueltas las diferencias auditivas solo por coincidir mensajes o muestras con el mismo sintetizador. Se generan 32 segundos de los cinco bancos y una referencia adicional desde puertos del ensamblador. Mantenerlas excluidas de Git; esto no acredita equivalencia acústica con el hardware físico.

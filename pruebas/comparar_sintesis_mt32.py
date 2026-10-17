@@ -30,7 +30,7 @@ class SintetizadorReferencia:
             ('set_analog_output_mode', [puntero, ctypes.c_int], None),
             ('set_stereo_output_samplerate', [puntero, ctypes.c_double], None),
             ('open_synth', [puntero], ctypes.c_int),
-            ('play_msg_now', [puntero, ctypes.c_uint], None),
+            ('play_msg', [puntero, ctypes.c_uint], ctypes.c_int),
             ('render_bit16s', [puntero, ctypes.POINTER(ctypes.c_short), ctypes.c_uint], None),
             ('free_context', [puntero], None),
         ):
@@ -63,7 +63,8 @@ class SintetizadorReferencia:
 
     # Aplica mensajes completos obtenidos del puerto, sin usar EventoMusicaRS.mensaje.
     def enviar(self, mensaje):
-        self.api.mt32emu_play_msg_now(self.contexto, mensaje)
+        if self.api.mt32emu_play_msg(self.contexto, mensaje) != 0:
+            raise ValueError('La cola MIDI de referencia no ha aceptado una orden.')
 
     # Conserva la conversión y ganancia de la plataforma para comparar también sus muestras.
     def generar(self, cantidad):
@@ -103,21 +104,15 @@ def paquetes_originales(comparador, indice):
 
 
 # Sitúa eventos en muestras absolutas y conserva las fronteras de pulso del MPU de 120 PPQN.
-def producir_referencia(comparador, sintetizador, cantidad):
-    sintetizador.parar()
-    for tiempo, mensaje in paquetes_originales(comparador, 5):
-        if tiempo:
-            break
-        if mensaje:
-            sintetizador.enviar(mensaje)
-    sintetizador.parar()
+def producir_banco(comparador, sintetizador, banco, tempo, cantidad):
     muestras, pulsos = [], 0
-    for tiempo, mensaje in paquetes_originales(comparador, 1):
+    incremento = tempo * 120
+    for tiempo, mensaje in paquetes_originales(comparador, banco):
         pulsos += tiempo
-        objetivo = min(cantidad, (pulsos * 2880000 + 16799) // 16800)
+        objetivo = min(cantidad, (pulsos * 2880000 + incremento - 1) // incremento)
         while len(muestras) // 2 < objetivo:
-            siguiente_pulso = (len(muestras) // 2) * 16800 // 2880000 + 1
-            frontera = (siguiente_pulso * 2880000 + 16799) // 16800
+            siguiente_pulso = (len(muestras) // 2) * incremento // 2880000 + 1
+            frontera = (siguiente_pulso * 2880000 + incremento - 1) // incremento
             bloque = min(objetivo - len(muestras) // 2, 512, frontera - len(muestras) // 2)
             muestras.extend(sintetizador.generar(bloque))
         if len(muestras) == cantidad * 2:
@@ -125,6 +120,14 @@ def producir_referencia(comparador, sintetizador, cantidad):
         if mensaje:
             sintetizador.enviar(mensaje)
     raise ValueError('La referencia musical terminó antes de tiempo.')
+
+
+# Cambia de banco con voces todavía activas para detectar pérdidas de órdenes durante su liberación.
+def producir_referencia(comparador, sintetizador, cantidad):
+    sintetizador.parar()
+    producir_banco(comparador, sintetizador, 5, 110, 48000 * 8)
+    sintetizador.parar()
+    return producir_banco(comparador, sintetizador, 1, 140, cantidad)
 
 
 # Contrasta todo el WAV y guarda referencia e informe sin afirmar equivalencia con hardware físico.

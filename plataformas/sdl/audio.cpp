@@ -378,6 +378,11 @@ bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta) {
   constexpr unsigned short escenas[] = {0, 64, 3, 15, 0xffff};
   constexpr unsigned int cantidad = 48000 * 32;
   std::vector<short> muestras(cantidad * 2);
+  // Mantiene voces de la presentación antes de cambiar de banco, como en una partida real.
+  if (!sintetizador.generar(muestras.data(), 48000 * 8)) {
+    sintetizador.cerrar();
+    return false;
+  }
   bool guardado = false;
   for (unsigned int banco = 0; banco < 5; ++banco) {
     if (!sintetizador.cambiar_escena(escenas[banco]) || sintetizador.banco() != banco ||
