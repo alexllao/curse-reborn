@@ -1,8 +1,8 @@
 # Copias de vídeo, paleta y referencia visual del título
 
-El código de [planos.cpp](../motor/video/planos.cpp) traslada cuatro rutinas gráficas originales. La muestra de **83 casos** coincide con el ejecutable en RAM, los cuatro planos y las operaciones de puerto. Hay **1.183 casos** preparados para la comparación amplia.
+El código de [planos.cpp](../motor/video/planos.cpp) traslada cuatro rutinas gráficas originales. La muestra de **83 casos** coincide con el ejecutable en RAM, los cuatro planos y las operaciones de puerto. El propietario ha confirmado también los **1.183 casos** de la comparación amplia.
 
-También se ha recuperado y comprobado visualmente la pantalla de título como imagen de diagnóstico. **No es una partida ni una ventana SDL.** Esta referencia inicial utiliza la rutina original de `CURSE.EXE` en Unicorn. El [traslado posterior de RNC](descompresion_rnc.md) ya permite generar la misma imagen con C++ mediante `pnpm titulo`, sin ejecutar esa rutina original.
+También se ha recuperado y comprobado visualmente la pantalla de título como imagen de diagnóstico. **Este PNG de referencia no es una partida.** La [presentación SDL posterior](ventana_sdl.md) ya muestra el título directamente desde el núcleo. Esta referencia inicial utiliza la rutina original de `CURSE.EXE` en Unicorn. El [traslado posterior de RNC](descompresion_rnc.md) ya permite generar la misma imagen con C++ mediante `pnpm titulo`, sin ejecutar esa rutina original.
 
 ## Recorrido desde el arranque
 
@@ -23,7 +23,7 @@ El número de grupos es `ancho >> 2`: los restos de uno a tres píxeles se desca
 
 La copia usa el modo de escritura uno. Cada lectura carga simultáneamente los cuatro cerrojos y la escritura los copia al destino con máscara `0Fh`. El traslado mantiene ese avance de byte en byte, incluyendo solapamientos. No usa una copia con dirección elegida para evitar solapamientos: eso cambiaría lo que hace el original.
 
-`PuertosVideo` sustituye las instrucciones de entrada y salida por funciones del llamador. El código nunca toca el hardware del ordenador anfitrión. Las matrices de planos son estado explícito y todavía deben conectarse a una textura y una ventana SDL.
+`PuertosVideo` sustituye las instrucciones de entrada y salida por funciones del llamador. El código nunca toca el hardware del ordenador anfitrión. Las matrices de planos son estado explícito y se conectan ahora a una textura y una ventana en la [primera presentación SDL](ventana_sdl.md).
 
 La API acepta anchos de al menos cuatro píxeles, alturas no nulas, pasos no menores que el número de grupos, imágenes lineales de hasta 65.536 bytes y regiones completas dentro de cada plano. Rechaza las geometrías que cruzarían su final. Esos límites evitan atribuir al traslado los efectos de contadores nulos, bucles enormes y acarreos de direcciones que no están cubiertos por esta comparación. Origen lineal y planos deben ser búferes separados.
 
@@ -46,7 +46,7 @@ Se guardan localmente:
 
 La paleta del título contiene 768 bytes con componentes entre cero y 63. Para el PNG se convierten mediante `componente × 255 / 63`, con división entera. La imagen se ha inspeccionado: aparecen el título y el castillo completos. No se han inventado gráficos ni sustituido los recursos originales. Los archivos derivados permanecen fuera de Git.
 
-El [descompresor RNC de método uno](descompresion_rnc.md) ya está trasladado y conserva su comparación propia. El cargador real y la presentación interactiva continúan pendientes. Este conjunto gráfico sigue usando la descompresión original como referencia independiente.
+El [descompresor RNC de método uno](descompresion_rnc.md) ya está trasladado y conserva su comparación propia. La [primera presentación SDL](ventana_sdl.md) carga los archivos de título reales; la carga y presentación de las escenas y la partida continúan pendientes. Este conjunto gráfico sigue usando la descompresión original como referencia independiente.
 
 ## Comparación agrupada
 
@@ -54,7 +54,7 @@ El [descompresor RNC de método uno](descompresion_rnc.md) ya está trasladado y
 pnpm comparar:video
 ```
 
-| Grupo | Comparación amplia preparada | Muestra comprobada |
+| Grupo | Comparación amplia confirmada | Muestra comprobada |
 | --- | ---: | ---: |
 | Subida de imagen | 378 | 24 |
 | Recuperación de imagen | 378 | 24 |

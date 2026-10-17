@@ -1,8 +1,8 @@
 # Descompresión RNC de método uno en C++
 
-[rnc.cpp](../motor/recursos/rnc.cpp) reconstruye el método uno estudiado en `0000:64E0`–`0000:67AC`. No incorpora una biblioteca de descompresión ajena. La muestra de **38 casos** coincide con las instrucciones originales. La comparación amplia de **142 casos** queda preparada; los **1.183 casos gráficos** anteriores siguen pendientes de confirmación amplia por el propietario.
+[rnc.cpp](../motor/recursos/rnc.cpp) reconstruye el método uno estudiado en `0000:64E0`–`0000:67AC`. No incorpora una biblioteca de descompresión ajena. La muestra de **38 casos** coincide con las instrucciones originales. El propietario ha confirmado también los **142 casos** de RNC y los **1.183 casos gráficos** anteriores, **1.325 casos** en conjunto.
 
-El comando `pnpm titulo` ya genera el título con descompresión, subida a cuatro planos, recuperación y paleta en C++. **No carga `CURSE.EXE` ni ejecuta Unicorn.** Es una imagen fija PNG; todavía no hay ventana SDL ni una partida.
+El comando `pnpm titulo` ya genera el título con descompresión, subida a cuatro planos, recuperación y paleta en C++. **No carga `CURSE.EXE` ni ejecuta Unicorn.** Ese comando produce una imagen fija PNG. La [presentación SDL](ventana_sdl.md) ya permite mostrarla directamente desde los recursos originales mediante `pnpm ventana`; todavía no hay una partida.
 
 ## Relación con las instrucciones originales
 
@@ -38,7 +38,7 @@ No se comprueban los CRC de la cabecera, que tampoco se utilizan en el tramo ori
 pnpm comparar:rnc
 ```
 
-| Grupo | Comparación amplia preparada | Muestra comprobada |
+| Grupo | Comparación amplia confirmada | Muestra comprobada |
 | --- | ---: | ---: |
 | `CORE.DAT`, `MENU.DAT` y `TITLE.DAT` | 24 | 6 |
 | Literales, repeticiones solapadas y reutilización de tablas sintéticas | 104 | 18 |
@@ -52,7 +52,7 @@ Los programas sintéticos son generados por un escritor propio: incluyen valores
 
 La muestra se ejecuta añadiendo `--muestra`. Los informes locales se guardan por separado en `trabajo/comparacion_rnc/muestra.json` y `resultado.json`.
 
-Para agrupar esta comparación con los 1.183 casos gráficos pendientes, usa `pnpm comparar:graficos`: compila una vez y ejecuta los dos conjuntos, **1.325 casos** en total, conservando sus informes separados. Con `--muestra` ejecuta 121 casos.
+Para agrupar esta comparación con los 1.183 casos gráficos, usa `pnpm comparar:graficos`: compila una vez y ejecuta los dos conjuntos, **1.325 casos** en total, conservando sus informes separados. Con `--muestra` ejecuta 121 casos.
 
 ## Imagen del título sin ejecutar el EXE
 
@@ -64,4 +64,4 @@ El comando compila el núcleo y utiliza únicamente `datos_originales/CURSE/DATA
 
 La imagen C++ generada se ha contrastado con la referencia obtenida anteriormente mediante el ejecutable. **Ambos PNG tienen el mismo SHA-256**, y los índices descomprimidos del título tienen la huella `e9bd143ea644c93e43330b763b007913cf604e5865c39437ae432e7d908ea714`.
 
-La creación del PNG aplica la misma expansión de componentes de paleta que la referencia visual. No sustituye el dibujo de entidades, el desplazamiento de vista, la entrada ni la cadencia del bucle del juego. El siguiente paso es conectar esta primera pantalla a la capa de presentación, conservando separados núcleo y SDL.
+La creación del PNG aplica la misma expansión de componentes de paleta que la referencia visual. No sustituye el dibujo de entidades, el desplazamiento de vista, la entrada ni la cadencia del bucle del juego. La [capa de presentación SDL](ventana_sdl.md) ya conecta esta primera pantalla y conserva separado el núcleo.

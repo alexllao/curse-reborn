@@ -30,6 +30,10 @@
     "comparar:rnc": "node herramientas/gestionar_proyecto.mjs comparar:rnc",
     "titulo": "node herramientas/gestionar_proyecto.mjs titulo",
     "comparar:graficos": "node herramientas/gestionar_proyecto.mjs comparar:graficos",
+    "sdl:preparar": "node herramientas/gestionar_proyecto.mjs sdl:preparar",
+    "sdl:compilar": "node herramientas/gestionar_proyecto.mjs sdl:compilar",
+    "ventana": "node herramientas/gestionar_proyecto.mjs ventana",
+    "comprobar:ventana": "node herramientas/gestionar_proyecto.mjs comprobar:ventana",
     "estado": "node herramientas/gestionar_proyecto.mjs estado"
   },
   "repository": {

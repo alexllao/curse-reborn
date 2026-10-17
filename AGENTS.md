@@ -14,7 +14,7 @@ La fuente de la reconstrucción es el desensamblado de `CURSE.EXE`. Seguir y doc
 
 El entregable principal es código C/C++ portable. Conservar el ensamblador comentado como referencia de los traslados: las anotaciones propias se versionan en el mapa y el listado completo se regenera en `trabajo/`. Mantener sincronizadas las referencias entre código original, contratos, C++ y comprobaciones.
 
-El núcleo reconstruido debe mantenerse independiente de SDL. La capa de plataforma prevista utilizará SDL para Windows/macOS y se compilará también a WebAssembly con Emscripten para navegador.
+El núcleo reconstruido debe mantenerse independiente de SDL. La primera capa de plataforma está en `plataformas/sdl/`, con la pantalla de título compilada y comprobada mediante SDL3 en Windows. macOS y WebAssembly con Emscripten para navegador siguen pendientes de validar e integrar. Mantener explícita la diferencia entre esta pantalla fija y una partida completa.
 
 ## Forma de trabajar
 

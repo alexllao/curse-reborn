@@ -3,6 +3,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { gestionarSdl } from './gestionar_sdl.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const entorno = join(raiz, 'trabajo', 'entorno');
@@ -105,6 +106,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     join(raiz, 'motor', 'sonido', 'altavoz.cpp'),
     join(raiz, 'motor', 'video', 'planos.cpp'),
     join(raiz, 'motor', 'recursos', 'rnc.cpp'),
+    join(raiz, 'motor', 'recursos', 'titulo.cpp'),
     join(raiz, 'motor', 'aleatorio', 'generador.cpp'),
     join(raiz, 'pruebas', 'puente_tabla.cpp'), '-o', biblioteca]);
   const comparadores = { acciones: 'comparar_acciones.py', aleatorio: 'comparar_aleatorio.py',
@@ -120,6 +122,12 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'sdl:preparar':
+    case 'sdl:compilar':
+    case 'ventana':
+    case 'comprobar:ventana':
+      await gestionarSdl(accion, argumentos);
+      break;
     case 'preparar':
       preparar();
       break;

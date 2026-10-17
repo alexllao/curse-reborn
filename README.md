@@ -19,7 +19,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-**Reconstrucción en C++ con acciones, movimiento, entidades y secuencias de animación. Todavía no hay una versión jugable ni integración con SDL.**
+**Primera pantalla de título en una ventana SDL, calculada por el núcleo C++ reconstruido. Todavía no hay una versión jugable.**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
@@ -27,15 +27,17 @@ El nuevo traslado de [operaciones de sonido y modelos](documentacion/operaciones
 
 El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Aún no genera audio digital ni salida audible.
 
-Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++, con **83 casos de muestra** coincidentes y **1.183 casos** preparados para la comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
+Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++ y el propietario ha confirmado sus **1.183 casos** de comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
 
-El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++, con **38 casos de muestra** coincidentes y **142 casos** preparados para la comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior. Todavía no existe una ventana SDL ni una versión jugable; el método dos de RNC sigue pendiente.
+El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++ y el propietario ha confirmado sus **142 casos** de comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior.
+
+**`pnpm ventana` abre ahora esa pantalla en SDL**, con escalado entero y cierre con Escape. La comprobación con ventana oculta y dibujante de software coincide en los **64.000 píxeles** y termina mediante el evento de Escape. La interacción visible y el dibujante acelerado quedan para la comprobación manual; no hay partida ni audio. El método dos de RNC sigue pendiente.
 
 Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y saltos desde el punto de entrada, tres manejadores identificados, seis tablas estáticas y las fuentes de una tabla dinámica de acciones. La pasada actual alcanza **18.744 instrucciones candidatas y 113 destinos de llamada directa**, y señala **dos transferencias indirectas pendientes**, que encadenan vectores de DOS. Estas cifras se obtienen por análisis estático; no representan el porcentaje completado del motor ni una ejecución verificada del juego.
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 134 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL; se prevé una capa SDL para Windows/macOS y una compilación web mediante Emscripten.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 134 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [primera capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -74,9 +76,11 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar arranque, parada y temporizador del altavoz del PC; muestra de 310 casos coincidente.
 - [x] Confirmar con el propietario los 3.312 casos del altavoz.
 - [x] Trasladar copias por planos y envío de paleta; muestra de 83 casos y referencia visual del título comprobadas.
-- [ ] Confirmar la comparación amplia de 1.183 casos de vídeo.
+- [x] Confirmar con el propietario los 1.183 casos de vídeo.
 - [x] Trasladar RNC de método uno y generar el título con C++; muestra de 38 casos coincidente.
-- [ ] Ejecutar los 142 casos de RNC y conectar la primera pantalla con SDL.
+- [x] Confirmar con el propietario los 142 casos de RNC.
+- [x] Conectar el título a SDL y comprobar sus 64.000 píxeles con dibujante de software y cierre por Escape.
+- [ ] Confirmar manualmente la ventana visible y ampliar la presentación hacia los recursos de las escenas.
 - [ ] Completar los destinos indirectos restantes y las estructuras de estado del juego.
 - [ ] Validar el recorrido identificado durante la ejecución del original.
 - [ ] Seguir las rutinas originales de carga y descompresión de recursos.
@@ -89,7 +93,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [ ] Comprobar el desarrollo completo de la aventura frente al original.
 - [ ] Definir y desarrollar las mejoras de la remasterización.
 
-**Siguiente hito de reconstrucción:** conectar la pantalla generada por el núcleo C++ a una capa de presentación SDL, manteniendo las comparaciones con el original y sin presentarla como una partida.
+**Siguiente hito de reconstrucción:** seguir la carga y el dibujo originales de escenas y entidades, incorporándolos a la presentación SDL; el título es todavía una pantalla fija.
 
 ## Organización del repositorio
 
@@ -97,10 +101,12 @@ El proyecto se organiza como un **monorepositorio**: el motor, las herramientas 
 
 ```text
 curse-reborn/
-├── motor/              # Motor del juego basado en SDL
+├── motor/              # Núcleo C++ reconstruido, independiente de SDL
+├── plataformas/        # Presentación y acceso a recursos mediante SDL
 ├── herramientas/       # Análisis del ejecutable y apoyo a su reconstrucción
 ├── documentacion/      # Mapa de código, formatos y decisiones del proyecto
 ├── pruebas/            # Comprobaciones del motor y las herramientas
+├── licencias/          # Avisos de las dependencias, sin asignar licencia al código propio
 └── datos_originales/   # Copia local del juego; solo se versiona .gitkeep
 ```
 
@@ -141,16 +147,20 @@ pnpm comprobar
 | `pnpm comparar:secuencias` | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos. |
 | `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos. |
 | `pnpm comparar:altavoz` | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos. |
-| `pnpm comparar:video` | Compara copias por planos y paleta: 1.183 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 83 casos ya comprobados. Genera `trabajo/vista_titulo/titulo.png` usando la descompresión original como referencia. |
-| `pnpm comparar:rnc` | Compara el descompresor de método uno: 142 casos preparados, pendientes de ejecución amplia. Admite `--muestra` con los 38 casos ya comprobados. |
+| `pnpm comparar:video` | Compara 1.183 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
+| `pnpm comparar:rnc` | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos. |
 | `pnpm titulo` | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida. |
-| `pnpm comparar:graficos` | Compila una vez y agrupa los 1.183 casos de vídeo y los 142 de RNC: 1.325 casos preparados. Con `--muestra` ejecuta los 121 casos cortos. |
+| `pnpm comparar:graficos` | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos. |
+| `pnpm ventana` | Prepara SDL en Windows si falta, compila y abre el título calculado por C++. Escape o cerrar terminan la aplicación. |
+| `pnpm sdl:preparar` | Descarga y verifica el paquete oficial SDL3 fijado para Windows de 64 bits. |
+| `pnpm sdl:compilar` | Compila la presentación sin abrir una ventana. |
+| `pnpm comprobar:ventana` | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape. |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
 Para comprobar los bloques trasladados, ejecuta `pnpm preparar` y después `pnpm comparar:acciones`. El entorno incorpora Unicorn para ejecutar los tramos originales aislados. Consulta [los requisitos de compilación](documentacion/tabla_acciones.md) y [el alcance de las comparaciones](documentacion/contrato_acciones.md).
 
-Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar --raiz 0000:0276`. Los comandos de gestión contemplan Windows, Linux y macOS; por ahora se han comprobado en Windows. Todavía no existe un comando para compilar o arrancar el motor, porque el motor SDL está pendiente de implementar.
+Puedes pasar opciones a la herramienta de análisis, por ejemplo `pnpm analizar --raiz 0000:0276`. Los comandos de gestión contemplan Windows, Linux y macOS; por ahora se han comprobado en Windows. La primera pantalla SDL se compila con `pnpm sdl:compilar` y se abre con `pnpm ventana`. Consulta [sus requisitos y el alcance de la comprobación](documentacion/ventana_sdl.md). Todavía no inicia una partida.
 
 ### Dónde colocar el juego original
 
