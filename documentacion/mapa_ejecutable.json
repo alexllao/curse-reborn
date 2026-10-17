@@ -843,6 +843,31 @@
       "direccion": "0000:DF4E",
       "nombre": "Fin del bloque de construcción trasladado",
       "comentario": "La comparación de memoria termina antes de este punto. El código posterior dibuja la selección y queda pendiente."
+    },
+    {
+      "direccion": "0000:28B2",
+      "nombre": "Introducción de la bruja y el béisbol",
+      "comentario": "28B2–2F4F: recorrido trasladado a motor/video/introduccion.cpp. Cargas RNC2, páginas CRTC, tres paletas, cuatro fundidos y controles de omisión. SDL sustituye E/S y retrazo; no hay audio."
+    },
+    {
+      "direccion": "0000:2951",
+      "nombre": "Animación del caldero",
+      "comentario": "39 selecciones: páginas 1/2/3/0 con ocho esperas explícitas de retrazo por selección. Los recursos son CAULDRN1.DAT a CAULDRN4.DAT."
+    },
+    {
+      "direccion": "0000:2A98",
+      "nombre": "Animación del balcón",
+      "comentario": "29 selecciones: páginas 1/2/0 con diez esperas explícitas por selección. Después carga BALCONY4 y BALCONY5 en páginas cero y uno."
+    },
+    {
+      "direccion": "0000:2F50",
+      "nombre": "Carga de una página de introducción",
+      "comentario": "Abre el DAT, descomprime mediante 67BC y llama a 7636 con ancho y paso 320: 80 bytes por plano. DI determina una de cuatro páginas separadas por 4000h."
+    },
+    {
+      "direccion": "0000:2F8E",
+      "nombre": "Control de omisión de la introducción",
+      "comentario": "Devuelve acarreo al detectar tecla o botón según la configuración. Los puntos de llamada se conservan en la secuencia C++; SDL adapta la entrada y Escape sigue reservado al cierre."
     }
   ],
   "tablas": [
@@ -869,12 +894,30 @@
           "destino": "0000:DE96",
           "evidencia": "DF48 y escrituras DEF1/DEF4; respaldo asignado en DFF3."
         },
-        { "destino": "0000:563A", "evidencia": "E007 asigna este valor a DS:B636." },
-        { "destino": "0000:32DE", "evidencia": "E030 asigna este valor a DS:B636." },
-        { "destino": "0000:3B53", "evidencia": "E0A1 y E0E0 asignan este valor a DS:B636." },
-        { "destino": "0000:384A", "evidencia": "E0F4 asigna este valor a DS:B636." },
-        { "destino": "0000:2FCA", "evidencia": "E11D asigna este valor a DS:B636." },
-        { "destino": "0000:3143", "evidencia": "E155 asigna este valor a DS:B636." },
+        {
+          "destino": "0000:563A",
+          "evidencia": "E007 asigna este valor a DS:B636."
+        },
+        {
+          "destino": "0000:32DE",
+          "evidencia": "E030 asigna este valor a DS:B636."
+        },
+        {
+          "destino": "0000:3B53",
+          "evidencia": "E0A1 y E0E0 asignan este valor a DS:B636."
+        },
+        {
+          "destino": "0000:384A",
+          "evidencia": "E0F4 asigna este valor a DS:B636."
+        },
+        {
+          "destino": "0000:2FCA",
+          "evidencia": "E11D asigna este valor a DS:B636."
+        },
+        {
+          "destino": "0000:3143",
+          "evidencia": "E155 asigna este valor a DS:B636."
+        },
         {
           "destino": "0000:E0C0",
           "evidencia": "E0B8 sustituye directamente la primera entrada DS:B60C."

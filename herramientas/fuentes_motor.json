@@ -27,5 +27,6 @@
   "motor/video/fundido.cpp",
   "motor/video/orden.cpp",
   "motor/video/planos.cpp",
-  "motor/video/sprites.cpp"
+  "motor/video/sprites.cpp",
+  "motor/video/introduccion.cpp"
 ]

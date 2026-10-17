@@ -146,6 +146,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     avance: 'comparar_avance.py',
     entidades: 'comparar_entidades.py',
     objetos: ['comparar_objetos.py', 'comparar_composicion.py'],
+    introduccion: 'comparar_introduccion.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -173,6 +174,7 @@ try {
     case 'sdl:preparar':
     case 'sdl:compilar':
     case 'ventana':
+    case 'comprobar:introduccion':
     case 'comprobar:ventana':
     case 'comprobar:escena':
       await gestionarSdl(accion, argumentos);
@@ -231,6 +233,9 @@ try {
       break;
     case 'comparar:escena':
       compararAcciones('escena', argumentos);
+      break;
+    case 'comparar:introduccion':
+      compararAcciones('introduccion', argumentos);
       break;
     case 'comparar:presentacion':
       compararAcciones('presentacion', argumentos);

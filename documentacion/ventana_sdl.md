@@ -55,10 +55,12 @@ La aplicación normal no requiere Python. La comprobación utiliza el generador 
 
 Esta comprobación verifica la ruta de software con ventana oculta y cierre por Escape. La interacción visible, el cambio de tamaño y el dibujante acelerado quedan para la comprobación manual con `pnpm ventana`. No verifica audio, una partida ni compatibilidad con todos los controladores gráficos.
 
-`pnpm comprobar:escena` comprueba el avance por F6 desde el título, la lectura de datos del EXE y los bancos y los 64.000 píxeles de la mazmorra inicial. Repite la captura tras 32 pasos de escena, con sus entidades y animaciones. Ambas coinciden con la referencia contrastada contra el original. La comparación amplia de objetos está agrupada en `pnpm comparar:objetos`; queda pendiente de confirmación del propietario. `pnpm comparar:presentacion` conserva el grupo anterior de fondos, sprites, RNC2 y fundidos.
+`pnpm comprobar:escena` comprueba el avance por F6 desde el título, la lectura de datos del EXE y los bancos y los 64.000 píxeles de la mazmorra inicial. Repite la captura tras 32 pasos de escena, con sus entidades y animaciones. Ambas coinciden con la referencia contrastada contra el original. La comparación amplia de objetos está agrupada en `pnpm comparar:objetos`; el propietario ha confirmado sus 773 casos/pasos. `pnpm comparar:presentacion` conserva el grupo anterior de fondos, sprites, RNC2 y fundidos.
 
 ## Otras plataformas
 
 [CMakeLists.txt](../CMakeLists.txt) prepara la compilación del mismo código con CMake 3.21 o posterior y una instalación de SDL3 3.4.18 o compatible con su configuración CMake. En macOS y Linux, `pnpm sdl:compilar` utiliza esa ruta. No se ha comprobado todavía en esos sistemas. El paquete automático de Windows no sirve para ellos.
 
 La compilación WebAssembly y la adaptación del bucle de presentación al navegador siguen pendientes. El núcleo se conserva independiente de la ventana para poder realizar ese paso después.
+
+La [introducción original](introduccion_original.md) se intercala ahora entre título y mazmorra; también dispone de su comparación y capturas SDL específicas.

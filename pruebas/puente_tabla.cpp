@@ -1,3 +1,4 @@
+#include "../motor/video/introduccion.hpp"
 #include "../motor/acciones/construir_tabla.hpp"
 #include "../motor/acciones/seleccionar_coincidencias.hpp"
 #include "../motor/acciones/retorno_accion.hpp"
@@ -536,4 +537,28 @@ extern "C" EXPORTAR int avanzar_objetos(unsigned char *datos, unsigned short *pa
 extern "C" EXPORTAR int leer_datos_iniciales(const unsigned char *ejecutable, unsigned int longitud,
                                              unsigned char *datos) {
   return motor::leer_datos_iniciales(ejecutable, longitud, datos) ? 1 : 0;
+}
+
+// Expone los eventos originales de la introducción sin copiar tipos C++ al comparador.
+extern "C" EXPORTAR int evento_introduccion(unsigned int indice, unsigned short *salida) {
+  motor::EventoIntroduccion evento{};
+  if (!motor::obtener_evento_introduccion(indice, evento))
+    return 0;
+  salida[0] = static_cast<unsigned short>(evento.operacion);
+  salida[1] = evento.valor;
+  salida[2] = evento.pagina;
+  return 1;
+}
+
+// Comprueba RNC2, subida y recuperación de cada página de la introducción.
+extern "C" EXPORTAR int pagina_introduccion(const unsigned char *datos, unsigned int longitud,
+                                            unsigned short pagina, unsigned char *planos,
+                                            unsigned char *temporal, unsigned char *salida) {
+  static motor::ImagenIndexada imagen;
+  if (!motor::cargar_pagina_introduccion(datos, longitud, pagina, planos, temporal) ||
+      !motor::mostrar_pagina_introduccion(planos, pagina, imagen))
+    return 0;
+  for (unsigned int i = 0; i < 64000; ++i)
+    salida[i] = imagen.indices[i];
+  return 1;
 }

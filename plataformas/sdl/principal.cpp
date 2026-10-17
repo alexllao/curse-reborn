@@ -8,6 +8,7 @@
 #include "../../motor/video/sprites.hpp"
 #include "../../motor/video/fundido.hpp"
 #include "mazmorra.hpp"
+#include "introduccion.hpp"
 
 namespace {
 motor::ImagenTitulo imagen;
@@ -16,6 +17,7 @@ unsigned char pixeles[64000 * 4];
 unsigned char tira[6400];
 unsigned char paleta_visible[768];
 Mazmorra mazmorra;
+Introduccion introduccion;
 
 struct Presentacion {
   SDL_Window *ventana = nullptr;
@@ -113,8 +115,10 @@ bool actualizar_textura(SDL_Texture *textura) {
 // Recorre las vistas de desarrollo; cada entrada a la mazmorra prepara una sesión nueva sin
 // guardar.
 bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &presentacion) {
-  const bool cargada = pantalla == 2 ? cargar_mazmorra(carpeta)
-                                     : cargar_imagen(carpeta, pantalla == 0 ? "CORE" : "TITLE");
+  const bool cargada =
+      pantalla == 3   ? cargar_mazmorra(carpeta)
+      : pantalla == 2 ? (cargar_imagen(carpeta, "TITLE") && introduccion.iniciar(carpeta, imagen))
+                      : cargar_imagen(carpeta, pantalla == 0 ? "CORE" : "TITLE");
   if (!cargada)
     return false;
   for (unsigned int i = 0; i < 768; ++i)
@@ -123,6 +127,7 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
          SDL_SetWindowTitle(presentacion.ventana,
                             pantalla == 0   ? "Curse Reborn — Core Design"
                             : pantalla == 1 ? "Curse Reborn — Pantalla de título"
+                            : pantalla == 2 ? "Curse Reborn — Introducción original"
                                             : "Curse Reborn — Mazmorra inicial (reconstrucción)");
 }
 
@@ -135,13 +140,19 @@ int main(int argc, char *argv[]) {
         "[--comprobar|--comprobar-core|--comprobar-transicion|--comprobar-escena <captura.bmp>]\n");
     return 1;
   }
+  const std::string opcion = argc == 4 ? argv[2] : "";
+  const bool comprobar_introduccion =
+      opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
+      opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
+      opcion == "--comprobar-salto-intro";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
   const bool comprobar_escena =
       argc == 4 && (std::string(argv[2]) == "--comprobar-escena" || comprobar_animacion);
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
-  const bool comprobar = argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena ||
-                                       comprobar_core || comprobar_transicion);
+  const bool comprobar =
+      argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
+                    comprobar_transicion || comprobar_introduccion);
   if (argc == 4 && !comprobar) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
@@ -165,19 +176,27 @@ int main(int argc, char *argv[]) {
                                            SDL_TEXTUREACCESS_STATIC, 320, 200);
   if (!presentacion.textura ||
       !SDL_SetTextureScaleMode(presentacion.textura, SDL_SCALEMODE_NEAREST) ||
-      !cambiar_pantalla(carpeta, comprobar && !comprobar_core && !comprobar_transicion ? 1 : 0,
+      !cambiar_pantalla(carpeta,
+                        comprobar_introduccion                                  ? 2
+                        : comprobar && !comprobar_core && !comprobar_transicion ? 1
+                                                                                : 0,
                         presentacion))
     return fallo("No se ha podido crear la imagen");
   if (comprobar_escena || comprobar_transicion) {
     SDL_Event avance{};
     avance.type = SDL_EVENT_KEY_DOWN;
     avance.key.key = comprobar_transicion ? SDLK_RETURN : SDLK_F6;
+    if (comprobar_escena && !SDL_PushEvent(&avance))
+      return fallo("No se ha podido preparar el segundo avance de desarrollo");
     if (!SDL_PushEvent(&avance))
       return fallo("No se ha podido comprobar el avance con F6");
   }
   bool salir = false, capturada = false, fundiendo = false;
-  bool animacion_preparada = false;
-  int pantalla = comprobar && !comprobar_core && !comprobar_transicion ? 1 : 0;
+  bool animacion_preparada = false, introduccion_comprobada = false;
+  bool entrada_introduccion = false;
+  int pantalla = comprobar_introduccion                                  ? 2
+                 : comprobar && !comprobar_core && !comprobar_transicion ? 1
+                                                                         : 0;
   unsigned short paso_fundido = 0;
   Uint64 inicio_pantalla = SDL_GetTicksNS(), inicio_fundido = 0;
   Uint64 ultimo_paso_escena = inicio_pantalla;
@@ -188,7 +207,7 @@ int main(int argc, char *argv[]) {
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE))
         salir = true;
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
-        const bool avanzar = pantalla < 2 && evento.key.key == SDLK_F6;
+        const bool avanzar = pantalla < 3 && evento.key.key == SDLK_F6;
         const bool retroceder = pantalla > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
           pantalla += avanzar ? 1 : -1;
@@ -199,25 +218,70 @@ int main(int argc, char *argv[]) {
             return 1;
           }
           fundiendo = false;
+          entrada_introduccion = false;
           inicio_pantalla = SDL_GetTicksNS();
           ultimo_paso_escena = inicio_pantalla;
-        } else if (!fundiendo && pantalla < 2 && evento.key.key != SDLK_F5 &&
+        } else if (!fundiendo && pantalla == 1 && evento.key.key != SDLK_F5 &&
+                   evento.key.key != SDLK_F6) {
+          pantalla = 2;
+          if (!cambiar_pantalla(carpeta, pantalla, presentacion))
+            return fallo("No se ha podido cargar la introducción");
+          inicio_pantalla = SDL_GetTicksNS();
+        } else if (pantalla == 2 && evento.key.key != SDLK_F5 && evento.key.key != SDLK_F6) {
+          entrada_introduccion = true;
+        } else if (!fundiendo && pantalla == 0 && evento.key.key != SDLK_F5 &&
                    evento.key.key != SDLK_F6) {
           fundiendo = true;
           paso_fundido = 0;
           inicio_fundido = SDL_GetTicksNS();
         }
       }
-      if (!salir && !fundiendo && pantalla < 2 && evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+      if (!salir && !fundiendo && pantalla < 3 && evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
           evento.button.button == SDL_BUTTON_LEFT) {
-        fundiendo = true;
-        paso_fundido = 0;
-        inicio_fundido = SDL_GetTicksNS();
+        if (pantalla == 1) {
+          pantalla = 2;
+          if (!cambiar_pantalla(carpeta, pantalla, presentacion))
+            return fallo("No se ha podido cargar la introducción");
+          inicio_pantalla = SDL_GetTicksNS();
+        } else if (pantalla == 2) {
+          entrada_introduccion = true;
+        } else {
+          fundiendo = true;
+          paso_fundido = 0;
+          inicio_fundido = SDL_GetTicksNS();
+        }
       }
     }
     if (salir)
       break;
-    if (comprobar_animacion && pantalla == 2 && !animacion_preparada) {
+    if (comprobar_introduccion && !introduccion_comprobada) {
+      const unsigned int limite = opcion == "--comprobar-caldero"   ? 33
+                                  : opcion == "--comprobar-balcon"  ? 378
+                                  : opcion == "--comprobar-beisbol" ? 708
+                                                                    : 2000;
+      unsigned int ultimo_tick = 0;
+      for (unsigned int tick = 0; tick <= limite && !introduccion.terminada(); ++tick) {
+        ultimo_tick = tick;
+        if (!introduccion.avanzar(tick, opcion == "--comprobar-salto-intro" && tick == 34, imagen))
+          return fallo("No se ha podido comprobar el recorrido de la introducción");
+      }
+      if (limite == 2000) {
+        if (!introduccion.terminada())
+          return fallo("La introducción no ha terminado");
+        if (ultimo_tick != (opcion == "--comprobar-salto-intro" ? 73u : 1005u))
+          return fallo("La introducción no ha terminado en el retrazo previsto");
+        pantalla = 3;
+        if (!cambiar_pantalla(carpeta, pantalla, presentacion))
+          return fallo("La introducción no ha entrado en la mazmorra");
+      } else {
+        for (unsigned int i = 0; i < 768; ++i)
+          paleta_visible[i] = imagen.paleta[i];
+        if (!actualizar_textura(presentacion.textura))
+          return fallo("No se ha podido comprobar la imagen de la introducción");
+      }
+      introduccion_comprobada = true;
+    }
+    if (comprobar_animacion && pantalla == 3 && !animacion_preparada) {
       for (unsigned int paso = 0; paso < 32; ++paso) {
         if (!mazmorra.avanzar() || !mazmorra.dibujar(imagen))
           return fallo("No se ha podido comprobar la animación de los objetos");
@@ -250,9 +314,24 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido avanzar el fundido original");
       }
     }
+    if (!comprobar && pantalla == 2) {
+      if (!introduccion.avanzar((ahora - inicio_pantalla) * 70u / 1000000000u, entrada_introduccion,
+                                imagen))
+        return fallo("No se ha podido avanzar la introducción original");
+      entrada_introduccion = false;
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (introduccion.terminada()) {
+        pantalla = 3;
+        if (!cambiar_pantalla(carpeta, pantalla, presentacion))
+          return fallo("No se ha podido entrar en la mazmorra");
+        ultimo_paso_escena = ahora;
+      } else if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido dibujar la introducción");
+    }
     // EAD5 espera cinco ticks del temporizador. Mantiene la referencia nominal de 70 Hz de esta
     // plataforma.
-    if (!comprobar && pantalla == 2 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
+    if (!comprobar && pantalla == 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() || !mazmorra.dibujar(imagen) ||
           !actualizar_textura(presentacion.textura)) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");

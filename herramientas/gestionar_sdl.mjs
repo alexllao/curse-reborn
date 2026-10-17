@@ -155,6 +155,7 @@ async function compilar() {
       join(sdl, 'include'),
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
@@ -168,16 +169,17 @@ async function compilar() {
 }
 
 // Convierte la referencia indexada a RGB para compararla con una captura SDL.
-function leerReferencia(escena = false, animada = false) {
+function leerReferencia(escena = false, animada = false, ruta = null) {
   const archivo = readFileSync(
-    escena
-      ? join(
-          raiz,
-          'trabajo',
-          'comparacion_objetos',
-          animada ? 'mazmorra_animada_cpp.png' : 'mazmorra_objetos_cpp.png',
-        )
-      : join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png'),
+    ruta ??
+      (escena
+        ? join(
+            raiz,
+            'trabajo',
+            'comparacion_objetos',
+            animada ? 'mazmorra_animada_cpp.png' : 'mazmorra_objetos_cpp.png',
+          )
+        : join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png')),
   );
   let posicion = 8,
     paleta,
@@ -251,12 +253,30 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion !== 'sdl:compilar') {
     const necesarios = ['TITLE.DAT', 'TITLE.PAL', 'CORE.DAT', 'CORE.PAL'];
-    if (accion === 'ventana' || accion === 'comprobar:escena')
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:escena' ||
+      accion === 'comprobar:introduccion'
+    )
       necesarios.push('DUNGEON.MAP', 'DUNGEON.SPR', 'MANA.BRD', 'STD.BRD', 'SPRITES.PAL');
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:escena' ||
+      accion === 'comprobar:introduccion'
+    ) {
+      necesarios.push('CAULDRN.PAL', 'BALCONY.PAL', 'BASEBALL.PAL', 'BASEBAT.DAT');
+      for (let i = 1; i <= 4; ++i) necesarios.push(`CAULDRN${i}.DAT`);
+      for (let i = 1; i <= 5; ++i) necesarios.push(`BALCONY${i}.DAT`);
+      for (let i = 1; i <= 6; ++i) necesarios.push(`BASEBAL${i}.DAT`);
+    }
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
-    if (accion === 'ventana' || accion === 'comprobar:escena') {
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:escena' ||
+      accion === 'comprobar:introduccion'
+    ) {
       const ejecutable = join(datos, '..', 'CURSE.EXE');
       if (!existsSync(ejecutable))
         throw new Error(
@@ -276,9 +296,63 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título y mazmorra animada: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Menú y control del personaje todavía pendientes.',
+      'Core, título, introducción y mazmorra animada: una tecla inicia el fundido; F6 avanza y F5 retrocede directamente; Escape cierra. Menú y control del personaje todavía pendientes.',
     );
     ejecutar(programa, [datos], process.env, false, false);
+    return;
+  }
+  if (accion === 'comprobar:introduccion') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:introduccion',
+      '--muestra',
+    ]);
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:objetos',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_introduccion_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const capturas = [
+      ['caldero', 'cauldrn2'],
+      ['balcon', 'balcony2'],
+      ['beisbol', 'basebal1'],
+      ['fin-intro', null],
+      ['salto-intro', null],
+    ];
+    for (const [opcion, nombre] of capturas) {
+      const ruta = join(carpeta, `${opcion}.bmp`);
+      ejecutar(programa, [datos, `--comprobar-${opcion}`, ruta], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      const referencia = nombre
+        ? leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_introduccion', `${nombre}.png`),
+          )
+        : leerReferencia(true);
+      if (!leerCaptura(ruta).equals(referencia))
+        throw new Error(`La captura de ${opcion} difiere de la referencia original.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: capturas.length,
+          pixeles_por_captura: 64000,
+          final_y_omision_entran_en_mazmorra: true,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Introducción SDL: coinciden caldero, balcón, béisbol y entrada en mazmorra al terminar u omitir.',
+    );
     return;
   }
   const escena = accion === 'comprobar:escena';

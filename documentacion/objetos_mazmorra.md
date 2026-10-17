@@ -53,7 +53,7 @@ El comando compila una vez y ejecuta las dos comparaciones. La muestra comprobad
 
 Se compara DS completo y el estado aleatorio, además de 64.000 píxeles en cada composición y guardas fuera del búfer. La preparación recorre los fragmentos originales de entrada sin simular sus resultados: solo la lectura DOS del modelo se sustituye por el banco real ya cargado. El avance ejecuta las secuencias y el recorrido original completo de entidades, incluida su llamada a `183F`.
 
-La comparación amplia queda pendiente de ejecución por el propietario. Las imágenes y los informes se guardan en `trabajo/comparacion_objetos/`. La lista de fuentes C++ se comparte entre las herramientas y CMake mediante `herramientas/fuentes_motor.json`.
+El propietario ha confirmado los **773 casos/pasos** de la comparación amplia y que las animaciones se ven en la mazmorra. Las imágenes y los informes se guardan en `trabajo/comparacion_objetos/`. La lista de fuentes C++ se comparte entre las herramientas y CMake mediante `herramientas/fuentes_motor.json`.
 
 ```sh
 pnpm comprobar:escena

@@ -28,7 +28,7 @@ El descriptor inicial está en **DS:859E**: entidad activa, imagen cero, posici�
 pnpm ventana
 ```
 
-El recorrido disponible es **Core → título → mazmorra con objetos y animaciones autónomas**. Una tecla o botón izquierdo inicia el fundido normal. En Core también comienza al acabar la espera máxima. F6 avanza directamente; F5 retrocede directamente. Los atajos omiten esperas y fundidos para acelerar las pruebas. Se detienen en los extremos y vuelven a preparar el estado al entrar en la mazmorra; no escriben partidas. Escape cierra.
+El recorrido disponible es **Core → título → introducción original → mazmorra con objetos y animaciones autónomas**. Una tecla o botón izquierdo inicia el fundido normal. En Core también comienza al acabar la espera máxima. F6 avanza directamente; F5 retrocede directamente. Los atajos cambian de vista directamente para acelerar las pruebas; al entrar en la introducción, esta comienza desde su fundido inicial. Se detienen en los extremos y vuelven a preparar el estado al entrar en la mazmorra; no escriben partidas. Escape cierra.
 
 Los bloques disponibles no representan una partida completa. Faltan la conexión del menú y las acciones, el control del personaje y las interacciones del puzle. Otras escenas usarán el mismo cargador, pero su conexión y lógica deben trasladarse y comprobarse antes de anunciarlas como funcionales.
 
@@ -45,3 +45,5 @@ La muestra ya comprobada con `--muestra` tiene **166 casos/pasos**: 67 de RNC2, 
 `pnpm comprobar:escena` utiliza ahora la muestra de [objetos y composición](objetos_mazmorra.md) y compara los estados inicial y tras 32 pasos. Introduce F6 en la cola de eventos y termina mediante Escape. El control visible, F5, la maximización y la cadencia deben comprobarse manualmente. `pnpm comprobar:ventana` conserva la comprobación de los 64.000 píxeles del título y el paso desde Core.
 
 Los resultados y la vista PNG quedan en `trabajo/comparacion_rnc2/`, `trabajo/comparacion_escena/`, `trabajo/comparacion_fundidos/` y `trabajo/comprobacion_escena_sdl/`. Nada de esos recursos se incorpora al historial.
+
+El bloque `28B2` está trasladado y documentado en [introduccion_original.md](introduccion_original.md): bruja, balcón y béisbol, con sus páginas, paletas y fundidos.
