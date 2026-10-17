@@ -175,6 +175,7 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
       join(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'partidas.cpp'),
       join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
@@ -432,7 +433,12 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
-      accion === 'comprobar:cuevas' ||
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion) ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
@@ -444,7 +450,12 @@ export async function gestionarSdl(accion, argumentos) {
         accion === 'comprobar:corredor' ||
         accion === 'comprobar:lago' ||
         accion === 'comprobar:poza' ||
-        accion === 'comprobar:cuevas'
+        [
+          'comprobar:cuevas',
+          'comprobar:catapulta',
+          'comprobar:final-cuevas',
+          'comprobar:partidas',
+        ].includes(accion)
           ? ['CORRIDOR.MAP', 'CORRIDOR.SPR']
           : []),
         'MANA.BRD',
@@ -464,7 +475,12 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
-      accion === 'comprobar:cuevas' ||
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion) ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -479,7 +495,12 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
-      accion === 'comprobar:cuevas'
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion)
     )
       necesarios.push(
         'DROP.MAP',
@@ -493,13 +514,49 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'ventana' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
-      accion === 'comprobar:cuevas'
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion)
     )
       necesarios.push('POOL.MAP', 'POOL.SPR', 'EMERGE.BRD');
-    if (accion === 'ventana' || accion === 'comprobar:poza' || accion === 'comprobar:cuevas')
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:poza' ||
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion)
+    )
       necesarios.push('CAVECOR.MAP', 'CAVECOR.SPR');
-    if (accion === 'ventana' || accion === 'comprobar:cuevas')
+    if (
+      accion === 'ventana' ||
+      [
+        'comprobar:cuevas',
+        'comprobar:catapulta',
+        'comprobar:final-cuevas',
+        'comprobar:partidas',
+      ].includes(accion)
+    )
       necesarios.push('WELL.MAP', 'WELL.SPR', 'CAVERBMI.MAP', 'CAVERBMI.SPR');
+    if (
+      accion === 'ventana' ||
+      ['comprobar:catapulta', 'comprobar:final-cuevas', 'comprobar:partidas'].includes(accion)
+    )
+      necesarios.push(
+        'SEESAW.MAP',
+        'SEESAW.SPR',
+        'CAVE.MAP',
+        'CAVE.SPR',
+        'SHAFT.MAP',
+        'SHAFT.SPR',
+        'COUNTRY1.MAP',
+        'COUNTRY1.SPR',
+      );
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
@@ -837,6 +894,168 @@ export async function gestionarSdl(accion, argumentos) {
     );
     return;
   }
+  if (accion === 'comprobar:partidas') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:partidas',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_partidas_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    const perfil = join(carpeta, `perfil_${Date.now()}.sav`);
+    const original = join(raiz, 'trabajo', 'comparacion_partidas', 'original_dos.sav');
+    if (!existsSync(original))
+      throw new Error(
+        'Falta la partida de referencia DOS: ejecuta pnpm comparar:final-cuevas --muestra y repite.',
+      );
+    const registro = ejecutar(
+      programa,
+      [datos, '--comprobar-final-partidas', join(carpeta, 'panel.bmp')],
+      {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+        CURSE_REBORN_PARTIDAS: perfil,
+        CURSE_REBORN_IMPORTAR_PRUEBA: original,
+      },
+      true,
+    );
+    writeFileSync(join(carpeta, 'acciones.log'), registro + '\n');
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          ranuras: 7,
+          importacion_dos: true,
+          borrado_confirmado: true,
+          perfil_aislado: perfil,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Partidas SDL: guardado, restauración, importación DOS sin sobrescribir otras ranuras y borrado confirmado.',
+    );
+    return;
+  }
+  if (accion === 'comprobar:final-cuevas') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:final-cuevas',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_final_cuevas_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['--comprobar-final-moneda', 'final_moneda'],
+      ['--comprobar-final-agujero-65', 'final_agujero_65'],
+      ['--comprobar-final-agujero-66', 'final_agujero_66'],
+      ['--comprobar-final-agujero-67', 'final_agujero_67'],
+      ['--comprobar-final-agujero-68', 'final_agujero_68'],
+      ['--comprobar-final-ramitas', 'final_ramitas'],
+      ['--comprobar-final-trampa', 'final_trampa'],
+      ['--comprobar-final-barro', 'final_barro'],
+      ['--comprobar-final-ofertas-pozo', 'final_ofertas_pozo'],
+      ['--comprobar-final-casco-suelo', 'final_casco_suelo'],
+      ['--comprobar-final-casco', 'final_casco'],
+      ['--comprobar-final-desprendimiento', 'final_desprendimiento'],
+      ['--comprobar-final-cubo', 'final_cubo'],
+      ['--comprobar-final-dentro-cubo', 'final_dentro_cubo'],
+      ['--comprobar-final-mascara', 'final_mascara'],
+      ['--comprobar-final-salida-cuevas', 'final_salida_cuevas'],
+    ]) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, opcion, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_final_cuevas', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la partida original.`);
+    }
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'vistas.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 16,
+          pixeles_por_captura: 64000,
+          cambios_de_vista: 30,
+          limite:
+            'Ruta de las quince escenas hasta salir de las cuevas; comprobaciones descritas en documentacion/final_cuevas.md.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log('Final de las cuevas SDL: coinciden dieciséis capturas y treinta cambios F5/F6.');
+    return;
+  }
+  if (accion === 'comprobar:catapulta') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:catapulta',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_catapulta_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['--comprobar-catapulta-corredor', 'catapulta_corredor'],
+      ['--comprobar-catapulta-monitor', 'catapulta_monitor'],
+      ['--comprobar-catapulta-tablon', 'catapulta_tablon'],
+      ['--comprobar-catapulta-cornisa', 'catapulta_cornisa'],
+      ['--comprobar-catapulta-iman', 'catapulta_iman'],
+      ['--comprobar-catapulta-alambre', 'catapulta_alambre'],
+    ]) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, opcion, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_catapulta', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la partida original.`);
+    }
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'vistas.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 6,
+          pixeles_por_captura: 64000,
+          cambios_de_vista: 30,
+          limite:
+            'Catapulta, regreso de la cornisa e imán con cordel hasta el alambre; el resto se comprueba con comprobar:final-cuevas.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log('Catapulta SDL: coinciden seis capturas hasta el alambre y treinta cambios F5/F6.');
+    return;
+  }
   if (accion === 'comprobar:cuevas') {
     ejecutar(process.execPath, [
       join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
@@ -878,7 +1097,7 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: 4,
           pixeles_por_captura: 64000,
-          cambios_de_vista: 20,
+          cambios_de_vista: 30,
           limite:
             'Recogida de doce piedras y cuerda; otras acciones y puzles de las cuevas pendientes.',
         },
@@ -886,7 +1105,7 @@ export async function gestionarSdl(accion, argumentos) {
         2,
       ) + '\n',
     );
-    console.log('Cuevas SDL: coinciden cuatro capturas hasta la cuerda y veinte cambios F5/F6.');
+    console.log('Cuevas SDL: coinciden cuatro capturas hasta la cuerda y treinta cambios F5/F6.');
     return;
   }
   if (accion === 'comprobar:poza') {

@@ -56,7 +56,7 @@ En Core y título, una tecla o un clic izquierdo permite avanzar. En la introduc
 | **F5** | Ir directamente a la vista anterior.  |
 | **F6** | Ir directamente a la vista siguiente. |
 
-Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → primer corredor de las cuevas → segundo corredor → tercer corredor → pozo → picapedrero**. En los extremos no hay otra vista a la que saltar. La ruta normal permite recoger doce piedras y entregarlas al picapedrero para obtener la cuerda. Los puzles del pozo y otras interacciones de las cuevas siguen pendientes.
+Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → primer corredor de las cuevas → segundo corredor → tercer corredor → pozo → picapedrero → cuarto corredor → catapulta → cueva del monitor → cuatro agujeros → cubo**. En los extremos no hay otra vista a la que saltar. La ruta normal permite recoger doce piedras y entregarlas al picapedrero para obtener la cuerda. La ruta normal continúa por catapulta, alambre, barro, pozo, casco y máscara hasta salir del cubo.
 
 **Al entrar en una vista jugable mediante F5/F6 se prepara una sesión nueva.** Estos saltos sirven para probar pantallas: no conservan el progreso ni resuelven los puzles anteriores. Para continuar la misma partida, utiliza las salidas normales del escenario.
 
@@ -72,3 +72,11 @@ Estos atajos funcionan en las escenas jugables y no modifican el estado del jueg
 | **F10** | Mostrar u ocultar encuadre, umbrales, paredes y salidas de BOXDET; activa la depuración. |
 
 Colores: **verde**, objetos; **cian**, Brad; **magenta**, zonas de interacción; **naranja**, proximidad de los pies; **amarillo**, encuadre y paredes; **azul**, salidas. La consola registra los cambios de estas opciones.
+
+## Guardar, cargar y borrar
+
+Abrir el menú con Escape o botón derecho y elegir el octavo icono, **partidas**. Su submenú ofrece cargar, guardar y borrar. El décimo icono abre la ficha de información y puntuación.
+
+En el panel de partidas, usar ratón o flechas arriba/abajo para seleccionar una de siete ranuras; Intro o **Aceptar** confirma. Escape o **Cancelar** vuelve al juego. Al guardar, escribir el nombre (hasta trece caracteres ASCII); Ctrl+A limpia el campo y Retroceso borra. Reemplazar una ranura o borrarla exige confirmar; mantener Intro pulsado no confirma automáticamente. El juego queda pausado y la música continúa.
+
+**Importar DOS**, dentro de Cargar, abre el selector de archivos. También se puede arrastrar un CURSE.SAV sobre ese panel. Se añaden sus partidas en ranuras libres; no se sobrescriben las existentes ni se modifica el archivo importado. Se pueden conservar partidas de zonas posteriores, pero solo se cargan las zonas ya integradas. El archivo del perfil y su copia anterior se indican por consola. Véanse [formato y comprobaciones](partidas.md).

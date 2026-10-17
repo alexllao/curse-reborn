@@ -32,20 +32,29 @@ ResultadoMenu ejecutar_interaccion_cuevas(unsigned char *d, unsigned short manej
   const auto escena = palabra(d, 0x8082);
   if ((escena < 4 || escena > 7) && escena != 10)
     return ResultadoMenu::pendiente;
-  if (manejador == 0x563a && grupo_piedra(id) >= 0) {
+  if (manejador == 0x563a &&
+      (grupo_piedra(id) >= 0 || (escena == 5 && id == 37) || (escena == 7 && id == 47))) {
     const Palabra origen = id <= 30 ? 27 : id <= 35 ? 31 : id <= 42 ? 38 : 43;
     const Palabra esperada = id <= 30 ? 4 : id <= 35 ? 5 : id <= 42 ? 6 : 7;
-    if (escena != esperada)
+    if (grupo_piedra(id) >= 0 && escena != esperada)
       return ResultadoMenu::pendiente;
-    if (!incorporar(d, id)) {
+    if (!(id == 47 ? insertar_identificador(d, id) : incorporar(d, id))) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }
-    const auto entidad = static_cast<Palabra>(0x2c4c + (id - origen) * 33);
+    const auto entidad = static_cast<Palabra>(id == 37   ? 0x2d96
+                                              : id == 47 ? 0x2cd0
+                                                         : 0x2c4c + (id - origen) * 33);
+    if (id == 37 && (contiene_identificador(d, 64) || contiene_identificador(d, 73))) {
+      const auto ofertas = palabra(d, 0x53c7);
+      d[static_cast<Palabra>(ofertas + 1)] = 0;
+      for (unsigned int i = 1; i < 5; ++i)
+        d[static_cast<Palabra>(ofertas + i * 9 + 1)] = 3;
+    }
     guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + 5));
     guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) - 2));
     const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + escena * 2));
-    d[static_cast<Palabra>(lista + (id - origen) * 9 + 1)] = 0;
+    d[static_cast<Palabra>(lista + ((entidad - 0x2c4c) / 33) * 9 + 1)] = 0;
     guardar(d, entidad + 16, 0x1a2e);
     d[entidad + 18] = 0;
     d[entidad + 20] = 1;
@@ -55,6 +64,59 @@ ResultadoMenu ejecutar_interaccion_cuevas(unsigned char *d, unsigned short manej
     if (!iniciar_accion(d, pasos))
       return ResultadoMenu::error;
     d[entidad + 19] = static_cast<unsigned char>(pasos + 6);
+    return ResultadoMenu::accion;
+  }
+  if (manejador == 0x9c73 && escena == 5) {
+    // 9C73–9CBD: instala alambre en los aros y espera al monstruo con la rutina 183F.
+    retirar_identificador(d, 63);
+    d[0x3ae2] = 1;
+    guardar(d, 0x2d64, 0x1a2c);
+    d[0x2d66] = 0;
+    d[0x2d68] = 1;
+    guardar(d, 0x1a38, palabra(d, 0x2d14));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2d16) + 15));
+    guardar(d, 0x0ad7, 0x9bd6);
+    guardar(d, 0x0adc, 0x9c0c);
+    guardar(d, 0x0ae1, 0x9c2f);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return ResultadoMenu::error;
+    d[0x2d67] = static_cast<unsigned char>(pasos + 36);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return ResultadoMenu::accion;
+  }
+  if (manejador == 0x9cbe) {
+    // 9CBE–9DE3: ponerse casco antes del paso de desprendimientos.
+    if (escena != 6) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 53);
+    guardar(d, 0x1a38, static_cast<Palabra>(820 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 160);
+    guardar(d, 0x0ad7, 0x9c4b);
+    guardar(d, 0x0adc, 0x9c8d);
+    guardar(d, 0x0ae1, 0x9cc2);
+    constexpr Palabra campos[] = {0x2d01, 0x2d06, 0x2d0b, 0x2d64, 0x2d69, 0x2d6e,
+                                  0x2d22, 0x2d27, 0x2d2c, 0x2d43, 0x2d48, 0x2d4d};
+    constexpr Palabra secuencias[] = {0x9cf7, 0x9d02, 0x9d2b, 0x1a2c, 0x9d54, 0x9d67,
+                                      0x1a2c, 0x9d83, 0x9d7b, 0x1a2c, 0x9d8a, 0x9d7b};
+    for (unsigned int i = 0; i < 12; ++i) {
+      guardar(d, campos[i], secuencias[i]);
+      d[campos[i] + 2] = 0;
+      d[campos[i] + 4] = i < 3 ? 2 : 1;
+    }
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return ResultadoMenu::error;
+    for (unsigned int i = 0; i < 12; ++i)
+      d[campos[i] + 3] = static_cast<unsigned char>(pasos + (i < 3 ? 8 : i < 6 ? 40 : 50));
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return ResultadoMenu::accion;
+  }
+  if (manejador == 0x9f39 && escena == 10 && grupo_piedra(id) < 0) {
+    // 3F25–3F84: el picapedrero rechaza los demás objetos, incluidos el cordel y las algas.
+    marcar_accion_rechazada(d);
     return ResultadoMenu::accion;
   }
   if (manejador == 0x9f39 && escena == 10 && grupo_piedra(id) >= 0) {
@@ -90,7 +152,7 @@ ResultadoMenu ejecutar_interaccion_cuevas(unsigned char *d, unsigned short manej
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
-  if (id == 3 || (id >= 27 && id <= 55)) {
+  if (id == 3 || (id >= 27 && id <= 74)) {
     if (manejador == 0x384a && id != 8)
       return ResultadoMenu::actualizado;
     if (manejador == 0x2fca || manejador == 0x3143) {

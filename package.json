@@ -76,8 +76,15 @@
     "comparar:poza": "node herramientas/gestionar_proyecto.mjs comparar:poza",
     "comprobar:poza": "node herramientas/gestionar_proyecto.mjs comprobar:poza",
     "comparar:cuevas": "node herramientas/gestionar_proyecto.mjs comparar:cuevas",
+    "comparar:catapulta": "node herramientas/gestionar_proyecto.mjs comparar:catapulta",
     "comprobar:cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:cuevas",
-    "comprobar:marcos": "node herramientas/gestionar_proyecto.mjs comprobar:marcos"
+    "comprobar:marcos": "node herramientas/gestionar_proyecto.mjs comprobar:marcos",
+    "comprobar:catapulta": "node herramientas/gestionar_proyecto.mjs comprobar:catapulta",
+    "comparar:final-cuevas": "node herramientas/gestionar_proyecto.mjs comparar:final-cuevas",
+    "comprobar:final-cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:final-cuevas",
+    "comparar:partidas": "node herramientas/gestionar_proyecto.mjs comparar:partidas",
+    "comprobar:partidas": "node herramientas/gestionar_proyecto.mjs comprobar:partidas",
+    "comparar:opciones": "node herramientas/gestionar_proyecto.mjs comparar:opciones"
   },
   "repository": {
     "type": "git",

@@ -2,6 +2,10 @@
 #include "lago.hpp"
 #include "poza.hpp"
 #include "cuevas.hpp"
+#include "catapulta.hpp"
+#include "agujeros.hpp"
+#include "mascara.hpp"
+#include "pozo.hpp"
 #include "menu.hpp"
 #include "construir_tabla.hpp"
 #include "objetos_cercanos.hpp"
@@ -72,7 +76,13 @@ void abrir_menu(unsigned char *d, unsigned short x, unsigned short y) {
 
 // El ámbito explícito impide ejecutar una aproximación del mismo verbo en otras escenas.
 ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short manejador,
-                                           unsigned short id, const ServicioSonido &sonido) {
+                                           unsigned short id, const ServicioSonido &sonido,
+                                           const ServicioCreacion &creacion) {
+  if (manejador == 0xa1d4 || manejador == 0xa1fa || manejador == 0xa220 || manejador == 0xa245 ||
+      manejador == 0xa26a || manejador == 0xa28f || manejador == 0xa2d8)
+    return ejecutar_interaccion_mascara(d, manejador);
+  if (manejador == 0xa383)
+    return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if (manejador == 0x9994 && palabra(d, 0x8082) != 3) {
     marcar_accion_rechazada(d);
     return ResultadoMenu::accion;
@@ -81,6 +91,13 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_lago(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 8)
     return ejecutar_interaccion_poza(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 9)
+    return ejecutar_interaccion_pozo(d, manejador, id, sonido, creacion);
+  if (palabra(d, 0x8082) == 14)
+    return ejecutar_interaccion_agujeros(d, manejador, id, sonido);
+  if (manejador == 0xa383 || palabra(d, 0x8082) == 11 || palabra(d, 0x8082) == 12 ||
+      palabra(d, 0x8082) == 13)
+    return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 1)
@@ -228,7 +245,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
 
 // Conserva los destinos originales como etiquetas; nunca salta a direcciones de código DOS.
 ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
-                               const ServicioSonido &sonido) {
+                               const ServicioSonido &sonido, const ServicioCreacion &creacion) {
   if (casilla >= 10)
     return ResultadoMenu::error;
   const auto manejador = palabra(d, static_cast<Palabra>(0xb60c + casilla * 2));
@@ -279,34 +296,75 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return preparar_destinos(d) ? ResultadoMenu::actualizado : ResultadoMenu::error;
       }
       if (accion == 4 && objeto == 6)
-        return ejecutar_interaccion_inicial(d, 0x9994, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x9994, objeto, sonido, creacion);
       if (accion == 2 && objeto == 15)
-        return ejecutar_interaccion_inicial(d, 0x9a48, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x9a48, objeto, sonido, creacion);
       if (accion == 2 && objeto == 48)
-        return ejecutar_interaccion_inicial(d, 0x9de4, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x9de4, objeto, sonido, creacion);
       if (accion == 2 && objeto == 2)
-        return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x9900, objeto, sonido, creacion);
+      if (accion == 5 && objeto == 47 && palabra(d, 0x8082) == 9)
+        return ejecutar_interaccion_inicial(d, 0x9e21, objeto, sonido, creacion);
+      if (accion == 5 && objeto == 61 && palabra(d, 0x8082) == 11)
+        return ejecutar_interaccion_inicial(d, 0xa0db, objeto, sonido, creacion);
+      if (accion == 5 && objeto == 70 && palabra(d, 0x8082) == 13)
+        return ejecutar_interaccion_inicial(d, 0xa3b8, objeto, sonido, creacion);
+      if (accion == 4 && objeto == 53 && palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7)
+        return ejecutar_interaccion_inicial(d, 0x9cbe, objeto, sonido, creacion);
+      if (accion == 4 && objeto == 74)
+        return ejecutar_interaccion_inicial(d, 0xa2d8, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 6 && objeto == 20 && previo == 17) {
-      return ejecutar_interaccion_inicial(d, 0x9aa8, objeto, sonido);
+      return ejecutar_interaccion_inicial(d, 0x9aa8, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 6 && objeto == 22 && previo == 18) {
-      return ejecutar_interaccion_inicial(d, 0x9b86, objeto, sonido);
+      return ejecutar_interaccion_inicial(d, 0x9b86, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 1 &&
                ((objeto == 25 && previo == 23) || (objeto == 23 && previo == 25))) {
       // 3D72–3D89: insertar picana y tapón admite ambos órdenes de selección.
-      return ejecutar_interaccion_inicial(d, 0x9bb8, objeto, sonido);
+      return ejecutar_interaccion_inicial(d, 0x9bb8, objeto, sonido, creacion);
+    } else if (palabra(d, 0xb634) == 1 && palabra(d, 0x8082) == 13 &&
+               ((objeto == 62 && previo == 70) || (objeto == 70 && previo == 62))) {
+      // 3D8C–3DA5: insertar el imán con cordel en el agujero equivale a lanzarlo, en ambos órdenes.
+      return ejecutar_interaccion_inicial(d, 0xa3b8, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 6 && objeto == 54 && palabra(d, 0x8082) == 10) {
       // 3E89–3F25: el destino es el picapedrero y el objeto previo determina el tamaño.
-      return ejecutar_interaccion_inicial(d, 0x9f39, previo, sonido);
+      return ejecutar_interaccion_inicial(d, 0x9f39, previo, sonido, creacion);
+    } else if (palabra(d, 0xb634) == 7) {
+      if (objeto == 36 && previo == 63 && palabra(d, 0x8082) == 5)
+        return ejecutar_interaccion_inicial(d, 0x9c73, objeto, sonido, creacion);
+      // 3FF9–407F: cada receta admite los dos órdenes originales.
+      const auto pareja = [&](Palabra a, Palabra b) {
+        return (objeto == a && previo == b) || (objeto == b && previo == a);
+      };
+      if (pareja(37, 64))
+        return ejecutar_interaccion_inicial(d, 0xa1d4, objeto, sonido, creacion);
+      if (pareja(37, 49))
+        return ejecutar_interaccion_inicial(d, 0xa1fa, objeto, sonido, creacion);
+      if (pareja(64, 49))
+        return ejecutar_interaccion_inicial(d, 0xa220, objeto, sonido, creacion);
+      if (pareja(49, 71))
+        return ejecutar_interaccion_inicial(d, 0xa245, objeto, sonido, creacion);
+      if (pareja(64, 72))
+        return ejecutar_interaccion_inicial(d, 0xa26a, objeto, sonido, creacion);
+      if (pareja(37, 73))
+        return ejecutar_interaccion_inicial(d, 0xa28f, objeto, sonido, creacion);
+      if (objeto == 58 && previo == 56 && palabra(d, 0x8082) == 11)
+        return ejecutar_interaccion_inicial(d, 0xa07e, objeto, sonido, creacion);
+      if ((objeto == 57 && previo == 55) || (objeto == 55 && previo == 57))
+        return ejecutar_interaccion_inicial(d, 0xa383, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
-        return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido, creacion);
       if ((objeto == 3 && previo == 4) || (objeto == 4 && previo == 3))
-        return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido);
+        return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
     }
     if ((palabra(d, 0x8082) == 0 && objeto <= 5 && (previo == 0xffff || previo <= 5)) ||
         (palabra(d, 0x8082) == 1 && objeto <= 14 && (previo == 0xffff || previo <= 14)) ||
+        (palabra(d, 0x8082) == 3 && objeto <= 26 && (previo == 0xffff || previo <= 26)) ||
         (palabra(d, 0x8082) == 8 && (objeto == 3 || (objeto >= 48 && objeto <= 50)) &&
-         (previo == 0xffff || previo == 3 || (previo >= 48 && previo <= 50)))) {
+         (previo == 0xffff || previo == 3 || (previo >= 48 && previo <= 50))) ||
+        ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 14) &&
+         (objeto == 3 || (objeto >= 27 && objeto <= 74)) &&
+         (previo == 0xffff || previo == 3 || (previo >= 27 && previo <= 74)))) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }
@@ -314,7 +372,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
   } else if (manejador == 0x32de || manejador == 0x563a || manejador == 0x2fca ||
              manejador == 0x3143 || manejador == 0x384a)
     return ejecutar_interaccion_inicial(
-        d, manejador, static_cast<Palabra>(id - (manejador == 0x32de ? 0x17 : 0x1a)), sonido);
+        d, manejador, static_cast<Palabra>(id - (manejador == 0x32de ? 0x17 : 0x1a)), sonido,
+        creacion);
   else
     return ResultadoMenu::pendiente;
   construir_tabla_acciones(d);

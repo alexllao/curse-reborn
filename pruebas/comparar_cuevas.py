@@ -49,7 +49,12 @@ class ComparacionCuevas(ComparacionPoza):
         self.andar(datos, semilla, 0xFFFF, 96)
         if identificador not in [palabra(datos, 0x5225 + i * 2) for i in range(10)]:
             raise ErrorAnalisis(f'La piedra {identificador} no se conserva en el inventario.')
-        self.resumen['piedras_recogidas'] = self.resumen.get('piedras_recogidas', 0) + 1
+        grupo = (
+            'piedras_recogidas'
+            if identificador in (*range(27, 36), *range(38, 47))
+            else 'objetos_recogidos'
+        )
+        self.resumen[grupo] = self.resumen.get(grupo, 0) + 1
 
     # Cruza el umbral real y consume la entrada original de la habitación siguiente.
     def cruzar_cueva(self, datos, semilla, x, y, salida):
@@ -136,6 +141,11 @@ class ComparacionCuevas(ComparacionPoza):
         if datos[0x35CB:0x35CE] != bytes((0, 0, 0)) or 55 not in inventario:
             raise ErrorAnalisis('La entrega de las doce piedras no proporciona la cuerda.')
         self.captura(datos, carpeta, 'cuevas_cuerda')
+        self.despues_cuevas(datos, semilla, carpeta)
+
+    # Permite continuar la misma partida sin fabricar objetos ni resolver puzles por adelantado.
+    def despues_cuevas(self, datos, semilla, carpeta):
+        pass
 
 
 if __name__ == '__main__':

@@ -2,6 +2,10 @@
   "motor/acciones/construir_tabla.cpp",
   "motor/acciones/poza.cpp",
   "motor/acciones/cuevas.cpp",
+  "motor/acciones/catapulta.cpp",
+  "motor/acciones/agujeros.cpp",
+  "motor/acciones/mascara.cpp",
+  "motor/acciones/pozo.cpp",
   "motor/acciones/iniciar_accion.cpp",
   "motor/acciones/lista_identificadores.cpp",
   "motor/acciones/objetos_cercanos.cpp",
@@ -41,5 +45,6 @@
   "motor/sonido/musica_rs.cpp",
   "motor/sonido/digital.cpp",
   "motor/acciones/lago.cpp",
-  "motor/acciones/corredor.cpp"
+  "motor/acciones/corredor.cpp",
+  "motor/estado/partidas.cpp"
 ]

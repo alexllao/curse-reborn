@@ -4,6 +4,7 @@
 #include "../motor/movimiento/geometria.hpp"
 #include "../motor/estado/paso_escena.hpp"
 #include "../motor/acciones/menu.hpp"
+#include "../motor/estado/partidas.hpp"
 #include "../motor/video/menu.hpp"
 #include "../motor/video/introduccion.hpp"
 #include "../motor/acciones/construir_tabla.hpp"
@@ -663,6 +664,50 @@ extern "C" EXPORTAR int pagina_introduccion(const unsigned char *datos, unsigned
 }
 
 // Expone las decisiones y escrituras del menú y la activación de acciones al comparador.
+struct ContextoCreacionMenu {
+  BancoPrueba banco;
+  motor::EstadoAleatorio azar;
+};
+// Aporta el mismo creador usado por SDL con el banco real de la habitación que prueba Unicorn.
+bool crear_menu_prueba(void *contexto, unsigned char *datos, unsigned short descriptor,
+                       unsigned short &posicion) {
+  auto &estado = *static_cast<ContextoCreacionMenu *>(contexto);
+  const motor::RecursosEntidades recursos{&estado.banco, dimensiones_banco, 0x4000, parrafo_banco};
+  const auto resultado = motor::crear_entidad(datos, estado.azar, recursos, descriptor);
+  posicion = resultado.posicion;
+  return resultado.valido && resultado.creada;
+}
+// Permite comparar selecciones que crean fragmentos sin introducir recursos en el núcleo.
+extern "C" EXPORTAR int seleccionar_menu_recursos(unsigned char *datos, unsigned short casilla,
+                                                  const unsigned char *banco, unsigned int longitud,
+                                                  unsigned short *semilla) {
+  ContextoCreacionMenu contexto{{banco, longitud},
+                                {semilla[0], semilla[1], semilla[2], semilla[3]}};
+  const auto resultado =
+      motor::seleccionar_menu(datos, casilla, {}, {&contexto, crear_menu_prueba});
+  semilla[0] = contexto.azar.primera;
+  semilla[1] = contexto.azar.segunda;
+  semilla[2] = contexto.azar.tercera;
+  semilla[3] = contexto.azar.cuarta;
+  return static_cast<int>(resultado);
+}
+
+// Expone las cuatro operaciones del archivo DOS sin permitir acceso del núcleo al disco.
+extern "C" EXPORTAR int procesar_partidas(unsigned int operacion, unsigned char *archivo,
+                                          unsigned int longitud, unsigned int ranura,
+                                          const char *nombre, unsigned char *datos) {
+  if (operacion == 0)
+    return motor::validar_partidas(archivo, longitud);
+  if (operacion == 1)
+    return motor::escribir_partida(archivo, longitud, ranura, nombre, datos);
+  if (operacion == 2)
+    return motor::leer_partida(archivo, longitud, ranura, datos);
+  if (operacion == 3)
+    return motor::borrar_partida(archivo, longitud, ranura);
+  return 0;
+}
+
+// Conserva el puente sin recursos para las comparaciones de los primeros manejadores.
 extern "C" EXPORTAR int procesar_menu(unsigned int operacion, unsigned char *datos,
                                       unsigned short parametro, unsigned short otro) {
   if (operacion == 0) {

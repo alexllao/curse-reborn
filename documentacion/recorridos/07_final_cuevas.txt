@@ -1,0 +1,13 @@
+FINAL DE LAS CUEVAS — RECORRIDO DEL PORT
+
+Desde la cueva del monitor, ya con el alambre:
+1. Regresa al cuarto corredor y recoge la moneda que brilla cerca del acceso central.
+2. Entra en la sala de cuatro agujeros. Examina los tres primeros hasta que sus criaturas salgan. Rodea por abajo el saliente derecho y examina el cuarto para descubrir y recoger las ramitas.
+3. Regresa al segundo corredor, junto a la habitación del picapedrero. Combina el alambre con los aros. Espera la captura del monstruo y recoge el barro.
+4. En el pozo, lanza la moneda. Elige el casco entre las ofertas. Cuando quede en el suelo, recógelo otra vez. Los otros premios también tienen sus respuestas originales, pero el casco es el que permite seguir.
+5. Vuelve al tercer corredor y acércate a los desprendimientos. Ponte el casco antes de cruzarlos.
+6. Entra en la sala del cubo. Selecciona Atacar sobre el cubo para meterte dentro.
+7. Combina barro y algas; después combina el resultado con las ramitas. También funcionan los otros órdenes de las seis recetas originales.
+8. Ponte la máscara. El guion sube el cubo y deja a Brad en COUNTRY1, entrada al siguiente tramo.
+
+Para escoger el segundo ingrediente desde inventario, usa la casilla de inventario del submenú de destinos. F5/F6 no transportan la partida: abren sesiones nuevas de desarrollo sin resolver sus puzles.

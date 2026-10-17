@@ -74,6 +74,26 @@ public:
   bool menu_abierto() const {
     return menu_visible;
   }
+  // Devuelve la petición de cargar, guardar o borrar del menú original y la consume una sola vez.
+  unsigned int tomar_solicitud_partidas() {
+    const auto solicitud = solicitud_partidas;
+    solicitud_partidas = 0;
+    return solicitud;
+  }
+  // E160: ofrece la puntuación original para la ficha informativa de la plataforma.
+  unsigned short puntuacion() const {
+    return static_cast<unsigned short>(datos[0x35c7] |
+                                       (static_cast<unsigned int>(datos[0x35c8]) << 8));
+  }
+  // Consulta el control original para comprobar que cargar una partida no bloquea a Brad.
+  bool movimiento_habilitado() const {
+    return datos[0x3594] != 0;
+  }
+  // E725: copia el bloque compatible con DOS a una ranura de CURSE.SAV.
+  bool guardar_partida(unsigned char *archivo, unsigned int capacidad, unsigned int ranura,
+                       const char *nombre) const;
+  // E253–E2B3 y 4AF0 con AL=1: restaura una ranura sin sustituir la partida si faltan recursos.
+  bool cargar_partida(const unsigned char *archivo, unsigned int longitud, unsigned int ranura);
   // Dibuja rectángulos de diagnóstico sin escribir en el estado ni en las imágenes originales.
   bool depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones, bool limites) const;
 
@@ -116,6 +136,9 @@ public:
   }
 
 private:
+  // 8B6F: facilita al menú el creador común con los recursos y la semilla de la partida.
+  static bool crear_desde_menu(void *contexto, unsigned char *datos, unsigned short descriptor,
+                               unsigned short &posicion);
   Audio audio;
   unsigned short inventario_registrado[10]{};
   unsigned char control_registrado = 0;
@@ -135,12 +158,16 @@ private:
   std::vector<unsigned char> escena, personaje, modelo, iconos, raton, geometria, mapa;
   unsigned char fondo_menu[10240]{}, panel_menu[64000]{};
   bool menu_visible = false;
+  unsigned int solicitud_partidas = 0;
   unsigned short direccion = 0xffff;
   unsigned short casilla_menu = 0;
 
   // Carga bancos, BOXDET y entidades de las cuatro escenas integradas conservando el resto del
   // segmento DS.
   bool cambiar_habitacion(unsigned short salida);
+  // Comparte los recursos y las entidades del cargador DOS entre transición y restauración.
+  bool cargar_habitacion_actual(unsigned short salida, bool actualizar_sonido = true,
+                                bool reconstruir_entidades = true);
   // Reconstruye las diez tiras visibles desde la tabla de la escena y su ventana actual.
   bool cargar_fondo_visible();
   // Lee un banco local sin asumir que sus bytes estén alineados o terminen en cero.

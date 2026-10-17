@@ -24,6 +24,10 @@
 #include "contador_fps.hpp"
 #include "vistas.hpp"
 #include "comprobar_cuevas.hpp"
+#include "comprobar_catapulta.hpp"
+#include "comprobar_final_cuevas.hpp"
+#include "partidas.hpp"
+#include "comprobar_partidas.hpp"
 #include "marcos.hpp"
 
 namespace {
@@ -250,7 +254,10 @@ int main(int argc, char *argv[]) {
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
-  const bool comprobar_cuevas = opcion == "--comprobar-cuevas-piedras-uno" ||
+  const bool comprobar_final_cuevas = opcion.rfind("--comprobar-final-", 0) == 0;
+  const bool comprobar_catapulta =
+      comprobar_final_cuevas || opcion.rfind("--comprobar-catapulta-", 0) == 0;
+  const bool comprobar_cuevas = comprobar_catapulta || opcion == "--comprobar-cuevas-piedras-uno" ||
                                 opcion == "--comprobar-cuevas-primera-entrega" ||
                                 opcion == "--comprobar-cuevas-piedras-tres" ||
                                 opcion == "--comprobar-cuevas-cuerda";
@@ -381,6 +388,13 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido preparar xBRZ con el marco");
   }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
+  PartidasSDL partidas;
+  // Libera las flechas antes de pausar para que el personaje no siga caminando al cerrar el panel.
+  const auto abrir_partidas = [&](unsigned int modo) {
+    for (const auto bit : {1, 2, 4, 8})
+      mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
+    partidas.abrir(modo, presentacion.ventana, mazmorra.puntuacion());
+  };
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
@@ -391,6 +405,28 @@ int main(int argc, char *argv[]) {
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla < 3 || comprobar)))
         salir = true;
+      const auto solicitud = mazmorra.tomar_solicitud_partidas();
+      if (solicitud)
+        abrir_partidas(solicitud);
+      SDL_Event entrada_partidas = evento;
+      if (partidas.abierta() &&
+          (evento.type == SDL_EVENT_MOUSE_MOTION || evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN) &&
+          !SDL_ConvertEventToRenderCoordinates(presentacion.dibujante, &entrada_partidas))
+        return fallo("No se ha podido adaptar el ratón del panel de partidas");
+      bool redibujar_partida = false;
+      if (!salir &&
+          partidas.evento(entrada_partidas, presentacion.ventana, mazmorra, redibujar_partida)) {
+        if (redibujar_partida) {
+          if (!mazmorra.dibujar(imagen))
+            return fallo("No se ha podido dibujar la partida cargada");
+          for (unsigned int i = 0; i < 768; ++i)
+            paleta_visible[i] = imagen.paleta[i];
+          if (!actualizar_textura(presentacion))
+            return fallo("No se ha podido presentar la partida cargada");
+        }
+        ultimo_paso_escena = SDL_GetTicksNS();
+        continue;
+      }
       if (!salir && pantalla >= 3 &&
           (evento.type == SDL_EVENT_KEY_DOWN || evento.type == SDL_EVENT_KEY_UP)) {
         const unsigned short bit = evento.key.key == SDLK_LEFT    ? 8
@@ -573,23 +609,26 @@ int main(int argc, char *argv[]) {
     }
     if (salir)
       break;
+    const auto solicitud = mazmorra.tomar_solicitud_partidas();
+    if (solicitud)
+      abrir_partidas(solicitud);
     if (comprobar_vistas && !capturada) {
-      constexpr unsigned short escenas[] = {0, 1, 0,  1, 2, 1, 2, 3, 8, 4, 5,
-                                            6, 9, 10, 9, 6, 5, 4, 8, 3, 2};
-      constexpr SDL_Keycode teclas[] = {
-          SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F6,
-          SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5};
-      if (mazmorra.escena_actual() != escenas[paso_vistas])
+      const auto indice = paso_vistas < 2                      ? paso_vistas
+                          : paso_vistas <= cantidad_vistas + 1 ? paso_vistas - 2
+                                                               : cantidad_vistas * 2 - paso_vistas;
+      if (mazmorra.escena_actual() != vistas_desarrollo[indice].escena)
         return fallo("F5/F6 no han respetado el orden de las escenas");
-      if (paso_vistas < 20) {
+      if (paso_vistas < cantidad_vistas * 2) {
         SDL_Event tecla{};
         tecla.type = SDL_EVENT_KEY_DOWN;
-        tecla.key.key = teclas[paso_vistas++];
+        tecla.key.key = paso_vistas == 1 || paso_vistas >= cantidad_vistas + 1 ? SDLK_F5 : SDLK_F6;
+        ++paso_vistas;
         if (!SDL_PushEvent(&tecla))
           return fallo("No se ha podido comprobar la navegación de desarrollo");
         continue;
       }
-      std::printf("F5/F6: veinte cambios comprobados hasta el pozo y el picapedrero.\n");
+      std::printf("F5/F6: %u cambios comprobados en las %u vistas jugables.\n", cantidad_vistas * 2,
+                  cantidad_vistas);
     }
     if (comprobar_introduccion && !introduccion_comprobada) {
       const unsigned int limite = opcion == "--comprobar-caldero"   ? 33
@@ -1027,6 +1066,15 @@ int main(int argc, char *argv[]) {
         };
         if (!comprobar_recorrido_cuevas(mazmorra, opcion, avanzar, abrir, elegir, objeto))
           return fallo("No coincide el recorrido SDL de las piedras y el picapedrero");
+        if (comprobar_catapulta &&
+            !comprobar_recorrido_catapulta(mazmorra, opcion, avanzar, abrir, elegir, objeto))
+          return fallo("No coincide el recorrido SDL de catapulta, imán y alambre");
+        if (comprobar_final_cuevas &&
+            !comprobar_recorrido_final_cuevas(mazmorra, opcion, avanzar, abrir, elegir, objeto))
+          return fallo("No coincide el recorrido SDL hasta salir de las cuevas");
+        if (opcion == "--comprobar-final-partidas" &&
+            !comprobar_partidas_sdl(partidas, presentacion.ventana, mazmorra, argv[1], imagen))
+          return fallo("No coinciden las ranuras y la restauración SDL de partidas");
       }
       if (!mazmorra.dibujar(imagen))
         return fallo("No se ha podido dibujar el estado jugable");
@@ -1122,7 +1170,10 @@ int main(int argc, char *argv[]) {
     }
     // EAD5 espera cinco ticks del temporizador. Mantiene la referencia nominal de 70 Hz de esta
     // plataforma.
-    if (!comprobar && pantalla >= 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
+    if (partidas.abierta())
+      ultimo_paso_escena = ahora;
+    if (!comprobar && !partidas.abierta() && pantalla >= 3 &&
+        ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() ||
           !mazmorra.dibujar(imagen, static_cast<unsigned int>(SDL_GetTicks() / 57u))) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");
@@ -1159,6 +1210,8 @@ int main(int argc, char *argv[]) {
       return fallo("No se han podido dibujar las cajas de depuración");
     if (!contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
+    if (!partidas.dibujar(presentacion.dibujante))
+      return fallo("No se ha podido dibujar el panel de partidas");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.
       if ((comprobar_fps || comprobar_marcos) &&

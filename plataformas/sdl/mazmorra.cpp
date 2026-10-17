@@ -3,6 +3,7 @@
 #include "../../motor/video/fundido.hpp"
 #include "../../motor/recursos/escena.hpp"
 #include "mazmorra.hpp"
+#include "../../motor/estado/partidas.hpp"
 #include "registro.hpp"
 #include "vistas.hpp"
 #include "../../motor/estado/paso_escena.hpp"
@@ -212,8 +213,14 @@ bool Mazmorra::avanzar() {
          (actual == 8 && resultado.parametro == 17) ||
          (actual == 4 && (resultado.parametro == 5 || resultado.parametro == 6)) ||
          (actual == 5 && (resultado.parametro >= 7 && resultado.parametro <= 9)) ||
-         (actual == 6 && resultado.parametro == 10) || (actual == 9 && resultado.parametro == 18) ||
-         (actual == 10 && resultado.parametro == 19))) {
+         (actual == 6 && resultado.parametro >= 10 && resultado.parametro <= 13) ||
+         (actual == 7 && (resultado.parametro >= 14 && resultado.parametro <= 16)) ||
+         (actual == 9 && resultado.parametro == 18) ||
+         (actual == 10 && resultado.parametro == 19) ||
+         (actual == 11 && resultado.parametro == 20) ||
+         (actual == 12 && (resultado.parametro == 21 || resultado.parametro == 24)) ||
+         (actual == 13 && resultado.parametro == 22) ||
+         (actual == 14 && resultado.parametro == 23))) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -260,6 +267,20 @@ bool Mazmorra::dibujar(motor::ImagenIndexada &imagen, unsigned int paso_menu) {
   return true;
 }
 
+// 8B6F: los fragmentos del pozo usan el mismo creador de entidades que las animaciones.
+bool Mazmorra::crear_desde_menu(void *contexto, unsigned char *datos, unsigned short descriptor,
+                                unsigned short &posicion) {
+  auto &partida = *static_cast<Mazmorra *>(contexto);
+  const motor::RecursosEntidades recursos{contexto,
+                                          dimensiones_escena,
+                                          referencia_escena,
+                                          parrafo_escena,
+                                          {contexto, reproducir_sonido}};
+  const auto resultado = motor::crear_entidad(datos, partida.aleatorio, recursos, descriptor);
+  posicion = resultado.posicion;
+  return resultado.valido && resultado.creada;
+}
+
 // DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
 bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar) {
   if (en_presentacion()) {
@@ -294,7 +315,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
                          : manejador == 0xe010 || manejador == 0x32de ? "hablar"
                          : manejador == 0xe14a || manejador == 0x3143 ? "atacar"
                          : manejador == 0xe0fd || manejador == 0x2fca ? "usar objeto"
-                         : manejador == 0xe126                        ? "saltar"
+                         : manejador == 0xe126                        ? "partidas"
                                                                       : "elegir objeto o submenú";
     constexpr const char *manipulaciones[] = {"desbloquear",   "insertar",       "empujar o tirar",
                                               "comer o beber", "ponerse",        "lanzar",
@@ -304,7 +325,20 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
     registrar_accion("Selección de menú: %s; casilla %u, identificador %04X, manejador %04X",
                      accion, casilla_menu + 1, motor::palabra(datos, 0xb620 + casilla_menu * 2),
                      manejador);
-    const auto resultado = motor::seleccionar_menu(datos, casilla_menu, {this, reproducir_sonido});
+    if (manejador == 0xe19f || manejador == 0xe325 || manejador == 0xe793 || manejador == 0xe160) {
+      solicitud_partidas = manejador == 0xe160   ? 4
+                           : manejador == 0xe19f ? 1
+                           : manejador == 0xe325 ? 2
+                                                 : 3;
+      menu_visible = false;
+      registrar_accion("Partidas: abrir %s", solicitud_partidas == 1   ? "cargar"
+                                             : solicitud_partidas == 2 ? "guardar"
+                                             : solicitud_partidas == 3 ? "borrar"
+                                                                       : "información");
+      return true;
+    }
+    const auto resultado = motor::seleccionar_menu(datos, casilla_menu, {this, reproducir_sonido},
+                                                   {this, crear_desde_menu});
     if (resultado == motor::ResultadoMenu::error) {
       registrar_accion("Error al despachar la selección del menú");
       return false;
@@ -389,6 +423,88 @@ bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones
   return true;
 }
 
+// E718–E745: guarda únicamente el bloque de estado que utiliza el archivo original de DOS.
+bool Mazmorra::guardar_partida(unsigned char *archivo, unsigned int capacidad, unsigned int ranura,
+                               const char *nombre) const {
+  return motor::escribir_partida(archivo, capacidad, ranura, nombre, datos);
+}
+
+// E27E y 4AF0/AL=1: reconstruye recursos en un estado temporal antes de sustituir la sesión viva.
+bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitud,
+                              unsigned int ranura) {
+  Mazmorra candidata;
+  for (unsigned int i = 0; i < sizeof(datos); ++i)
+    candidata.datos[i] = datos[i];
+  if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
+    return false;
+  const auto salida = motor::palabra(candidata.datos, 0x3598);
+  if (salida != 0xffff && salida > 24)
+    return false;
+  const auto escena_guardada =
+      motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
+  if (escena_guardada > 15)
+    return false;
+  candidata.carpeta = carpeta;
+  candidata.aleatorio = aleatorio;
+  candidata.personaje = personaje;
+  candidata.modelo = modelo;
+  candidata.raton = raton;
+  candidata.iconos = iconos;
+  candidata.fondo = fondo;
+  for (unsigned int i = 0; i < sizeof(fondo_menu); ++i)
+    candidata.fondo_menu[i] = fondo_menu[i];
+  motor::guardar(candidata.datos, 0x8082, escena_guardada);
+  motor::guardar(candidata.datos, 0x2c29, referencia_raton);
+  const auto modelo_guardado = candidata.datos[0x358c];
+  if (modelo_guardado < 254) {
+    if (modelo_guardado >= 32 ||
+        !cargar_modelo(&candidata, candidata.datos,
+                       motor::palabra(candidata.datos, 0x0918 + modelo_guardado * 2), 0xfa00))
+      return false;
+    candidata.datos[0x9974] = modelo_guardado;
+  }
+  const auto referencia = modelo_guardado == 255   ? referencia_personaje
+                          : modelo_guardado == 254 ? referencia_escena
+                                                   : referencia_modelo;
+  motor::guardar(candidata.datos, 0x2c4a, referencia);
+  if (modelo_guardado != 255)
+    candidata.datos[0x2c3f] = candidata.datos[0x2c44] = candidata.datos[0x2c49] = 2;
+  // 513F–5143 omite 5145–5182 al cargar: conserva control, secuencias y entidades guardadas.
+  if (!motor::preparar_vista_escena(candidata.datos) ||
+      !candidata.cargar_habitacion_actual(salida, false, false))
+    return false;
+  unsigned short ancho = 0, alto = 0;
+  if (modelo_guardado != 255 &&
+      !dimensiones(&candidata, referencia, candidata.datos[0x2c2c] & 0x7f, ancho, alto))
+    return false;
+  if (modelo_guardado != 255) {
+    motor::guardar(candidata.datos, 0x2c31, ancho);
+    motor::guardar(candidata.datos, 0x2c33, alto);
+  }
+  motor::ImagenIndexada comprobacion{};
+  if (!candidata.dibujar(comprobacion))
+    return false;
+  for (unsigned int i = 0; i < sizeof(datos); ++i)
+    datos[i] = candidata.datos[i];
+  aleatorio = candidata.aleatorio;
+  escena.swap(candidata.escena);
+  modelo.swap(candidata.modelo);
+  mapa.swap(candidata.mapa);
+  geometria.swap(candidata.geometria);
+  fondo = candidata.fondo;
+  menu_visible = false;
+  animacion = paso_animacion = 0;
+  paso_tras_camara = false;
+  direccion = 0xffff;
+  registro_preparado = false;
+  solicitud_partidas = 0;
+  if (!audio.conectar(datos) || !audio.cambiar_escena(escena_guardada))
+    registrar_accion("Partida recuperada; no se ha podido restablecer el audio");
+  registrar_accion("Partida cargada: ranura %u, escena %u", ranura + 1, escena_guardada);
+  registrar_estado();
+  return true;
+}
+
 // 08C8–08DA: el ratón solo propone rutas cuando el guion original ha habilitado el movimiento.
 bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
   if (en_presentacion() || menu_visible || !datos[0x3594]) {
@@ -449,19 +565,26 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if (salida > 19 || (salida > 10 && salida < 17))
+  if (salida > 24)
     return false;
   unsigned short ancho = 32, alto = 48;
-  if ((salida == 3 || salida == 4) &&
-      (!cargar_banco(salida == 3 ? "PLUNGE.BRD" : "EMERGE.BRD", modelo) ||
-       !dimensiones(this, referencia_modelo, 0, ancho, alto)))
+  const auto modelo_entrada = datos[0x85ac + salida * 14 + 13];
+  if (modelo_entrada != 0xff &&
+      (!cargar_modelo(this, datos, motor::palabra(datos, 0x0918 + modelo_entrada * 2), 0xfa00) ||
+       !dimensiones(this, referencia_modelo, datos[0x85ac + salida * 14 + 1] & 0x7f, ancho, alto)))
     return false;
   if (!motor::preparar_transicion_escena(datos, salida, referencia_personaje, referencia_modelo,
                                          ancho, alto) ||
       !motor::preparar_vista_escena(datos))
     return false;
+  return cargar_habitacion_actual(salida);
+}
+
+// 4E98–5182: carga recursos de la escena y reconstruye sus entidades persistentes.
+bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_sonido,
+                                        bool reconstruir_entidades) {
   const auto actual = escena_actual();
-  const char *nombre_banco = nullptr;
+  const char *nombre_banco = actual == 15 ? "COUNTRY1" : nullptr;
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == actual)
       nombre_banco = vista.banco;
@@ -480,12 +603,26 @@ bool Mazmorra::cambiar_habitacion(unsigned short salida) {
   geometria.assign(boxdet.begin() + inicio, boxdet.begin() + inicio + cantidad * 10u);
   motor::guardar(datos, 0x0df0, static_cast<unsigned short>(cantidad));
   motor::guardar(datos, 0x0df2, 0);
-  if (!audio.cambiar_escena(actual))
+  if (actualizar_sonido && !audio.cambiar_escena(actual))
     return false;
   const motor::RecursosEntidades recursos{
       this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
-  if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
-    return false;
+  if (reconstruir_entidades) {
+    if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
+      return false;
+  } else {
+    // E28B–E2B3: sustituye los segmentos DOS, conservando todos los registros guardados.
+    if (motor::palabra(datos, 0x3588) >= 70 || motor::palabra(datos, 0x358a) > 10)
+      return false;
+    for (unsigned int i = 0; i < 68; ++i)
+      motor::guardar(datos, static_cast<unsigned short>(0x2c4c + i * 33 + 31), referencia_escena);
+    for (unsigned int i = 0; i < motor::palabra(datos, 0x358a); ++i) {
+      const auto registro = static_cast<unsigned short>(0x3510 + i * 12);
+      motor::guardar(
+          datos, registro + 8,
+          static_cast<unsigned short>(referencia_escena + motor::palabra(datos, registro + 10)));
+    }
+  }
   motor::guardar(datos, 0x0358, 0);
   motor::guardar(datos, 0x0616, 0);
   menu_visible = false;

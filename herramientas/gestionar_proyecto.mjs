@@ -155,6 +155,10 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     lago: 'comparar_lago.py',
     poza: 'comparar_poza.py',
     cuevas: 'comparar_cuevas.py',
+    catapulta: 'comparar_catapulta.py',
+    final_cuevas: 'comparar_final_cuevas.py',
+    partidas: 'comparar_partidas.py',
+    opciones: 'auditar_opciones.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -191,6 +195,9 @@ try {
     case 'comprobar:caida':
     case 'comprobar:lago':
     case 'comprobar:poza':
+    case 'comprobar:partidas':
+    case 'comprobar:final-cuevas':
+    case 'comprobar:catapulta':
     case 'comprobar:cuevas':
     case 'comprobar:corredor':
     case 'comprobar:puzle':
@@ -302,6 +309,18 @@ try {
       break;
     case 'comparar:cuevas':
       compararAcciones('cuevas', argumentos);
+      break;
+    case 'comparar:opciones':
+      compararAcciones('opciones', argumentos);
+      break;
+    case 'comparar:partidas':
+      compararAcciones('partidas', argumentos);
+      break;
+    case 'comparar:final-cuevas':
+      compararAcciones('final_cuevas', argumentos);
+      break;
+    case 'comparar:catapulta':
+      compararAcciones('catapulta', argumentos);
       break;
     case 'comparar:caida':
       compararAcciones('caida', argumentos);

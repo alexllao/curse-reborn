@@ -3,6 +3,91 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:E824",
+      "nombre": "Borrado lógico de una ranura",
+      "comentario": "E824–E84D: limpia su bit con XOR 7F y AND, escribe solo el byte de máscara. Los bytes de las ranuras se conservan. Panel SDL solicita confirmación y mantiene copia anterior."
+    },
+    {
+      "direccion": "0000:513F",
+      "nombre": "Diferencia entre cargar partida y cambiar de habitación",
+      "comentario": "513F–5143: AL=1 del cargador salta a 5185. No reinicia 3593–3596 ni recrea las entidades con 8AA6; conserva animaciones y control guardados. Adaptación de referencias E28B–E2B3."
+    },
+    {
+      "direccion": "0000:E253",
+      "nombre": "Lectura del estado de una ranura DOS",
+      "comentario": "E253–E27A: consulta posición 14+indice*10164, copia 10151 bytes, invoca 4AF0 con AL=1 y después adapta referencias en E28B–E2B3. Panel SDL importa sin modificar origen ni ranuras ocupadas."
+    },
+    {
+      "direccion": "0000:E718",
+      "nombre": "Escritura compatible de las siete partidas DOS",
+      "comentario": "E718–E745: nombres de trece bytes y DS:2C0A con longitud DS:53B1=10151, desplazamientos según E3C4 y máscara en byte inicial. Motor/estado/partidas.cpp, 183 casos frente al EXE."
+    },
+    {
+      "direccion": "0000:320B",
+      "nombre": "Entrada en el cubo",
+      "comentario": "320B–324B: acción Atacar sobre identificador 60, rechaza modelo 14 y programa 2299/22AB/22B1. El cubo pertenece a SHAFT, escena doce."
+    },
+    {
+      "direccion": "0000:A2D8",
+      "nombre": "Máscara desde el cubo",
+      "comentario": "A2D8–A382: exige modelo 14, consume máscara y retira las piedras que indica el EXE, programa 9FF8/A00A/A016 y salida 24 hacia COUNTRY1. Recorrido completo contrastado."
+    },
+    {
+      "direccion": "0000:A1D4",
+      "nombre": "Seis recetas de máscara",
+      "comentario": "A1D4–A2D7: barro 37, algas 49 y ramitas 64, productos intermedios 71–73 y máscara 74. Ambos órdenes de menú; conserva control/modelo, capacidad y puntuación. Mascara.cpp."
+    },
+    {
+      "direccion": "0000:9F11",
+      "nombre": "Fragmentos relativos de las ofertas del pozo",
+      "comentario": "9F11–9F38: usa 8B6F, tablas de desplazamiento y campos +10/+14 del subdescriptor 9E47. ServicioCreacion adapta el creador común a SDL; no inventa partículas ni altera su azar."
+    },
+    {
+      "direccion": "0000:9E21",
+      "nombre": "Moneda y ofertas del pozo",
+      "comentario": "9E21–9F10: escena nueve con entidad inicial inactiva, consume 47, programa ofertas y fragmentos con tablas 9E6A/9EA2. Pozo.cpp; premios dinero, mujer y casco comparados con recursos reales."
+    },
+    {
+      "direccion": "0000:9CBE",
+      "nombre": "Ponerse casco y cruzar desprendimientos",
+      "comentario": "9CBE–9DE3: exige escena seis, consume casco 53, destino global 820/160 y doce canales con demoras AL+8/+40/+50. Traslado cuevas.cpp y comprobación SDL."
+    },
+    {
+      "direccion": "0000:9C73",
+      "nombre": "Trampa de alambre para el monstruo de barro",
+      "comentario": "9C73–9CBD: consume 63, activa descriptor 3AE2 y secuencia 1A2C, destino relativo a los aros, guiones 9BD6/9C0C/9C2F y demora AL+36. Rutina 183F resuelve la captura. Cuevas.cpp y comparación persistente."
+    },
+    {
+      "direccion": "0000:3934",
+      "nombre": "Inspección de los cuatro agujeros",
+      "comentario": "3934–3AFC: condiciones de criaturas 2C6D/2C8E/2CAF, cuarto agujero y afinidad de ramitas 64. Traslado agujeros.cpp, recorrido de los cuatro con capturas y auditoría de opciones."
+    },
+    {
+      "direccion": "0000:3196",
+      "nombre": "Bajar desde la cornisa con el imán",
+      "comentario": "3196–320A: acción Atacar sobre 59, exige inventario 57 o 70 y modifica profundidades persistentes. La salida normal requiere rodear la roca por el suelo."
+    },
+    {
+      "direccion": "0000:A3B8",
+      "nombre": "Recuperar alambre del agujero",
+      "comentario": "A3B8–A405: escena 13, destino +19/+42 y canales A018/A02A; si entidad 2C8E activa, incorpora 63 y retira 3ED9. Examinar 38D3 conserva indicio."
+    },
+    {
+      "direccion": "0000:A383",
+      "nombre": "Combinar imán y cordel",
+      "comentario": "A383–A3B7: ambos órdenes 55/57, exige control y retirar imán, crea objeto 70 y suma cinco puntos. Comparación catapulta."
+    },
+    {
+      "direccion": "0000:A0DB",
+      "nombre": "Lanzar monitor y catapultar a Brad",
+      "comentario": "A0DB–A1D3: exige apoyo modelo 6 y distancias con signo ≤60/≤5. Monitor consumido, profundidad 180, canales 9F64/9F7D/9F8F y demoras AL+8/+26. Comparación de DS y animación hasta cornisa."
+    },
+    {
+      "direccion": "0000:A07E",
+      "nombre": "Combinar tablón y roca",
+      "comentario": "A07E–A0DA: orden 56 antes de 58, consume tablón, apoyo persistente modelo 6 en 124/121 y profundidad 10. Traslado catapulta.cpp; comparación de menú y recorrido con EBBD."
+    },
+    {
       "direccion": "0000:5849",
       "nombre": "Recogida persistente de las piedras de los corredores",
       "comentario": "5849–59A3 y 615C: identificadores 27–35 y 38–46, agrupados por escena cuatro a siete. Incorpora al inventario salvo iconos de puntuación, retira el descriptor de la lista DS:53B5, dispone 1A2E y los canales de Brad 96C0/96C9 o 96F6/96FF y demora AL+6. Traslado motor/acciones/cuevas.cpp; variantes de capacidad y puntuación y recorrido de doce piedras hasta la cuerda."

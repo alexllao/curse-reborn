@@ -16,9 +16,15 @@ BANCOS_ESCENA = {
     4: 'CAVECOR',
     5: 'CAVECOR',
     6: 'CAVECOR',
+    7: 'CAVECOR',
     8: 'POOL',
     9: 'WELL',
     10: 'CAVERBMI',
+    11: 'SEESAW',
+    12: 'SHAFT',
+    13: 'CAVE',
+    14: 'CAVE',
+    15: 'COUNTRY1',
 }
 
 
@@ -61,6 +67,10 @@ class ComparacionCorredor(ComparacionPuzle):
             self.modelo = (self.carpeta / 'PLUNGE.BRD').read_bytes()
         elif salida == 4:
             self.modelo = (self.carpeta / 'EMERGE.BRD').read_bytes()
+        elif salida == 24:
+            p = palabra(datos, 0x0918 + 14 * 2)
+            nombre = bytes(datos[p : p + 13]).split(b'\0')[0].decode('ascii').upper()
+            self.modelo = (self.carpeta / nombre).read_bytes()
         self.preparar_bancos_originales()
         m, r = self.maquina, self.r
         m.mem_write(self.segmento, bytes(datos))
@@ -73,8 +83,11 @@ class ComparacionCorredor(ComparacionPuzle):
         self.ejecutar_hasta(0x4D2B, 0x4D40)
         self.ejecutar_hasta(0x5145, 0x5182)
         esperado = bytes(m.mem_read(self.segmento, 65536))
-        p = struct.unpack_from('<H', self.modelo)[0] * 16
-        ancho, alto = struct.unpack_from('<2H', self.modelo, p)
+        ancho, alto = 32, 48
+        if datos[0x85AC + salida * 14 + 13] != 0xFF:
+            imagen_entrada = datos[0x85AC + salida * 14 + 1] & 0x7F
+            p = struct.unpack_from('<H', self.modelo, imagen_entrada * 2)[0] * 16
+            ancho, alto = struct.unpack_from('<2H', self.modelo, p)
         if (
             not self.nativa.preparar_transicion(
                 (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6400, 0x5400, ancho, alto
