@@ -172,7 +172,7 @@ class ComparacionObjetos(Comparacion):
             guardar(datos, 0x2D01, secuencia)
             guardar(datos, 0x2D14, 0xFFF0)
             guardar(datos, 0x2D16, 0x7FF0)
-            self.caso('rutina_mazmorra', 1, datos)
+            self.caso('rutina_escena_cinco', 1, datos)
         for caso in range(8 if self.muestra else 128):
             datos = bytearray(self.base)
             for i in range(69):

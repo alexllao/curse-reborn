@@ -10,7 +10,7 @@ La mazmorra ya carga la lista original de entidades y superposiciones, las orden
 | `8AA6`–`8B6E`                | `motor/entidades/cargar.cpp`          | Lista por escena, entidades, superposiciones, desplazamiento de cámara y reservas. Reutiliza el bloque común de creación ya contrastado.               |
 | `F29A`–`F30E`                | `motor/video/orden.cpp`               | Claves de profundidad e intercambios de los 69 registros, con comparaciones de palabra con signo.                                                      |
 | `EBBD`–`EC89`                | `motor/video/entidades.cpp`           | Entidades visibles en su orden original y recortes que vuelven a quedar por delante.                                                                   |
-| `183F`–`1904`                | `motor/entidades/mazmorra.cpp`        | Lógica particular de la primera escena y selección de secuencias según el estado.                                                                      |
+| `183F`–`1904`                | `motor/entidades/mazmorra.cpp`        | Rutina de la escena cinco; véase la corrección de despacho documentada abajo.                                                                          |
 | `891E`–`89D8`                | `motor/acciones/objetos_cercanos.cpp` | Objetos compatibles con una acción y próximos a los pies del personaje. Es la base de las listas de interacción, no una selección por píxel del ratón. |
 
 La lista de la mazmorra empieza en DS:35D0 y contiene quince descriptores de entidades y dos de superposiciones. Cinco entidades están condicionadas por el bit 80 de su descriptor y DS:0AD6. Se conservan estas condiciones; no se decide su presencia a partir de una interpretación visual.
@@ -51,7 +51,7 @@ El comando compila una vez y ejecuta las dos comparaciones. La muestra comprobad
 | Avance persistente con bancos y guiones reales       |                 32 |                          256 |
 | **Total**                                            |            **145** |                      **773** |
 
-Se compara DS completo y el estado aleatorio, además de 64.000 píxeles en cada composición y guardas fuera del búfer. La preparación recorre los fragmentos originales de entrada sin simular sus resultados: solo la lectura DOS del modelo se sustituye por el banco real ya cargado. El avance ejecuta las secuencias y el recorrido original completo de entidades, incluida su llamada a `183F`.
+Se compara DS completo y el estado aleatorio, además de 64.000 píxeles en cada composición y guardas fuera del búfer. La preparación recorre los fragmentos originales de entrada sin simular sus resultados: solo la lectura DOS del modelo se sustituye por el banco real ya cargado. El avance ejecuta las secuencias y el recorrido original completo de entidades, incluido su despacho por `CS:17A3`; en la escena cero no llama a `183F`.
 
 El propietario ha confirmado los **773 casos/pasos** de la comparación amplia y que las animaciones se ven en la mazmorra. Las imágenes y los informes se guardan en `trabajo/comparacion_objetos/`. La lista de fuentes C++ se comparte entre las herramientas y CMake mediante `herramientas/fuentes_motor.json`.
 
@@ -63,4 +63,6 @@ Esta comprobación usa SDL con ventana oculta y dibujante de software: introduce
 
 ## Siguiente conexión
 
-El [menú original y las primeras interacciones](menu_e_interacciones.md) ya conectan `DAE2` y varios destinos de la tabla de acciones. El siguiente bloque amplía los efectos específicos, las colisiones y el movimiento libre. Debe conservarse la distinción entre objeto visible, objeto disponible para una acción y efecto real de esa acción sobre el estado del puzle.
+El [menú original y las primeras interacciones](menu_e_interacciones.md) ya conectan `DAE2` y varios destinos de la tabla de acciones. La [integración de movimiento y colisiones](movimiento_y_colisiones.md) permite caminar tras la liberación y corrige el despacho que desplazaba indebidamente la puerta. Debe conservarse la distinción entre objeto visible, objeto disponible para una acción y efecto real de esa acción sobre el estado del puzle.
+
+La atribución inicial de `183F` a la primera escena era incorrecta: corresponde al índice cinco de la tabla. La [corrección y su regresión completa](movimiento_y_colisiones.md) distinguen la traducción aislada de la asignación de escena.

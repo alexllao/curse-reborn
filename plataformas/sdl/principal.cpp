@@ -145,11 +145,14 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
       opcion == "--comprobar-salto-intro";
+  const bool comprobar_jugabilidad =
+      opcion == "--comprobar-liberacion" || opcion == "--comprobar-movimiento";
   const bool comprobar_menu = opcion == "--comprobar-menu" || opcion == "--comprobar-orden" ||
                               opcion == "--comprobar-depuracion";
   const bool comprobar_animacion = argc == 4 && std::string(argv[2]) == "--comprobar-animacion";
-  const bool comprobar_escena = argc == 4 && (std::string(argv[2]) == "--comprobar-escena" ||
-                                              comprobar_animacion || comprobar_menu);
+  const bool comprobar_escena =
+      argc == 4 && (std::string(argv[2]) == "--comprobar-escena" || comprobar_animacion ||
+                    comprobar_menu || comprobar_jugabilidad);
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
@@ -194,7 +197,8 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido comprobar el avance con F6");
   }
   bool salir = false, capturada = false, fundiendo = false;
-  bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false;
+  bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false,
+       jugabilidad_comprobada = false;
   bool entrada_introduccion = false;
   bool depuracion = false, cajas_objetos = true, cajas_interaccion = true, cajas_limites = true;
   unsigned short puntero_x = 152, puntero_y = 92;
@@ -211,6 +215,16 @@ int main(int argc, char *argv[]) {
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla != 3 || comprobar)))
         salir = true;
+      if (!salir && pantalla == 3 &&
+          (evento.type == SDL_EVENT_KEY_DOWN || evento.type == SDL_EVENT_KEY_UP)) {
+        const unsigned short bit = evento.key.key == SDLK_LEFT    ? 8
+                                   : evento.key.key == SDLK_RIGHT ? 4
+                                   : evento.key.key == SDLK_UP    ? 2
+                                   : evento.key.key == SDLK_DOWN  ? 1
+                                                                  : 0;
+        if (bit && (!mazmorra.menu_abierto() || evento.type == SDL_EVENT_KEY_UP))
+          mazmorra.tecla_direccion(bit, evento.type == SDL_EVENT_KEY_DOWN);
+      }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
         if (pantalla == 3) {
           const auto tecla = evento.key.key;
@@ -234,8 +248,9 @@ int main(int argc, char *argv[]) {
             if (tecla == SDLK_RIGHT)
               puntero_x = puntero_x < 288 ? puntero_x + 32 : 304;
           }
-          if (tecla == SDLK_ESCAPE || tecla == SDLK_RETURN || tecla == SDLK_LEFT ||
-              tecla == SDLK_RIGHT) {
+          if (tecla == SDLK_ESCAPE ||
+              (mazmorra.menu_abierto() &&
+               (tecla == SDLK_RETURN || tecla == SDLK_LEFT || tecla == SDLK_RIGHT))) {
             if (!mazmorra.entrada_menu(puntero_x, puntero_y, tecla == SDLK_RETURN,
                                        tecla == SDLK_ESCAPE) ||
                 !mazmorra.dibujar(imagen,
@@ -343,6 +358,50 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido comprobar la imagen de la introducción");
       }
       introduccion_comprobada = true;
+    }
+    if (comprobar_jugabilidad && pantalla == 3 && !jugabilidad_comprobada) {
+      // Recorre los mismos clics del menú que el jugador, sin cambiar directamente su inventario.
+      const auto elegir = [](unsigned short casilla) {
+        return mazmorra.entrada_menu(static_cast<unsigned short>(casilla * 32 + 16), 92, true,
+                                     false);
+      };
+      // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
+      const auto avanzar = [](unsigned int cantidad) {
+        for (unsigned int i = 0; i < cantidad; ++i)
+          if (!mazmorra.avanzar())
+            return false;
+        return true;
+      };
+      if (!avanzar(1) || !mazmorra.entrada_menu(152, 92, false, true) || !elegir(4) || !elegir(1) ||
+          !avanzar(192) || !mazmorra.entrada_menu(152, 92, false, true) || !elegir(1) ||
+          !elegir(0) || !avanzar(8) || !mazmorra.entrada_menu(152, 92, false, true))
+        return fallo("No se ha podido preparar la liberación desde el menú");
+      for (const auto casilla : {2, 0, 0, 0, 1})
+        if (!elegir(static_cast<unsigned short>(casilla)))
+          return fallo("No se ha podido combinar la llave y las esposas");
+      if (mazmorra.menu_abierto() || !avanzar(80))
+        return fallo("La liberación no ha terminado correctamente");
+      if (opcion == "--comprobar-movimiento") {
+        for (const auto bit : {4, 8, 2, 1}) {
+          mazmorra.tecla_direccion(static_cast<unsigned short>(bit), true);
+          if (!avanzar(8))
+            return fallo("No se ha podido caminar con las flechas");
+          mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
+        }
+        if (!avanzar(8))
+          return fallo("No se ha podido detener al personaje");
+        const unsigned short destinos[][2] = {{180, 157}, {80, 160}, {150, 185}, {300, 180}};
+        for (const auto &destino : destinos)
+          if (!mazmorra.mover_a(destino[0], destino[1]) || !avanzar(48))
+            return fallo("No se ha podido caminar hacia el destino del ratón");
+      }
+      if (!mazmorra.dibujar(imagen))
+        return fallo("No se ha podido dibujar el estado jugable");
+      for (unsigned int i = 0; i < 768; ++i)
+        paleta_visible[i] = imagen.paleta[i];
+      if (!actualizar_textura(presentacion.textura))
+        return fallo("No se ha podido presentar el movimiento");
+      jugabilidad_comprobada = true;
     }
     if (comprobar_menu && pantalla == 3 && !menu_comprobado) {
       if (!mazmorra.avanzar())

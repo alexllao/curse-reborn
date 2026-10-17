@@ -18,6 +18,10 @@ public:
 
   // Abre/cierra el menú original y procesa sus casillas desde entrada SDL en coordenadas lógicas.
   bool entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar);
+  // El clic izquierdo propone un destino; el control y las paredes originales deciden el avance.
+  bool mover_a(unsigned short x, unsigned short y);
+  // Conserva las flechas pulsadas con los cuatro bits originales de dirección.
+  void tecla_direccion(unsigned short bit, bool pulsada);
   // Consulta si las animaciones deben permanecer detenidas mientras se escoge una acción.
   bool menu_abierto() const {
     return menu_visible;
@@ -30,9 +34,10 @@ private:
   motor::ImagenIndexada fondo{};
   motor::EstadoAleatorio aleatorio{};
   std::string carpeta;
-  std::vector<unsigned char> escena, personaje, modelo, iconos, raton;
+  std::vector<unsigned char> escena, personaje, modelo, iconos, raton, geometria;
   unsigned char fondo_menu[10240]{}, panel_menu[64000]{};
   bool menu_visible = false;
+  unsigned short direccion = 0xffff;
   unsigned short casilla_menu = 0;
 
   // Lee un banco local sin asumir que sus bytes estén alineados o terminen en cero.

@@ -209,8 +209,8 @@
     },
     {
       "direccion": "0000:1791",
-      "nombre": "Rutina particular por escena",
-      "comentario": "Consulta CS:17A3 mediante el índice DS:8082. Una entrada nula hace que retorne."
+      "nombre": "Despacho específico de escenas",
+      "comentario": "1791–17A2 consulta CS:17A3 por DS:8082. Índice cero sin manejador; índice cinco llama a 183F. Corregida la llamada indebida que desplazaba la puerta al habilitar 3594 tras la liberación."
     },
     {
       "direccion": "0000:4AF0",
@@ -231,8 +231,8 @@
     },
     {
       "direccion": "0000:183F",
-      "nombre": "Rutina particular de la mazmorra inicial",
-      "comentario": "Comprueba estado y secuencia de DS:2CF1 y control del personaje; configura coordenadas y tres canales. La condición DS:2D54 modifica dos descriptores persistentes y activa otras secuencias.",
+      "nombre": "Rutina particular de la escena cinco",
+      "comentario": "183F–1904 corresponde al índice 5 de CS:17A3, no a la mazmorra inicial. Se conserva como actualizar_escena_cinco; el índice 0 tiene destino cero.",
       "traslado": "motor/entidades/mazmorra.cpp"
     },
     {
@@ -898,6 +898,31 @@
       "direccion": "0000:099A",
       "nombre": "Activación de acciones tras alcanzar un nodo",
       "comentario": "099A–0A58 consume nodos enlazados. Al terminar, coloca el personaje, copia los quince bytes de canales pendientes y consume hasta setenta registros de programación. Traslado en motor/acciones/menu.cpp."
+    },
+    {
+      "direccion": "0000:254A",
+      "nombre": "Detección de paredes y zonas especiales",
+      "comentario": "254A–28B1 trasladado en movimiento/geometria.cpp. Rectángulos de diez bytes del bloque BOXDET, condiciones originales, cambios en DS, RNG y retornos tipados."
+    },
+    {
+      "direccion": "0000:504F",
+      "nombre": "Carga de rectángulos BOXDET",
+      "comentario": "504F–50CC selecciona el bloque por escena, lee cantidad y registros de diez bytes; reinicia 0DF2. La mazmorra usa catorce registros, incorporados al adaptador SDL."
+    },
+    {
+      "direccion": "0000:89DA",
+      "nombre": "Construcción de camino por ratón",
+      "comentario": "89DA–8AA5 reconstruido: nodos de seis bytes desde 9978. Las cajas se localizan con el puntero de juego 0DF6; la tabla de rutas de 8A62 se lee del segmento de geometría, no del DS del juego."
+    },
+    {
+      "direccion": "0000:0A6E",
+      "nombre": "Corrección del avance contra geometría",
+      "comentario": "0A6E–0BA0 aplica márgenes de los pies, ajuste de un píxel según pared, restauración de ejes y cuenta de bloqueo. SDL recibe por separado las transiciones aún pendientes."
+    },
+    {
+      "direccion": "0000:0BA6",
+      "nombre": "Historial horizontal del personaje",
+      "comentario": "0BA6–0BC0 desplaza nueve palabras hacia direcciones mayores y guarda x actual al principio. Se aplica antes de actualizar entidades, como en el bucle original."
     }
   ],
   "tablas": [

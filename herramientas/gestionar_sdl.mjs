@@ -257,7 +257,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
-      accion === 'comprobar:menu'
+      accion === 'comprobar:menu' ||
+      accion === 'comprobar:jugabilidad'
     )
       necesarios.push(
         'DUNGEON.MAP',
@@ -268,12 +269,14 @@ export async function gestionarSdl(accion, argumentos) {
         'MENU.DAT',
         'ICONS.SPR',
         'MOUSE.SPR',
+        'BOXDET.DAT',
       );
     if (
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
-      accion === 'comprobar:menu'
+      accion === 'comprobar:menu' ||
+      accion === 'comprobar:jugabilidad'
     ) {
       necesarios.push('CAULDRN.PAL', 'BALCONY.PAL', 'BASEBALL.PAL', 'BASEBAT.DAT');
       for (let i = 1; i <= 4; ++i) necesarios.push(`CAULDRN${i}.DAT`);
@@ -287,7 +290,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'ventana' ||
       accion === 'comprobar:escena' ||
       accion === 'comprobar:introduccion' ||
-      accion === 'comprobar:menu'
+      accion === 'comprobar:menu' ||
+      accion === 'comprobar:jugabilidad'
     ) {
       const ejecutable = join(datos, '..', 'CURSE.EXE');
       if (!existsSync(ejecutable))
@@ -308,9 +312,47 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción y mazmorra: F5/F6 recorren las vistas; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Movimiento libre y demás acciones pendientes.',
+      'Core, título, introducción y mazmorra: F5/F6 recorren las vistas; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración. Tras la liberación se camina con clic o flechas; otras acciones y transiciones siguen pendientes.',
     );
     ejecutar(programa, [datos], process.env, false, false);
+    return;
+  }
+  if (accion === 'comprobar:jugabilidad') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:jugabilidad',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_jugabilidad_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const nombre of ['liberacion', 'movimiento']) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, `--comprobar-${nombre}`, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_jugabilidad', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura de ${nombre} difiere del recorrido original.`);
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        { resultado: 'coinciden', capturas: 2, puerta_inmovil: true, flechas_y_raton: true },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log(
+      'Jugabilidad SDL: coinciden la liberación con la puerta en su sitio y el movimiento por flechas y ratón.',
+    );
     return;
   }
   if (accion === 'comprobar:menu') {

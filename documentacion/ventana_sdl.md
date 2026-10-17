@@ -1,6 +1,6 @@
 # Presentación reconstruida en una ventana SDL
 
-La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Ya se conectan el menú y las primeras interacciones; siguen pendientes las demás acciones, movimiento libre y puzles completos. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
+La presentación nativa está en [principal.cpp](../plataformas/sdl/principal.cpp). Lee Core, título y los recursos de la mazmorra y los muestra mediante el núcleo reconstruido. La mazmorra incorpora ahora [sus objetos, superposiciones y guiones autónomos](objetos_mazmorra.md), gestionados por [mazmorra.cpp](../plataformas/sdl/mazmorra.cpp). **Ya se conectan el menú y las primeras interacciones; clic y flechas permiten caminar tras la liberación, con BOXDET; siguen pendientes otras acciones, transiciones y puzles completos. El audio queda aparcado.** El [análisis del arranque](arranque_escena.md) documenta los bloques originales anteriores.
 
 ## Abrir la ventana
 
@@ -16,7 +16,7 @@ La imagen lógica es de 320 × 200. La ventana inicial mide 960 × 600. Al redim
 
 La aplicación carga los recursos originales directamente y no usa el PNG generado por Python ni ejecuta Unicorn. Core y título solo necesitan sus DAT/PAL. **La mazmorra necesita ahora `CURSE.EXE` como fuente de tablas y guiones**, además de sus bancos originales. Node verifica la huella antes de iniciar la escena; C++ lee únicamente datos. El núcleo no incluye cabeceras SDL ni ejecuta instrucciones DOS. [titulo.cpp](../motor/recursos/titulo.cpp) agrupa descompresión y copias por planos; la capa de plataforma abre archivos, adapta la paleta a RGBA y gestiona ventana, textura y eventos.
 
-Core y título corresponden a los recorridos de `0498` y `0584`, con los bloques contrastados de `64E0`, `7636` y `7679`. Los fundidos conservan las paletas de `77E4`; la capa SDL usa una frecuencia nominal de 70 Hz, pendiente de contrastar en una ejecución completa. La mazmorra incorpora el montaje de `50D2`, la carga de `8AA6`, la composición de `EBBD` y el avance de secuencias, comportamientos y rutina particular de `183F`. El menú y los manejadores de acción siguen pendientes. F5/F6 recorren las vistas y preparan un estado nuevo al volver a entrar en la mazmorra; no escriben partidas.
+Core y título corresponden a los recorridos de `0498` y `0584`, con los bloques contrastados de `64E0`, `7636` y `7679`. Los fundidos conservan las paletas de `77E4`; la capa SDL usa una frecuencia nominal de 70 Hz, pendiente de contrastar en una ejecución completa. La mazmorra incorpora el montaje de `50D2`, la carga de `8AA6`, la composición de `EBBD` y el avance de secuencias y comportamientos. El despacho de `1791` deja vacía la rutina particular de la escena cero: `183F` pertenece a la cinco. El menú y las primeras acciones están integrados; el bloque posterior conecta movimiento y colisiones. F5/F6 recorren las vistas y preparan un estado nuevo al volver a entrar en la mazmorra; no escriben partidas.
 
 ## Dependencias y compilación en Windows
 
@@ -66,3 +66,5 @@ La compilación WebAssembly y la adaptación del bucle de presentación al naveg
 La [introducción original](introduccion_original.md) se intercala ahora entre título y mazmorra; también dispone de su comparación y capturas SDL específicas.
 
 El [menú y la depuración F7–F10](menu_e_interacciones.md) tienen comprobación SDL propia. Escape abre/cierra el menú dentro de la mazmorra; fuera mantiene el cierre de la ventana.
+
+El [movimiento con colisiones y la corrección de la puerta](movimiento_y_colisiones.md) disponen de comparación del bucle completo y capturas SDL propias.

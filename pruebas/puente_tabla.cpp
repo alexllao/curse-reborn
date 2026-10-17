@@ -1,3 +1,5 @@
+#include "../motor/movimiento/geometria.hpp"
+#include "../motor/estado/paso_escena.hpp"
 #include "../motor/acciones/menu.hpp"
 #include "../motor/video/menu.hpp"
 #include "../motor/video/introduccion.hpp"
@@ -481,7 +483,7 @@ extern "C" EXPORTAR int procesar_objetos(unsigned int operacion, unsigned char *
   if (operacion == 0)
     valido = motor::cargar_entidades_escena(datos, estado, recursos);
   else if (operacion == 1)
-    motor::actualizar_mazmorra(datos);
+    motor::actualizar_escena_cinco(datos);
   else if (operacion == 2)
     motor::ordenar_entidades(datos);
   else if (operacion == 3) {
@@ -513,7 +515,7 @@ extern "C" EXPORTAR int componer_objetos(unsigned char *datos, unsigned char *im
 }
 
 // Integra un paso de secuencias y comportamientos con bancos reales y la rutina particular de la
-// escena cero.
+// escena seleccionada mediante el despacho original.
 extern "C" EXPORTAR int avanzar_objetos(unsigned char *datos, unsigned short *palabras,
                                         const unsigned char *escena, unsigned int longitud_escena,
                                         const unsigned char *personaje,
@@ -527,7 +529,7 @@ extern "C" EXPORTAR int avanzar_objetos(unsigned char *datos, unsigned short *pa
       motor::avanzar_secuencias(datos, estado, secuencias) == motor::EstadoSecuencias::correcto &&
       motor::actualizar_entidades(datos, estado, entidades);
   if (valido)
-    motor::actualizar_mazmorra(datos);
+    motor::actualizar_rutina_escena(datos);
   palabras[0] = estado.primera;
   palabras[1] = estado.segunda;
   palabras[2] = estado.tercera;
@@ -612,7 +614,7 @@ extern "C" EXPORTAR int avanzar_menu(unsigned char *datos, unsigned short *palab
   const motor::RecursosEntidades entidades{&dimensiones, dimensiones_escena, 0x4000, nullptr};
   if (!motor::actualizar_entidades(datos, estado, entidades))
     return -20;
-  motor::actualizar_mazmorra(datos);
+  motor::actualizar_rutina_escena(datos);
   palabras[0] = estado.primera;
   palabras[1] = estado.segunda;
   palabras[2] = estado.tercera;
@@ -643,4 +645,56 @@ extern "C" EXPORTAR int componer_menu_escena(unsigned char *datos, unsigned char
                                              unsigned int n_estandar) {
   BancoPrueba bancos[] = {{escena, n_escena}, {modelo, n_modelo}, {estandar, n_estandar}};
   return motor::dibujar_entidades(datos, {bancos, banco_menu_prueba, 0x4000}, imagen) ? 1 : 0;
+}
+
+// Expone caminos, detección y corrección de colisiones, historial y despacho para contrastar DS.
+extern "C" EXPORTAR int procesar_geometria(unsigned int operacion, unsigned char *datos,
+                                           const unsigned char *geometria, unsigned int longitud,
+                                           unsigned short *palabras, unsigned short *parametros) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  motor::Colision r{true, 0, 0};
+  if (operacion == 1)
+    r.valida = motor::preparar_camino(datos, geometria, longitud);
+  else if (operacion == 2)
+    r = motor::comprobar_colision(datos, azar, geometria, longitud, parametros[0], parametros[1],
+                                  parametros[2], parametros[3]);
+  else if (operacion == 3)
+    r = motor::resolver_colision_personaje(datos, azar, geometria, longitud);
+  else if (operacion == 4)
+    motor::actualizar_historial_personaje(datos);
+  else if (operacion == 5)
+    r.valida = motor::actualizar_rutina_escena(datos);
+  else
+    r.valida = false;
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  parametros[4] = r.acciones;
+  parametros[5] = r.parametro;
+  return r.valida ? 1 : 0;
+}
+
+// Recorre un paso jugable completo con servicios de bancos reales aportados por el comparador.
+extern "C" EXPORTAR int avanzar_jugabilidad(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const motor::RecursosSecuencias secuencias{nullptr, dimensiones,          0x6200, 0x4000,
+                                             0x5200,  omitir_sonido_prueba, modelo};
+  // Adapta la consulta de dimensiones al banco fijo de las entidades de escena.
+  const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
+                            unsigned short &alto) {
+    return (*static_cast<decltype(dimensiones) *>(contexto))(nullptr, 0x4000, indice, ancho, alto);
+  };
+  const motor::RecursosEntidades entidades{&dimensiones, consultar, 0x4000, nullptr};
+  const auto r =
+      motor::avanzar_escena(datos, azar, secuencias, entidades, geometria, longitud, direccion);
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  return r.valida ? static_cast<int>(r.acciones) : -1;
 }

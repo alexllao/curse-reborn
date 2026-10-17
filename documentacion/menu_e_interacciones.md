@@ -1,6 +1,6 @@
 # Menú, primeras interacciones y depuración
 
-La mazmorra ya permite abrir el menú original, navegar por sus submenús y ejecutar las primeras interacciones trasladadas. El motor común prepara listas, inventario, destinos y canales; la lógica de cada puzle sigue necesitando su traslado. **Todavía no se anuncia movimiento libre ni una mazmorra completa.** Las acciones pendientes se conservan sin aplicar un efecto aproximado.
+La mazmorra ya permite abrir el menú original, navegar por sus submenús y ejecutar las primeras interacciones trasladadas. El motor común prepara listas, inventario, destinos y canales; la lógica de cada puzle sigue necesitando su traslado. La [integración posterior de movimiento](movimiento_y_colisiones.md) permite caminar con clic y flechas tras la liberación, con BOXDET; todavía no hay una mazmorra completa. Las acciones pendientes se conservan sin aplicar un efecto aproximado.
 
 ## Uso
 
@@ -33,7 +33,7 @@ También están trasladadas la recogida de los objetos originales uno y tres y l
 
 El banco de iconos tiene más de 128 entradas; su dibujo usa la referencia en párrafos de su propia tabla, sin el límite de siete bits de los fotogramas de entidades. Las máscaras de 24×24 se leen de `DS:BC10`. Los canales de estado del cursor también necesitan `MOUSE.SPR`, aunque la flecha visible sigue siendo la del sistema. Las imágenes comerciales permanecen locales.
 
-El menú detiene el avance de la escena. Se recompone en memoria lineal, sustituyendo las copias de páginas y las aperturas/cierres deslizantes del original. El marco usa la tabla original de 24 colores; su cadencia se aproxima con el reloj SDL. Las transiciones deslizantes del panel, el cursor gráfico original, la integración de las demás acciones, guardado/carga y las colisiones de movimiento libre siguen pendientes. No se presenta la interfaz entera como temporalmente idéntica al original.
+El menú detiene el avance de la escena. Se recompone en memoria lineal, sustituyendo las copias de páginas y las aperturas/cierres deslizantes del original. El marco usa la tabla original de 24 colores; su cadencia se aproxima con el reloj SDL. Las transiciones deslizantes del panel, el cursor gráfico original, la integración de las demás acciones, guardado/carga y las transiciones a otras escenas siguen pendientes. No se presenta la interfaz entera como temporalmente idéntica al original.
 
 ## Depuración
 
@@ -46,7 +46,7 @@ Está desactivada al iniciar. Los interruptores se conservan al recorrer las vis
 | **F9**  | Alterna zonas de disponibilidad.               | Magenta: objetos con afinidad de acción y margen vertical. Naranja: banda de proximidad de los pies del personaje. |
 | **F10** | Alterna encuadre y umbrales de desplazamiento. | Amarillo: borde 320×200 y campos `DS:358D/358F`.                                                                   |
 
-F8–F10 activan también la capa general para hacer visible el cambio. Los rectángulos leen posición, tamaño y campos reales de las entidades. Las zonas magenta/naranja corresponden a la selección de proximidad de `891E`, **no a colisiones físicas ni a la detección píxel a píxel del ratón**. Los campos amarillos son umbrales de encuadre, no paredes. Las cajas de navegación de `BOXDET.DAT` se añadirán al trasladar su cargador y consumidor. No se inventa una geometría para sustituir esos datos.
+F8–F10 activan también la capa general para hacer visible el cambio. Los rectángulos leen posición, tamaño y campos reales de las entidades. Las zonas magenta/naranja corresponden a la selección de proximidad de `891E`, **no a colisiones físicas ni a la detección píxel a píxel del ratón**. F10 también muestra ahora los rectángulos originales de BOXDET: paredes amarillas y salidas azules; se documentan en [movimiento_y_colisiones.md](movimiento_y_colisiones.md). No se inventa una geometría para sustituir esos datos.
 
 La capa se dibuja después de la textura, en coordenadas lógicas y con colores RGB fijos. No escribe en el estado, inventario, paleta ni imagen indexada del motor; desactivarla recupera la vista habitual. No añade filtros a la imagen original.
 

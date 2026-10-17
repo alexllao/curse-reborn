@@ -30,5 +30,7 @@
   "motor/video/sprites.cpp",
   "motor/video/introduccion.cpp",
   "motor/acciones/menu.cpp",
-  "motor/video/menu.cpp"
+  "motor/video/menu.cpp",
+  "motor/movimiento/geometria.cpp",
+  "motor/estado/paso_escena.cpp"
 ]

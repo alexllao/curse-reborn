@@ -1,4 +1,8 @@
 #include "mazmorra.hpp"
+#include "../../motor/estado/paso_escena.hpp"
+#include "../../motor/movimiento/geometria.hpp"
+#include "../../motor/movimiento/planificar.hpp"
+#include "../../motor/movimiento/direccion.hpp"
 #include "../../motor/acciones/menu.hpp"
 #include "../../motor/video/menu.hpp"
 #include "../../motor/recursos/rnc.hpp"
@@ -131,29 +135,46 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
       menu_comprimido.data(), static_cast<unsigned int>(menu_comprimido.size()), fondo_menu, 10240);
   if (descomprimido.estado != motor::EstadoRnc::correcto || descomprimido.escritos != 10240)
     return false;
+  std::vector<unsigned char> boxdet;
+  unsigned int inicio = 0, cantidad = 0;
+  if (!cargar_banco("BOXDET.DAT", boxdet) ||
+      !motor::localizar_geometria(boxdet.data(), static_cast<unsigned int>(boxdet.size()), 0,
+                                  inicio, cantidad))
+    return false;
+  geometria.assign(boxdet.begin() + inicio, boxdet.begin() + inicio + cantidad * 10u);
+  motor::guardar(datos, 0x0df0, static_cast<unsigned short>(cantidad));
+  motor::guardar(datos, 0x0df2, 0);
+  direccion = 0xffff;
   menu_visible = false;
   motor::guardar(datos, 0x2c29, referencia_raton);
   fondo = imagen_fondo;
   return true;
 }
 
-// 0A59 y 0BC1: avanza los canales y los comportamientos antes de la rutina particular de la
-// mazmorra.
+// 06E8–0BC1: integra entrada, guiones, paredes e historial antes del despacho de la escena.
 bool Mazmorra::avanzar() {
   if (menu_visible)
     return true;
-  if (!motor::avanzar_accion_pendiente(datos))
-    return false;
   const motor::RecursosSecuencias secuencias{
       this,          dimensiones,  referencia_personaje, referencia_escena, referencia_modelo,
       omitir_sonido, cargar_modelo};
   const motor::RecursosEntidades entidades{this, dimensiones_escena, referencia_escena,
                                            parrafo_escena};
-  if (motor::avanzar_secuencias(datos, aleatorio, secuencias) !=
-          motor::EstadoSecuencias::correcto ||
-      !motor::actualizar_entidades(datos, aleatorio, entidades))
+  const auto resultado =
+      motor::avanzar_escena(datos, aleatorio, secuencias, entidades, geometria.data(),
+                            static_cast<unsigned int>(geometria.size()), direccion);
+  if (!resultado.valida)
     return false;
-  motor::actualizar_mazmorra(datos);
+  if (resultado.acciones) {
+    // La salida de esta habitación aún no está integrada: se conserva el último punto interior.
+    motor::guardar(datos, 0x2c2d, motor::palabra(datos, 0x0ae6));
+    motor::guardar(datos, 0x2c2f, motor::palabra(datos, 0x0ae8));
+    motor::guardar(datos, 0x359a, 0);
+    motor::guardar(datos, 0x0dfa, 0);
+    if (!motor::seleccionar_direccion(datos, 0))
+      return false;
+    SDL_Log("La transición fuera de esta escena todavía está pendiente de integrar.");
+  }
   return true;
 }
 
@@ -186,7 +207,7 @@ bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar
     menu_visible = true;
   }
   if (!menu_visible)
-    return true;
+    return seleccionar ? mover_a(x, y) : true;
   casilla_menu = x < 320 ? x / 32 : 9;
   motor::guardar(datos, 0xb60a, x);
   if (seleccionar) {
@@ -239,6 +260,23 @@ bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones
       return false;
   }
   if (limites) {
+    for (unsigned int p = 0; p + 10 <= geometria.size(); p += 10) {
+      // Lee cada campo del registro original de diez bytes, sin cambiar la geometría.
+      const auto leer = [&](unsigned int campo) {
+        return static_cast<unsigned short>(
+            geometria[p + campo] | (static_cast<unsigned int>(geometria[p + campo + 1]) << 8));
+      };
+      const int x = motor::con_signo(leer(2)) - motor::con_signo(motor::palabra(datos, 0x3591));
+      const int y = motor::con_signo(leer(4));
+      const auto tipo = geometria[p];
+      if (!rectangulo(x, y, motor::con_signo(leer(6)) - motor::con_signo(leer(2)) + 1,
+                      motor::con_signo(leer(8)) - y + 1, tipo == 2 ? 40 : 255,
+                      tipo == 2   ? 140
+                      : tipo == 1 ? 50
+                                  : 255,
+                      tipo == 2 ? 255 : 0))
+        return false;
+    }
     if (!rectangulo(0, 0, 320, 200, 255, 255, 0))
       return false;
     for (const auto campo : {0x358d, 0x358f}) {
@@ -250,4 +288,37 @@ bool Mazmorra::depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones
     }
   }
   return true;
+}
+
+// 08C8–08DA: el ratón solo propone rutas cuando el guion original ha habilitado el movimiento.
+bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
+  if (menu_visible || !datos[0x3594])
+    return true;
+  if (x >= 320 || y >= 200)
+    return true;
+  direccion = 0xffff;
+  datos[0x0ad5] = 1;
+  datos[0x2c0a] = 1;
+  motor::guardar(datos, 0x2c0c, x);
+  motor::guardar(datos, 0x2c0e, y);
+  if (!motor::preparar_camino(datos, geometria.data(), static_cast<unsigned int>(geometria.size())))
+    return false;
+  unsigned short pasos = 0;
+  return motor::planificar_movimiento(datos, motor::palabra(datos, 0x0dfa), pasos);
+}
+
+// 083D–086D: izquierda=8, derecha=4, arriba=2 y abajo=1; los guiones conservan su bloqueo.
+void Mazmorra::tecla_direccion(unsigned short bit, bool pulsada) {
+  if (!pulsada && direccion == 0xffff)
+    return;
+  if (direccion == 0xffff)
+    direccion = 0;
+  if (pulsada)
+    direccion = static_cast<unsigned short>(direccion | bit);
+  else
+    direccion = static_cast<unsigned short>(direccion & ~bit);
+  if (datos[0x3594]) {
+    datos[0x0ad5] = 0;
+    datos[0x2c0a] = 0;
+  }
 }

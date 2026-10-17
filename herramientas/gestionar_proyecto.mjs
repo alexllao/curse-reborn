@@ -148,6 +148,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     objetos: ['comparar_objetos.py', 'comparar_composicion.py'],
     introduccion: 'comparar_introduccion.py',
     menu: 'comparar_menu.py',
+    jugabilidad: 'comparar_jugabilidad.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -175,6 +176,7 @@ try {
     case 'sdl:preparar':
     case 'sdl:compilar':
     case 'ventana':
+    case 'comprobar:jugabilidad':
     case 'comprobar:menu':
     case 'comprobar:introduccion':
     case 'comprobar:ventana':
@@ -235,6 +237,9 @@ try {
       break;
     case 'comparar:escena':
       compararAcciones('escena', argumentos);
+      break;
+    case 'comparar:jugabilidad':
+      compararAcciones('jugabilidad', argumentos);
       break;
     case 'comparar:menu':
       compararAcciones('menu', argumentos);

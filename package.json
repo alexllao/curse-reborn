@@ -48,7 +48,9 @@
     "comparar:introduccion": "node herramientas/gestionar_proyecto.mjs comparar:introduccion",
     "comprobar:introduccion": "node herramientas/gestionar_proyecto.mjs comprobar:introduccion",
     "comparar:menu": "node herramientas/gestionar_proyecto.mjs comparar:menu",
-    "comprobar:menu": "node herramientas/gestionar_proyecto.mjs comprobar:menu"
+    "comprobar:menu": "node herramientas/gestionar_proyecto.mjs comprobar:menu",
+    "comparar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comparar:jugabilidad",
+    "comprobar:jugabilidad": "node herramientas/gestionar_proyecto.mjs comprobar:jugabilidad"
   },
   "repository": {
     "type": "git",
