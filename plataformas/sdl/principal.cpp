@@ -22,6 +22,9 @@
 #include "registro.hpp"
 #include "filtros.hpp"
 #include "contador_fps.hpp"
+#include "vistas.hpp"
+#include "comprobar_cuevas.hpp"
+#include "marcos.hpp"
 
 namespace {
 // Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
@@ -29,9 +32,8 @@ constexpr Uint64 intervalo_presentacion_ns = 1000000000ull / 70u;
 
 // Relaciona el índice DOS con las vistas disponibles, cuyo orden difiere del de los recursos.
 int vista_de_escena(unsigned short escena) {
-  constexpr unsigned short escenas[] = {0, 1, 2, 3, 8, 4};
-  for (unsigned int i = 0; i < 6; ++i)
-    if (escenas[i] == escena)
+  for (unsigned int i = 0; i < cantidad_vistas; ++i)
+    if (vistas_desarrollo[i].escena == escena)
       return static_cast<int>(i) + 3;
   return -1;
 }
@@ -57,10 +59,12 @@ struct Presentacion {
   SDL_Renderer *dibujante = nullptr;
   SDL_Texture *textura = nullptr;
   FiltrosPantalla filtros;
+  MarcosPantalla marcos;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
     mazmorra.cerrar_audio();
     filtros.cerrar();
+    marcos.cerrar();
     if (textura)
       SDL_DestroyTexture(textura);
     if (dibujante)
@@ -152,15 +156,13 @@ bool actualizar_textura(Presentacion &presentacion) {
 // Recorre las vistas de desarrollo; cada entrada a la mazmorra prepara una sesión nueva sin
 // guardar.
 bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &presentacion) {
-  registrar_accion("Cambio de vista: %s", pantalla == 0   ? "Core"
-                                          : pantalla == 1 ? "título"
-                                          : pantalla == 2 ? "introducción"
-                                          : pantalla == 3 ? "mazmorra"
-                                          : pantalla == 4 ? "corredor"
-                                          : pantalla == 5 ? "caída"
-                                          : pantalla == 6 ? "lago"
-                                          : pantalla == 7 ? "poza de las cuevas"
-                                                          : "corredor de las cuevas");
+  if (pantalla < 0 || pantalla >= static_cast<int>(cantidad_vistas) + 3)
+    return false;
+  const char *nombre = pantalla == 0   ? "Core"
+                       : pantalla == 1 ? "título"
+                       : pantalla == 2 ? "introducción"
+                                       : vistas_desarrollo[pantalla - 3].nombre;
+  registrar_accion("Cambio de vista: %s", nombre);
   mazmorra.desconectar_audio();
   const bool cargada =
       pantalla >= 3   ? cargar_mazmorra(carpeta, static_cast<unsigned short>(pantalla - 3))
@@ -170,18 +172,10 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
     return false;
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
+  const std::string titulo =
+      std::string("Curse Reborn — ") + nombre + (pantalla >= 3 ? " (vista de desarrollo)" : "");
   return actualizar_textura(presentacion) &&
-         SDL_SetWindowTitle(
-             presentacion.ventana,
-             pantalla == 0   ? "Curse Reborn — Core Design"
-             : pantalla == 1 ? "Curse Reborn — Pantalla de título"
-             : pantalla == 2 ? "Curse Reborn — Introducción original"
-             : pantalla == 4 ? "Curse Reborn — Corredor (vista de desarrollo)"
-             : pantalla == 5 ? "Curse Reborn — Caída (vista de desarrollo)"
-             : pantalla == 6 ? "Curse Reborn — Lago (vista de desarrollo)"
-             : pantalla == 7 ? "Curse Reborn — Entrada a las cuevas (vista de desarrollo)"
-             : pantalla == 8 ? "Curse Reborn — Corredor de las cuevas (vista de desarrollo)"
-                             : "Curse Reborn — Mazmorra (reconstrucción)");
+         SDL_SetWindowTitle(presentacion.ventana, titulo.c_str());
 }
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
@@ -246,12 +240,21 @@ int main(int argc, char *argv[]) {
       opcion == "--comprobar-salto-intro";
   const bool comprobar_fps = opcion == "--comprobar-fps";
   const bool comprobar_filtros = opcion == "--comprobar-filtros";
+  const bool comprobar_marcos =
+      opcion == "--comprobar-marcos" || opcion == "--comprobar-marcos-vertical" ||
+      opcion == "--comprobar-marcos-ajustado" || opcion == "--comprobar-marcos-impar" ||
+      opcion == "--comprobar-marcos-filtro";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
-  const bool comprobar_poza =
-      opcion == "--comprobar-poza-algas" || opcion == "--comprobar-poza-puerta" ||
-      opcion == "--comprobar-cuevas-corredor-entrada" || opcion == "--comprobar-cuevas-corredor";
+  const bool comprobar_cuevas = opcion == "--comprobar-cuevas-piedras-uno" ||
+                                opcion == "--comprobar-cuevas-primera-entrega" ||
+                                opcion == "--comprobar-cuevas-piedras-tres" ||
+                                opcion == "--comprobar-cuevas-cuerda";
+  const bool comprobar_poza = comprobar_cuevas || opcion == "--comprobar-poza-algas" ||
+                              opcion == "--comprobar-poza-puerta" ||
+                              opcion == "--comprobar-cuevas-corredor-entrada" ||
+                              opcion == "--comprobar-cuevas-corredor";
   const bool lago_tercera_parte =
       comprobar_poza || opcion == "--comprobar-lago-almeja" || opcion == "--comprobar-lago-tapon" ||
       opcion == "--comprobar-cueva-entrada" || opcion == "--comprobar-cueva-emergida";
@@ -281,9 +284,9 @@ int main(int argc, char *argv[]) {
   const bool comprobar_core = argc == 4 && std::string(argv[2]) == "--comprobar-core";
   const bool comprobar_transicion = argc == 4 && std::string(argv[2]) == "--comprobar-transicion";
   const bool comprobar =
-      argc == 4 &&
-      (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
-       comprobar_transicion || comprobar_introduccion || comprobar_filtros || comprobar_fps);
+      argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
+                    comprobar_transicion || comprobar_introduccion || comprobar_filtros ||
+                    comprobar_fps || comprobar_marcos);
   if (argc == 4 && !comprobar) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
@@ -298,14 +301,23 @@ int main(int argc, char *argv[]) {
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
-  if (!SDL_CreateWindowAndRenderer("Curse Reborn — Pantalla de título",
-                                   comprobar && !comprobar_filtros && !comprobar_fps ? 320
-                                   : comprobar_fps                                   ? 1000
-                                                                                     : 960,
-                                   comprobar && !comprobar_filtros && !comprobar_fps ? 200
-                                   : comprobar_fps                                   ? 700
-                                                                                     : 600,
-                                   opciones, &presentacion.ventana, &presentacion.dibujante)) {
+  if (!SDL_CreateWindowAndRenderer(
+          "Curse Reborn — Pantalla de título",
+          comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 720
+                              : opcion == "--comprobar-marcos-ajustado" ? 960
+                              : opcion == "--comprobar-marcos-impar"    ? 1279
+                                                                        : 1280)
+          : comprobar && !comprobar_filtros && !comprobar_fps ? 320
+          : comprobar_fps                                     ? 1000
+                                                              : 960,
+          comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 1280
+                              : opcion == "--comprobar-marcos-ajustado" ? 600
+                              : opcion == "--comprobar-marcos-impar"    ? 721
+                                                                        : 720)
+          : comprobar && !comprobar_filtros && !comprobar_fps ? 200
+          : comprobar_fps                                     ? 700
+                                                              : 600,
+          opciones, &presentacion.ventana, &presentacion.dibujante)) {
     return fallo("No se ha podido crear la ventana");
   }
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
@@ -357,6 +369,14 @@ int main(int argc, char *argv[]) {
     if (!SDL_PushEvent(&alternar) || !SDL_PushEvent(&alternar))
       return fallo("No se ha podido preparar Alt + Enter");
   }
+  if (opcion == "--comprobar-marcos-filtro") {
+    SDL_Event filtro{};
+    filtro.type = SDL_EVENT_KEY_DOWN;
+    filtro.key.key = SDLK_F11;
+    for (unsigned int i = 0; i < 4; ++i)
+      if (!SDL_PushEvent(&filtro))
+        return fallo("No se ha podido preparar xBRZ con el marco");
+  }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   while (!salir) {
     if (!mazmorra.actualizar_audio())
@@ -378,6 +398,10 @@ int main(int argc, char *argv[]) {
           mazmorra.tecla_direccion(bit, evento.type == SDL_EVENT_KEY_DOWN);
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
+        if (evento.key.key == SDLK_F1) {
+          presentacion.marcos.alternar();
+          continue;
+        }
         if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
             (evento.key.mod & SDL_KMOD_ALT)) {
           const bool siguiente = !pantalla_completa;
@@ -473,7 +497,9 @@ int main(int argc, char *argv[]) {
         }
         const int vista_actual =
             pantalla >= 3 ? vista_de_escena(mazmorra.escena_actual()) : pantalla;
-        const bool avanzar = vista_actual >= 0 && vista_actual < 8 && evento.key.key == SDLK_F6;
+        const bool avanzar = vista_actual >= 0 &&
+                             vista_actual < static_cast<int>(cantidad_vistas) + 2 &&
+                             evento.key.key == SDLK_F6;
         const bool retroceder = vista_actual > 0 && evento.key.key == SDLK_F5;
         if (avanzar || retroceder) {
           pantalla = vista_actual + (avanzar ? 1 : -1);
@@ -544,12 +570,14 @@ int main(int argc, char *argv[]) {
     if (salir)
       break;
     if (comprobar_vistas && !capturada) {
-      constexpr unsigned short escenas[] = {0, 1, 0, 1, 2, 1, 2, 3, 8, 4, 8, 3, 2};
-      constexpr SDL_Keycode teclas[] = {SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F6,
-                                        SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5, SDLK_F5};
+      constexpr unsigned short escenas[] = {0, 1, 0,  1, 2, 1, 2, 3, 8, 4, 5,
+                                            6, 9, 10, 9, 6, 5, 4, 8, 3, 2};
+      constexpr SDL_Keycode teclas[] = {
+          SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F6,
+          SDLK_F6, SDLK_F6, SDLK_F6, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5, SDLK_F5};
       if (mazmorra.escena_actual() != escenas[paso_vistas])
         return fallo("F5/F6 no han respetado el orden de las escenas");
-      if (paso_vistas < 12) {
+      if (paso_vistas < 20) {
         SDL_Event tecla{};
         tecla.type = SDL_EVENT_KEY_DOWN;
         tecla.key.key = teclas[paso_vistas++];
@@ -557,7 +585,7 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido comprobar la navegación de desarrollo");
         continue;
       }
-      std::printf("F5/F6: doce cambios comprobados hasta el corredor de las cuevas.\n");
+      std::printf("F5/F6: veinte cambios comprobados hasta el pozo y el picapedrero.\n");
     }
     if (comprobar_introduccion && !introduccion_comprobada) {
       const unsigned int limite = opcion == "--comprobar-caldero"   ? 33
@@ -949,7 +977,8 @@ int main(int argc, char *argv[]) {
                               if (!avanzar(1))
                                 return fallo("No se ha podido atravesar la puerta secreta");
                             if (mazmorra.escena_actual() != 4 || !mazmorra.conserva_objeto(49) ||
-                                (opcion == "--comprobar-cuevas-corredor" && !avanzar(96)))
+                                ((opcion == "--comprobar-cuevas-corredor" || comprobar_cuevas) &&
+                                 !avanzar(96)))
                               return fallo(
                                   "No se ha podido completar la entrada al corredor de las cuevas");
                           }
@@ -983,6 +1012,17 @@ int main(int argc, char *argv[]) {
           if (mazmorra.escena_actual() != 0 || !avanzar(48))
             return fallo("No se ha completado el regreso a la mazmorra");
         }
+      }
+      if (comprobar_cuevas) {
+        // Abre el menú sin cambiar la partida ni resolver acciones mediante estados de prueba.
+        const auto abrir = [&]() { return mazmorra.entrada_menu(152, 92, false, true); };
+        // Escoge el identificador de la misma lista visible para el jugador.
+        const auto objeto = [&](unsigned short id) {
+          const int casilla = mazmorra.casilla_objeto(id);
+          return casilla >= 0 && elegir(static_cast<unsigned int>(casilla));
+        };
+        if (!comprobar_recorrido_cuevas(mazmorra, opcion, avanzar, abrir, elegir, objeto))
+          return fallo("No coincide el recorrido SDL de las piedras y el picapedrero");
       }
       if (!mazmorra.dibujar(imagen))
         return fallo("No se ha podido dibujar el estado jugable");
@@ -1097,6 +1137,13 @@ int main(int argc, char *argv[]) {
                            nullptr)) {
       return fallo("No se ha podido dibujar el título");
     }
+    const std::string contexto_marco = pantalla == 0   ? "core"
+                                       : pantalla == 1 ? "titulo"
+                                       : pantalla == 2
+                                           ? "introduccion"
+                                           : "escena_" + std::to_string(mazmorra.escena_actual());
+    if (!presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str()))
+      return fallo("No se ha podido dibujar el marco de pantalla");
     if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
@@ -1104,12 +1151,14 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido dibujar el contador FPS");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.
-      if (comprobar_fps && !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 0, 0,
-                                                             SDL_LOGICAL_PRESENTATION_DISABLED))
+      if ((comprobar_fps || comprobar_marcos) &&
+          !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 0, 0,
+                                            SDL_LOGICAL_PRESENTATION_DISABLED))
         return fallo("No se ha podido preparar la captura completa del contador");
       SDL_Surface *captura = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
-      if (comprobar_fps && !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
-                                                             SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
+      if ((comprobar_fps || comprobar_marcos) &&
+          !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
+                                            SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
         SDL_DestroySurface(captura);
         return fallo("No se ha podido recuperar el encuadre después de capturar el contador");
       }
@@ -1120,7 +1169,7 @@ int main(int argc, char *argv[]) {
       if (!rgb)
         return fallo("No se ha podido convertir la captura");
       const std::string ruta_captura =
-          comprobar_filtros || comprobar_fps
+          comprobar_filtros || comprobar_fps || comprobar_marcos
               ? std::string(argv[3]) + "." + std::to_string(paso_aspecto) + ".bmp"
               : argv[3];
       const bool guardado = SDL_SaveBMP(rgb, ruta_captura.c_str());
@@ -1129,11 +1178,12 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido guardar el fotograma");
       if (comprobar_lago && !mazmorra.guardar_estado_diagnostico(std::string(argv[3]) + ".ds.bin"))
         return fallo("No se ha podido guardar el estado diagnóstico de la captura");
-      if ((comprobar_filtros && paso_aspecto < 6) || (comprobar_fps && paso_aspecto < 2)) {
+      if ((comprobar_filtros && paso_aspecto < 6) ||
+          ((comprobar_fps || comprobar_marcos) && paso_aspecto < 2)) {
         ++paso_aspecto;
         SDL_Event filtro{};
         filtro.type = SDL_EVENT_KEY_DOWN;
-        filtro.key.key = comprobar_fps ? SDLK_F12 : SDLK_F11;
+        filtro.key.key = comprobar_marcos ? SDLK_F1 : comprobar_fps ? SDLK_F12 : SDLK_F11;
         if (!SDL_PushEvent(&filtro))
           return fallo("No se ha podido comprobar el atajo de presentación");
       } else {

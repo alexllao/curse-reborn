@@ -8,20 +8,20 @@ La guía corresponde a Amiga; su autora indica que también sirve para DOS, salv
 
 El audio común ya está integrado. La prioridad actual es completar la jugabilidad pantalla por pantalla, contrastar cada tramo y subir los cambios comprobados a development. Seguir el lago antes de avanzar por los demás capítulos.
 
-| Tramo de la referencia | Estado del port                                                                                |
-| ---------------------- | ---------------------------------------------------------------------------------------------- |
-| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                    |
-| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                             |
-| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara    |
-| Caída                  | Animación y enlace automático con el lago comparados                                           |
-| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente                  |
-| Cuevas                 | Poza, algas, botón y puerta comparados; entrada al corredor integrada, demás puzles pendientes |
-| Paso del dragón        | Pendiente                                                                                      |
-| Confín del mundo       | Pendiente                                                                                      |
-| Valle de lo perdido    | Pendiente                                                                                      |
-| Hielo y nieve          | Pendiente                                                                                      |
-| Muertos vivientes      | Pendiente                                                                                      |
-| Enfrentamiento final   | Pendiente                                                                                      |
+| Tramo de la referencia | Estado del port                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                 |
+| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                          |
+| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara |
+| Caída                  | Animación y enlace automático con el lago comparados                                        |
+| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente               |
+| Cuevas                 | Poza y ruta de doce piedras hasta la cuerda comparadas; pozo y otras acciones pendientes    |
+| Paso del dragón        | Pendiente                                                                                   |
+| Confín del mundo       | Pendiente                                                                                   |
+| Valle de lo perdido    | Pendiente                                                                                   |
+| Hielo y nieve          | Pendiente                                                                                   |
+| Muertos vivientes      | Pendiente                                                                                   |
+| Enfrentamiento final   | Pendiente                                                                                   |
 
 ## Correcciones que deben conservarse
 
@@ -30,6 +30,7 @@ El audio común ya está integrado. La prioridad actual es completar la jugabili
 - El clip desbloquea la puerta. El submenú de desbloquear no debe llamarse combinar.
 - En el corredor se recoge la pecera antes de atravesar las estatuas y los guardias hacia la puerta izquierda. Una prueba corta de movimiento no demuestra una barrera permanente.
 - Al entrar al agua hay que ponerse la pecera. Después siguen el pez encerrado, la moneda, el gusano y el intercambio de oxígeno; las acciones posteriores deben incorporarse conforme se reconstruyan.
+- En el ejecutable DOS analizado, el picapedrero exige cuatro piedras de cada tamaño; la ruta comparada utiliza doce en dos entregas.
 - F5/F6 son vistas de desarrollo, no pasos de la solución ni pruebas de conservación del inventario.
 
 ## Criterio para dar un tramo por terminado

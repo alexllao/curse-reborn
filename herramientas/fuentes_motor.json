@@ -1,6 +1,7 @@
 [
   "motor/acciones/construir_tabla.cpp",
   "motor/acciones/poza.cpp",
+  "motor/acciones/cuevas.cpp",
   "motor/acciones/iniciar_accion.cpp",
   "motor/acciones/lista_identificadores.cpp",
   "motor/acciones/objetos_cercanos.cpp",

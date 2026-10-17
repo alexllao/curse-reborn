@@ -3,6 +3,14 @@ project(CurseReborn LANGUAGES CXX)
 
 find_package(SDL3 3.4.18 CONFIG REQUIRED)
 
+# Preparar únicamente recursos propios; los archivos comerciales siguen siendo locales.
+find_program(NODE_EXECUTABLE node REQUIRED)
+file(GLOB FUENTES_MARCOS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets/original/marcos/*")
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp"
+  COMMAND "${NODE_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs" "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS ${FUENTES_MARCOS} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs"
+  VERBATIM)
+
 # Compartir la lista de fuentes con las herramientas Node de compilación y comparación.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/fuentes_motor.json" MANIFIESTO_MOTOR)
 string(JSON CANTIDAD_FUENTES LENGTH "${MANIFIESTO_MOTOR}")
@@ -14,6 +22,11 @@ endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS herramientas/fuentes_motor.json)
 add_executable(curse-reborn plataformas/sdl/contador_fps.cpp plataformas/sdl/filtros.cpp plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp plataformas/sdl/opl2.cpp plataformas/sdl/ymfm_opl.cpp plataformas/sdl/ymfm_adpcm.cpp plataformas/sdl/ymfm_pcm.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
+target_sources(curse-reborn PRIVATE plataformas/sdl/marcos.cpp "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp")
+target_include_directories(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/assets/original/marcos"
+  "$<TARGET_FILE_DIR:curse-reborn>/assets/original/marcos")
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 if(MSVC)
   target_compile_options(curse-reborn PRIVATE /W4 /WX /utf-8)

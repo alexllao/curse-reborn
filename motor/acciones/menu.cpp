@@ -1,6 +1,7 @@
 #include "corredor.hpp"
 #include "lago.hpp"
 #include "poza.hpp"
+#include "cuevas.hpp"
 #include "menu.hpp"
 #include "construir_tabla.hpp"
 #include "objetos_cercanos.hpp"
@@ -80,6 +81,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_lago(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 8)
     return ejecutar_interaccion_poza(d, manejador, id, sonido);
+  if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
+    return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 1)
     return ejecutar_interaccion_corredor(d, manejador, id, sonido);
   if (palabra(d, 0x8082) != 0)
@@ -291,6 +294,9 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
                ((objeto == 25 && previo == 23) || (objeto == 23 && previo == 25))) {
       // 3D72–3D89: insertar picana y tapón admite ambos órdenes de selección.
       return ejecutar_interaccion_inicial(d, 0x9bb8, objeto, sonido);
+    } else if (palabra(d, 0xb634) == 6 && objeto == 54 && palabra(d, 0x8082) == 10) {
+      // 3E89–3F25: el destino es el picapedrero y el objeto previo determina el tamaño.
+      return ejecutar_interaccion_inicial(d, 0x9f39, previo, sonido);
     } else if (palabra(d, 0xb634) == 0) {
       if ((objeto == 0 && previo == 1) || (objeto == 1 && previo == 0))
         return ejecutar_interaccion_inicial(d, 0x989e, objeto, sonido);

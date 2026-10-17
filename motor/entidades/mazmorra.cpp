@@ -37,7 +37,7 @@ void actualizar_escena_cinco(unsigned char *datos) {
 // La tabla CS:17A3 contiene cero para la mazmorra (índice 0) y 183F para el índice 5.
 bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
-  if (escena == 0 || escena == 2 || escena == 4)
+  if (escena == 0 || escena == 2 || escena == 4 || escena == 9 || escena == 10)
     return true;
   if (escena == 1) {
     // BEA8–BEFC: reacción del corredor en sus ventanas 24 y cero, con coordenadas con signo.
@@ -66,6 +66,26 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 6) {
+    // 1905–1962: habilita el efecto de la franja 832–896 y conserva sus cuatro consumos de azar.
+    const auto x = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x3591));
+    d[0x0def] = con_signo(x) >= 832 && con_signo(x) <= 896 ? 1 : 0;
+    Palabra valor = 0;
+    if (!generar_aleatorio(azar, 3, valor))
+      return false;
+    if (!valor)
+      return true;
+    if (!generar_aleatorio(azar, 4, valor))
+      return false;
+    d[0x120a] = static_cast<unsigned char>(valor + 2);
+    if (!generar_aleatorio(azar, 2, valor))
+      return false;
+    d[0x120a] |= static_cast<unsigned char>(valor << 7);
+    if (!generar_aleatorio(azar, 63, valor))
+      return false;
+    guardar(d, 0x120b, static_cast<Palabra>(valor + 832 - palabra(d, 0x3591)));
+    return crear_entidad(d, azar, recursos, 0x1208).valido;
+  }
   if (palabra(d, 0x8082) == 8) {
     // 1963–1992: la poza crea partículas solo cuando la presentación original está activa.
     if (!d[0x0def])

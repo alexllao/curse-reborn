@@ -1,5 +1,6 @@
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 import { prepararMt32 } from './gestionar_mt32.mjs';
+import { prepararMarcos } from './gestionar_marcos.mjs';
 /** Compilación y comprobación de Curse Reborn con SDL, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -147,6 +148,7 @@ async function compilar() {
     return existsSync(directo) ? directo : join(aplicacion, 'Release', 'curse-reborn');
   }
   const sdl = await preparar();
+  prepararMarcos(raiz, aplicacion);
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
   console.log('Compilando Curse Reborn con SDL…');
@@ -168,8 +170,11 @@ async function compilar() {
       join(sdl, 'include'),
       '-I',
       join(mt32, 'include'),
+      '-I',
+      aplicacion,
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
       join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
@@ -271,9 +276,12 @@ function leerCaptura(archivo, ancho = 320, alto = 200) {
   const inicio = bmp.readUInt32LE(10),
     invertida = bmp.readInt32LE(22) > 0;
   const rgb = Buffer.alloc(ancho * alto * 3);
+  const paso_fila = Math.ceil((ancho * 3) / 4) * 4;
+  if (inicio + paso_fila * alto > bmp.length)
+    throw new Error('La captura BMP tiene filas incompletas.');
   for (let y = 0; y < alto; ++y)
     for (let x = 0; x < ancho; ++x) {
-      const origen = inicio + ((invertida ? alto - 1 - y : y) * ancho + x) * 3;
+      const origen = inicio + (invertida ? alto - 1 - y : y) * paso_fila + x * 3;
       const destino = (y * ancho + x) * 3;
       rgb[destino] = bmp[origen + 2];
       rgb[destino + 1] = bmp[origen + 1];
@@ -424,6 +432,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
+      accion === 'comprobar:cuevas' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     )
@@ -434,7 +443,8 @@ export async function gestionarSdl(accion, argumentos) {
         accion === 'comprobar:caida' ||
         accion === 'comprobar:corredor' ||
         accion === 'comprobar:lago' ||
-        accion === 'comprobar:poza'
+        accion === 'comprobar:poza' ||
+        accion === 'comprobar:cuevas'
           ? ['CORRIDOR.MAP', 'CORRIDOR.SPR']
           : []),
         'MANA.BRD',
@@ -454,6 +464,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
+      accion === 'comprobar:cuevas' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -467,7 +478,8 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:caida' ||
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
-      accion === 'comprobar:poza'
+      accion === 'comprobar:poza' ||
+      accion === 'comprobar:cuevas'
     )
       necesarios.push(
         'DROP.MAP',
@@ -477,10 +489,17 @@ export async function gestionarSdl(accion, argumentos) {
         'PLUNGE.BRD',
         'PLOK.BRD',
       );
-    if (accion === 'ventana' || accion === 'comprobar:lago' || accion === 'comprobar:poza')
+    if (
+      accion === 'ventana' ||
+      accion === 'comprobar:lago' ||
+      accion === 'comprobar:poza' ||
+      accion === 'comprobar:cuevas'
+    )
       necesarios.push('POOL.MAP', 'POOL.SPR', 'EMERGE.BRD');
-    if (accion === 'ventana' || accion === 'comprobar:poza')
+    if (accion === 'ventana' || accion === 'comprobar:poza' || accion === 'comprobar:cuevas')
       necesarios.push('CAVECOR.MAP', 'CAVECOR.SPR');
+    if (accion === 'ventana' || accion === 'comprobar:cuevas')
+      necesarios.push('WELL.MAP', 'WELL.SPR', 'CAVERBMI.MAP', 'CAVERBMI.SPR');
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
     if (faltantes.length)
       throw new Error(`Faltan ${faltantes.join(', ')} en datos_originales/CURSE/DATA.`);
@@ -493,6 +512,7 @@ export async function gestionarSdl(accion, argumentos) {
       accion === 'comprobar:corredor' ||
       accion === 'comprobar:lago' ||
       accion === 'comprobar:poza' ||
+      accion === 'comprobar:cuevas' ||
       accion === 'comprobar:puzle' ||
       accion === 'comprobar:jugabilidad'
     ) {
@@ -669,6 +689,122 @@ export async function gestionarSdl(accion, argumentos) {
     console.log(
       'Filtros SDL: seis modos diferentes, ciclo F11 reversible y 64.000 píxeles originales conservados.',
     );
+    return;
+  }
+  if (accion === 'comprobar:marcos') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_marcos');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, ancho, alto] of [
+      ['marcos', 1280, 720],
+      ['marcos-vertical', 720, 1280],
+      ['marcos-ajustado', 960, 600],
+      ['marcos-impar', 1279, 721],
+      ['marcos-filtro', 1280, 720],
+    ]) {
+      const prefijo = join(carpeta, opcion);
+      ejecutar(programa, [datos, `--comprobar-${opcion}`, prefijo], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      const capturas = [0, 1, 2].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
+      if (!capturas[0].equals(capturas[2]))
+        throw new Error(`F1 no recupera las bandas originales: ${opcion}.`);
+      const escala = Math.min(ancho / 320, alto / 200);
+      const x0 = (ancho - 320 * escala) / 2,
+        y0 = (alto - 200 * escala) / 2;
+      const solapeX = Math.min(2 * escala, x0 * 0.15),
+        solapeY = Math.min(2 * escala, y0 * 0.15);
+      let modificados = 0;
+      for (let y = 0; y < alto; y++)
+        for (let x = 0; x < ancho; x++) {
+          const p = (y * ancho + x) * 3;
+          const distinto =
+            capturas[0][p] !== capturas[1][p] ||
+            capturas[0][p + 1] !== capturas[1][p + 1] ||
+            capturas[0][p + 2] !== capturas[1][p + 2];
+          if (!distinto) continue;
+          if (
+            x >= Math.ceil(x0 + solapeX) &&
+            x < Math.floor(ancho - x0 - solapeX) &&
+            y >= Math.ceil(y0 + solapeY) &&
+            y < Math.floor(alto - y0 - solapeY)
+          )
+            throw new Error(`El marco modifica el área del juego: ${opcion}, ${x}, ${y}.`);
+          modificados++;
+        }
+      if ((opcion === 'marcos-ajustado') !== (modificados === 0))
+        throw new Error(`Presencia de marco incorrecta: ${opcion}.`);
+      console.log(
+        `${opcion}: F1 reversible; ${modificados} píxeles de bandas decorados, juego conservado.`,
+      );
+    }
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 15,
+          formatos: ['apaisado', 'vertical', 'ajustado', 'impar', 'xBRZ'],
+          interior_conservado: true,
+          solape_logico_maximo: 2,
+          ciclo_reversible: true,
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    return;
+  }
+  if (accion === 'comprobar:cuevas') {
+    ejecutar(process.execPath, [
+      join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+      'comparar:cuevas',
+      '--muestra',
+    ]);
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_cuevas_sdl');
+    mkdirSync(carpeta, { recursive: true });
+    for (const [opcion, nombre] of [
+      ['--comprobar-cuevas-piedras-uno', 'cuevas_piedras_uno'],
+      ['--comprobar-cuevas-primera-entrega', 'cuevas_primera_entrega'],
+      ['--comprobar-cuevas-piedras-tres', 'cuevas_piedras_tres'],
+      ['--comprobar-cuevas-cuerda', 'cuevas_cuerda'],
+    ]) {
+      const captura = join(carpeta, `${nombre}.bmp`);
+      ejecutar(programa, [datos, opcion, captura], {
+        ...process.env,
+        SDL_RENDER_DRIVER: 'software',
+      });
+      if (
+        !leerCaptura(captura).equals(
+          leerReferencia(
+            false,
+            false,
+            join(raiz, 'trabajo', 'comparacion_cuevas', `${nombre}_cpp.png`),
+          ),
+        )
+      )
+        throw new Error(`La captura SDL de ${nombre} difiere de la partida original.`);
+    }
+    ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'vistas.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    writeFileSync(
+      join(carpeta, 'resultado.json'),
+      JSON.stringify(
+        {
+          resultado: 'coinciden',
+          capturas: 4,
+          pixeles_por_captura: 64000,
+          cambios_de_vista: 20,
+          limite:
+            'Recogida de doce piedras y cuerda; otras acciones y puzles de las cuevas pendientes.',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    console.log('Cuevas SDL: coinciden cuatro capturas hasta la cuerda y veinte cambios F5/F6.');
     return;
   }
   if (accion === 'comprobar:poza') {

@@ -1,0 +1,41 @@
+CURSE REBORN — PIEDRAS Y CUERDA
+
+Continuar la partida por la puerta secreta de la poza, sin usar F5/F6.
+Esas teclas reinician las vistas y no conservan piedras de la anterior.
+
+1. PRIMER CORREDOR DE LAS CUEVAS
+   Recoger una piedra pequeña, una mediana y una grande.
+   La ruta comprobada utiliza los identificadores 27, 28 y 29.
+   Caminar por la salida inferior izquierda hacia el segundo corredor.
+
+2. SEGUNDO CORREDOR
+   Recoger otra piedra de cada tamaño: 31, 32 y 34 en la prueba.
+   Acercarse al extremo derecho y entrar por el paso al picapedrero.
+
+3. PRIMERA ENTREGA
+   Acercarse al picapedrero y abrir Manipular objetos, Dar.
+   Elegir una piedra del inventario y después al picapedrero.
+   Repetir con las seis piedras, esperando cada animación.
+   El cartel empieza con cuatro piedras de cada tamaño; ahora quedan dos.
+
+4. BUSCAR LAS SEIS RESTANTES
+   Volver al segundo corredor por la salida inferior izquierda.
+   Recoger las piedras 33 y 35.
+   Cruzar su paso izquierdo al tercer corredor.
+   Recoger las piedras 38, 39, 40 y 41.
+   Regresar al segundo corredor y volver a entrar por el paso derecho.
+   Las piedras recogidas anteriormente deben seguir retiradas.
+
+5. RECIBIR LA CUERDA
+   Acercarse al picapedrero y entregar las seis piedras restantes con Dar.
+   Tras la última entrega el cartel queda a cero y Brad recibe la cuerda.
+
+COMPROBACIONES
+pnpm comparar:cuevas --muestra
+pnpm comprobar:cuevas
+
+PENDIENTE
+El uso de la cuerda y los demás puzles y alternativas de las cuevas.
+
+Redacción propia orientada por la guía de Sophie Cheshire (falsehead),
+28/03/2003, aportada por Àlex y contrastada con nuestro ejecutable DOS.

@@ -18,6 +18,8 @@ El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificació
 
 ## Aspecto de pantalla
 
+**F1** muestra u oculta el marco decorativo y registra el cambio en consola. Arranca desactivado. El marco por defecto es el PNG de Àlex, conservado en `assets/original/marcos/`; se utiliza en todas las pantallas mientras no tengan uno propio. Rellena las bandas y admite un solape de dos píxeles lógicos sobre el borde del juego, con redondeo al píxel físico. No cambia las coordenadas de clic. Funciona también con los filtros y en pantalla completa; si no sobra espacio alrededor del juego, no aparece. Los futuros marcos del remaster irán separados. Véase [Recursos propios](../assets/README.md).
+
 **F11** recorre **original → suavizado → líneas de escaneo → CRT suave → xBRZ 2x → 2xSaI → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
 
 El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.
@@ -43,7 +45,7 @@ Está previsto un HUD con mensajes breves de cambios y acciones. Todavía no est
 | **← / →**, con el menú abierto                       | Cambiar de casilla.                                                |
 | **Intro**, con el menú abierto                       | Confirmar la casilla seleccionada.                                 |
 
-En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido, F2, F11 y F12 funcionan sin avanzar la presentación.
+En Core y título, una tecla o un clic izquierdo permite avanzar. En la introducción solicita omitirla en el siguiente punto previsto por el original. Los controles de sonido, F1, F2, F11, F12 y Alt + Enter funcionan sin avanzar la presentación.
 
 **Escape cierra el programa en Core, título e introducción.** Dentro de una escena jugable abre o cierra el menú. El botón de cierre de la ventana termina el programa desde cualquier vista.
 
@@ -54,7 +56,7 @@ En Core y título, una tecla o un clic izquierdo permite avanzar. En la introduc
 | **F5** | Ir directamente a la vista anterior.  |
 | **F6** | Ir directamente a la vista siguiente. |
 
-Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → corredor de las cuevas**. En los extremos no hay otra vista a la que saltar. La poza permite recoger algas, pulsar el botón y atravesar la puerta secreta; los puzles posteriores del corredor siguen pendientes.
+Orden actual: **Core → título → introducción → mazmorra → corredor → caída → lago → poza → primer corredor de las cuevas → segundo corredor → tercer corredor → pozo → picapedrero**. En los extremos no hay otra vista a la que saltar. La ruta normal permite recoger doce piedras y entregarlas al picapedrero para obtener la cuerda. Los puzles del pozo y otras interacciones de las cuevas siguen pendientes.
 
 **Al entrar en una vista jugable mediante F5/F6 se prepara una sesión nueva.** Estos saltos sirven para probar pantallas: no conservan el progreso ni resuelven los puzles anteriores. Para continuar la misma partida, utiliza las salidas normales del escenario.
 

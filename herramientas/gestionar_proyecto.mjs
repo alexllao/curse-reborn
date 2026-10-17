@@ -154,6 +154,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     caida: 'comparar_caida.py',
     lago: 'comparar_lago.py',
     poza: 'comparar_poza.py',
+    cuevas: 'comparar_cuevas.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -190,6 +191,7 @@ try {
     case 'comprobar:caida':
     case 'comprobar:lago':
     case 'comprobar:poza':
+    case 'comprobar:cuevas':
     case 'comprobar:corredor':
     case 'comprobar:puzle':
     case 'comprobar:jugabilidad':
@@ -197,6 +199,7 @@ try {
     case 'comprobar:introduccion':
     case 'comprobar:fps':
     case 'comprobar:filtros':
+    case 'comprobar:marcos':
     case 'comprobar:ventana':
     case 'comprobar:escena':
       await gestionarSdl(accion, argumentos);
@@ -296,6 +299,9 @@ try {
       break;
     case 'comparar:poza':
       compararAcciones('poza', argumentos);
+      break;
+    case 'comparar:cuevas':
+      compararAcciones('cuevas', argumentos);
       break;
     case 'comparar:caida':
       compararAcciones('caida', argumentos);

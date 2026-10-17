@@ -1,0 +1,27 @@
+{
+  "label": "Default · Enchantia",
+  "left": {
+    "x": 0,
+    "y": 0,
+    "width": 1254,
+    "height": 1254
+  },
+  "right": {
+    "x": 0,
+    "y": 0,
+    "width": 1254,
+    "height": 1254
+  },
+  "innerPadding": {
+    "left": 45,
+    "right": 45
+  },
+  "fit": "cover",
+  "mirrorRight": true,
+  "contexts": ["title", "core", "intro"],
+  "requestedSize": "2048x2048",
+  "actualSize": "1254x1254",
+  "sourceSha256": "083ee51a182d570125cd97cb4d3783c6311333afec90190018f3a3933aadbd93",
+  "promptArchive": "reports/referencias/marcos/prompts/Marco-Default-prompts.txt",
+  "note": "Panel artístico del port; versión Original de estilo pixel art, no recurso DOS. Generador integrado, PNG conservado sin editar ni ampliar. Remaster ilustrado, no fotorealista."
+}

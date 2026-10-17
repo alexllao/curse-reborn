@@ -51,6 +51,11 @@ class ComparacionPoza(ComparacionLago):
         if palabra(datos, 0x8082) != 4 or not datos[0x3594]:
             raise ErrorAnalisis('El corredor de las cuevas no devuelve el control.')
         self.resumen['salida_poza'] = 1
+        self.despues_poza(datos, semilla, carpeta)
+
+    # Permite ampliar la misma partida hacia las cuevas sin fabricar inventario ni estados.
+    def despues_poza(self, datos, semilla, carpeta):
+        pass
 
     # Compara capacidad y puntuación, ambos temas, verbos sin acción y combinaciones antes/después.
     def opciones_poza(self, base):

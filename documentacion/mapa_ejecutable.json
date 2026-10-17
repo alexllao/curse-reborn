@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5849",
+      "nombre": "Recogida persistente de las piedras de los corredores",
+      "comentario": "5849–59A3 y 615C: identificadores 27–35 y 38–46, agrupados por escena cuatro a siete. Incorpora al inventario salvo iconos de puntuación, retira el descriptor de la lista DS:53B5, dispone 1A2E y los canales de Brad 96C0/96C9 o 96F6/96FF y demora AL+6. Traslado motor/acciones/cuevas.cpp; variantes de capacidad y puntuación y recorrido de doce piedras hasta la cuerda."
+    },
+    {
+      "direccion": "0000:9F39",
+      "nombre": "Entrega de piedras al picapedrero por tamaño",
+      "comentario": "9F39, 9F85 y 9FCD: clasificación por 3E89–3F25, retirada del identificador y DEC de DS:35CB–35CD. JGE incluye OF: contador 80h que pasa a 7Fh no descuenta el cartel. Los contadores iniciales son cuatro por tamaño en este EXE. Retira puntos de las listas 3D8E/3DB2/3DD6 y sus entidades; conserva la partida al regresar. Traslado motor/acciones/cuevas.cpp y comparación de contadores límite."
+    },
+    {
+      "direccion": "0000:A00A",
+      "nombre": "Cuerda y respuesta del picapedrero tras las entregas",
+      "comentario": "A00A–A07B: cuando los tres contadores con signo están satisfechos incorpora el identificador 55, prepara los canales 9EFD/9F0A y el guion 9F10. Las entregas parciales usan 9EE2/9EEF y 9EF5. Destino relativo al picapedrero -10/+34 y cinco puntos con aritmética de 16 bits. Ruta de doce piedras comparada desde la mazmorra inicial y cuatro capturas SDL hasta la cuerda."
+    },
+    {
+      "direccion": "0000:1905",
+      "nombre": "Rutina ambiental del tercer corredor de las cuevas",
+      "comentario": "1905–1962: escena seis. X global de Brad entre 832 y 896 inclusive controla 0DEF. Azar módulo tres decide la creación; después módulo cuatro más dos, módulo dos para bit siete y módulo 63 más 832 menos cámara preparan el descriptor 1208 antes de 8B6F. Traslado motor/entidades/mazmorra.cpp; se conservan número y orden de las llamadas al generador durante el recorrido persistente."
+    },
+    {
       "direccion": "0000:59B5",
       "nombre": "Recogida de las algas y habilitación del botón de la poza",
       "comentario": "59B5–59C9: identificador 31h, escribe 30h como identificador de la entidad 2C6D y recoge 2C8E con ajuste +5/-9 mediante 61A7. 623D retira su descriptor persistente. Conserva 96CF/96D8 o 9705/970E para Brad pequeño y demora AL+6. Traslado motor/acciones/poza.cpp; prueba de inventario lleno y recorrido desde el lago. Examinar la zona 32h retorna por 3B4F sin otra mutación."

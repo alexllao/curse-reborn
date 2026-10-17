@@ -74,7 +74,10 @@
     "comprobar:filtros": "node herramientas/gestionar_proyecto.mjs comprobar:filtros",
     "comprobar:fps": "node herramientas/gestionar_proyecto.mjs comprobar:fps",
     "comparar:poza": "node herramientas/gestionar_proyecto.mjs comparar:poza",
-    "comprobar:poza": "node herramientas/gestionar_proyecto.mjs comprobar:poza"
+    "comprobar:poza": "node herramientas/gestionar_proyecto.mjs comprobar:poza",
+    "comparar:cuevas": "node herramientas/gestionar_proyecto.mjs comparar:cuevas",
+    "comprobar:cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:cuevas",
+    "comprobar:marcos": "node herramientas/gestionar_proyecto.mjs comprobar:marcos"
   },
   "repository": {
     "type": "git",

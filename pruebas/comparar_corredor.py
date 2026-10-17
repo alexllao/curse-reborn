@@ -8,7 +8,18 @@ from pathlib import Path
 from comparar_puzle import ComparacionPuzle, ErrorAnalisis
 from comparar_objetos import ComparacionObjetos, guardar, palabra
 
-BANCOS_ESCENA = {0: 'DUNGEON', 1: 'CORRIDOR', 2: 'DROP', 3: 'LAKEBED', 4: 'CAVECOR', 8: 'POOL'}
+BANCOS_ESCENA = {
+    0: 'DUNGEON',
+    1: 'CORRIDOR',
+    2: 'DROP',
+    3: 'LAKEBED',
+    4: 'CAVECOR',
+    5: 'CAVECOR',
+    6: 'CAVECOR',
+    8: 'POOL',
+    9: 'WELL',
+    10: 'CAVERBMI',
+}
 
 
 class ComparacionCorredor(ComparacionPuzle):
@@ -382,6 +393,8 @@ class ComparacionCorredor(ComparacionPuzle):
 
     # Recupera solo los archivos de una instantánea de partida; nunca modifica sus banderas o entidades.
     def retomar_recursos(self, datos):
+        # La instantánea recupera bancos y segmentos; descarta también sus traducciones anteriores.
+        self.maquina.ctl_flush_tb()
         escena = palabra(datos, 0x8082)
         nombre = BANCOS_ESCENA[escena]
         self.escena = (self.carpeta / (nombre + '.SPR')).read_bytes()
