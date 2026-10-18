@@ -3,6 +3,11 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:C794",
+      "nombre": "Encuentro y partículas de POST",
+      "comentario": "C794–C8B0 conserva comprobación111/112, estado2C4C, umbrales unsigned320/600, retirada de ambos identificadores, canalesB1BC/B1DA oB227/B245 yB201, descriptor461F y coordenadas. Cuatro consumos explícitos de azar antes de8B6F, incluso sin registros libres. comparar:regreso-loro contrasta288 variantes aisladas de esta rutina, además de llegada52 y128 pasos reales. POST todavía no activado en SDL."
+    },
+    {
       "direccion": "0000:361A",
       "nombre": "Saludo y encargo del loro sabio",
       "comentario": "361A–3727 para WISE31: bit1 de35C9 distingue primera visita y repetida. Primera visita OR1, activa41EC/41F5 y actor2C6D/256C; ambas programan Brad241D/2442 o247A/245D,2C4C/2571 y seis actores25E0 con sus canales. Entrada72 desdeEDGE y regreso73 aDERELICT27 contrastados; rutina CS:17A3[31]=0. No inventar transformación ni objetos por la guía."
@@ -170,7 +175,7 @@
     {
       "direccion": "0000:43B4",
       "nombre": "Intercambio con el mago",
-      "comentario": "43B4–44A8: Dar dinero76 al ID77; tres guiones según35C9, rechazo402E, ofertas persistentes, puntuación+5 y canales1F84/1F90. Primera visita recorre el transporte hasta salida47."
+      "comentario": "43B4–44A8: Dar dinero76 al ID77; tres guiones según35C9, rechazo402E, ofertas persistentes, puntuación+5 y canales1F84/1F90. Primera visita recorre el transporte hasta salida47. El regreso real después de WISE también contrasta segundo pago, ofertas402E y recorrido hasta el guardia deGYPSY."
     },
     {
       "direccion": "0000:5482",

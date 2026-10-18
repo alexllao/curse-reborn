@@ -1,0 +1,16 @@
+REGRESO DEL LORO Y SEGUNDO PAGO AL MAGO
+Redacción propia contrastada con el EXE DOS.
+
+1. Tras el saludo del loro, espera a regresar a la casa abandonada. Sal por abajo.
+2. Ve hacia la derecha por la calle de la adivina y vuelve a la plaza de la fuente.
+3. Sube a la calle de las maravillas y entra en la tienda del mago.
+4. Usa Manipular → Dar con el dinero y luego el mago. Espera su animación y la activación de las ofertas siguientes.
+5. Sal del mago por abajo y regresa a la plaza.
+6. Toma la calle de la izquierda. Camina hasta la zona del guardia y baja para pasar por debajo de él, sin intentar atravesarlo por arriba.
+7. Continúa por la franja de suelo hacia el borde izquierdo.
+
+LÍMITE ACTUAL DE SDL
+La comprobación visual llega al paso del guardia. La salida52 y la llegada aPOST están contrastadas en el núcleo, pero POST todavía no se activa en SDL. No se consideran completos sus caminos, puzles ni capítulos posteriores.
+
+Para contrastar: pnpm comparar:regreso-loro --muestra
+Comprobación agrupada SDL: pnpm comprobar:regreso-loro

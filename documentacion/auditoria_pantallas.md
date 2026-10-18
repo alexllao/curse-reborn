@@ -23,7 +23,7 @@ El recorrido contrastado de estas cuatro ramas parte de las instantáneas reales
 | ----------- | ------ | ----------- | -------------------------------------------------------------------- |
 | CHANGE (25) | 74     | Escena 43   | Continuación posterior del disfraz; aún sin integrar.                |
 | GYPSY (20)  | 52     | Escena 35   | Continuación posterior todavía sin integrar.                         |
-| MAGE (22)   | 72     | Escena 31   | WISE31 ya integrado desde EDGE; falta contrastar esta rama del mago. |
+| MAGE (22)   | 72     | Escena 31   | Carga22→31 contrastada; faltan condiciones argumentales posteriores. |
 
 Las rutas 19→24 por35, 20→26 por38 y 20→27 por39 ya están conectadas, con regresos46/48/49. La comparación de tiendas incluye saludo, entrega de dinero a la adivina, fases de oferta de Benn y su rutina de partículas. Se conservan los recursos compartidos entre escenas23/27 con sus estados independientes. Véase [el tramo de tiendas](tiendas_poblacion.md).
 
@@ -34,3 +34,5 @@ Las escenas iniciales hasta COUNTRY2 conservan sus recorridos y auditorías ante
 El probador25 ya conecta36/27. Se contrasta1A74 y los manejadores del vestido; el recorrido posterior del valle sigue pendiente. Véase [el alcance del probador](probador_benn.md).
 
 La auditoría de32 vistas detecta también WISE31→64 por112, correspondiente a la continuación posterior. Junto con52/72/74 suma cuatro enlaces pendientes desde el catálogo; no se ocultan los destinos de capítulos posteriores.
+
+La revisión siguiente incorpora el adaptador MAGE22→WISE31 por72, contrastado como contrato aislado del cargador. No prueba todavía su activación argumental posterior. Quedan tres enlaces desde las vistas disponibles (52/74/112). POST35 tiene entrada y rutina contrastadas solo en el núcleo; sus caminos60/57/66/71 y puzles permanecen pendientes. Véase [el regreso del loro](regreso_loro.md).

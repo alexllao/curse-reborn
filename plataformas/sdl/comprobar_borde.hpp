@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_regreso_loro.hpp"
 #include <initializer_list>
 
 // Reproduce la ruta contrastada de EDGE con flechas y menús, conservando los ciclos originales.
@@ -127,5 +128,8 @@ bool comprobar_recorrido_borde(Mazmorra &p, const std::string &opcion, Avanzar a
   for (unsigned int i = 0; i < 1024 && p.escena_actual() == 31; ++i)
     if (!avanzar(1))
       return false;
-  return p.escena_actual() == 27 && avanzar(256) && detener("borde_loro_regreso");
+  if (p.escena_actual() != 27 || !avanzar(256))
+    return false;
+  return detener("borde_loro_regreso") ||
+         comprobar_regreso_loro(p, opcion, avanzar, abrir, elegir, objeto);
 }

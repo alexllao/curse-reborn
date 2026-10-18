@@ -170,6 +170,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     recorrido_borde: 'comparar_recorrido_borde.py',
     acciones_borde: 'comparar_acciones_borde.py',
     loro: 'comparar_loro.py',
+    regreso_loro: 'comparar_regreso_loro.py',
     opciones: 'auditar_opciones.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
@@ -200,6 +201,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:regreso-loro':
+      await gestionarSdl('comprobar:poblacion', ['--regreso-loro']);
+      break;
     case 'comprobar:borde':
       await gestionarSdl('comprobar:poblacion', ['--borde']);
       break;
@@ -351,6 +355,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:regreso-loro':
+      compararAcciones('regreso_loro', argumentos);
       break;
     case 'comparar:loro':
       compararAcciones('loro', argumentos);

@@ -3,8 +3,11 @@
 namespace motor {
 struct EstadoAleatorio;
 struct RecursosEntidades;
-// C093–C4DB: rutina del borde del mundo; la plataforma aún mantiene detenida su llegada.
+// C093–C4DB: obstáculos, rescate y creaciones del borde del mundo.
 bool actualizar_borde(unsigned char *datos, EstadoAleatorio &azar,
+                      const RecursosEntidades &recursos);
+// C794–C8B0: encuentro del poste y partículas; conserva inventario y azar originales.
+bool actualizar_poste(unsigned char *datos, EstadoAleatorio &azar,
                       const RecursosEntidades &recursos);
 // BEFD–C092: añade el fondo del lago, sus burbujas y entidades, con el generador original.
 bool actualizar_rutina_escena(unsigned char *datos, EstadoAleatorio &azar,

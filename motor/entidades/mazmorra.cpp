@@ -94,6 +94,8 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 35)
+    return actualizar_poste(d, azar, recursos);
   if (palabra(d, 0x8082) == 30)
     return actualizar_borde(d, azar, recursos);
   if (palabra(d, 0x8082) == 25) {

@@ -22,6 +22,24 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
     guardar(d, registro + 8, c);
 }
 } // namespace
+// 313E/37FF/3B4F/88A0: solo respuestas comunes del inventario inicial y saludo en POST35.
+ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short manejador,
+                                         unsigned short id, const ServicioSonido &sonido) {
+  if (palabra(d, 0x8082) != 35)
+    return ResultadoMenu::pendiente;
+  if (manejador == 0x32de && id <= 1)
+    return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
+                                                                            : ResultadoMenu::error;
+  if (id != 3 && id != 70 && id != 76)
+    return ResultadoMenu::pendiente;
+  if (manejador == 0x384a)
+    return ResultadoMenu::actualizado;
+  if (manejador == 0x2fca || manejador == 0x3143 || manejador == 0x3b53) {
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
+  }
+  return ResultadoMenu::pendiente;
+}
 // Traduce las respuestas y los intercambios ofrecidos en el trayecto de la población.
 ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido) {

@@ -17,6 +17,7 @@
   "motor/aleatorio/generador.cpp",
   "motor/entidades/actualizar.cpp",
   "motor/entidades/borde.cpp",
+  "motor/entidades/poste.cpp",
   "motor/entidades/cargar.cpp",
   "motor/entidades/crear.cpp",
   "motor/entidades/mazmorra.cpp",

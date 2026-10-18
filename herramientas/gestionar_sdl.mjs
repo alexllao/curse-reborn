@@ -302,7 +302,14 @@ export async function gestionarSdl(accion, argumentos) {
   const comprobarCalles =
     accion === 'comprobar:poblacion' &&
     argumentos.length === 1 &&
-    ['--calles', '--tiendas', '--probador', '--entrada-borde', '--borde'].includes(argumentos[0]);
+    [
+      '--calles',
+      '--tiendas',
+      '--probador',
+      '--entrada-borde',
+      '--borde',
+      '--regreso-loro',
+    ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
@@ -1025,7 +1032,8 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:poblacion') {
-    const borde = argumentos.includes('--borde');
+    const regresoLoro = argumentos.includes('--regreso-loro');
+    const borde = regresoLoro || argumentos.includes('--borde');
     const entradaBorde = borde || argumentos.includes('--entrada-borde');
     const probador = argumentos.includes('--probador');
     const tiendas = argumentos.includes('--tiendas') || probador;
@@ -1033,17 +1041,19 @@ export async function gestionarSdl(accion, argumentos) {
     const carpeta = join(
       raiz,
       'trabajo',
-      borde
-        ? 'comprobacion_borde_sdl'
-        : entradaBorde
-          ? 'comprobacion_entrada_borde_sdl'
-          : probador
-            ? 'comprobacion_probador_sdl'
-            : tiendas
-              ? 'comprobacion_tiendas_sdl'
-              : calles
-                ? 'comprobacion_calles_sdl'
-                : 'comprobacion_poblacion_sdl',
+      regresoLoro
+        ? 'comprobacion_regreso_loro_sdl'
+        : borde
+          ? 'comprobacion_borde_sdl'
+          : entradaBorde
+            ? 'comprobacion_entrada_borde_sdl'
+            : probador
+              ? 'comprobacion_probador_sdl'
+              : tiendas
+                ? 'comprobacion_tiendas_sdl'
+                : calles
+                  ? 'comprobacion_calles_sdl'
+                  : 'comprobacion_poblacion_sdl',
     );
     mkdirSync(carpeta, { recursive: true });
     const entrada = join(carpeta, 'orden_entrada.bmp');
@@ -1088,69 +1098,79 @@ export async function gestionarSdl(accion, argumentos) {
         'comparar:loro',
       ]);
     }
-    const capturas = borde
-      ? [
-          ...[
-            'borde_roca_empujada',
-            'borde_roca_saltada',
-            'borde_guantes',
-            'borde_puente',
-            'borde_cuerda',
-            'borde_electrico',
-            'borde_caramelo',
-            'borde_caramelo_puesto',
-            'borde_roca_grande',
-            'borde_cuerda_lanzada',
-            'borde_abismo_saltado',
-            'borde_inscripcion',
-            'borde_puerta_abierta',
-          ].map((nombre) => [nombre, nombre]),
-          ...['loro_cargado', 'loro_entrada', 'loro_regreso'].map((nombre) => [
-            'borde_' + nombre,
-            nombre,
-          ]),
-        ]
-      : entradaBorde
-        ? [['borde', 'borde_cargado']]
-        : probador
-          ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
-          : tiendas
-            ? [
-                'tienda_35',
-                'regreso_tienda_35',
-                'tienda_38',
-                'adivina_saludo',
-                'adivina_respuesta',
-                'regreso_tienda_38',
-                'tienda_39',
-                'regreso_tienda_39',
-              ].map((nombre) => [nombre, nombre])
-            : calles
+    if (regresoLoro)
+      ejecutar(process.execPath, [
+        join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+        'comparar:regreso-loro',
+      ]);
+    const capturas = regresoLoro
+      ? ['regreso_mago', 'regreso_mago_pagado', 'regreso_guardia'].map((nombre) => [
+          'borde_' + nombre,
+          nombre,
+        ])
+      : borde
+        ? [
+            ...[
+              'borde_roca_empujada',
+              'borde_roca_saltada',
+              'borde_guantes',
+              'borde_puente',
+              'borde_cuerda',
+              'borde_electrico',
+              'borde_caramelo',
+              'borde_caramelo_puesto',
+              'borde_roca_grande',
+              'borde_cuerda_lanzada',
+              'borde_abismo_saltado',
+              'borde_inscripcion',
+              'borde_puerta_abierta',
+            ].map((nombre) => [nombre, nombre]),
+            ...['loro_cargado', 'loro_entrada', 'loro_regreso'].map((nombre) => [
+              'borde_' + nombre,
+              nombre,
+            ]),
+          ]
+        : entradaBorde
+          ? [['borde', 'borde_cargado']]
+          : probador
+            ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
+            : tiendas
               ? [
-                  ['calle_29', 'calle_29'],
-                  ['regreso_29', 'regreso_29'],
-                  ['calle_30', 'calle_30'],
-                  ['regreso_30', 'regreso_30'],
-                  ['calle_33', 'calle_33'],
-                  ['regreso_33', 'regreso_33'],
-                  ['calle_41', 'calle_41'],
-                  ['posadero', 'posadero'],
-                  ['regreso_41', 'regreso_41'],
-                ]
-              : [
-                  ['entrada', 'poblacion_entrada'],
-                  ['guardias', 'poblacion_guardias'],
-                  ['frank', 'poblacion_frank'],
-                  ['saludo', 'poblacion_saludo'],
-                  ['comida', 'poblacion_comida'],
-                  ['comer', 'poblacion_comer'],
-                  ['consumida', 'poblacion_consumida'],
-                  ['regreso', 'poblacion_regreso'],
-                  ['fuente', 'poblacion_fuente'],
-                  ['maravillas', 'poblacion_maravillas'],
-                  ['mago', 'poblacion_mago'],
-                  ['transporte', 'poblacion_transporte'],
-                ];
+                  'tienda_35',
+                  'regreso_tienda_35',
+                  'tienda_38',
+                  'adivina_saludo',
+                  'adivina_respuesta',
+                  'regreso_tienda_38',
+                  'tienda_39',
+                  'regreso_tienda_39',
+                ].map((nombre) => [nombre, nombre])
+              : calles
+                ? [
+                    ['calle_29', 'calle_29'],
+                    ['regreso_29', 'regreso_29'],
+                    ['calle_30', 'calle_30'],
+                    ['regreso_30', 'regreso_30'],
+                    ['calle_33', 'calle_33'],
+                    ['regreso_33', 'regreso_33'],
+                    ['calle_41', 'calle_41'],
+                    ['posadero', 'posadero'],
+                    ['regreso_41', 'regreso_41'],
+                  ]
+                : [
+                    ['entrada', 'poblacion_entrada'],
+                    ['guardias', 'poblacion_guardias'],
+                    ['frank', 'poblacion_frank'],
+                    ['saludo', 'poblacion_saludo'],
+                    ['comida', 'poblacion_comida'],
+                    ['comer', 'poblacion_comer'],
+                    ['consumida', 'poblacion_consumida'],
+                    ['regreso', 'poblacion_regreso'],
+                    ['fuente', 'poblacion_fuente'],
+                    ['maravillas', 'poblacion_maravillas'],
+                    ['mago', 'poblacion_mago'],
+                    ['transporte', 'poblacion_transporte'],
+                  ];
     for (const [opcion, nombre] of capturas) {
       const captura = join(carpeta, nombre + '.bmp');
       const registro = ejecutar(
@@ -1168,19 +1188,21 @@ export async function gestionarSdl(accion, argumentos) {
             join(
               raiz,
               'trabajo',
-              borde
-                ? nombre.startsWith('loro_')
-                  ? 'comparacion_loro'
-                  : 'comparacion_acciones_borde'
-                : entradaBorde
-                  ? 'comparacion_recorrido_borde'
-                  : probador
-                    ? 'comparacion_probador'
-                    : tiendas
-                      ? 'comparacion_tiendas'
-                      : calles
-                        ? 'comparacion_calles'
-                        : 'comparacion_poblacion',
+              regresoLoro
+                ? 'comparacion_regreso_loro'
+                : borde
+                  ? nombre.startsWith('loro_')
+                    ? 'comparacion_loro'
+                    : 'comparacion_acciones_borde'
+                  : entradaBorde
+                    ? 'comparacion_recorrido_borde'
+                    : probador
+                      ? 'comparacion_probador'
+                      : tiendas
+                        ? 'comparacion_tiendas'
+                        : calles
+                          ? 'comparacion_calles'
+                          : 'comparacion_poblacion',
               nombre + '_cpp.png',
             ),
           ),
@@ -1216,11 +1238,13 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: capturas.length,
           pixeles_por_captura: 64000,
-          llegada_borde: entradaBorde
-            ? borde
-              ? 'recorrido completo de EDGE, visita al loro y regreso;16 capturas contrastadas'
-              : 'entrada y composición comprobadas; el recorrido se verifica con comprobar:borde'
-            : 'carga y salida comprobadas; no se contrasta la composición en este comando',
+          llegada_borde: regresoLoro
+            ? 'regreso al mago y guardia;3 capturas contrastadas; POST todavía fuera de SDL'
+            : entradaBorde
+              ? borde
+                ? 'recorrido completo de EDGE, visita al loro y regreso;16 capturas contrastadas'
+                : 'entrada y composición comprobadas; el recorrido se verifica con comprobar:borde'
+              : 'carga y salida comprobadas; no se contrasta la composición en este comando',
           vistas_desarrollo: 32,
           cambios_de_vista: 64,
         },
