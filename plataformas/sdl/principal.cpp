@@ -200,6 +200,18 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
          SDL_SetWindowTitle(presentacion.ventana, titulo.c_str());
 }
 
+// Reinicio opcional del monitor: vuelve a Core sin escribir partidas y conserva los ajustes
+// externos.
+bool reiniciar_presentacion(const std::string &carpeta, Presentacion &presentacion,
+                            PartidasSDL &partidas) {
+  for (const auto bit : {1, 2, 4, 8})
+    mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
+  mazmorra.tomar_solicitud_partidas();
+  if (partidas.abierta())
+    partidas.cerrar(presentacion.ventana);
+  return mazmorra.reiniciar_audio() && cambiar_pantalla(carpeta, 0, presentacion);
+}
+
 // Comprueba la decoración contra la imagen real de Frank y captura todos los filtros comunes.
 bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo) {
   Presentacion presentacion;
@@ -394,6 +406,119 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
       captura && restaurado ? SDL_ConvertSurface(captura, SDL_PIXELFORMAT_RGBA32) : nullptr;
   SDL_DestroySurface(captura);
   return rgba;
+}
+
+// Contrasta clics visibles, piloto, apagado, reinicio único y conservación del encuadre.
+bool comprobar_reinicio(const std::string &carpeta, const std::string &prefijo) {
+  Presentacion p;
+  if (!SDL_Init(SDL_INIT_VIDEO) ||
+      !SDL_CreateWindowAndRenderer("Reinicio del monitor", 1280, 720,
+                                   SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE, &p.ventana,
+                                   &p.dibujante))
+    return fallo_monitor("No se ha podido crear la prueba de reinicio");
+  p.textura =
+      SDL_CreateTexture(p.dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
+  if (!p.textura)
+    return false;
+  p.marcos.alternar(1000000000ull);
+  p.marcos.alternar(1300000000ull);
+  PartidasSDL partidas;
+  unsigned int caso = 0;
+  for (const auto &tamano : {std::pair<int, int>{1280, 720}, {3840, 1080}, {720, 1280}}) {
+    const Uint64 inicio = 2000000000ull + caso++ * 2000000000ull;
+    SDL_Event zoom{};
+    zoom.type = SDL_EVENT_KEY_DOWN;
+    zoom.key.mod = SDL_KMOD_CTRL;
+    zoom.key.key = SDLK_0;
+    p.marcos.evento_zoom(zoom);
+    zoom.key.key = SDLK_MINUS;
+    for (int paso = 0; paso < (tamano.first == 720 ? 5 : 3); ++paso)
+      p.marcos.evento_zoom(zoom);
+    if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) || !SDL_SyncWindow(p.ventana) ||
+        !p.marcos.preparar_encuadre(p.dibujante, inicio) || !cambiar_pantalla(carpeta, 3, p))
+      return fallo_monitor("No se ha podido preparar la partida de reinicio");
+    SDL_FRect boton, piloto, antes;
+    int ancho = 0, alto = 0, ventana_ancho = 0, ventana_alto = 0;
+    if (!p.marcos.localizar_controles(p.dibujante, boton, piloto) ||
+        !MarcosPantalla::area_juego(p.dibujante, antes) ||
+        !SDL_GetRenderOutputSize(p.dibujante, &ancho, &alto) ||
+        !SDL_GetWindowSize(p.ventana, &ventana_ancho, &ventana_alto))
+      return false;
+    // La captura comparte el dibujo del juego y de la carcasa, sin tocar los recursos originales.
+    const auto capturar = [&](Uint64 reloj, const char *fase, bool rojo, bool apagado,
+                              bool destello) {
+      const auto destino = p.marcos.destino_juego(reloj);
+      if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
+          (destino.h > 0 && !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino)) ||
+          !p.marcos.dibujar(p.dibujante, "escena_0", reloj))
+        return false;
+      SDL_Surface *imagen_fase = capturar_monitor(p.dibujante);
+      if (!imagen_fase)
+        return false;
+      Uint8 r = 0, g = 0, b = 0, alpha = 0;
+      bool correcto = SDL_ReadSurfacePixel(imagen_fase, int(piloto.x + piloto.w / 2),
+                                           int(piloto.y + piloto.h / 2), &r, &g, &b, &alpha) &&
+                      (rojo ? r > g : g > r);
+      if (apagado || destello) {
+        correcto = correcto && SDL_ReadSurfacePixel(imagen_fase, int(antes.x + antes.w / 2),
+                                                    int(antes.y + antes.h / 2), &r, &g, &b, &alpha);
+        correcto =
+            correcto && (apagado ? r == 0 && g == 0 && b == 0 : r > 150 && g > 150 && b > 150);
+      }
+      const auto ruta = prefijo + "." + std::to_string(tamano.first) + "x" +
+                        std::to_string(tamano.second) + "." + fase + ".png";
+      correcto = correcto && SDL_SavePNG(imagen_fase, ruta.c_str());
+      SDL_DestroySurface(imagen_fase);
+      return correcto;
+    };
+    SDL_Event clic{};
+    clic.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
+    clic.button.windowID = SDL_GetWindowID(p.ventana);
+    clic.button.button = SDL_BUTTON_LEFT;
+    clic.button.x = (antes.x + antes.w / 2) * ventana_ancho / ancho;
+    clic.button.y = (antes.y + antes.h / 2) * ventana_alto / alto;
+    if (p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio) ||
+        !capturar(inicio, "verde", false, false, false))
+      return fallo_monitor("El botón responde fuera de su zona o el piloto inicial no es verde");
+    clic.button.x = (boton.x + boton.w / 2) * ventana_ancho / ancho;
+    clic.button.y = (boton.y + boton.h / 2) * ventana_alto / alto;
+    clic.button.button = SDL_BUTTON_RIGHT;
+    if (p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio))
+      return fallo_monitor("El botón responde al clic derecho");
+    clic.button.button = SDL_BUTTON_LEFT;
+    partidas.abrir(4, p.ventana);
+    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio) || !p.marcos.reiniciando() ||
+        !p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio + 100000000ull) ||
+        !capturar(inicio + 50000000ull, "cierre", true, false, false) ||
+        !capturar(inicio + 180000000ull, "linea", true, false, true) ||
+        !capturar(inicio + 400000000ull, "negro", true, true, false) ||
+        p.marcos.tomar_reinicio(inicio + 699000000ull) ||
+        !p.marcos.tomar_reinicio(inicio + 700000000ull) ||
+        p.marcos.tomar_reinicio(inicio + 900000000ull))
+      return fallo_monitor("No coinciden las fases del apagado o se duplica el reinicio");
+    if (!reiniciar_presentacion(carpeta, p, partidas) || partidas.abierta() ||
+        std::string(SDL_GetWindowTitle(p.ventana)).find("Core") == std::string::npos ||
+        !capturar(inicio + 700000000ull, "reiniciado", false, false, false))
+      return fallo_monitor("El reinicio no vuelve a Core y cierra el panel");
+    SDL_FRect despues;
+    if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != antes.x ||
+        despues.y != antes.y || despues.w != antes.w || despues.h != antes.h)
+      return fallo_monitor("El reinicio modifica el zoom elegido");
+  }
+  Audio prueba_audio;
+  bool sonido = prueba_audio.abrir(carpeta) && prueba_audio.ajustar_volumen(-40) &&
+                prueba_audio.alternar_dispositivo() && prueba_audio.alternar_silencio() &&
+                prueba_audio.alternar_efectos();
+  const auto perfil = prueba_audio.perfil_musical();
+  sonido = sonido && prueba_audio.pausar_reinicio() && prueba_audio.reiniciar() &&
+           prueba_audio.nivel_volumen() == 60 && prueba_audio.perfil_musical() == perfil;
+  prueba_audio.cerrar();
+  if (!sonido)
+    return fallo_monitor("El reinicio no conserva la selección de audio o el volumen");
+  registrar_accion(
+      "Reinicio del monitor: tres formatos, clic izquierdo, piloto rojo/verde, línea CRT, pausa "
+      "negra, una solicitud, vuelta a Core, cierre de panel y preferencias de audio comprobados");
+  return true;
 }
 
 // Revisa los cuatro lados del bisel para detectar rendijas de habitación o restos de color.
@@ -602,6 +727,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-reinicio" && argc == 4)
+    return comprobar_reinicio(argv[1], argv[3]) ? 0
+                                                : fallo("No se ha podido comprobar el reinicio");
   if (opcion == "--comprobar-monitor" && argc == 4)
     return comprobar_monitor(argv[1], argv[3]) ? 0 : fallo("No se ha podido comprobar el monitor");
   if (opcion == "--comprobar-cursor" && argc == 4)
@@ -827,6 +955,14 @@ int main(int argc, char *argv[]) {
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla < 3 || comprobar)))
         salir = true;
+      if (!salir &&
+          presentacion.marcos.evento_boton(presentacion.ventana, presentacion.dibujante, evento)) {
+        if (!mazmorra.pausar_audio_reinicio())
+          return fallo("No se ha podido pausar el sonido durante el apagado");
+        continue;
+      }
+      if (!salir && presentacion.marcos.reiniciando())
+        continue;
       if (!salir && presentacion.marcos.evento_zoom(evento)) {
         if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante))
           return fallo("No se ha podido ajustar el zoom del monitor");
@@ -1043,6 +1179,19 @@ int main(int argc, char *argv[]) {
     }
     if (salir)
       break;
+    if (presentacion.marcos.tomar_reinicio()) {
+      if (!reiniciar_presentacion(carpeta, presentacion, partidas))
+        return fallo("No se ha podido reiniciar la presentación desde Core");
+      pantalla = 0;
+      fundiendo = false;
+      paso_fundido = 0;
+      entrada_introduccion = false;
+      escena_titulada = 0xffff;
+      puntero_x = 152;
+      puntero_y = 92;
+      inicio_fundido = 0;
+      inicio_pantalla = ultimo_paso_escena = siguiente_presentacion = SDL_GetTicksNS();
+    }
     const auto solicitud = mazmorra.tomar_solicitud_partidas();
     if (solicitud)
       abrir_partidas(solicitud);
@@ -1572,13 +1721,13 @@ int main(int argc, char *argv[]) {
     }
     const auto ahora = SDL_GetTicksNS();
     // 0516 carga 2100 esperas de retrazo. La plataforma usa una referencia nominal de 70 Hz.
-    if (!comprobar && pantalla == 0 && !fundiendo &&
+    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 0 && !fundiendo &&
         (ahora - inicio_pantalla) * 70u / 1000000000u >= 2100u) {
       fundiendo = true;
       paso_fundido = 0;
       inicio_fundido = ahora;
     }
-    if (fundiendo) {
+    if (fundiendo && !presentacion.marcos.reiniciando()) {
       const auto paso = (ahora - inicio_fundido) * 70u / 1000000000u;
       if (paso > 32u) {
         ++pantalla;
@@ -1594,7 +1743,7 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido avanzar el fundido original");
       }
     }
-    if (!comprobar && pantalla == 2) {
+    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 2) {
       if (!introduccion.avanzar((ahora - inicio_pantalla) * 70u / 1000000000u, entrada_introduccion,
                                 imagen))
         return fallo("No se ha podido avanzar la introducción original");
@@ -1609,7 +1758,8 @@ int main(int argc, char *argv[]) {
       } else if (!actualizar_textura(presentacion))
         return fallo("No se ha podido dibujar la introducción");
     }
-    if (!comprobar && pantalla >= 3 && mazmorra.en_presentacion()) {
+    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla >= 3 &&
+        mazmorra.en_presentacion()) {
       if (!mazmorra.avanzar_presentacion(ahora * 70u / 1000000000u) || !mazmorra.dibujar(imagen))
         return fallo("No se ha podido avanzar el cambio de habitación o la cámara");
       for (unsigned int i = 0; i < 768; ++i)
@@ -1622,7 +1772,7 @@ int main(int argc, char *argv[]) {
     // plataforma.
     if (partidas.abierta())
       ultimo_paso_escena = ahora;
-    if (!comprobar && !partidas.abierta() && pantalla >= 3 &&
+    if (!comprobar && !presentacion.marcos.reiniciando() && !partidas.abierta() && pantalla >= 3 &&
         ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() ||
           !mazmorra.dibujar(imagen, static_cast<unsigned int>(SDL_GetTicks() / 57u))) {
@@ -1654,12 +1804,13 @@ int main(int argc, char *argv[]) {
     if (!presentacion.marcos.preparar_encuadre(
             presentacion.dibujante, comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido actualizar el encuadre del juego");
-    const SDL_FRect area_imagen{0, 0, 320, 200};
+    const auto area_imagen = presentacion.marcos.destino_juego();
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
-        !SDL_RenderTexture(presentacion.dibujante,
-                           presentacion.filtros.textura_visible(presentacion.textura), nullptr,
-                           &area_imagen)) {
+        (area_imagen.h > 0 &&
+         !SDL_RenderTexture(presentacion.dibujante,
+                            presentacion.filtros.textura_visible(presentacion.textura), nullptr,
+                            &area_imagen))) {
       return fallo("No se ha podido dibujar el título");
     }
     const std::string contexto_marco = opcion == "--comprobar-marcos-mazmorra"   ? "escena_0"
@@ -1673,16 +1824,18 @@ int main(int argc, char *argv[]) {
     if (!presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
                                      comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido dibujar el marco de pantalla");
-    if (pantalla >= 3 && depuracion && !mazmorra.en_presentacion() &&
+    if (!presentacion.marcos.reiniciando() && pantalla >= 3 && depuracion &&
+        !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
     if (!contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
-    if (!partidas.dibujar(presentacion.dibujante, mazmorra))
+    if (!presentacion.marcos.reiniciando() && !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
-    if (!comprobar &&
-        !presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                        pantalla >= 3, partidas.incorpora_cursor()))
+    if (!comprobar && !presentacion.cursor.actualizar(
+                          presentacion.ventana, presentacion.dibujante, mazmorra,
+                          pantalla >= 3 && !presentacion.marcos.reiniciando(),
+                          partidas.incorpora_cursor() && !presentacion.marcos.reiniciando()))
       return fallo("No se ha podido actualizar el cursor original");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.

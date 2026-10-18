@@ -19,14 +19,46 @@ const DefinicionMarco *elegir_marco(const char *pantalla) {
   return nullptr;
 }
 
+// Cambia solo la luz verde del piloto y conserva el bisel, el brillo y la textura de su carcasa.
+SDL_Texture *crear_piloto_rojo(SDL_Renderer *dibujante, SDL_Surface *monitor) {
+  const auto &zona = monitor_pc.piloto;
+  SDL_Surface *luz = SDL_CreateSurface(int(zona.w), int(zona.h), SDL_PIXELFORMAT_RGBA32);
+  if (!luz)
+    return nullptr;
+  bool correcto = true;
+  for (int y = 0; correcto && y < luz->h; ++y)
+    for (int x = 0; correcto && x < luz->w; ++x) {
+      Uint8 r = 0, g = 0, b = 0, alpha = 0;
+      correcto =
+          SDL_ReadSurfacePixel(monitor, int(zona.x) + x, int(zona.y) + y, &r, &g, &b, &alpha);
+      if (g > r + 15 && g > b + 15) {
+        const Uint8 verde = g;
+        g = r / 4;
+        r = verde;
+      }
+      correcto = correcto && SDL_WriteSurfacePixel(luz, x, y, r, g, b, alpha);
+    }
+  SDL_Texture *textura = correcto ? SDL_CreateTextureFromSurface(dibujante, luz) : nullptr;
+  SDL_DestroySurface(luz);
+  if (textura && (!SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_LINEAR) ||
+                  !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND))) {
+    SDL_DestroyTexture(textura);
+    return nullptr;
+  }
+  return textura;
+}
+
 // Carga únicamente una ilustración propia y conserva su transparencia al reducirla.
-SDL_Texture *cargar_textura_propia(SDL_Renderer *dibujante, const char *archivo) {
+SDL_Texture *cargar_textura_propia(SDL_Renderer *dibujante, const char *archivo,
+                                   SDL_Texture **piloto_rojo = nullptr) {
   const char *base = SDL_GetBasePath();
   const std::string ruta = std::string(base ? base : "") + archivo;
   SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
   if (!imagen)
     return nullptr;
   SDL_Texture *textura = SDL_CreateTextureFromSurface(dibujante, imagen);
+  if (textura && piloto_rojo)
+    *piloto_rojo = crear_piloto_rojo(dibujante, imagen);
   SDL_DestroySurface(imagen);
   if (textura && (!SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND) ||
                   !SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_LINEAR))) {
@@ -59,6 +91,21 @@ bool dibujar_exterior(SDL_Renderer *dibujante, SDL_Texture *textura, const SDL_F
     }
   }
   return SDL_SetRenderClipRect(dibujante, recortado ? &recorte : nullptr) && resultado;
+}
+
+// Sitúa la carcasa alrededor de la imagen física, conservando su abertura y proporciones.
+SDL_FRect colocar_monitor(const SDL_FRect &juego) {
+  const float escala = std::max(juego.w / monitor_pc.pantalla.w, juego.h / monitor_pc.pantalla.h);
+  return {juego.x + juego.w / 2 - (monitor_pc.pantalla.x + monitor_pc.pantalla.w / 2) * escala,
+          juego.y + juego.h / 2 - (monitor_pc.pantalla.y + monitor_pc.pantalla.h / 2) * escala,
+          monitor_pc.ancho * escala, monitor_pc.alto * escala};
+}
+
+// Comparte la transformación del PNG entre los controles dibujados y sus zonas de clic.
+SDL_FRect colocar_control(const SDL_FRect &control, const SDL_FRect &monitor) {
+  const float escala = monitor.w / monitor_pc.ancho;
+  return {monitor.x + control.x * escala, monitor.y + control.y * escala, control.w * escala,
+          control.h * escala};
 }
 
 // Conserva el remate interior completo, incluido su relieve transparente sobre el juego.
@@ -150,6 +197,65 @@ bool MarcosPantalla::evento_zoom(const SDL_Event &evento) {
   return false;
 }
 
+// Solo el monitor activo ofrece botón; las posiciones se expresan en píxeles físicos.
+bool MarcosPantalla::localizar_controles(SDL_Renderer *dibujante, SDL_FRect &boton,
+                                         SDL_FRect &piloto) const {
+  if (modo != 2 || !visible)
+    return false;
+  SDL_FRect juego;
+  if (!area_juego(dibujante, juego))
+    return false;
+  const auto monitor = colocar_monitor(juego);
+  boton = colocar_control(monitor_pc.boton, monitor);
+  piloto = colocar_control(monitor_pc.piloto, monitor);
+  return true;
+}
+
+// Una pulsación izquierda inicia un único ciclo; repetirla no prolonga ni duplica el reinicio.
+bool MarcosPantalla::evento_boton(SDL_Window *ventana, SDL_Renderer *dibujante,
+                                  const SDL_Event &evento, Uint64 ahora) {
+  if (evento.type != SDL_EVENT_MOUSE_BUTTON_DOWN || evento.button.button != SDL_BUTTON_LEFT ||
+      (evento.button.windowID && evento.button.windowID != SDL_GetWindowID(ventana)))
+    return false;
+  SDL_FRect boton, piloto;
+  int ancho = 0, alto = 0, ventana_ancho = 0, ventana_alto = 0;
+  if (!localizar_controles(dibujante, boton, piloto) ||
+      !SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
+      !SDL_GetWindowSize(ventana, &ventana_ancho, &ventana_alto) || ventana_ancho <= 0 ||
+      ventana_alto <= 0)
+    return false;
+  const float x = evento.button.x * ancho / ventana_ancho,
+              y = evento.button.y * alto / ventana_alto;
+  if (x < 0 || y < 0 || x >= ancho || y >= alto || x < boton.x || x >= boton.x + boton.w ||
+      y < boton.y || y >= boton.y + boton.h)
+    return false;
+  if (!reinicio_solicitado) {
+    reinicio_solicitado = true;
+    inicio_reinicio = ahora;
+    registrar_accion("Monitor: botón de reinicio; piloto rojo y apagado CRT");
+  }
+  return true;
+}
+
+// Tras setecientos milisegundos vuelve la luz verde y la plataforma puede arrancar desde Core.
+bool MarcosPantalla::tomar_reinicio(Uint64 ahora) {
+  if (!reinicio_solicitado || ahora < inicio_reinicio || ahora - inicio_reinicio < 700000000ull)
+    return false;
+  reinicio_solicitado = false;
+  registrar_accion("Monitor: piloto verde; reiniciar el juego");
+  return true;
+}
+
+// Efecto opcional de plataforma: el dibujo se cierra verticalmente durante los primeros 140 ms.
+SDL_FRect MarcosPantalla::destino_juego(Uint64 ahora) const {
+  if (!reinicio_solicitado)
+    return {0, 0, 320, 200};
+  const float tiempo = float(ahora >= inicio_reinicio ? ahora - inicio_reinicio : 0) / 140000000.0f;
+  const float restante = std::max(0.0f, 1.0f - tiempo);
+  const float alto = 200 * restante * restante;
+  return {0, (200 - alto) / 2, 320, alto};
+}
+
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
 float MarcosPantalla::nivel_animacion(Uint64 ahora) const {
   if (!inicio_animacion)
@@ -166,6 +272,9 @@ void MarcosPantalla::cerrar() {
     SDL_DestroyTexture(textura);
   if (textura_monitor)
     SDL_DestroyTexture(textura_monitor);
+  if (textura_piloto_rojo)
+    SDL_DestroyTexture(textura_piloto_rojo);
+  textura_piloto_rojo = nullptr;
   if (textura_habitacion)
     SDL_DestroyTexture(textura_habitacion);
   textura_habitacion = nullptr;
@@ -213,10 +322,10 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   if (modo == 2 || (monitor_en_salida && !visible)) {
     monitor_presentado = true;
     if (!textura_monitor)
-      textura_monitor = cargar_textura_propia(dibujante, monitor_pc.archivo);
+      textura_monitor = cargar_textura_propia(dibujante, monitor_pc.archivo, &textura_piloto_rojo);
     if (!textura_habitacion)
       textura_habitacion = cargar_textura_propia(dibujante, monitor_pc.fondo);
-    if (!textura_monitor || !textura_habitacion)
+    if (!textura_monitor || !textura_habitacion || !textura_piloto_rojo)
       return false;
     int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
     SDL_RendererLogicalPresentation presentacion;
@@ -233,10 +342,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       return false;
     // La abertura rodea la imagen máxima: la carcasa puede salir de la ventana, el juego nunca.
     const float escala = std::max(juego.w / monitor_pc.pantalla.w, juego.h / monitor_pc.pantalla.h);
-    const SDL_FRect destino{
-        juego.x + juego.w / 2 - (monitor_pc.pantalla.x + monitor_pc.pantalla.w / 2) * escala,
-        juego.y + juego.h / 2 - (monitor_pc.pantalla.y + monitor_pc.pantalla.h / 2) * escala,
-        monitor_pc.ancho * escala, monitor_pc.alto * escala};
+    const auto destino = colocar_monitor(juego);
     const float escala_fondo =
         std::max(float(ancho) / monitor_pc.ancho_fondo, float(alto) / monitor_pc.alto_fondo);
     const SDL_FRect habitacion{(ancho - monitor_pc.ancho_fondo * escala_fondo) / 2, 0,
@@ -250,13 +356,26 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
     const SDL_FRect borde_limpio{abertura.x - bisel, abertura.y - bisel, abertura.w + 2 * bisel,
                                  abertura.h + 2 * bisel};
     const auto opacidad = Uint8(nivel * 255 + 0.5f);
-    const bool dibujado =
+    bool dibujado =
         SDL_SetTextureAlphaMod(textura_monitor, opacidad) &&
         SDL_SetTextureAlphaMod(textura_habitacion, opacidad) &&
         dibujar_exterior(dibujante, textura_habitacion, habitacion, juego, ancho, alto) &&
         SDL_SetRenderDrawColor(dibujante, 0, 0, 0, opacidad) &&
         dibujar_exterior(dibujante, textura_monitor, destino, juego, ancho, alto) &&
         dibujar_exterior(dibujante, nullptr, borde_limpio, juego, ancho, alto);
+    if (dibujado && reinicio_solicitado) {
+      const auto piloto = colocar_control(monitor_pc.piloto, destino);
+      dibujado = SDL_SetTextureAlphaMod(textura_piloto_rojo, opacidad) &&
+                 SDL_RenderTexture(dibujante, textura_piloto_rojo, nullptr, &piloto);
+      const auto transcurrido = ahora >= inicio_reinicio ? ahora - inicio_reinicio : 0;
+      if (dibujado && transcurrido >= 100000000ull && transcurrido < 260000000ull) {
+        const float resto = 1 - float(transcurrido - 100000000ull) / 160000000.0f;
+        const SDL_FRect destello{juego.x + juego.w * (1 - resto * resto) / 2, juego.y + juego.h / 2,
+                                 juego.w * resto * resto, std::max(1.0f, juego.h / 200)};
+        dibujado = SDL_SetRenderDrawColor(dibujante, 225, 245, 255, 255) &&
+                   SDL_RenderFillRect(dibujante, &destello);
+      }
+    }
     const bool restaurado =
         SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion) &&
         SDL_SetRenderScale(dibujante, sx, sy) &&

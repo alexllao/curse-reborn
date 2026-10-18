@@ -125,6 +125,14 @@ public:
   bool abrir_audio(const std::string &carpeta) {
     return audio.abrir(carpeta);
   }
+  // Pausa el sonido durante el apagado opcional del marco de monitor.
+  bool pausar_audio_reinicio() {
+    return audio.pausar_reinicio();
+  }
+  // Reinicia las secuencias sonoras conservando volumen, silencio y dispositivos elegidos.
+  bool reiniciar_audio() {
+    return audio.reiniciar();
+  }
   // Libera el dispositivo antes de cerrar SDL.
   void cerrar_audio() {
     audio.cerrar();

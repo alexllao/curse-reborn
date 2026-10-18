@@ -8,5 +8,7 @@
     "archivo": "habitacion_90.png",
     "resolucion": [2172, 724],
     "descripcion": "Habitación de un joven aficionado a aventuras gráficas: póster ilustrado de Monkey Island, cajas de juegos, disquetes y joystick. Guiños artísticos a títulos de terceros; no son recursos extraídos de sus juegos."
-  }
+  },
+  "boton": [1503, 833, 56, 55],
+  "piloto": [1448, 850, 33, 21]
 }

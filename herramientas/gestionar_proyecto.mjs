@@ -219,6 +219,7 @@ try {
     case 'comprobar:introduccion':
     case 'comprobar:fps':
     case 'comprobar:filtros':
+    case 'comprobar:reinicio':
     case 'comprobar:monitor':
     case 'comprobar:marcos':
     case 'comprobar:decorados':

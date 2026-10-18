@@ -7,7 +7,7 @@
 #include "../../motor/estado/segmento.hpp"
 
 // Abre dos flujos del mismo dispositivo: música autónoma y efectos atendidos por el juego.
-bool Audio::abrir(const std::string &carpeta) {
+bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion) {
   if (flujo)
     return true;
   if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
@@ -35,9 +35,9 @@ bool Audio::abrir(const std::string &carpeta) {
       cargar_efectos(0xffff);
   if (preparada && mt32.iniciar(carpeta, static_cast<const unsigned char *>(archivo),
                                 static_cast<unsigned int>(longitud)))
-    perfil = 3;
+    perfil = conservar_seleccion ? perfil : 3;
   else {
-    perfil = 1;
+    perfil = conservar_seleccion && perfil != 3 ? perfil : 1;
     std::printf(
         "MT-32 no disponible: revisa MT32_CONTROL.ROM y MT32_PCM.ROM en datos_originales/ROMS.\n");
   }
@@ -62,12 +62,26 @@ bool Audio::abrir(const std::string &carpeta) {
     cerrar();
     return false;
   }
-  std::printf("Audio: %s + Sound Blaster digital (efectos). F4 cambia música; F3 cambia efectos; M "
-              "silencia.\n",
-              perfil == 3 ? "MT-32 (música por escena)" : "AdLib OPL2 (tema continuo original)");
+  constexpr const char *nombres[] = {"sin música", "AdLib OPL2", "Sound Blaster 16 OPL3", "MT-32"};
+  std::printf("Audio: %s + %s (efectos). F4 cambia música; F3 cambia efectos; M silencia.\n",
+              nombres[perfil], efectos_digitales ? "Sound Blaster digital" : "PC Speaker");
   std::fflush(stdout);
   registrar_volumen();
   return true;
+}
+
+// La pausa afecta a los dos flujos del dispositivo sin cambiar el ajuste de M ni el volumen.
+bool Audio::pausar_reinicio() {
+  return !dispositivo || SDL_PauseAudioDevice(dispositivo);
+}
+
+// Reabre los sintetizadores para reiniciar sus secuencias y conserva las preferencias de sesión.
+bool Audio::reiniciar() {
+  if (!flujo)
+    return true;
+  const auto carpeta = carpeta_datos;
+  cerrar();
+  return abrir(carpeta, true);
 }
 
 // SDL espera al callback antes de liberar su sintetizador y el dispositivo compartido.

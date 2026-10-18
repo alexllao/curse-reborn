@@ -99,7 +99,8 @@
     "comprobar:poblacion": "node herramientas/gestionar_proyecto.mjs comprobar:poblacion",
     "comparar:asaltante": "node herramientas/gestionar_proyecto.mjs comparar:asaltante",
     "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante",
-    "comprobar:monitor": "node herramientas/gestionar_proyecto.mjs comprobar:monitor"
+    "comprobar:monitor": "node herramientas/gestionar_proyecto.mjs comprobar:monitor",
+    "comprobar:reinicio": "node herramientas/gestionar_proyecto.mjs comprobar:reinicio"
   },
   "repository": {
     "type": "git",

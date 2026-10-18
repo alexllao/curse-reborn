@@ -171,7 +171,22 @@ export function prepararMarcos(raiz, destino) {
   )
     throw new Error('Resolución o formato inesperados en la habitación.');
   copyFileSync(join(origen, fondoMonitor.archivo), join(carpeta, fondoMonitor.archivo));
-  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}},${JSON.stringify(`assets/original/marcos/${fondoMonitor.archivo}`)},${fondoMonitor.resolucion.join(',')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  for (const nombre of ['boton', 'piloto']) {
+    const r = monitor[nombre];
+    if (
+      !Array.isArray(r) ||
+      r.length !== 4 ||
+      !r.every(Number.isInteger) ||
+      r[0] < 0 ||
+      r[1] < 0 ||
+      r[2] <= 0 ||
+      r[3] <= 0 ||
+      r[0] + r[2] > monitor.resolucion[0] ||
+      r[1] + r[3] > monitor.resolucion[1]
+    )
+      throw new Error('Control del monitor inválido: ' + nombre);
+  }
+  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}},${JSON.stringify(`assets/original/marcos/${fondoMonitor.archivo}`)},${fondoMonitor.resolucion.join(',')},{${monitor.boton.join(',')}},{${monitor.piloto.join(',')}}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

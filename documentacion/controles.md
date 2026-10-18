@@ -102,3 +102,9 @@ Los marcos se orientan según las bandas: laterales en ventanas anchas y girados
 Los decorados ampliados pueden solaparse dos píxeles sobre el fondo de la escena para integrar sus bordes, incluido el arco de Frank. Los actores, objetos y menús conservan sus píxeles; al desactivarlos se recupera la imagen original.
 
 La mano original del ratón aparece únicamente dentro de la imagen jugable. Sobre el marco, la habitación o las bandas, y al salir de la ventana, se recupera la flecha normal. Volver al juego restaura la mano a su escala actual, también con zoom. Los paneles DOS ocultan el cursor nativo solo mientras el puntero permanece dentro del juego, para evitar duplicar su mano incorporada.
+
+## Botón del monitor
+
+Con el marco de PC seleccionado, un clic izquierdo en su botón físico reinicia el juego. El piloto pasa a rojo, la imagen se cierra verticalmente en una línea luminosa y permanece negra un instante. A los700 ms vuelve el piloto verde y arranca desde Core, seguido del título y la introducción. Si el botón queda fuera de la ventana, aleja el monitor con Ctrl+rueda o Ctrl+− para verlo.
+
+Durante el apagado se pausan las entradas, el avance del juego y la salida sonora. El reinicio cierra los paneles abiertos y arranca la música desde el principio, conservando volumen, silencio, selección de música y efectos, filtros, marco, zoom y pantalla completa. No escribe ni borra las partidas guardadas. Pulsaciones repetidas durante el apagado producen un único reinicio; el clic derecho y los clics fuera del botón no lo activan. La consola registra el apagado y el nuevo arranque.

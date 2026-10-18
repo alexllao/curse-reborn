@@ -15,6 +15,8 @@ public:
   bool evento(const SDL_Event &evento, SDL_Window *ventana, Mazmorra &partida, bool &redibujar);
   // Presenta las fichas originales o las ranuras en el encuadre lógico del juego.
   bool dibujar(SDL_Renderer *dibujante, const Mazmorra &partida);
+  // Cierra el panel y termina la entrada de texto antes de devolver el control al juego.
+  void cerrar(SDL_Window *ventana);
   // Permite pausar exclusivamente la lógica mientras la música continúa.
   bool abierta() const {
     return modo != 0;
@@ -44,8 +46,7 @@ private:
   // Importa únicamente en ranuras libres, sin modificar el archivo original ni ocupar otras
   // partidas.
   void importar(const char *ruta);
-  // Cierra el panel y termina la entrada de texto antes de devolver el control al juego.
-  void cerrar(SDL_Window *ventana);
+
   // E595–E6F6: interpreta la casilla elegida del teclado original.
   bool pulsar_tecla(SDL_Window *ventana, Mazmorra &partida, bool &redibujar);
 };

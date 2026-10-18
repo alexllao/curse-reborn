@@ -14,7 +14,11 @@ class Audio {
 public:
   // Abre una salida estéreo con efectos mono; SDL convierte al formato y frecuencia del dispositivo
   // real.
-  bool abrir(const std::string &carpeta);
+  bool abrir(const std::string &carpeta, bool conservar_seleccion = false);
+  // Detiene la salida durante el apagado visual sin alterar volumen, silencio ni perfiles.
+  bool pausar_reinicio();
+  // Arranca la música desde el principio conservando las opciones elegidas por el usuario.
+  bool reiniciar();
   // Cierra el flujo antes de SDL_Quit, incluso cuando falla la carga de una escena.
   void cerrar();
   // Asocia una sesión nueva, conserva el dispositivo y limpia efectos de la sesión anterior.
@@ -40,6 +44,10 @@ public:
 
   // Selecciona el banco de la escena bajo el bloqueo del flujo musical, sin vaciar sus muestras.
   bool cambiar_escena(unsigned short escena);
+  // Identifica la selección musical conservada al reiniciar el monitor.
+  unsigned int perfil_musical() const {
+    return perfil;
+  }
   // Cuenta muestras producidas desde el hilo SDL para comprobar continuidad durante cargas.
   unsigned long long muestras_musicales() const {
     return muestras_producidas.load();
