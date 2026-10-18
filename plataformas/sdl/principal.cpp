@@ -301,19 +301,55 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
                                            SDL_TEXTUREACCESS_STATIC, 320, 200);
   if (!presentacion.textura || !cambiar_pantalla(carpeta, 3, presentacion))
     return false;
-  for (const auto &tamano : {std::pair<int, int>{640, 400}, {1280, 720}, {720, 1280}}) {
-    if (!SDL_SetWindowSize(presentacion.ventana, tamano.first, tamano.second) ||
-        !SDL_SyncWindow(presentacion.ventana) ||
-        !presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                        true, false) ||
-        SDL_GetCursor() == SDL_GetDefaultCursor() || !SDL_CursorVisible() ||
-        !presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                        true, true) ||
-        SDL_CursorVisible() ||
-        !presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                        true, false) ||
-        !SDL_CursorVisible())
-      return false;
+  for (int modo = 0; modo < 2; ++modo) {
+    if (modo == 1) {
+      presentacion.marcos.alternar(1000000000ull);
+      presentacion.marcos.alternar(1300000000ull);
+      SDL_Event zoom{};
+      zoom.type = SDL_EVENT_KEY_DOWN;
+      zoom.key.mod = SDL_KMOD_CTRL;
+      zoom.key.key = SDLK_MINUS;
+      for (int paso = 0; paso < 3; ++paso)
+        presentacion.marcos.evento_zoom(zoom);
+    }
+    for (const auto &tamano : {std::pair<int, int>{640, 400}, {1280, 720}, {720, 1280}}) {
+      if (!SDL_SetWindowSize(presentacion.ventana, tamano.first, tamano.second) ||
+          !SDL_SyncWindow(presentacion.ventana) ||
+          !presentacion.marcos.preparar_encuadre(presentacion.dibujante, 1600000000ull))
+        return false;
+      SDL_FPoint centro;
+      if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, 160, 100, &centro.x, &centro.y) ||
+          !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                  mazmorra, true, false, &centro) ||
+          SDL_GetCursor() == SDL_GetDefaultCursor() || !SDL_CursorVisible() ||
+          !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                  mazmorra, true, true, &centro) ||
+          SDL_CursorVisible())
+        return false;
+      for (const SDL_FPoint &fuera : {SDL_FPoint{-1, 100}, {320, 100}, {160, -1}, {160, 200}}) {
+        SDL_FPoint ventana;
+        if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, fuera.x, fuera.y, &ventana.x,
+                                           &ventana.y) ||
+            !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                    mazmorra, true, true, &ventana) ||
+            SDL_GetCursor() != SDL_GetDefaultCursor() || !SDL_CursorVisible())
+          return SDL_SetError(
+              "El cursor del juego aparece fuera de la imagen o sigue oculto al salir del panel");
+      }
+      for (const SDL_FPoint &dentro : {SDL_FPoint{0.25f, 0.25f}, {319.75f, 199.75f}}) {
+        SDL_FPoint ventana;
+        if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, dentro.x, dentro.y, &ventana.x,
+                                           &ventana.y) ||
+            !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                    mazmorra, true, false, &ventana) ||
+            SDL_GetCursor() == SDL_GetDefaultCursor() || !SDL_CursorVisible())
+          return SDL_SetError("No se recupera la mano al volver a la imagen jugable");
+      }
+      if (!presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                  mazmorra, true, true, nullptr) ||
+          SDL_GetCursor() != SDL_GetDefaultCursor() || !SDL_CursorVisible())
+        return SDL_SetError("Salir de la ventana no restaura la flecha normal");
+    }
   }
   std::vector<unsigned char> rgba(16u * 16u * 4u);
   if (!mazmorra.preparar_cursor_rgba(rgba.data()))
@@ -327,8 +363,8 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
                                       false) ||
       SDL_GetCursor() != SDL_GetDefaultCursor())
     return false;
-  registrar_accion(
-      "Cursor original: tres formatos de ventana, relevo de panel y restauración comprobados");
+  registrar_accion("Cursor: tres formatos con y sin zoom; cuatro bordes, salida de ventana, "
+                   "regreso de la mano y relevo del panel comprobados");
   return true;
 }
 
