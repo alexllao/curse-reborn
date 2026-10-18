@@ -88,6 +88,10 @@ public:
   bool menu_abierto() const {
     return menu_visible;
   }
+  // Reserva la banda completa del menú original para no decorar sus píxeles negros.
+  int franja_menu() const {
+    return menu_visible ? (datos[0xb608] || datos[0xb609] ? 168 : 0) : -1;
+  }
   // Devuelve la petición de cargar, guardar o borrar del menú original y la consume una sola vez.
   unsigned int tomar_solicitud_partidas() {
     const auto solicitud = solicitud_partidas;

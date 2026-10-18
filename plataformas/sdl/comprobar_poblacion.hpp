@@ -41,12 +41,73 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
   const auto detener = [&](const char *hito) {
     return opcion == std::string("--comprobar-final-poblacion-") + hito;
   };
+  // Los umbrales del borde permiten clics en todo el ancho, sin exigir cámara adicional.
+  const auto ir = [&](int global, unsigned short y) {
+    for (unsigned int paso = 0; paso < 1500; ++paso) {
+      const int local = global - partida.ventana_actual() * 32;
+      if (local >= 0 && local <= 319) {
+        if (!partida.mover_a(static_cast<unsigned short>(local), y))
+          return false;
+        const auto anterior = partida.escena_actual();
+        for (unsigned int i = 0; i < 192 && partida.escena_actual() == anterior; ++i)
+          if (!avanzar(1))
+            return false;
+        return true;
+      }
+      const unsigned short bit = local < 0 ? 8 : 4;
+      partida.tecla_direccion(bit, true);
+      const bool correcto = avanzar(1);
+      partida.tecla_direccion(bit, false);
+      if (!correcto)
+        return false;
+    }
+    return false;
+  };
+  // Cada captura se detiene en el mismo paso persistente que el comparador del EXE.
+  const auto rama = [&](unsigned short destino,
+                        std::initializer_list<std::pair<int, unsigned short>> puntos,
+                        const char *nombre,
+                        std::initializer_list<std::pair<int, unsigned short>> vuelta,
+                        unsigned short origen) {
+    const auto anterior = partida.escena_actual();
+    for (const auto &p : puntos) {
+      if (!ir(p.first, p.second))
+        return false;
+      if (partida.escena_actual() != anterior)
+        break;
+    }
+    if (partida.escena_actual() == anterior && !ir(puntos.end()[-1].first, puntos.end()[-1].second))
+      return false;
+    if (partida.escena_actual() != destino || !avanzar(128))
+      return false;
+    if (detener(nombre))
+      return true;
+    if (destino == 28) {
+      if (!partida.mover_a(90, 165) || !avanzar(8))
+        return false;
+      if (detener("posadero"))
+        return true;
+      for (unsigned int i = 0; i < 192 && partida.escena_actual() == destino; ++i)
+        if (!avanzar(1))
+          return false;
+      return partida.escena_actual() == origen && avanzar(128);
+    }
+    for (const auto &p : vuelta) {
+      if (!ir(p.first, p.second))
+        return false;
+      if (partida.escena_actual() != destino)
+        break;
+    }
+    return partida.escena_actual() == origen && avanzar(128);
+  };
   if (detener("entrada"))
     return true;
   if (!avanzar(160))
     return false;
   if (detener("guardias"))
     return true;
+  if (detener("calle_41") || detener("regreso_41") || detener("posadero"))
+    return rama(28, {{320, 185}, {192, 175}, {192, 145}}, "calle_41", {{30, 195}, {20, 199}}, 21);
   if (!caminar(320, 185) || !caminar(250, 170) || !caminar(245, 150) ||
       partida.escena_actual() != 29 || !avanzar(128))
     return false;
@@ -79,11 +140,17 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
     return false;
   if (detener("fuente"))
     return true;
+  if (detener("calle_29") || detener("regreso_29"))
+    return rama(19, {{260, 180}, {310, 100}, {319, 70}}, "calle_29", {{160, 195}, {160, 199}}, 17);
+  if (detener("calle_30") || detener("regreso_30"))
+    return rama(20, {{60, 180}, {8, 100}, {0, 70}}, "calle_30", {{470, 185}, {479, 180}}, 17);
   if (!caminar(220, 180) || !caminar(235, 120) || !caminar(225, 70) || !caminar(170, 50) ||
       !caminar(170, 5) || partida.escena_actual() != 18 || !avanzar(128))
     return false;
   if (detener("maravillas"))
     return true;
+  if (detener("calle_33") || detener("regreso_33"))
+    return rama(23, {{275, 180}, {285, 145}, {284, 136}}, "calle_33", {{104, 148}}, 18);
   if (!caminar(115, 170) || !caminar(110, 130) || partida.escena_actual() != 22 || !avanzar(128))
     return false;
   if (detener("mago"))

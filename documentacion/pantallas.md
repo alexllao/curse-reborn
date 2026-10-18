@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las veintidós vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las veintiséis vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -28,10 +28,14 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 20    | 17         | La plaza de la fuente           | XROADS   |
 | 21    | 18         | La calle de las maravillas      | SORCERY  |
 | 22    | 22         | La tienda del mago              | MAGE     |
+| 23    | 19         | La calle de los disfraces       | ROGUE    |
+| 24    | 20         | La calle de la adivina          | GYPSY    |
+| 25    | 23         | La tienda abandonada            | DERELICT |
+| 26    | 28         | La posada Red Dragon            | INNSIDE  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
-Las cinco vistas de la población cubren el trayecto de comida y transporte del mago; sus ramas laterales y las visitas posteriores siguen pendientes. El número de vistas no representa pantallas completadas al 100 %. Véase [alcance de los puzles de la población](puzles_poblacion.md).
+Las nueve vistas de la población cubren el trayecto de comida y transporte del mago, las dos calles de la fuente, la tienda abandonada y la posada con sus regresos. Las tiendas situadas en esas nuevas calles y las visitas posteriores siguen pendientes. El número de vistas no representa pantallas completadas al 100 %. Véanse el [alcance de la población](puzles_poblacion.md) y la [auditoría de rutas](auditoria_pantallas.md).
 
 EDGE (escena 30) se identifica como **El borde del mundo (pendiente)**. Se carga al terminar el transporte y permanece detenido; no se ofrece como vista jugable F5/F6.
 

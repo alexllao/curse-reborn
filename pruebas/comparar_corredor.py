@@ -28,8 +28,12 @@ BANCOS_ESCENA = {
     16: 'COUNTRY2',
     17: 'XROADS',
     18: 'SORCERY',
+    19: 'ROGUE',
+    20: 'GYPSY',
     21: 'DRAGON',
     22: 'MAGE',
+    23: 'DERELICT',
+    28: 'INNSIDE',
     29: 'FRANKS',
     30: 'EDGE',
 }

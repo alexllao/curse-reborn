@@ -33,9 +33,32 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {17, 21, 43, "La plaza de la fuente", "XROADS"},
     {18, 17, 28, "La calle de las maravillas", "SORCERY"},
     {22, 18, 32, "La tienda del mago", "MAGE"},
+    {19, 17, 29, "La calle de los disfraces", "ROGUE"},
+    {20, 17, 30, "La calle de la adivina", "GYPSY"},
+    {23, 18, 33, "La tienda abandonada", "DERELICT"},
+    {28, 21, 41, "La posada Red Dragon", "INNSIDE"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
+
+// Única lista de enlaces habilitados; la auditoría la cruza con BOXDET y la tabla DOS.
+struct SalidaIntegrada {
+  unsigned short escena, salida;
+};
+inline constexpr SalidaIntegrada salidas_integradas[] = {
+    {0, 0},   {1, 1},   {1, 2},   {2, 3},   {3, 4},   {8, 17},  {4, 5},   {4, 6},   {5, 7},
+    {5, 8},   {5, 9},   {6, 10},  {6, 11},  {6, 12},  {6, 13},  {7, 14},  {7, 15},  {7, 16},
+    {9, 18},  {10, 19}, {11, 20}, {12, 21}, {12, 24}, {13, 22}, {14, 23}, {15, 25}, {16, 26},
+    {21, 42}, {21, 43}, {29, 51}, {17, 28}, {17, 31}, {18, 32}, {18, 34}, {22, 44}, {22, 47},
+    {17, 29}, {17, 30}, {18, 33}, {21, 41}, {19, 37}, {20, 40}, {23, 45}, {28, 50}};
+
+// No confunde reconocer una salida original con disponer de su habitación y sus puzles.
+inline bool salida_integrada(unsigned short escena, unsigned short salida) {
+  for (const auto &enlace : salidas_integradas)
+    if (enlace.escena == escena && enlace.salida == salida)
+      return true;
+  return false;
+}
 
 // Comparte los nombres entre navegación, consola y título sin confundir el índice DOS con F5/F6.
 inline const char *nombre_escena(unsigned short escena) {

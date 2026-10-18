@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:19C1",
+      "nombre": "Proximidad de la calle de la adivina",
+      "comentario": "19C1–19DE: fija18F9=60 y18FB=199; salvo postura23, usa2C71+2C75 del segundo actor. Motor/entidades/mazmorra.cpp y comparación persistente de calles."
+    },
+    {
+      "direccion": "0000:541C",
+      "nombre": "Reacción del mostrador de la posada",
+      "comentario": "541C–547F: BOXDET3/id2 prepara96B5/96BC del posadero,1A2E del segundo canal y93A0 de Brad hacia4/190; continúa por5639. Paso_escena.cpp, comparación de ocho pasos y regreso50."
+    },
+    {
       "direccion": "0000:E89D",
       "nombre": "Selector original de partidas",
       "comentario": "E89D–E994: placa negra128×100 en96/50, texto por D87A, ocho filas y cursor relativo B603/B605. Panel_partidas.cpp y23 composiciones originales de64.000 píxeles."
@@ -60,7 +70,7 @@
     {
       "direccion": "0000:54AA",
       "nombre": "Reacción del portero de la posada",
-      "comentario": "54AA–54EA: BOXDET3/id4, postura19 y destino relativo20/50; canales93A4/93AE/93B7 y sonido7. Paso_escena.cpp. La posada y su ruta permanecen pendientes."
+      "comentario": "54AA–54EA: BOXDET3/id4, postura19 y destino relativo20/50; canales93A4/93AE/93B7 y sonido7. Paso_escena.cpp. Entrada41 a INNSIDE y regreso50 integrados y contrastados."
     },
     {
       "direccion": "0000:300B",

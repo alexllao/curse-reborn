@@ -1,5 +1,13 @@
 # Instrucciones de trabajo
 
+## Última ampliación: calles y decorados
+
+El catálogo tiene26 vistas: añadeROGUE19 (salida29/regreso37), GYPSY20 (30/40), DERELICT23 (33/45) e INNSIDE28 (41/50). La posada reproduce541C–547F: al acercarse al mostrador, el guion devuelve automáticamente a Brad al exterior. No inventar una conversación o permanencia que el original no permita. GYPSY usa19C1–19DE. comparar:calles contrasta6.113 casos/pasos,368 selecciones en4 estados y9 composiciones; comprobar:calles verifica9 capturas SDL y52 cambios F5/F6. Las referencias parten de las instantáneas reales de población y comparten solo la permutación gráfica inicial como antes. Las opciones durante la reacción bloqueada del posadero no se cuentan como un estado de menú disponible.
+
+Àlex exige revisar las rutas laterales, no solo la solución principal. pnpm auditar:rutas recorre78 tablas BOXDET y cruza sus umbrales con DS:7482 y la lista única salidas_integradas de vistas.hpp. Quedan expresamente pendientes19→24 por35,20→26 por38,20→27 por39,20→35 por52 y22→31 por72; EDGE30 sigue detenido. No confundir este inventario estático con una auditoría exhaustiva de interacciones, predicados o saltos indirectos. Fuente: documentacion/auditoria_pantallas.md.
+
+Àlex denomina «Decorados ampliados» a las ilustraciones que rellenan el vacío negro dentro del juego. Son assets adicionales de Curse Reborn en assets/original/decorados/, separados de los comerciales. Mayús+F1 los controla, inicialmente desactivados e independientemente de F1; F2 ya controla los FPS. Se componen antes de F11 y reciben todos sus filtros. Mantener intactos escena, menús, entrada, colisiones y estado DOS. Frank tiene fachada1507×1044 con vano transparente; no añadir ventanas: la ventana de la referencia exterior pertenece a la casa vecina. El pozo del cubo tiene ilustración1586×992 y ajuste al contorno por fila. Las dimensiones son las generadas sin ampliación artificial. El montaje completo con captura comercial se conserva solo en trabajo/referencias/marcos/. El catálogo JSON describe asignación y reservas. comprobar:decorados verifica ambas escenas, menús, seis filtros por decorado y restauración al desactivar. En escenas sin ilustración no heredar otra. Estos decorados propios no acreditan fidelidad gráfica al original y permanecen opcionales.
+
 ## Idioma
 
 - Escribir en castellano las respuestas, la documentación, los comentarios del código, los textos propios de las herramientas, los mensajes de los cambios y las descripciones de las solicitudes de integración.

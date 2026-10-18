@@ -26,7 +26,7 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
 ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido) {
   const auto escena = palabra(d, 0x8082);
-  if (escena != 17 && escena != 18 && escena != 21 && escena != 22 && escena != 29)
+  if ((escena < 17 || escena > 23) && escena != 28 && escena != 29)
     return ResultadoMenu::pendiente;
   // 5C8F elige 2C6D en DRAGON, frente a 2C8E en el camino del asaltante.
   if (escena == 21 && manejador == 0x563a && id == 76)

@@ -2,7 +2,7 @@
 
 Se ha reconstruido el trayecto DRAGON → FRANKS → DRAGON → XROADS → SORCERY → MAGE, desde la partida que ganó el dinero al asaltante. Las salidas conservan inventario y estado; las vistas F5/F6 abren sesiones independientes.
 
-Están integrados la entrada y los guardias, el saludo a Frank, dar dinero para obtener comida, comerla, el portal con perspectiva, la fuente y el intercambio con el mago hasta la salida 47. **No equivale a completar toda la ciudad**: posada, calles laterales, otros personajes y regresos de capítulos posteriores necesitan sus recorridos completos y auditorías. No se cuentan como pantallas terminadas solo por cargar sus fondos.
+Están integrados la entrada y los guardias, el saludo a Frank, dar dinero para obtener comida, comerla, el portal con perspectiva, la fuente y el intercambio con el mago hasta la salida 47. La ampliación conecta las dos calles laterales de la fuente, la tienda abandonada de SORCERY y la posada Red Dragon, con regresos y reacción del mostrador. **No equivale a completar toda la ciudad**: las tiendas de las nuevas calles, otros personajes y los capítulos posteriores siguen pendientes. Véase la [auditoría de rutas y pendientes](auditoria_pantallas.md).
 
 ## Fuentes originales
 
@@ -14,7 +14,9 @@ Están integrados la entrada y los guardias, el saludo a Frank, dar dinero para 
 | 419E–41D7             | Comer 84: orientación original, modelo normal y consumo del objeto.                                                            |
 | 43B4–44A8             | Dar dinero 76 al mago 77: tres guiones según progreso, ofertas persistentes y puntuación.                                      |
 | 5482–54A9             | Portal de perspectiva hacia XROADS: conserva el reinicio y los tres canales.                                                   |
-| 54AA–54EA             | Reacción del portero al acercarse a la posada; el interior sigue pendiente.                                                    |
+| 54AA–54EA             | Reacción del portero al acercarse a la posada.                                                                                 |
+| 541C–547F             | Reacción del posadero al acercarse al mostrador y regreso automático al exterior.                                              |
+| 19C1–19DE             | Franja de proximidad de GYPSY según la postura y tamaño del segundo actor.                                                     |
 | 5C8F–5CAC             | Recogida de dinero en DRAGON: entidad distinta de la del asaltante.                                                            |
 
 El intercambio no descuenta dinero del inventario: se conserva el comportamiento observado en el EXE. La respuesta al identificador 81 (420F–430C) también tiene comparación aislada de sus cinco ramas; no implica que esté integrada su ruta futura.
@@ -30,3 +32,5 @@ La ejecución final contrasta **8.855 casos y pasos**, incluidas **1.084 selecci
 La entrada 47 con SMALL.BRD se contrasta con el cargador DOS. SDL carga el borde del mundo y lo deja detenido como **punto de llegada pendiente**: su rutina C093 y sus puzles aún no están trasladados. Su imagen de llegada no forma parte de las doce comparaciones por píxeles. El límite se registra en consola y se puede salir con F5/F6.
 
 Los resultados permanecen en `trabajo/comparacion_poblacion/` y `trabajo/comprobacion_poblacion_sdl/`, fuera de Git. El recorrido propio está en [10_paso_del_dragon.txt](recorridos/10_paso_del_dragon.txt).
+
+`pnpm comparar:calles` contrasta las cuatro ramas nuevas desde los estados reales anteriores: 6.113 casos/pasos, 368 selecciones en cuatro estados disponibles de menú y nueve composiciones. Incluye los ocho enlaces de entrada/regreso, la reacción del posadero antes de su salida automática y la conservación del estado. `pnpm comprobar:calles` comparte la permutación inicial de dibujo con SDL como en la comparación principal, regenera las referencias originales, compara las nueve capturas, verifica la llegada a EDGE y recorre 52 cambios F5/F6 entre 26 vistas. Los resultados quedan en `trabajo/comparacion_calles/` y `trabajo/comprobacion_calles_sdl/`.

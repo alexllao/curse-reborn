@@ -32,6 +32,7 @@
 #include "partidas.hpp"
 #include "comprobar_partidas.hpp"
 #include "marcos.hpp"
+#include "decorados.hpp"
 
 namespace {
 // Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
@@ -67,11 +68,13 @@ struct Presentacion {
   SDL_Texture *textura = nullptr;
   FiltrosPantalla filtros;
   MarcosPantalla marcos;
+  DecoradosAmpliados decorados;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
     mazmorra.cerrar_audio();
     filtros.cerrar();
     marcos.cerrar();
+    decorados.cerrar();
     if (textura)
       SDL_DestroyTexture(textura);
     if (dibujante)
@@ -147,7 +150,7 @@ bool cargar_mazmorra(const std::string &carpeta, unsigned short escena_vista = 0
 }
 
 // Adapta la paleta VGA a RGBA; los filtros opcionales se aplican después de la composición.
-bool actualizar_textura(Presentacion &presentacion) {
+bool actualizar_textura(Presentacion &presentacion, bool con_decorado = false) {
   // Adaptación de color de seis bits a RGBA; no sustituye la lógica original del juego.
   for (unsigned int i = 0; i < 64000; ++i) {
     const auto color = imagen.indices[i] * 3u;
@@ -156,6 +159,14 @@ bool actualizar_textura(Presentacion &presentacion) {
           static_cast<unsigned char>(paleta_visible[color + componente] * 255u / 63u);
     }
     pixeles[i * 4 + 3] = 255;
+  }
+  if (con_decorado) {
+    unsigned int luz = 0;
+    for (const auto componente : paleta_visible)
+      luz = std::max(luz, static_cast<unsigned int>(componente));
+    if (!presentacion.decorados.componer(pixeles, mazmorra.escena_actual(), mazmorra.franja_menu(),
+                                         luz))
+      return false;
   }
   return presentacion.filtros.actualizar(presentacion.textura, pixeles);
 }
@@ -186,6 +197,75 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
          SDL_SetWindowTitle(presentacion.ventana, titulo.c_str());
 }
 
+// Comprueba la decoración contra la imagen real de Frank y captura todos los filtros comunes.
+bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo) {
+  Presentacion presentacion;
+  if (!SDL_Init(SDL_INIT_VIDEO) ||
+      !SDL_CreateWindowAndRenderer("Fachada de Frank", 960, 600, SDL_WINDOW_HIDDEN,
+                                   &presentacion.ventana, &presentacion.dibujante) ||
+      !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
+                                        SDL_LOGICAL_PRESENTATION_LETTERBOX))
+    return false;
+  presentacion.textura = SDL_CreateTexture(presentacion.dibujante, SDL_PIXELFORMAT_RGBA32,
+                                           SDL_TEXTUREACCESS_STATIC, 320, 200);
+  if (!presentacion.textura)
+    return false;
+  for (int vista : {21, 17}) {
+    if (!cambiar_pantalla(carpeta, vista, presentacion))
+      return false;
+    const auto escena = mazmorra.escena_actual();
+    const auto reserva = DecoradosAmpliados::buscar(escena)->reserva;
+    const std::vector<unsigned char> original(pixeles, pixeles + sizeof(pixeles));
+    presentacion.decorados.alternar();
+    for (int menu : {-1, 0, 168}) {
+      auto prueba = original;
+      if (!presentacion.decorados.componer(prueba.data(), escena, menu, 63))
+        return false;
+      unsigned int cambios = 0;
+      for (int y = 0; y < 200; ++y)
+        for (int x = 0; x < 320; ++x) {
+          const auto p = (y * 320 + x) * 4;
+          const bool protegido =
+              (!DecoradosAmpliados::buscar(escena)->ajustar_silueta && x >= reserva.x &&
+               x < reserva.x + reserva.w && y >= reserva.y && y < reserva.y + reserva.h) ||
+              (menu >= 0 && y >= menu && y < menu + 32) || original[p] || original[p + 1] ||
+              original[p + 2];
+          for (int c = 0; c < 4; ++c)
+            if (prueba[p + c] != original[p + c]) {
+              if (protegido)
+                return SDL_SetError("El decorado altera el interior o un menú original");
+              ++cambios;
+            }
+        }
+      if (!cambios)
+        return SDL_SetError("El decorado no rellena el vacío exterior");
+    }
+    for (unsigned int modo = 0; modo < 6; ++modo) {
+      if (!actualizar_textura(presentacion, true) ||
+          !SDL_RenderTexture(presentacion.dibujante,
+                             presentacion.filtros.textura_visible(presentacion.textura), nullptr,
+                             nullptr))
+        return false;
+      SDL_Surface *captura = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
+      const bool guardada =
+          captura && SDL_SavePNG(captura, (prefijo + "." + std::to_string(escena) + "." +
+                                           std::to_string(modo) + ".png")
+                                              .c_str());
+      SDL_DestroySurface(captura);
+      if (!guardada ||
+          !presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
+        return false;
+    }
+    presentacion.decorados.alternar();
+    if (!actualizar_textura(presentacion, true) ||
+        !std::equal(original.begin(), original.end(), pixeles))
+      return SDL_SetError("Desactivar el decorado no recupera la imagen original");
+  }
+  registrar_accion(
+      "Decorados: dos escenas y bandas de menú intactas; seis filtros y restauración comprobados");
+  return true;
+}
+
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
   configurar_consola();
@@ -197,6 +277,10 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-decorados" && argc == 4)
+    return comprobar_decorados(argv[1], argv[3])
+               ? 0
+               : fallo("No coincide la composición de la decorado");
   if (argc == 3 && opcion != "--sin-sonido") {
     std::fprintf(stderr, "La opción de ejecución debe ser --sin-sonido.\n");
     return 1;
@@ -445,7 +529,10 @@ int main(int argc, char *argv[]) {
       }
       if (!salir && evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
         if (evento.key.key == SDLK_F1) {
-          presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
+          if (evento.key.mod & SDL_KMOD_SHIFT)
+            presentacion.decorados.alternar();
+          else
+            presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
           continue;
         }
         if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
@@ -1218,6 +1305,9 @@ int main(int argc, char *argv[]) {
       }
     } else
       escena_titulada = 0xffff;
+    if (pantalla >= 3 && DecoradosAmpliados::buscar(mazmorra.escena_actual()) &&
+        !actualizar_textura(presentacion, true))
+      return fallo("No se ha podido componer el decorado ampliado");
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
         !SDL_RenderTexture(presentacion.dibujante,

@@ -28,6 +28,57 @@ export function prepararMarcos(raiz, destino) {
   const origen = join(raiz, 'assets', 'original', 'marcos');
   const carpeta = join(destino, 'assets', 'original', 'marcos');
   mkdirSync(carpeta, { recursive: true });
+  const origenDecorados = join(raiz, 'assets', 'original', 'decorados');
+  const destinoDecorados = join(destino, 'assets', 'original', 'decorados');
+  mkdirSync(destinoDecorados, { recursive: true });
+  const decorados = JSON.parse(
+    readFileSync(join(origenDecorados, 'catalogo.json'), 'utf8'),
+  ).decorados;
+  const definiciones = [];
+  const escenasDecoradas = new Set();
+  for (const decorado of decorados) {
+    const { escena, archivo, resolucion, reservaOriginal, vanoImagen } = decorado;
+    if (
+      !Number.isInteger(escena) ||
+      escena < 0 ||
+      escena >= 78 ||
+      escenasDecoradas.has(escena) ||
+      !/^[a-z0-9_-]+\.png$/.test(archivo)
+    )
+      throw new Error('Asignación de decorado inválida.');
+    escenasDecoradas.add(escena);
+    const png = readFileSync(join(origenDecorados, archivo));
+    if (
+      png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
+      png.readUInt32BE(16) !== resolucion[0] ||
+      png.readUInt32BE(20) !== resolucion[1]
+    )
+      throw new Error(`Resolución inesperada en ${archivo}.`);
+    for (const [rect, ancho, alto] of [
+      [reservaOriginal, 320, 200],
+      [vanoImagen, ...resolucion],
+    ])
+      if (
+        rect.length !== 4 ||
+        !rect.every(Number.isInteger) ||
+        rect[0] < 0 ||
+        rect[1] < 0 ||
+        rect[2] <= 0 ||
+        rect[3] <= 0 ||
+        rect[0] + rect[2] > ancho ||
+        rect[1] + rect[3] > alto
+      )
+        throw new Error(`Reserva o vano inválido en ${archivo}.`);
+    definiciones.push(
+      `{${escena},${JSON.stringify(`assets/original/decorados/${archivo}`)},{${reservaOriginal.join(',')}},{${vanoImagen.join(',')}},${resolucion.join(',')},${decorado.ajustarSilueta === true}}`,
+    );
+    copyFileSync(join(origenDecorados, archivo), join(destinoDecorados, archivo));
+  }
+  writeFileSync(
+    join(destino, 'catalogo_decorados.hpp'),
+    `// Generado desde assets/original/decorados; no editar.\n#pragma once\ninline constexpr DefinicionDecorado catalogo_decorados[] = {${definiciones.join(',\n')}};\n`,
+  );
+  copyFileSync(join(origenDecorados, 'catalogo.json'), join(destinoDecorados, 'catalogo.json'));
   const catalogo = JSON.parse(readFileSync(join(origen, 'catalogo.json'), 'utf8'));
   const identificadores = [];
   const marcos = [];

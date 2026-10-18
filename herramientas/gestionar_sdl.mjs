@@ -295,7 +295,9 @@ function leerCaptura(archivo, ancho = 320, alto = 200) {
 export async function gestionarSdl(accion, argumentos) {
   const sinSonido =
     accion === 'ventana' && argumentos.length === 1 && argumentos[0] === '--sin-sonido';
-  if (argumentos.length && !sinSonido && accion !== 'exportar:musica')
+  const comprobarCalles =
+    accion === 'comprobar:poblacion' && argumentos.length === 1 && argumentos[0] === '--calles';
+  if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
     if (await preparar()) console.log('Dependencia SDL preparada.');
@@ -600,10 +602,17 @@ export async function gestionarSdl(accion, argumentos) {
       );
     if (accion === 'ventana' || accion === 'comprobar:poblacion')
       necesarios.push(
-        ...['FRANKS', 'XROADS', 'SORCERY', 'MAGE', 'EDGE'].flatMap((banco) => [
-          banco + '.MAP',
-          banco + '.SPR',
-        ]),
+        ...[
+          'FRANKS',
+          'XROADS',
+          'SORCERY',
+          'MAGE',
+          'EDGE',
+          'ROGUE',
+          'GYPSY',
+          'DERELICT',
+          'INNSIDE',
+        ].flatMap((banco) => [banco + '.MAP', banco + '.SPR']),
         'SMALL.BRD',
       );
     const faltantes = necesarios.filter((nombre) => !existsSync(join(datos, nombre)));
@@ -685,6 +694,15 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:decorados') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_decorados');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-decorados', join(carpeta, 'frank')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
     return;
   }
   if (accion === 'comprobar:fps') {
@@ -967,7 +985,12 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:poblacion') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_poblacion_sdl');
+    const calles = argumentos.includes('--calles');
+    const carpeta = join(
+      raiz,
+      'trabajo',
+      calles ? 'comprobacion_calles_sdl' : 'comprobacion_poblacion_sdl',
+    );
     mkdirSync(carpeta, { recursive: true });
     const entrada = join(carpeta, 'orden_entrada.bmp');
     ejecutar(
@@ -981,20 +1004,37 @@ export async function gestionarSdl(accion, argumentos) {
       [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'comparar:poblacion', '--muestra'],
       { ...process.env, CURSE_REBORN_ORDEN_ENTRADA: entrada + '.ds.bin' },
     );
-    const capturas = [
-      ['entrada', 'poblacion_entrada'],
-      ['guardias', 'poblacion_guardias'],
-      ['frank', 'poblacion_frank'],
-      ['saludo', 'poblacion_saludo'],
-      ['comida', 'poblacion_comida'],
-      ['comer', 'poblacion_comer'],
-      ['consumida', 'poblacion_consumida'],
-      ['regreso', 'poblacion_regreso'],
-      ['fuente', 'poblacion_fuente'],
-      ['maravillas', 'poblacion_maravillas'],
-      ['mago', 'poblacion_mago'],
-      ['transporte', 'poblacion_transporte'],
-    ];
+    if (calles)
+      ejecutar(process.execPath, [
+        join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+        'comparar:calles',
+      ]);
+    const capturas = calles
+      ? [
+          ['calle_29', 'calle_29'],
+          ['regreso_29', 'regreso_29'],
+          ['calle_30', 'calle_30'],
+          ['regreso_30', 'regreso_30'],
+          ['calle_33', 'calle_33'],
+          ['regreso_33', 'regreso_33'],
+          ['calle_41', 'calle_41'],
+          ['posadero', 'posadero'],
+          ['regreso_41', 'regreso_41'],
+        ]
+      : [
+          ['entrada', 'poblacion_entrada'],
+          ['guardias', 'poblacion_guardias'],
+          ['frank', 'poblacion_frank'],
+          ['saludo', 'poblacion_saludo'],
+          ['comida', 'poblacion_comida'],
+          ['comer', 'poblacion_comer'],
+          ['consumida', 'poblacion_consumida'],
+          ['regreso', 'poblacion_regreso'],
+          ['fuente', 'poblacion_fuente'],
+          ['maravillas', 'poblacion_maravillas'],
+          ['mago', 'poblacion_mago'],
+          ['transporte', 'poblacion_transporte'],
+        ];
     for (const [opcion, nombre] of capturas) {
       const captura = join(carpeta, nombre + '.bmp');
       const registro = ejecutar(
@@ -1009,7 +1049,12 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_poblacion', nombre + '_cpp.png'),
+            join(
+              raiz,
+              'trabajo',
+              calles ? 'comparacion_calles' : 'comparacion_poblacion',
+              nombre + '_cpp.png',
+            ),
           ),
         )
       )
@@ -1044,15 +1089,15 @@ export async function gestionarSdl(accion, argumentos) {
           capturas: capturas.length,
           pixeles_por_captura: 64000,
           llegada_borde: 'carga y salida comprobadas; imagen y jugabilidad pendientes de contraste',
-          vistas_desarrollo: 22,
-          cambios_de_vista: 44,
+          vistas_desarrollo: 26,
+          cambios_de_vista: 52,
         },
         null,
         2,
       ) + '\n',
     );
     console.log(
-      `Población: doce capturas SDL coincidentes y veintidós vistas F5/F6. Resultados: ${carpeta}`,
+      `Población: ${capturas.length} capturas SDL coincidentes y 26 vistas F5/F6. Resultados: ${carpeta}`,
     );
     return;
   }

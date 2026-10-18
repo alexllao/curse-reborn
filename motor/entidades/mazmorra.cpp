@@ -39,8 +39,17 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
       escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 ||
-      escena == 18 || escena == 21 || escena == 22 || escena == 29)
+      escena == 18 || escena == 19 || escena == 21 || escena == 22 || escena == 23 ||
+      escena == 28 || escena == 29)
     return true;
+  if (escena == 20) {
+    // 19C1–19DE: límite de proximidad de la calle de la adivina según el segundo actor.
+    guardar(datos, 0x18f9, 60);
+    guardar(datos, 0x18fb, 199);
+    if (datos[0x2c6e] != 23)
+      guardar(datos, 0x18fb, static_cast<Palabra>(palabra(datos, 0x2c71) + palabra(datos, 0x2c75)));
+    return true;
+  }
   if (escena == 17) {
     // 19A7–19C0: la fuente delimita la zona próxima mientras su entidad permanece activa.
     if (datos[0x2c6d] == 1) {

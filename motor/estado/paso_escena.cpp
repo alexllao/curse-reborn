@@ -42,6 +42,29 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
     d[0x2c0b] = 0;
     guardar(d, 0x2c1a, 0);
     guardar(d, 0x359c, 2);
+  } else if (colision.valida && colision.acciones == 8 && colision.parametro == 2 &&
+             palabra(d, 0x8082) == 28) {
+    // 541C–547F: reacción del posadero y regreso automático al umbral de entrada.
+    guardar(d, 0x2c5c, 0x96b5);
+    d[0x2c5e] = 0;
+    d[0x2c5f] = 1;
+    d[0x2c60] = 2;
+    guardar(d, 0x2c61, 0x96bc);
+    d[0x2c63] = 0;
+    d[0x2c64] = 1;
+    d[0x2c65] = 2;
+    guardar(d, 0x2c7d, 0x1a2e);
+    d[0x2c7f] = 0;
+    d[0x2c80] = d[0x2c81] = 1;
+    guardar(d, 0x1a38, 4);
+    guardar(d, 0x1a3a, 190);
+    guardar(d, 0x0ad7, 0x93a0);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return {false, 0, 0};
+    d[0x2c0b] = 0;
+    guardar(d, 0x2c1a, 0);
+    guardar(d, 0x359c, 2);
   } else if (colision.valida && colision.acciones == 8 && colision.parametro == 3 &&
              palabra(d, 0x8082) == 21) {
     // 5482–54A9: al cruzar el portal Brad pasa a los tres canales de perspectiva.

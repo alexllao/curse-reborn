@@ -201,36 +201,19 @@ bool Mazmorra::avanzar() {
                                              cargar_modelo};
   const motor::RecursosEntidades entidades{
       this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
+  const auto portero_anterior = datos[0x2c4d];
   const auto resultado =
       motor::avanzar_escena(datos, aleatorio, secuencias, entidades, geometria.data(),
                             static_cast<unsigned int>(geometria.size()), direccion);
   if (!resultado.valida)
     return false;
+  if (escena_actual() == 21 && datos[0x2c4d] == 19 && portero_anterior != 19)
+    registrar_accion("Red Dragon: reacción del portero original al acercarse a la posada");
   registrar_estado();
   if (resultado.acciones) {
     const auto actual = escena_actual();
     if ((resultado.acciones == 2 || resultado.acciones == 16) &&
-        ((actual == 0 && resultado.parametro == 0) ||
-         (actual == 1 && (resultado.parametro == 1 || resultado.parametro == 2)) ||
-         (actual == 2 && resultado.parametro == 3) || (actual == 3 && resultado.parametro == 4) ||
-         (actual == 8 && resultado.parametro == 17) ||
-         (actual == 4 && (resultado.parametro == 5 || resultado.parametro == 6)) ||
-         (actual == 5 && (resultado.parametro >= 7 && resultado.parametro <= 9)) ||
-         (actual == 6 && resultado.parametro >= 10 && resultado.parametro <= 13) ||
-         (actual == 7 && (resultado.parametro >= 14 && resultado.parametro <= 16)) ||
-         (actual == 9 && resultado.parametro == 18) ||
-         (actual == 10 && resultado.parametro == 19) ||
-         (actual == 11 && resultado.parametro == 20) ||
-         (actual == 12 && (resultado.parametro == 21 || resultado.parametro == 24)) ||
-         (actual == 13 && resultado.parametro == 22) ||
-         (actual == 14 && resultado.parametro == 23) ||
-         (actual == 15 && resultado.parametro == 25) ||
-         (actual == 16 && resultado.parametro == 26) ||
-         (actual == 21 && (resultado.parametro == 42 || resultado.parametro == 43)) ||
-         (actual == 29 && resultado.parametro == 51) ||
-         (actual == 17 && (resultado.parametro == 28 || resultado.parametro == 31)) ||
-         (actual == 18 && (resultado.parametro == 32 || resultado.parametro == 34)) ||
-         (actual == 22 && (resultado.parametro == 44 || resultado.parametro == 47)))) {
+        salida_integrada(actual, resultado.parametro)) {
       salida_pendiente = resultado.parametro;
       registrar_accion("Salida %u desde escena %u: comienza el fundido", salida_pendiente, actual);
       animacion = 1;
@@ -246,7 +229,9 @@ bool Mazmorra::avanzar() {
     motor::guardar(datos, 0x0dfa, 0);
     if (!motor::seleccionar_direccion(datos, 0))
       return false;
-    SDL_Log("La salida %u de la escena %u aún no está integrada.", resultado.parametro, actual);
+    registrar_accion("Ruta pendiente: salida %u desde %s (escena %u). La habitación de destino aún "
+                     "no está integrada.",
+                     resultado.parametro, nombre_escena(actual), actual);
   }
   return true;
 }
@@ -500,8 +485,8 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 18 && escena_guardada != 21 && escena_guardada != 22 &&
-      escena_guardada != 29 && escena_guardada != 30)
+  if (escena_guardada > 23 && escena_guardada != 28 && escena_guardada != 29 &&
+      escena_guardada != 30)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;

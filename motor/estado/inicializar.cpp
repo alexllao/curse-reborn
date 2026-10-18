@@ -8,10 +8,10 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                 unsigned short referencia_modelo, unsigned short ancho,
                                 unsigned short alto) {
   constexpr unsigned short origenes[] = {
-      0,      1,      1,  2,      3,      4,  4,      5,      5,  5,      6,      6,      6,
-      6,      7,      7,  7,      8,      9,  10,     11,     12, 13,     14,     12,     15,
-      16,     0xffff, 17, 0xffff, 0xffff, 17, 18,     0xffff, 18, 0xffff, 0xffff, 0xffff, 0xffff,
-      0xffff, 0xffff, 21, 21,     21,     22, 0xffff, 0xffff, 22, 0xffff, 0xffff, 0xffff, 29};
+      0,      1,      1,  2,  3,  4,  4,  5,      5,  5,      6,      6,  6,
+      6,      7,      7,  7,  8,  9,  10, 11,     12, 13,     14,     12, 15,
+      16,     0xffff, 17, 17, 17, 17, 18, 18,     18, 0xffff, 0xffff, 19, 0xffff,
+      0xffff, 20,     21, 21, 21, 22, 23, 0xffff, 22, 0xffff, 0xffff, 28, 29};
   if (salida >= sizeof(origenes) / sizeof(origenes[0]) || origenes[salida] == 0xffff ||
       palabra(d, 0x8082) != origenes[salida])
     return false;
