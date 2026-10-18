@@ -180,6 +180,7 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
       join(raiz, 'plataformas', 'sdl', 'partidas.cpp'),
       join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'tiempo_juego.cpp'),
       join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
@@ -699,6 +700,12 @@ export async function gestionarSdl(accion, argumentos) {
         '\n',
     );
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
+    return;
+  }
+  if (accion === 'comprobar:tiempo') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_tiempo');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-tiempo', carpeta]);
     return;
   }
   if (accion === 'comprobar:reinicio') {

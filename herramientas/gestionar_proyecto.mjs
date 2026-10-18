@@ -222,6 +222,7 @@ try {
     case 'comprobar:menu':
     case 'comprobar:introduccion':
     case 'comprobar:fps':
+    case 'comprobar:tiempo':
     case 'comprobar:filtros':
     case 'comprobar:reinicio':
     case 'comprobar:monitor':

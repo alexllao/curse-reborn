@@ -22,6 +22,8 @@
 #include "registro.hpp"
 #include "filtros.hpp"
 #include "contador_fps.hpp"
+#include "tiempo_juego.hpp"
+#include "comprobar_tiempo.hpp"
 #include "vistas.hpp"
 #include "comprobar_cuevas.hpp"
 #include "comprobar_catapulta.hpp"
@@ -702,6 +704,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-tiempo" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_tiempo_juego(argv[3])
+               ? 0
+               : fallo("No coincide el contador de tiempo");
+  }
   if (opcion == "--comprobar-reinicio" && argc == 4)
     return comprobar_reinicio(argv[1], argv[3]) ? 0
                                                 : fallo("No se ha podido comprobar el reinicio");
@@ -910,6 +918,9 @@ int main(int argc, char *argv[]) {
   }
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   PartidasSDL partidas;
+  TiempoJuego tiempo_juego;
+  if (!comprobar)
+    tiempo_juego.iniciar();
   unsigned short escena_titulada = 0xffff;
   // Libera las flechas antes de pausar para que el personaje no siga caminando al cerrar el panel.
   const auto abrir_partidas = [&](unsigned int modo) {
@@ -1699,6 +1710,12 @@ int main(int argc, char *argv[]) {
       animacion_preparada = true;
     }
     const auto ahora = SDL_GetTicksNS();
+    if (!comprobar)
+      tiempo_juego.actualizar(
+          TiempoJuego::debe_contar(pantalla >= 3 && mazmorra.escena_actual() != 30,
+                                   SDL_GetWindowFlags(presentacion.ventana), partidas.abierta(),
+                                   presentacion.marcos.reiniciando()),
+          ahora);
     // 0516 carga 2100 esperas de retrazo. La plataforma usa una referencia nominal de 70 Hz.
     if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 0 && !fundiendo &&
         (ahora - inicio_pantalla) * 70u / 1000000000u >= 2100u) {
