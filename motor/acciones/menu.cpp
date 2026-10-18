@@ -102,8 +102,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
-  if ((palabra(d, 0x8082) >= 17 && palabra(d, 0x8082) <= 23) || palabra(d, 0x8082) == 28 ||
-      palabra(d, 0x8082) == 29)
+  if (palabra(d, 0x8082) >= 17 && palabra(d, 0x8082) <= 29 && palabra(d, 0x8082) != 25)
     return ejecutar_interaccion_poblacion(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 16)
     return ejecutar_interaccion_asaltante(d, manejador, id, sonido, creacion);
@@ -383,10 +382,12 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
     }
     const auto escena = palabra(d, 0x8082);
-    if ((escena >= 17 && escena <= 23) || escena == 28 || escena == 29) {
-      if (palabra(d, 0xb634) == 6 && previo == 76 && (objeto == 83 || objeto == 81 || objeto == 77))
+    if (escena >= 17 && escena <= 29 && escena != 25) {
+      if (palabra(d, 0xb634) == 6 && previo == 76 &&
+          (objeto == 83 || objeto == 81 || objeto == 77 || objeto == 78))
         return ejecutar_interaccion_inicial(d,
                                             objeto == 83   ? 0x41da
+                                            : objeto == 78 ? 0x44ab
                                             : objeto == 77 ? 0x43b4
                                                            : 0x420f,
                                             objeto, sonido, creacion);

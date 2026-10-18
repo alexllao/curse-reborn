@@ -505,8 +505,7 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 23 && escena_guardada != 28 && escena_guardada != 29 &&
-      escena_guardada != 30)
+  if (escena_guardada > 30 || escena_guardada == 25)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;

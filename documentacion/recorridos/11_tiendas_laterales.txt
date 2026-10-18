@@ -1,0 +1,22 @@
+Ramas laterales de Paso del Dragón
+
+Desde la fuente, ir a la derecha para llegar a la calle de los disfraces.
+Caminar hacia la puerta de la derecha y entrar en la tienda de Benn.
+La presencia y oferta de Benn dependen del progreso: una visita temprana no
+adelanta la aparición del personaje ni resuelve el puzle del vestido.
+Regresar por la puerta de la derecha a la misma calle y volver a la fuente.
+
+Desde la fuente, ir a la izquierda a la calle de la adivina.
+Entrar por la puerta de la izquierda de esta calle. Esperar la entrada de Brad.
+Rodear la mesa por debajo, acercarse a la adivina y probar el saludo.
+Usar Dar, seleccionar el dinero y después a la adivina: se representa su
+respuesta original mediante animaciones, con variantes según el progreso.
+Rodear de nuevo la mesa por debajo y salir por la puerta izquierda del interior.
+
+En la misma calle hay otra puerta más a la derecha que da a una casa abandonada.
+Entrar y regresar por el borde inferior del pequeño interior.
+Aunque su imagen coincide con otra tienda abandonada, son escenas distintas.
+
+Las puertas y regresos conservan el inventario y el progreso de la partida.
+F5/F6 sirve para revisar las vistas y abre una sesión nueva en cada una.
+El probador de Benn y las continuaciones posteriores aún no están integrados.

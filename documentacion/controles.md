@@ -110,3 +110,5 @@ Con el marco de PC seleccionado, el primer clic izquierdo en su botón apaga el 
 Si el botón queda fuera de la ventana, aleja el monitor con Ctrl+rueda o Ctrl+−, también mientras está apagado. Durante el apagado y el arranque se pausan la partida y el sonido, se ocultan los FPS y se mantiene la flecha normal. Pulsar el botón durante el arranque vuelve a apagarlo; los rebotes durante el cierre CRT se ignoran.
 
 Al terminar el arranque se cierran los paneles y comienza de nuevo la música, conservando volumen, silencio, perfil de música y efectos, filtros, marco, zoom y pantalla completa. No escribe ni borra partidas guardadas. El clic derecho y los clics fuera del botón no activan la alimentación. La consola registra apagado, encendido y carga del juego. Se puede cerrar la aplicación mediante su ventana en cualquier momento.
+
+F5/F6 incorpora también Benn, la tienda de la adivina y la segunda casa abandonada: veintinueve vistas. Las puertas35/38/39 y sus regresos46/48/49 conservan la partida; el atajo sigue abriendo una sesión independiente.

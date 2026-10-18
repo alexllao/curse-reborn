@@ -40,7 +40,7 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
       escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 ||
       escena == 18 || escena == 19 || escena == 21 || escena == 22 || escena == 23 ||
-      escena == 28 || escena == 29)
+      escena == 26 || escena == 27 || escena == 28 || escena == 29)
     return true;
   if (escena == 20) {
     // 19C1–19DE: límite de proximidad de la calle de la adivina según el segundo actor.
@@ -94,6 +94,40 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 24) {
+    // 19DF–1A73: proximidad de Benn y quince partículas cuando ya se ha recuperado el ventilador.
+    if (!d[0x2c4c])
+      return true;
+    guardar(d, 0x18f5, palabra(d, 0x2c4e));
+    guardar(d, 0x18f9, static_cast<Palabra>(palabra(d, 0x2c4e) + palabra(d, 0x2c52)));
+    const auto pie = static_cast<Palabra>(palabra(d, 0x2c50) + palabra(d, 0x2c54));
+    guardar(d, 0x18fb, pie);
+    guardar(d, 0x18f7, static_cast<Palabra>(pie - 5));
+    if (!(d[0x35c9] & 4) || palabra(d, 0x2c5c) == 0x1383)
+      return true;
+    if (!palabra(d, 0x2c5c)) {
+      d[0x41ec] = 0;
+      configurar_secuencia(d, 0x2c5c, 0x1383, 5, 2);
+      return true;
+    }
+    if (d[0x2c4c] != 1)
+      return true;
+    for (unsigned int i = 0; i < 15; ++i) {
+      Palabra valor = 0;
+      if (!generar_aleatorio(azar, 24, valor))
+        return false;
+      guardar(d, 0x138d, static_cast<Palabra>(valor + 4 + palabra(d, 0x2c2d)));
+      if (!generar_aleatorio(azar, 47, valor))
+        return false;
+      guardar(d, 0x138f, static_cast<Palabra>(valor + 1 + palabra(d, 0x2c2f)));
+      if (!generar_aleatorio(azar, 4, valor))
+        return false;
+      d[0x138c] = static_cast<unsigned char>(valor + 17);
+      if (!crear_entidad(d, azar, recursos, 0x138a).valido)
+        return false;
+    }
+    return true;
+  }
   if (palabra(d, 0x8082) == 6) {
     // 1905–1962: habilita el efecto de la franja 832–896 y conserva sus cuatro consumos de azar.
     const auto x = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x3591));

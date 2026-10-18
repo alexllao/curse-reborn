@@ -2,7 +2,7 @@
 
 Se ha reconstruido el trayecto DRAGON → FRANKS → DRAGON → XROADS → SORCERY → MAGE, desde la partida que ganó el dinero al asaltante. Las salidas conservan inventario y estado; las vistas F5/F6 abren sesiones independientes.
 
-Están integrados la entrada y los guardias, el saludo a Frank, dar dinero para obtener comida, comerla, el portal con perspectiva, la fuente y el intercambio con el mago hasta la salida 47. La ampliación conecta las dos calles laterales de la fuente, la tienda abandonada de SORCERY y la posada Red Dragon, con regresos y reacción del mostrador. **No equivale a completar toda la ciudad**: las tiendas de las nuevas calles, otros personajes y los capítulos posteriores siguen pendientes. Véase la [auditoría de rutas y pendientes](auditoria_pantallas.md).
+Están integrados la entrada y los guardias, el saludo a Frank, dar dinero para obtener comida, comerla, el portal con perspectiva, la fuente y el intercambio con el mago hasta la salida 47. La ampliación conecta las dos calles laterales de la fuente, la tienda abandonada de SORCERY y la posada Red Dragon, con regresos y reacción del mostrador. **No equivale a completar toda la ciudad**: el probador de Benn, otros destinos y los capítulos posteriores siguen pendientes. Véase la [auditoría de rutas y pendientes](auditoria_pantallas.md).
 
 ## Fuentes originales
 
@@ -34,3 +34,5 @@ La entrada 47 con SMALL.BRD se contrasta con el cargador DOS. SDL carga el borde
 Los resultados permanecen en `trabajo/comparacion_poblacion/` y `trabajo/comprobacion_poblacion_sdl/`, fuera de Git. El recorrido propio está en [10_paso_del_dragon.txt](recorridos/10_paso_del_dragon.txt).
 
 `pnpm comparar:calles` contrasta las cuatro ramas nuevas desde los estados reales anteriores: 6.113 casos/pasos, 368 selecciones en cuatro estados disponibles de menú y nueve composiciones. Incluye los ocho enlaces de entrada/regreso, la reacción del posadero antes de su salida automática y la conservación del estado. `pnpm comprobar:calles` comparte la permutación inicial de dibujo con SDL como en la comparación principal, regenera las referencias originales, compara las nueve capturas, verifica la llegada a EDGE y recorre 52 cambios F5/F6 entre 26 vistas. Los resultados quedan en `trabajo/comparacion_calles/` y `trabajo/comprobacion_calles_sdl/`.
+
+Los interiores laterales continúan en [Benn, la adivina y la casa abandonada](tiendas_poblacion.md), con sus entradas, interacciones y regresos contrastados.

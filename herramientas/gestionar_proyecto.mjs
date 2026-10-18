@@ -164,6 +164,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     asaltante: 'comparar_asaltante.py',
     poblacion: 'comparar_poblacion.py',
     calles: 'comparar_calles.py',
+    tiendas: 'comparar_tiendas.py',
     opciones: 'auditar_opciones.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
@@ -194,6 +195,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:tiendas':
+      await gestionarSdl('comprobar:poblacion', ['--tiendas']);
+      break;
     case 'comprobar:calles':
       await gestionarSdl('comprobar:poblacion', ['--calles']);
       break;
@@ -332,6 +336,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:tiendas':
+      compararAcciones('tiendas', argumentos);
       break;
     case 'comparar:calles':
       compararAcciones('calles', argumentos);

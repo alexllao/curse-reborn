@@ -1,5 +1,39 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "../../motor/estado/partidas.hpp"
+#include <memory>
+#include <cstdio>
+
+// Contrasta guardar y cargar los nuevos índices sin tocar las partidas del usuario.
+inline bool comprobar_partida_tienda(Mazmorra &partida, const std::string &carpeta) {
+  std::vector<unsigned char> archivo(motor::bytes_archivo_partidas, 0);
+  auto imagenes = std::make_unique<motor::ImagenIndexada[]>(2);
+  if (!partida.dibujar(imagenes[0]) ||
+      !partida.guardar_partida(archivo.data(), static_cast<unsigned int>(archivo.size()), 0,
+                               "TIENDA"))
+    return false;
+  auto restaurada = std::make_unique<Mazmorra>();
+  // Los 64 colores comunes proceden de la presentación, igual que al iniciar una sesión real.
+  if (!restaurada->iniciar_vista(carpeta, imagenes[0], 0) ||
+      !restaurada->cargar_partida(archivo.data(), static_cast<unsigned int>(archivo.size()), 0) ||
+      restaurada->escena_actual() != partida.escena_actual() ||
+      restaurada->ventana_actual() != partida.ventana_actual() || !restaurada->dibujar(imagenes[1]))
+    return false;
+  for (unsigned int i = 0; i < 64000; ++i)
+    if (imagenes[0].indices[i] != imagenes[1].indices[i]) {
+      std::fprintf(stderr, "Restauración de escena %u: píxel %u distinto (%u/%u).\n",
+                   partida.escena_actual(), i, imagenes[0].indices[i], imagenes[1].indices[i]);
+      return false;
+    }
+  for (unsigned int i = 0; i < 768; ++i)
+    if (imagenes[0].paleta[i] != imagenes[1].paleta[i]) {
+      std::fprintf(stderr, "Restauración de escena %u: color %u distinto (%u/%u).\n",
+                   partida.escena_actual(), i, imagenes[0].paleta[i], imagenes[1].paleta[i]);
+      return false;
+    }
+  return true;
+}
+
 // Reproduce el trayecto de la guía con clics y selecciones, sin escribir estado de juego.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
 bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion, Avanzar avanzar,
@@ -63,6 +97,39 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
     }
     return false;
   };
+  // Las tiendas se alcanzan desde la calle real y regresan conservando la misma partida.
+  const auto visitar = [&](unsigned short interior, unsigned short salida,
+                           std::initializer_list<std::pair<int, unsigned short>> puntos,
+                           std::initializer_list<std::pair<int, unsigned short>> vuelta,
+                           unsigned short exterior) {
+    for (const auto &p : puntos) {
+      if (!ir(p.first, p.second))
+        return false;
+      if (partida.escena_actual() == interior)
+        break;
+    }
+    if (partida.escena_actual() != interior || !avanzar(128))
+      return false;
+    if (detener(("tienda_" + std::to_string(salida)).c_str()))
+      return true;
+    if (interior == 26) {
+      if (!ir(120, 178) || !ir(200, 178) || !abrir() || !elegir(4) || !elegir(0) || !avanzar(96))
+        return false;
+      if (detener("adivina_saludo"))
+        return true;
+      if (!abrir() || !elegir(2) || !elegir(6) || !objeto(76) || !objeto(81) || !avanzar(192))
+        return false;
+      if (detener("adivina_respuesta"))
+        return true;
+    }
+    for (const auto &p : vuelta) {
+      if (!ir(p.first, p.second))
+        return false;
+      if (partida.escena_actual() == exterior)
+        break;
+    }
+    return partida.escena_actual() == exterior && avanzar(128);
+  };
   // Cada captura se detiene en el mismo paso persistente que el comparador del EXE.
   const auto rama = [&](unsigned short destino,
                         std::initializer_list<std::pair<int, unsigned short>> puntos,
@@ -82,6 +149,14 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
       return false;
     if (detener(nombre))
       return true;
+    if (destino == 19 && (detener("tienda_35") || detener("regreso_tienda_35")))
+      return visitar(24, 35, {{300, 170}, {380, 150}, {380, 120}}, {{200, 155}, {210, 145}}, 19);
+    if (destino == 20 && (detener("tienda_38") || detener("regreso_tienda_38") ||
+                          detener("adivina_saludo") || detener("adivina_respuesta")))
+      return visitar(26, 38, {{420, 170}, {300, 170}, {115, 150}, {108, 127}},
+                     {{120, 170}, {85, 145}}, 20);
+    if (destino == 20 && (detener("tienda_39") || detener("regreso_tienda_39")))
+      return visitar(27, 39, {{420, 170}, {300, 155}, {270, 120}}, {{160, 175}}, 20);
     if (destino == 28) {
       if (!partida.mover_a(90, 165) || !avanzar(8))
         return false;
@@ -140,9 +215,12 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
     return false;
   if (detener("fuente"))
     return true;
-  if (detener("calle_29") || detener("regreso_29"))
+  if (detener("calle_29") || detener("regreso_29") || detener("tienda_35") ||
+      detener("regreso_tienda_35"))
     return rama(19, {{260, 180}, {310, 100}, {319, 70}}, "calle_29", {{160, 195}, {160, 199}}, 17);
-  if (detener("calle_30") || detener("regreso_30"))
+  if (detener("calle_30") || detener("regreso_30") || detener("tienda_38") ||
+      detener("regreso_tienda_38") || detener("tienda_39") || detener("regreso_tienda_39") ||
+      detener("adivina_saludo") || detener("adivina_respuesta"))
     return rama(20, {{60, 180}, {8, 100}, {0, 70}}, "calle_30", {{470, 185}, {479, 180}}, 17);
   if (!caminar(220, 180) || !caminar(235, 120) || !caminar(225, 70) || !caminar(170, 50) ||
       !caminar(170, 5) || partida.escena_actual() != 18 || !avanzar(128))

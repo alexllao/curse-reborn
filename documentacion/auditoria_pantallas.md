@@ -19,13 +19,13 @@ El recorrido contrastado de estas cuatro ramas parte de las instantáneas reales
 
 ## Pendientes localizados desde las vistas disponibles
 
-| Origen     | Salida | Destino DOS   | Trabajo pendiente                                                    |
-| ---------- | ------ | ------------- | -------------------------------------------------------------------- |
-| ROGUE (19) | 35     | BENN (24)     | Tienda de disfraces y sus puzles; entrada condicionada por actor.    |
-| GYPSY (20) | 38     | SALLY (26)    | Interior y respuestas de su personaje.                               |
-| GYPSY (20) | 39     | DERELICT (27) | Otra habitación que reutiliza recurso; no confundirla con escena 23. |
-| GYPSY (20) | 52     | Escena 35     | Continuación posterior; cargador actual limitado hasta salida 51.    |
-| MAGE (22)  | 72     | Escena 31     | Otro destino del mago condicionado por el progreso.                  |
+| Origen     | Salida | Destino DOS   | Trabajo pendiente                                          |
+| ---------- | ------ | ------------- | ---------------------------------------------------------- |
+| BENN (24)  | 36     | Probador (25) | Rutina 1A74–1BA1, vestido y continuación posterior.        |
+| GYPSY (20) | 52     | Escena 35     | Continuación posterior; cargador limitado hasta salida 51. |
+| MAGE (22)  | 72     | Escena 31     | Otro destino del mago condicionado por el progreso.        |
+
+Las rutas 19→24 por35, 20→26 por38 y 20→27 por39 ya están conectadas, con regresos46/48/49. La comparación de tiendas incluye saludo, entrega de dinero a la adivina, fases de oferta de Benn y su rutina de partículas. Se conservan los recursos compartidos entre escenas23/27 con sus estados independientes. Véase [el tramo de tiendas](tiendas_poblacion.md).
 
 EDGE (30) sigue siendo solo el punto de llegada del primer transporte: su rutina C093 y sus puzles no están trasladados. Las escenas fuera del catálogo siguen pendientes de reconstrucción; el informe de 78 tablas permite localizarlas sin contarlas como jugables.
 

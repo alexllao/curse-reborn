@@ -1219,6 +1219,10 @@ int main(int argc, char *argv[]) {
                                                                : cantidad_vistas * 2 - paso_vistas;
       if (mazmorra.escena_actual() != vistas_desarrollo[indice].escena)
         return fallo("F5/F6 no han respetado el orden de las escenas");
+      if ((mazmorra.escena_actual() == 24 || mazmorra.escena_actual() == 26 ||
+           mazmorra.escena_actual() == 27) &&
+          !comprobar_partida_tienda(mazmorra, argv[1]))
+        return fallo("Guardar y cargar altera la imagen o la escena de una tienda");
       if (paso_vistas < cantidad_vistas * 2) {
         SDL_Event tecla{};
         tecla.type = SDL_EVENT_KEY_DOWN;

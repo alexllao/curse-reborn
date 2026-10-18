@@ -26,7 +26,7 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
 ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido) {
   const auto escena = palabra(d, 0x8082);
-  if ((escena < 17 || escena > 23) && escena != 28 && escena != 29)
+  if (escena < 17 || escena > 29 || escena == 25)
     return ResultadoMenu::pendiente;
   // 5C8F elige 2C6D en DRAGON, frente a 2C8E en el camino del asaltante.
   if (escena == 21 && manejador == 0x563a && id == 76)
@@ -39,12 +39,19 @@ ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short ma
       d[0x2ce3] = 1;
       d[0x2ce4] = 40;
     }
-    // 35FB–3617: Frank responde a «Hi» mediante su canal de conversación.
-    if (id == 1 && escena == 29) {
+    // 35DC–3617: Sally y Frank responden a «Hi» mediante su canal de conversación.
+    if (id == 1 && (escena == 26 || escena == 29)) {
       guardar(d, 0x2c7d, 0x1a2f);
       d[0x2c7f] = 0;
       d[0x2c80] = 1;
       d[0x2c81] = 40;
+    }
+    // 35B3–35D9: el saludo de Benn depende de que su entidad siga activa.
+    if (id == 1 && escena == 24 && d[0x2c4c] == 1) {
+      guardar(d, 0x2cbf, 0x1a2f);
+      d[0x2cc1] = 0;
+      d[0x2cc2] = 1;
+      d[0x2cc3] = 40;
     }
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
@@ -70,6 +77,23 @@ ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short ma
     guardar(d, 0x0ad7, 0x96de);
     guardar(d, 0x0adc, 0x96e7);
     actor(d, 0x009c, 0x2c4c, 0x0209, 0x224c);
+    return comenzar(d);
+  }
+  if (manejador == 0x44ab) {
+    // 44AB–44FD: dar dinero a Benn ofrece el vestido solo en la fase tres del objeto.
+    if (d[0x2c6d] != 3) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    d[0x2c6d] |= 4;
+    d[0x41f5] |= 4;
+    guardar(d, 0x41f2, 0x1f9e);
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2c4e) + 16));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2c50) + palabra(d, 0x2c54) + 5));
+    guardar(d, 0x0ad7, 0x96de);
+    guardar(d, 0x0adc, 0x96e7);
+    actor(d, 0x009c, 0x2c4c, 0x0207, 0x1fb0);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
   if (manejador == 0x43b4) {

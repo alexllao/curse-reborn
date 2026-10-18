@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:19DF",
+      "nombre": "Proximidad y partículas de la tienda de Benn",
+      "comentario": "19DF–1A73: entidad2C4C delimita18F5/18F7/18F9/18FB. Bit2 de35C9 prepara1383 o emite15 entidades138A con tres consumos de azar por intento. Motor/entidades/mazmorra.cpp; variantes comparadas con actor0/1/3 y canal0/1383/1A2F."
+    },
+    {
+      "direccion": "0000:35B3",
+      "nombre": "Saludo de Benn",
+      "comentario": "35B3–35D9: escena24 y entidad2C4C=1 preparan el canal2CBF con1A2F, fase0, espera1 e intervalo40; termina en el sonido común37FF. Motor/acciones/poblacion.cpp."
+    },
+    {
+      "direccion": "0000:35DC",
+      "nombre": "Saludo de la adivina",
+      "comentario": "35DC–35F8: escena26 prepara2C7D=1A2F, fase0, espera1 e intervalo40. Comparada la visita desde GYPSY, saludo y pago76 al ID81 con el manejador420F."
+    },
+    {
+      "direccion": "0000:44AB",
+      "nombre": "Oferta de vestido de Benn",
+      "comentario": "44AB–44FD: requiere2C6D=3; conserva bits mediante OR4 en2C6D y41F5, cambia41F2 a1F9E, destino relativo16/(alto+5), guiones96DE/96E7 y1FB0, puntuación+5. Comparadas fases0–4 y puntuación0/65535. El probador25 y el recorrido posterior siguen pendientes."
+    },
+    {
       "direccion": "0000:19C1",
       "nombre": "Proximidad de la calle de la adivina",
       "comentario": "19C1–19DE: fija18F9=60 y18FB=199; salvo postura23, usa2C71+2C75 del segundo actor. Motor/entidades/mazmorra.cpp y comparación persistente de calles."
