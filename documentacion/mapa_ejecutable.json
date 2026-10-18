@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:C093",
+      "nombre": "Rutina aislada del borde del mundo",
+      "comentario": "C093–C4DB traducida a motor/entidades/borde.cpp. Modelo20/frame90, rescateC4DC, pájaro y tablaB036, obstáculos, ADCE/DEF, sonido6, creacionesAF37/B125 y objeto94. comparar:borde:1244 casos, DS completo, azar y20 llamadas a5288. EDGE SDL permanece detenida; no implica puzles ni composición integrados."
+    },
+    {
+      "direccion": "0000:C27A",
+      "nombre": "Temporizador y ráfagas de rocas",
+      "comentario": "ADCE decrece y limita a180; ventana21–40 consulta azar3 y emite sonido6 si0. Valores impares hasta50 generan tres intentos de8B6F, con azar2/260/30/2 antes de cada uno; se preservan también al agotarse registros."
+    },
+    {
+      "direccion": "0000:C378",
+      "nombre": "Recogida del objeto adherido",
+      "comentario": "Tras contactoC32D y canalesB104/B10F, 2C9C=FFFF y2C8E=1 intentan insertar94. El original ignora el acarreo de inventario lleno y continúa con1A2E/B11C/B120/AFEC/AFF2. Variantes de capacidad0/9/10 contrastadas aisladamente."
+    },
+    {
       "direccion": "0000:1A74",
       "nombre": "Rutina del probador de Benn",
       "comentario": "1A74–1BA1: siete creaciones en postura12; modelo19 usa fase CS:1BA2 externa a DS. Fotogramas0/3 fijan0/1;1/2 emiten16/22 partículas según fase. Motor/entidades/mazmorra.cpp; comparar:probador contrasta estado completo, azar y byte CS, también sin registros libres."

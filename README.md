@@ -340,3 +340,5 @@ La población amplía su recorrido con Benn (escena24), la adivina (26) y la seg
 El port contabiliza el **tiempo efectivo de juego del perfil**, excluyendo presentaciones, paneles de partidas/información, segundo plano, minimizado y ordenador virtual apagado. Persiste en `tiempo_juego.json`, separado de las partidas DOS, e informa por consola al iniciar y cerrar. Inventario, decisiones y animaciones de juego cuentan. El total continúa aunque se cargue una partida antigua; todavía no se asigna a una ranura. Véanse [criterios y persistencia](documentacion/tiempo_juego.md). Comprobación: `pnpm comprobar:tiempo`.
 
 El [probador de Benn](documentacion/probador_benn.md) incorpora36/27, rutina1A74 y contratos del vestido79. `pnpm comprobar:probador` contrasta el EXE, las dos capturas SDL y60 cambios F5/F6; la visita temprana no adelanta el progreso del valle.
+
+La [rutina del borde del mundo](documentacion/borde_del_mundo.md) ya tiene contraste aislado: `pnpm comparar:borde` verifica1.244 casos y sus órdenes sonoras. EDGE continúa detenida hasta completar movimiento, composición e interacciones; no se cuenta como vista jugable nueva.

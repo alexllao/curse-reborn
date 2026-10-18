@@ -83,6 +83,7 @@
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
+    "comparar:borde": "node herramientas/gestionar_proyecto.mjs comparar:borde",
     "comparar:probador": "node herramientas/gestionar_proyecto.mjs comparar:probador",
     "comparar:tiendas": "node herramientas/gestionar_proyecto.mjs comparar:tiendas",
     "comparar:calles": "node herramientas/gestionar_proyecto.mjs comparar:calles",

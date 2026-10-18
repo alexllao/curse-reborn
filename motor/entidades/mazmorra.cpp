@@ -91,9 +91,11 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   }
   return false;
 }
-// Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
+// Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 30)
+    return actualizar_borde(d, azar, recursos);
   if (palabra(d, 0x8082) == 25) {
     // 1A74–1ABE: siete intentos de creación, conservando orden y escrituras del descriptor.
     if (d[0x2c4d] == 12) {

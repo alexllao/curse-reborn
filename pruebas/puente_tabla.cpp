@@ -869,6 +869,35 @@ extern "C" EXPORTAR int avanzar_probador(
                           fase, solo_rutina);
 }
 
+// C093 aislada: comparte dimensiones y cuenta las órdenes sonoras sin abrir dispositivos.
+extern "C" EXPORTAR int procesar_borde(unsigned char *datos, unsigned short *palabras,
+                                       bool (*dimensiones)(void *, unsigned short, unsigned short,
+                                                           unsigned short &, unsigned short &),
+                                       unsigned int *sonidos) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  // El banco de escena conserva su referencia DOS en la comparación aislada.
+  const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
+                            unsigned short &alto) {
+    return (*static_cast<decltype(dimensiones) *>(contexto))(nullptr, 0x4000, indice, ancho, alto);
+  };
+  // Registra las peticiones de 5288 con modalidad cero, sin alterar DS ni el azar.
+  const auto sonido = [](void *contexto, unsigned char *d, unsigned short entidad,
+                         unsigned char id) {
+    if (entidad != 0x2c2b || id != 6 || d[0x0ad4] != 0)
+      return false;
+    ++*static_cast<unsigned int *>(contexto);
+    return true;
+  };
+  const motor::RecursosEntidades recursos{
+      &dimensiones, consultar, 0x4000, nullptr, {sonidos, sonido}};
+  const bool valido = motor::actualizar_borde(datos, azar, recursos);
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  return valido ? 1 : 0;
+}
+
 // Expone exclusivamente el estado de cámara y de su tabla; no ejecuta puertos VGA ni DOS.
 extern "C" EXPORTAR int procesar_camara(unsigned int operacion, unsigned char *datos,
                                         int direccion) {

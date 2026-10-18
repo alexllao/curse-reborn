@@ -27,7 +27,7 @@ El recorrido contrastado de estas cuatro ramas parte de las instantáneas reales
 
 Las rutas 19→24 por35, 20→26 por38 y 20→27 por39 ya están conectadas, con regresos46/48/49. La comparación de tiendas incluye saludo, entrega de dinero a la adivina, fases de oferta de Benn y su rutina de partículas. Se conservan los recursos compartidos entre escenas23/27 con sus estados independientes. Véase [el tramo de tiendas](tiendas_poblacion.md).
 
-EDGE (30) sigue siendo solo el punto de llegada del primer transporte: su rutina C093 y sus puzles no están trasladados. Las escenas fuera del catálogo siguen pendientes de reconstrucción; el informe de 78 tablas permite localizarlas sin contarlas como jugables.
+EDGE (30) sigue siendo solo el punto de llegada del primer transporte: su rutina C093 ya está trasladada y contrastada aisladamente, pero composición, movimiento y puzles siguen pendientes. Véase [el alcance de EDGE](borde_del_mundo.md). Las escenas fuera del catálogo siguen pendientes de reconstrucción; el informe de 78 tablas permite localizarlas sin contarlas como jugables.
 
 Las escenas iniciales hasta COUNTRY2 conservan sus recorridos y auditorías anteriores. Esto no demuestra exhaustivamente todos los estados de una partida, retornos de capítulos posteriores, opciones de inventario posibles ni equivalencia completa de cadencia. Los errores de disco DOS, macOS y WebAssembly continúan pendientes de validación. Las mejoras gráficas son opcionales y están separadas de estas garantías del motor.
 
