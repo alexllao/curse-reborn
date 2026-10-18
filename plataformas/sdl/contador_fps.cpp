@@ -1,6 +1,22 @@
 #include "contador_fps.hpp"
 #include "registro.hpp"
 #include <cstdio>
+#include <cstring>
+
+// Recorta las esquinas por filas sin superponer transparencias en el fondo del indicador.
+static bool dibujar_placa_redondeada(SDL_Renderer *dibujante, const SDL_FRect &placa) {
+  constexpr int recortes[] = {3, 1, 1, 0};
+  const int alto = static_cast<int>(placa.h);
+  for (int fila = 0; fila < alto; ++fila) {
+    const int distancia = fila < alto / 2 ? fila : alto - 1 - fila;
+    const float recorte = distancia < 4 ? static_cast<float>(recortes[distancia]) : 0.0f;
+    const SDL_FRect franja{placa.x + recorte, placa.y + static_cast<float>(fila),
+                           placa.w - 2.0f * recorte, 1.0f};
+    if (!SDL_RenderFillRect(dibujante, &franja))
+      return false;
+  }
+  return true;
+}
 
 // F12 no altera el avance del personaje, las animaciones ni la reproducción del audio.
 void ContadorFps::alternar() {
@@ -34,12 +50,17 @@ bool ContadorFps::dibujar(SDL_Renderer *dibujante) {
     return false;
   if (!SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
     return false;
-  const SDL_FRect placa{static_cast<float>(ancho - 88), 8.0f, 80.0f, 18.0f};
-  const bool dibujado = SDL_SetRenderDrawBlendMode(dibujante, SDL_BLENDMODE_BLEND) &&
-                        SDL_SetRenderDrawColor(dibujante, 0, 0, 0, 176) &&
-                        SDL_RenderFillRect(dibujante, &placa) &&
-                        SDL_SetRenderDrawColor(dibujante, 224, 240, 224, 255) &&
-                        SDL_RenderDebugText(dibujante, placa.x + 4, placa.y + 5, texto);
+  const float ancho_texto =
+      static_cast<float>(std::strlen(texto) * SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE);
+  const float ancho_placa = ancho_texto + 12.0f;
+  const SDL_FRect placa{static_cast<float>(ancho) - ancho_placa - 8.0f, 8.0f, ancho_placa, 16.0f};
+  const bool dibujado =
+      SDL_SetRenderDrawBlendMode(dibujante, SDL_BLENDMODE_BLEND) &&
+      SDL_SetRenderDrawColor(dibujante, 0, 0, 0, 176) &&
+      dibujar_placa_redondeada(dibujante, placa) &&
+      SDL_SetRenderDrawColor(dibujante, 224, 240, 224, 255) &&
+      SDL_RenderDebugText(dibujante, placa.x + (placa.w - ancho_texto) / 2.0f,
+                          placa.y + (placa.h - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2.0f, texto);
   const bool encuadre =
       SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
   const bool mezclado = SDL_SetRenderDrawBlendMode(dibujante, mezcla);
