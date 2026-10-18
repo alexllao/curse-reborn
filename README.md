@@ -333,4 +333,4 @@ Los [paneles de partidas](documentacion/partidas.md) conservan ahora el diseño 
 
 El marco opcional de monitor de PC 286 se selecciona con **F1**: predeterminado → monitor → sin marco. Incluye una habitación de época detrás y conserva el mismo tamaño máximo del juego que sin marco. La carcasa puede salir de la ventana cuando no cabe; nunca reduce ni tapa la escena. **Mayús+F1** sigue controlando los decorados ampliados por separado. **Ctrl+rueda** o **Ctrl+−/+** permiten alejar el monitor para ver más habitación; **Ctrl+0** recupera el máximo. Comprobación específica: `pnpm comprobar:monitor`.
 
-El botón del marco de monitor permite reiniciar desde Core con un breve apagado CRT y piloto rojo/verde. Conserva los ajustes de pantalla y sonido y no modifica las partidas guardadas. Comprobación específica: pnpm comprobar:reinicio.
+El botón del monitor apaga el ordenador y lo deja apagado hasta otra pulsación. Al encender reproduce un arranque visual de BIOS 386 y DOS de siete segundos, sin saltarlo, antes de Core. Conserva los ajustes de pantalla y sonido y no modifica las partidas guardadas. Comprobación específica: `pnpm comprobar:reinicio`.

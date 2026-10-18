@@ -25,9 +25,12 @@ function ejecutar(programa, argumentos, variables = process.env, capturar = fals
     encoding: 'utf8',
     windowsHide: ocultar,
     shell: false,
-    timeout: argumentos.some((argumento) => argumento.startsWith('--comprobar'))
-      ? 15000
-      : undefined,
+    // El encendido exporta más fases PNG en tres formatos que las pruebas de una sola vista.
+    timeout: argumentos.includes('--comprobar-reinicio')
+      ? 30000
+      : argumentos.some((argumento) => argumento.startsWith('--comprobar'))
+        ? 15000
+        : undefined,
     windowsVerbatimArguments:
       process.platform === 'win32' && programa.toLowerCase().endsWith('cmd.exe'),
   });

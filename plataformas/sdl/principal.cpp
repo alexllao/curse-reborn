@@ -493,12 +493,30 @@ bool comprobar_reinicio(const std::string &carpeta, const std::string &prefijo) 
         !capturar(inicio + 180000000ull, "linea", true, false, true) ||
         !capturar(inicio + 400000000ull, "negro", true, true, false) ||
         p.marcos.tomar_reinicio(inicio + 699000000ull) ||
-        !p.marcos.tomar_reinicio(inicio + 700000000ull) ||
-        p.marcos.tomar_reinicio(inicio + 900000000ull))
-      return fallo_monitor("No coinciden las fases del apagado o se duplica el reinicio");
+        p.marcos.tomar_reinicio(inicio + 700000000ull) ||
+        p.marcos.tomar_reinicio(inicio + 5000000000ull) || !p.marcos.reiniciando() ||
+        !capturar(inicio + 5000000000ull, "apagado_persistente", true, true, false))
+      return fallo_monitor("No coinciden las fases del apagado o se enciende sin pulsar");
+    const auto primero = inicio + 6000000000ull;
+    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, primero) ||
+        !p.marcos.evento_boton(p.ventana, p.dibujante, clic, primero + 1500000000ull) ||
+        p.marcos.destino_juego(primero + 1510000000ull).h != 0 ||
+        p.marcos.tomar_reinicio(primero + 2300000000ull) ||
+        !capturar(primero + 2300000000ull, "arranque_interrumpido", true, true, false))
+      return fallo_monitor("Apagar durante BIOS deja ver la partida o vuelve a encenderse");
+    const auto encendido = primero + 3000000000ull;
+    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, encendido) ||
+        !capturar(encendido + 1200000000ull, "bios_memoria", false, false, false) ||
+        !capturar(encendido + 2800000000ull, "bios_disco", false, false, false) ||
+        !capturar(encendido + 4600000000ull, "dos", false, false, false) ||
+        !capturar(encendido + 6200000000ull, "carga", false, false, false) ||
+        p.marcos.tomar_reinicio(encendido + 6999000000ull) ||
+        !p.marcos.tomar_reinicio(encendido + 7000000000ull) ||
+        p.marcos.tomar_reinicio(encendido + 8000000000ull) || p.marcos.reiniciando())
+      return fallo_monitor("El arranque no respeta BIOS, DOS y carga completos o se repite");
     if (!reiniciar_presentacion(carpeta, p, partidas) || partidas.abierta() ||
         std::string(SDL_GetWindowTitle(p.ventana)).find("Core") == std::string::npos ||
-        !capturar(inicio + 700000000ull, "reiniciado", false, false, false))
+        !capturar(encendido + 7000000000ull, "reiniciado", false, false, false))
       return fallo_monitor("El reinicio no vuelve a Core y cierra el panel");
     SDL_FRect despues;
     if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != antes.x ||
@@ -961,13 +979,13 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido pausar el sonido durante el apagado");
         continue;
       }
-      if (!salir && presentacion.marcos.reiniciando())
-        continue;
       if (!salir && presentacion.marcos.evento_zoom(evento)) {
         if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante))
           return fallo("No se ha podido ajustar el zoom del monitor");
         continue;
       }
+      if (!salir && presentacion.marcos.reiniciando())
+        continue;
       const auto solicitud = mazmorra.tomar_solicitud_partidas();
       if (solicitud)
         abrir_partidas(solicitud);
@@ -1828,7 +1846,7 @@ int main(int argc, char *argv[]) {
         !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
-    if (!contador_fps.dibujar(presentacion.dibujante))
+    if (!presentacion.marcos.reiniciando() && !contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
     if (!presentacion.marcos.reiniciando() && !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");

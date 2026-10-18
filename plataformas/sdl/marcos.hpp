@@ -41,11 +41,11 @@ public:
                     Uint64 ahora = SDL_GetTicksNS());
   // Expone las posiciones físicas de los controles sin duplicar la geometría en el ratón.
   bool localizar_controles(SDL_Renderer *dibujante, SDL_FRect &boton, SDL_FRect &piloto) const;
-  // Entrega una sola solicitud tras el apagado breve y devuelve el piloto a su estado verde.
+  // Entrega una sola solicitud al terminar la presentación completa de BIOS y DOS.
   bool tomar_reinicio(Uint64 ahora = SDL_GetTicksNS());
-  // Bloquea las entradas del juego y sus paneles mientras el monitor se reinicia.
+  // Detiene el juego durante el apagado, la espera sin corriente y el arranque.
   bool reiniciando() const {
-    return reinicio_solicitado;
+    return alimentacion != Alimentacion::encendido;
   }
   // Cierra la imagen hacia una línea antes del intervalo negro del apagado.
   SDL_FRect destino_juego(Uint64 ahora = SDL_GetTicksNS()) const;
@@ -62,7 +62,11 @@ private:
   // Aplica los límites del zoom elegido explícitamente para el monitor.
   void aplicar_zoom(int cambio);
   int zoom_monitor = 100;
-  bool reinicio_solicitado = false;
+  enum class Alimentacion { encendido, apagando, apagado, arrancando };
+  Alimentacion alimentacion = Alimentacion::encendido;
+  bool imagen_visible_al_apagar = true;
+  // Compone una presentación propia de época; no ejecuta firmware ni un sistema DOS.
+  bool dibujar_arranque(SDL_Renderer *dibujante, const SDL_FRect &juego, Uint64 ahora) const;
   Uint64 inicio_reinicio = 0;
   bool visible = false;
   unsigned int modo = 0;

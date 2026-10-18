@@ -211,7 +211,7 @@ bool MarcosPantalla::localizar_controles(SDL_Renderer *dibujante, SDL_FRect &bot
   return true;
 }
 
-// Una pulsación izquierda inicia un único ciclo; repetirla no prolonga ni duplica el reinicio.
+// El botón apaga o enciende; durante el cierre CRT ignora rebotes de la pulsación.
 bool MarcosPantalla::evento_boton(SDL_Window *ventana, SDL_Renderer *dibujante,
                                   const SDL_Event &evento, Uint64 ahora) {
   if (evento.type != SDL_EVENT_MOUSE_BUTTON_DOWN || evento.button.button != SDL_BUTTON_LEFT ||
@@ -229,31 +229,96 @@ bool MarcosPantalla::evento_boton(SDL_Window *ventana, SDL_Renderer *dibujante,
   if (x < 0 || y < 0 || x >= ancho || y >= alto || x < boton.x || x >= boton.x + boton.w ||
       y < boton.y || y >= boton.y + boton.h)
     return false;
-  if (!reinicio_solicitado) {
-    reinicio_solicitado = true;
+  if (alimentacion == Alimentacion::apagando && ahora >= inicio_reinicio + 700000000ull)
+    alimentacion = Alimentacion::apagado;
+  if (alimentacion == Alimentacion::encendido || alimentacion == Alimentacion::arrancando) {
+    imagen_visible_al_apagar = alimentacion == Alimentacion::encendido;
+    alimentacion = Alimentacion::apagando;
     inicio_reinicio = ahora;
-    registrar_accion("Monitor: botón de reinicio; piloto rojo y apagado CRT");
+    registrar_accion("Monitor: apagado CRT; el ordenador permanece apagado");
+  } else if (alimentacion == Alimentacion::apagado) {
+    alimentacion = Alimentacion::arrancando;
+    inicio_reinicio = ahora;
+    registrar_accion("Monitor: piloto verde; arranque de BIOS 386 y DOS (sin saltar)");
   }
   return true;
 }
 
-// Tras setecientos milisegundos vuelve la luz verde y la plataforma puede arrancar desde Core.
+// El apagado espera otro clic; los siete segundos del arranque se reproducen íntegros.
 bool MarcosPantalla::tomar_reinicio(Uint64 ahora) {
-  if (!reinicio_solicitado || ahora < inicio_reinicio || ahora - inicio_reinicio < 700000000ull)
+  if (ahora < inicio_reinicio)
     return false;
-  reinicio_solicitado = false;
-  registrar_accion("Monitor: piloto verde; reiniciar el juego");
+  if (alimentacion == Alimentacion::apagando && ahora - inicio_reinicio >= 700000000ull)
+    alimentacion = Alimentacion::apagado;
+  if (alimentacion != Alimentacion::arrancando || ahora - inicio_reinicio < 7000000000ull)
+    return false;
+  alimentacion = Alimentacion::encendido;
+  registrar_accion("DOS: CURSE cargado; inicio del juego en Core");
   return true;
 }
 
 // Efecto opcional de plataforma: el dibujo se cierra verticalmente durante los primeros 140 ms.
 SDL_FRect MarcosPantalla::destino_juego(Uint64 ahora) const {
-  if (!reinicio_solicitado)
+  if (alimentacion == Alimentacion::encendido)
     return {0, 0, 320, 200};
+  if (alimentacion != Alimentacion::apagando || !imagen_visible_al_apagar)
+    return {0, 100, 320, 0};
   const float tiempo = float(ahora >= inicio_reinicio ? ahora - inicio_reinicio : 0) / 140000000.0f;
   const float restante = std::max(0.0f, 1.0f - tiempo);
   const float alto = 200 * restante * restante;
   return {0, (200 - alto) / 2, 320, alto};
+}
+
+// Recrea el encendido de un 386 con texto de ochenta columnas y tiempos independientes de FPS.
+bool MarcosPantalla::dibujar_arranque(SDL_Renderer *dibujante, const SDL_FRect &juego,
+                                      Uint64 ahora) const {
+  const auto tiempo = (ahora >= inicio_reinicio ? ahora - inicio_reinicio : 0) / 1000000ull;
+  if (!SDL_SetRenderDrawColor(dibujante, 0, 0, 0, 255) || !SDL_RenderFillRect(dibujante, &juego))
+    return false;
+  // La fuente SDL de ocho píxeles se estira a 8x16, como el texto VGA de ochenta columnas.
+  const float sx = juego.w / 640, sy = juego.h / 200;
+  if (!SDL_SetRenderScale(dibujante, sx, sy))
+    return false;
+  const float x = juego.x / sx, y = juego.y / sy;
+  // Cada línea aparece completa en su instante; ninguna tecla adelanta esta presentación.
+  const auto linea = [&](float fila, const char *texto) {
+    return SDL_RenderDebugText(dibujante, x + 8, y + fila * 8, texto);
+  };
+  bool bien = SDL_SetRenderDrawColor(dibujante, 192, 192, 192, 255);
+  if (tiempo < 3200) {
+    bien = bien && linea(1, "AMI   American Megatrends") &&
+           linea(3, "Curse Reborn - 80386 DX / 33 MHz") &&
+           linea(4, "Adaptador VGA detectado - 256 KB");
+    if (tiempo >= 400) {
+      const auto memoria = std::min<Uint64>(4096, (tiempo - 400) * 4096 / 1800);
+      bien = bien &&
+             SDL_RenderDebugTextFormat(dibujante, x + 8, y + 56, "Comprobando memoria: %4u KB%s",
+                                       unsigned(memoria), memoria == 4096 ? " OK" : "");
+    }
+    if (tiempo >= 2300)
+      bien = bien && linea(10, "Teclado ...................... OK") &&
+             linea(11, "Unidad A: 1.44 MB ............. OK") &&
+             linea(12, "Disco duro C: ................ OK");
+    if (tiempo >= 2800)
+      bien = bien && linea(16, "Iniciando desde el disco duro...");
+  } else {
+    bien = bien && linea(1, "Iniciando MS-DOS...");
+    if (tiempo >= 3700)
+      bien = bien && linea(4, "HIMEM: comprobacion de memoria extendida finalizada.");
+    if (tiempo >= 4100)
+      bien = bien && linea(6, "C:\\>SET BLASTER=A220 I5 D1 H5 T6");
+    if (tiempo >= 4500)
+      bien = bien && linea(8, "C:\\>CD CURSE");
+    if (tiempo >= 5000)
+      bien = bien && linea(10, "C:\\CURSE>CURSE");
+    if (tiempo >= 5500)
+      bien = bien && linea(13, "Cargando Curse of Enchantia...");
+    if (tiempo >= 6100)
+      bien = bien && linea(15, "Preparando graficos y datos del juego...");
+    if ((tiempo / 350) % 2 == 0)
+      bien = bien && linea(18, "_");
+  }
+  return SDL_SetRenderScale(dibujante, 1, 1) && bien;
 }
 
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
@@ -363,7 +428,8 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
         SDL_SetRenderDrawColor(dibujante, 0, 0, 0, opacidad) &&
         dibujar_exterior(dibujante, textura_monitor, destino, juego, ancho, alto) &&
         dibujar_exterior(dibujante, nullptr, borde_limpio, juego, ancho, alto);
-    if (dibujado && reinicio_solicitado) {
+    if (dibujado &&
+        (alimentacion == Alimentacion::apagando || alimentacion == Alimentacion::apagado)) {
       const auto piloto = colocar_control(monitor_pc.piloto, destino);
       dibujado = SDL_SetTextureAlphaMod(textura_piloto_rojo, opacidad) &&
                  SDL_RenderTexture(dibujante, textura_piloto_rojo, nullptr, &piloto);
@@ -376,6 +442,8 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                    SDL_RenderFillRect(dibujante, &destello);
       }
     }
+    if (dibujado && alimentacion == Alimentacion::arrancando)
+      dibujado = dibujar_arranque(dibujante, juego, ahora);
     const bool restaurado =
         SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion) &&
         SDL_SetRenderScale(dibujante, sx, sy) &&
