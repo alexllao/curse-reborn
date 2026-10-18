@@ -80,6 +80,7 @@
     "comprobar:cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:cuevas",
     "comprobar:marcos": "node herramientas/gestionar_proyecto.mjs comprobar:marcos",
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
+    "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
     "comparar:calles": "node herramientas/gestionar_proyecto.mjs comparar:calles",
     "comprobar:calles": "node herramientas/gestionar_proyecto.mjs comprobar:calles",
@@ -97,7 +98,8 @@
     "comparar:poblacion": "node herramientas/gestionar_proyecto.mjs comparar:poblacion",
     "comprobar:poblacion": "node herramientas/gestionar_proyecto.mjs comprobar:poblacion",
     "comparar:asaltante": "node herramientas/gestionar_proyecto.mjs comparar:asaltante",
-    "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante"
+    "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante",
+    "comprobar:monitor": "node herramientas/gestionar_proyecto.mjs comprobar:monitor"
   },
   "repository": {
     "type": "git",

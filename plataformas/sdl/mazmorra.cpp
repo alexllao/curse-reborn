@@ -298,6 +298,26 @@ bool Mazmorra::dibujar_panel_partidas(unsigned int modo, const std::vector<unsig
                         datos[0x2c0b], raton.size(), cursor_x, cursor_y);
   return true;
 }
+// MOUSE.SPR conserva la misma mano que el selector DOS; dos fondos distinguen el negro opaco.
+bool Mazmorra::preparar_cursor_rgba(unsigned char *rgba) const {
+  std::vector<unsigned char> oscuro(64000, 0), claro(64000, 255);
+  if (!rgba ||
+      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()), 0,
+                                oscuro.data(), 0, 0, false) ||
+      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()), 0,
+                                claro.data(), 0, 0, false))
+    return false;
+  for (unsigned int y = 0; y < 16; ++y)
+    for (unsigned int x = 0; x < 16; ++x) {
+      const auto p = y * 320 + x;
+      auto *color = rgba + (y * 16 + x) * 4;
+      for (unsigned int c = 0; c < 3; ++c)
+        color[c] = static_cast<unsigned char>(fondo.paleta[oscuro[p] * 3u + c] * 255u / 63u);
+      color[3] = oscuro[p] == claro[p] ? 255 : 0;
+    }
+  return true;
+}
+
 // BA70 contiene siete teclas por fila, separadas por un espacio y con tres acciones especiales.
 unsigned char Mazmorra::tecla_nombre_partida(unsigned int x, unsigned int y) const {
   return x >= 8 && x <= 111 && y >= 15 && y <= 74 ? datos[0xba70 + ((y - 15) / 10) * 15 + x / 8]

@@ -19,6 +19,10 @@ public:
   bool abierta() const {
     return modo != 0;
   }
+  // Las ocho ranuras y el teclado ya dibujan el cursor DOS dentro de su imagen.
+  bool incorpora_cursor() const {
+    return modo >= 1 && modo <= 3;
+  }
 
 private:
   unsigned int modo = 0, seleccion = 0;

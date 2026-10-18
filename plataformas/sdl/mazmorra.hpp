@@ -96,6 +96,8 @@ public:
   const unsigned char *indices_fondo() const {
     return fondo.indices;
   }
+  // Decodifica la mano original de MOUSE.SPR en RGBA de16×16, conservando su transparencia.
+  bool preparar_cursor_rgba(unsigned char *rgba) const;
   // Devuelve la petición de cargar, guardar o borrar del menú original y la consume una sola vez.
   unsigned int tomar_solicitud_partidas() {
     const auto solicitud = solicitud_partidas;

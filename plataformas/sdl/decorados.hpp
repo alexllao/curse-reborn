@@ -8,9 +8,8 @@
 struct DefinicionDecorado {
   unsigned short escena;
   const char *archivo;
-  SDL_Rect reserva, vano;
+  SDL_Rect reserva;
   int ancho, alto;
-  bool ajustar_silueta;
   bool muestreo_area;
   int solape;
 };
@@ -68,44 +67,22 @@ public:
     for (int y = 0; y < 200; ++y) {
       if (menu_y >= 0 && y >= menu_y && y < menu_y + 32)
         continue;
-      int izquierda = reserva.x, derecha = reserva.x + reserva.w;
-      if (actual->ajustar_silueta) {
-        int primera = derecha, ultima = izquierda - 1;
-        for (int x = izquierda; x < derecha; ++x) {
-          if (fondo[y * 320 + x]) {
-            primera = std::min(primera, x);
-            ultima = x;
-          }
-        }
-        if (primera <= ultima) {
-          izquierda = primera;
-          derecha = ultima + 1;
-        }
-      }
-      // Solo la pared estática admite el solape; los actores y objetos conservan todos sus píxeles.
-      const int solape = std::min(actual->solape, (derecha - izquierda - 1) / 2);
-      izquierda += solape;
-      derecha -= solape;
-      const int sy = std::min(
-          proyectar(y, reserva.y, reserva.h, 200, actual->vano.y, actual->vano.h, imagen->h),
-          imagen->h - 1);
+      const int sy = y * imagen->h / 200;
       for (int x = 0; x < 320; ++x) {
-        if (x >= izquierda && x < derecha && y >= reserva.y && y < reserva.y + reserva.h)
-          continue;
-        auto *destino = rgba + (y * 320 + x) * 4;
         if (indices[y * 320 + x] != fondo[y * 320 + x])
           continue;
-        const int sx = std::min(proyectar(x, izquierda, derecha - izquierda, 320, actual->vano.x,
-                                          actual->vano.w, imagen->w),
-                                imagen->w - 1);
+        bool interior = y >= reserva.y && y < reserva.y + reserva.h && x >= actual->solape &&
+                        x < 320 - actual->solape;
+        for (int vecino = -actual->solape; interior && vecino <= actual->solape; ++vecino)
+          interior = fondo[y * 320 + x + vecino] != 0;
+        if (interior)
+          continue;
+        auto *destino = rgba + (y * 320 + x) * 4;
+        const int sx = x * imagen->w / 320;
         unsigned int color[4]{};
         if (actual->muestreo_area) {
-          const int fin_x = std::clamp(proyectar(x + 1, izquierda, derecha - izquierda, 320,
-                                                 actual->vano.x, actual->vano.w, imagen->w),
-                                       sx + 1, imagen->w);
-          const int fin_y = std::clamp(proyectar(y + 1, reserva.y, reserva.h, 200, actual->vano.y,
-                                                 actual->vano.h, imagen->h),
-                                       sy + 1, imagen->h);
+          const int fin_x = std::max(sx + 1, (x + 1) * imagen->w / 320);
+          const int fin_y = std::max(sy + 1, (y + 1) * imagen->h / 200);
           reducir_area(sx, sy, fin_x, fin_y, color);
         } else {
           const auto *muestra = fuente + sy * imagen->pitch + sx * 4;
@@ -149,16 +126,6 @@ private:
                   integral[static_cast<size_t>(abajo) * paso + x * 4u + c] +
                   integral[static_cast<size_t>(y) * paso + x * 4u + c]) /
                  superficie;
-  }
-  // Alinea por separado cada lado y el vano sin estrechar ni desplazar la escena DOS.
-  static int proyectar(int p, int inicio, int largo, int total, int vano, int hueco, int salida) {
-    if (p >= total)
-      return salida;
-    if (p < inicio)
-      return p * vano / inicio;
-    if (p < inicio + largo)
-      return vano + (p - inicio) * hueco / largo;
-    return vano + hueco + (p - inicio - largo) * (salida - vano - hueco) / (total - inicio - largo);
   }
   bool visible = false;
   SDL_Surface *imagen = nullptr;

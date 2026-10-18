@@ -93,3 +93,11 @@ Guardar selecciona ranura y abre el teclado; Intro guarda, ratón/Insertar pulsa
 Los marcos aportados son paneles laterales. En ventanas altas, Àlex autoriza girarlos90° para colocarlos arriba/abajo, con el remate hacia el juego; no reutilizarlos verticales y estirados. Conservar transparencia, relieve completo, zoom y fundido F1. El título de la ventana debe incluir número de vista y nombre («1: La mazmorra»), también al cambiar de escena normalmente o cargar; no alterar los índices DOS de guardado.
 
 Àlex pide cerrar los huecos del arco de Frank y permitir unos pocos píxeles de superposición. Ambos decorados siguen la silueta del fondo original; solape2 limitado en filas estrechas, solo sobre fondo estático y nunca sobre actores, objetos o bandas de menú. El pozo reduce por promedio de área con colores premultiplicados, en lugar de elegir un píxel aislado; se conservan los PNG maestros. Mayús+F1 sigue restaurando la imagen original al desactivar. El juicio visual del pozo en su equipo queda sujeto a su prueba; no darlo por resuelto solo por las capturas locales.
+
+## Monitor y composición fija aprobada
+
+F1 ahora recorre predeterminado → monitor de PC 286 → sin marco. El monitor se encaja entero, centrado y proporcional, sin girarlo en ventanas altas; el juego se reduce dentro de su abertura y se conservan bandas negras exteriores si sobran. El PNG propio no contiene el título comercial. Metadatos: assets/original/marcos/monitor.json. El encuadre SDL comparte viewport y escala con ratón, paneles y depuración; el cursor original debe usar el área física jugable. La preferencia dura la sesión. Mayús+F1 permanece independiente.
+
+Esta instrucción sustituye cualquier ajuste por filas descrito arriba: Àlex rechaza expresamente deformar los decorados o fabricar su arco con efectos. Frank usa el PNG1586×992 aprobado con el arco dibujado; pozo recupera su PNG maestro. Ambos se superponen con muestreo uniforme y protección de los actores y menús, sin deformaciones. No atribuir al juicio visual una garantía que solo venga de pruebas automáticas.
+
+La mano original de MOUSE.SPR también se utiliza durante la partida, adaptada a la escala del juego. Los paneles DOS que ya la incorporan ocultan el cursor nativo para evitar duplicarla. comprobar:cursor verifica tres formatos y el relevo de panel.

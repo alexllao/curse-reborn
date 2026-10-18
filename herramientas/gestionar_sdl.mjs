@@ -696,6 +696,24 @@ export async function gestionarSdl(accion, argumentos) {
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
     return;
   }
+  if (accion === 'comprobar:monitor') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_monitor');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-monitor', join(carpeta, 'monitor')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    return;
+  }
+  if (accion === 'comprobar:cursor') {
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_cursor');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-cursor', join(carpeta, 'mano_original.png')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+    });
+    return;
+  }
   if (accion === 'comprobar:decorados') {
     const carpeta = join(raiz, 'trabajo', 'comprobacion_decorados');
     mkdirSync(carpeta, { recursive: true });
@@ -837,7 +855,7 @@ export async function gestionarSdl(accion, argumentos) {
         ...process.env,
         SDL_RENDER_DRIVER: 'software',
       });
-      const capturas = [0, 1, 2].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
+      const capturas = [0, 1, 3].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
       if (!capturas[0].equals(capturas[2]))
         throw new Error(`F1 no recupera las bandas originales: ${opcion}.`);
       const escala = Math.min(ancho / 320, alto / 200);
@@ -959,7 +977,7 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 29,
+          capturas: 37,
           animacion_ms: 250,
           bandas_horizontales: 'paneles laterales girados 90 grados',
           zoom_inicial: 1.1,

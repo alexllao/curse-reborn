@@ -37,7 +37,7 @@ export function prepararMarcos(raiz, destino) {
   const definiciones = [];
   const escenasDecoradas = new Set();
   for (const decorado of decorados) {
-    const { escena, archivo, resolucion, reservaOriginal, vanoImagen } = decorado;
+    const { escena, archivo, resolucion, reservaOriginal } = decorado;
     if (
       !Number.isInteger(escena) ||
       escena < 0 ||
@@ -54,10 +54,7 @@ export function prepararMarcos(raiz, destino) {
       png.readUInt32BE(20) !== resolucion[1]
     )
       throw new Error(`Resolución inesperada en ${archivo}.`);
-    for (const [rect, ancho, alto] of [
-      [reservaOriginal, 320, 200],
-      [vanoImagen, ...resolucion],
-    ])
+    for (const [rect, ancho, alto] of [[reservaOriginal, 320, 200]])
       if (
         rect.length !== 4 ||
         !rect.every(Number.isInteger) ||
@@ -73,7 +70,7 @@ export function prepararMarcos(raiz, destino) {
     if (!Number.isInteger(solape) || solape < 0 || solape > 4)
       throw new Error(`Solape de decorado inválido en ${archivo}.`);
     definiciones.push(
-      `{${escena},${JSON.stringify(`assets/original/decorados/${archivo}`)},{${reservaOriginal.join(',')}},{${vanoImagen.join(',')}},${resolucion.join(',')},${decorado.ajustarSilueta === true},${decorado.muestreoArea === true},${solape}}`,
+      `{${escena},${JSON.stringify(`assets/original/decorados/${archivo}`)},{${reservaOriginal.join(',')}},${resolucion.join(',')},${decorado.muestreoArea === true},${solape}}`,
     );
     copyFileSync(join(origenDecorados, archivo), join(destinoDecorados, archivo));
   }
@@ -143,7 +140,27 @@ export function prepararMarcos(raiz, destino) {
   }
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
-  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  const monitor = JSON.parse(readFileSync(join(origen, 'monitor.json'), 'utf8'));
+  const imagenMonitor = readFileSync(join(origen, monitor.archivo));
+  if (
+    imagenMonitor.readUInt32BE(16) !== monitor.resolucion[0] ||
+    imagenMonitor.readUInt32BE(20) !== monitor.resolucion[1]
+  )
+    throw new Error('Resolución inesperada del monitor.');
+  const [mx, my, mw, mh] = monitor.pantalla;
+  if (
+    ![mx, my, mw, mh].every(Number.isInteger) ||
+    mx < 0 ||
+    my < 0 ||
+    mw <= 0 ||
+    mh <= 0 ||
+    mx + mw > monitor.resolucion[0] ||
+    my + mh > monitor.resolucion[1]
+  )
+    throw new Error('Abertura del monitor inválida.');
+  copyFileSync(join(origen, monitor.archivo), join(carpeta, monitor.archivo));
+  copyFileSync(join(origen, 'monitor.json'), join(carpeta, 'monitor.json'));
+  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

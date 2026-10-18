@@ -44,11 +44,17 @@ bool ContadorFps::dibujar(SDL_Renderer *dibujante) {
   int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
   SDL_RendererLogicalPresentation presentacion;
   SDL_BlendMode mezcla;
+  SDL_Rect viewport;
+  const bool viewport_fijado = SDL_RenderViewportSet(dibujante);
+  float sx = 1, sy = 1;
+  if (!SDL_GetRenderViewport(dibujante, &viewport) || !SDL_GetRenderScale(dibujante, &sx, &sy))
+    return false;
   if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
       !SDL_GetRenderLogicalPresentation(dibujante, &logico_ancho, &logico_alto, &presentacion) ||
       !SDL_GetRenderDrawBlendMode(dibujante, &mezcla))
     return false;
-  if (!SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+  if (!SDL_SetRenderViewport(dibujante, nullptr) || !SDL_SetRenderScale(dibujante, 1, 1) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
     return false;
   const float ancho_texto =
       static_cast<float>(std::strlen(texto) * SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE);
@@ -62,7 +68,9 @@ bool ContadorFps::dibujar(SDL_Renderer *dibujante) {
       SDL_RenderDebugText(dibujante, placa.x + (placa.w - ancho_texto) / 2.0f,
                           placa.y + (placa.h - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2.0f, texto);
   const bool encuadre =
-      SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
+      SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion) &&
+      SDL_SetRenderViewport(dibujante, viewport_fijado ? &viewport : nullptr) &&
+      SDL_SetRenderScale(dibujante, sx, sy);
   const bool mezclado = SDL_SetRenderDrawBlendMode(dibujante, mezcla);
   return dibujado && encuadre && mezclado;
 }

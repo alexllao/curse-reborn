@@ -66,9 +66,13 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
 // Conserva la preferencia durante los cambios de escena y los de modo de ventana.
 void MarcosPantalla::alternar(Uint64 ahora) {
   origen_animacion = nivel_animacion(ahora);
-  visible = !visible;
+  monitor_en_salida = modo == 2 && monitor_presentado;
+  modo = (modo + 1) % 3;
+  visible = modo != 0;
   inicio_animacion = ahora;
-  registrar_accion("Marcos: %s (zoom y fundido)", visible ? "activados" : "desactivados");
+  registrar_accion("Marcos: %s", modo == 1   ? "predeterminado"
+                                 : modo == 2 ? "monitor de PC 286"
+                                             : "sin marco");
 }
 
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
@@ -85,8 +89,52 @@ float MarcosPantalla::nivel_animacion(Uint64 ahora) const {
 void MarcosPantalla::cerrar() {
   if (textura)
     SDL_DestroyTexture(textura);
+  if (textura_monitor)
+    SDL_DestroyTexture(textura_monitor);
+  textura_monitor = nullptr;
   textura = nullptr;
   actual = nullptr;
+}
+
+// Ajusta el rectángulo completo de la carcasa sin girarlo ni recortarlo en ventanas altas.
+bool MarcosPantalla::preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora) const {
+  if (!SDL_SetRenderScale(dibujante, 1, 1) || !SDL_SetRenderViewport(dibujante, nullptr))
+    return false;
+  const bool monitor = modo == 2 || (monitor_en_salida && !visible && nivel_animacion(ahora) > 0);
+  if (!monitor)
+    return SDL_SetRenderLogicalPresentation(dibujante, 320, 200,
+                                            SDL_LOGICAL_PRESENTATION_LETTERBOX);
+  int ancho = 0, alto = 0;
+  if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+    return false;
+  const float escala = std::min(float(ancho) / monitor_pc.ancho, float(alto) / monitor_pc.alto);
+  const float centro_x = (ancho - monitor_pc.ancho * escala) / 2 +
+                         (monitor_pc.pantalla.x + monitor_pc.pantalla.w / 2) * escala;
+  const float centro_y = (alto - monitor_pc.alto * escala) / 2 +
+                         (monitor_pc.pantalla.y + monitor_pc.pantalla.h / 2) * escala;
+  const float unidad = std::min(monitor_pc.pantalla.w / 320, monitor_pc.pantalla.h / 200) * escala;
+  const float escala_x = std::round(320 * unidad) / 320;
+  const float escala_y = std::round(200 * unidad) / 200;
+  const SDL_Rect juego{int(std::round(centro_x / escala_x - 160)),
+                       int(std::round(centro_y / escala_y - 100)), 320, 200};
+  return SDL_SetRenderScale(dibujante, escala_x, escala_y) &&
+         SDL_SetRenderViewport(dibujante, &juego);
+}
+
+// Los cursores usan la misma zona física que el dibujo y la conversión de eventos de SDL.
+bool MarcosPantalla::area_juego(SDL_Renderer *dibujante, SDL_FRect &juego) {
+  if (SDL_RenderViewportSet(dibujante)) {
+    SDL_Rect zona;
+    if (!SDL_GetRenderViewport(dibujante, &zona))
+      return false;
+    float sx = 1, sy = 1;
+    if (!SDL_GetRenderScale(dibujante, &sx, &sy))
+      return false;
+    juego = {zona.x * sx, zona.y * sy, zona.w * sx, zona.h * sy};
+    return true;
+  }
+  return SDL_GetRenderLogicalPresentationRect(dibujante, &juego);
 }
 
 // Dibuja las bandas y el solape autorizado; los filtros siguen actuando solo sobre el juego.
@@ -94,6 +142,39 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   const float nivel = nivel_animacion(ahora);
   if (nivel <= 0.0f && !visible)
     return true;
+  if (modo == 2 || (monitor_en_salida && !visible)) {
+    monitor_presentado = true;
+    if (!textura_monitor) {
+      const char *base = SDL_GetBasePath();
+      const std::string ruta = std::string(base ? base : "") + monitor_pc.archivo;
+      SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
+      if (!imagen)
+        return false;
+      textura_monitor = SDL_CreateTextureFromSurface(dibujante, imagen);
+      SDL_DestroySurface(imagen);
+      if (!textura_monitor || !SDL_SetTextureBlendMode(textura_monitor, SDL_BLENDMODE_BLEND) ||
+          !SDL_SetTextureScaleMode(textura_monitor, SDL_SCALEMODE_LINEAR))
+        return false;
+    }
+    SDL_Rect viewport;
+    float sx = 1, sy = 1;
+    int ancho = 0, alto = 0;
+    if (!SDL_GetRenderViewport(dibujante, &viewport) || !SDL_GetRenderScale(dibujante, &sx, &sy) ||
+        !SDL_GetRenderOutputSize(dibujante, &ancho, &alto))
+      return false;
+    const float escala = std::min(float(ancho) / monitor_pc.ancho, float(alto) / monitor_pc.alto);
+    const SDL_FRect destino{(ancho - monitor_pc.ancho * escala) / 2,
+                            (alto - monitor_pc.alto * escala) / 2, monitor_pc.ancho * escala,
+                            monitor_pc.alto * escala};
+    const bool dibujado = SDL_SetRenderViewport(dibujante, nullptr) &&
+                          SDL_SetRenderScale(dibujante, 1, 1) &&
+                          SDL_SetTextureAlphaMod(textura_monitor, Uint8(nivel * 255 + 0.5f)) &&
+                          SDL_RenderTexture(dibujante, textura_monitor, nullptr, &destino);
+    const bool restaurado =
+        SDL_SetRenderViewport(dibujante, &viewport) && SDL_SetRenderScale(dibujante, sx, sy);
+    return dibujado && restaurado;
+  }
+  monitor_presentado = false;
   const auto *seleccion = elegir_marco(pantalla);
   if (!seleccion)
     return true;

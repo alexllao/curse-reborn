@@ -219,8 +219,10 @@ try {
     case 'comprobar:introduccion':
     case 'comprobar:fps':
     case 'comprobar:filtros':
+    case 'comprobar:monitor':
     case 'comprobar:marcos':
     case 'comprobar:decorados':
+    case 'comprobar:cursor':
     case 'comprobar:ventana':
     case 'comprobar:escena':
       await gestionarSdl(accion, argumentos);
