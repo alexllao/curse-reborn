@@ -88,6 +88,52 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
                     self.variante(base, 'roca_empujar', 0x3B53, 92, 2, cambios)
                     self.variante(base, 'roca_saltar', 0x3143, 92, 0, cambios)
 
+    # Contrasta una caída y su rescate sin modificar la rama principal del recorrido.
+    def rescate_persistente(self, base):
+        semilla = list(self.semilla_menu)
+        d = bytearray(base)
+        for direccion, pasos in ((4, 38), (0, 112)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('El rescate del pájaro abandona EDGE.')
+        if not d[0x3594] or palabra(d, 0x3591) + palabra(d, 0x2C2D) != 175:
+            raise ErrorAnalisis('El pájaro no devuelve a Brad al umbral original175.')
+        if d[0x2DD8] != 0:
+            raise ErrorAnalisis('El obstáculo no desaparece después de provocar la caída.')
+        self.hito_borde(d, 'borde_rescate')
+        self.semilla_menu[:] = semilla
+        self.retomar_recursos(base)
+
+    # Recorre el obstáculo temporizado, recoge los guantes y acciona los cinco botones reales.
+    def guantes_y_puente(self, d):
+        # En585 se activa la caída sin contacto; esperar permite continuar por el suelo original.
+        for direccion, pasos in ((4, 17), (0, 32), (4, 24), (6, 8), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('El sendero de los guantes abandona EDGE.')
+        if not d[0x3594] or d[0x2DD8]:
+            raise ErrorAnalisis('La espera no evita el obstáculo de los guantes.')
+        self.auditar(d, 'guantes al alcance')
+        self.elegir_objeto(d, (1,), 86)
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None:
+            raise ErrorAnalisis('Recoger los guantes abandona EDGE.')
+        inventario = [palabra(d, 0x5225 + i * 2) for i in range(10)]
+        if 86 not in inventario:
+            raise ErrorAnalisis('Los guantes no llegan al inventario real.')
+        self.hito_borde(d, 'borde_guantes')
+        for direccion, pasos in ((4, 8), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('La aproximación a los botones abandona EDGE.')
+        self.auditar(d, 'botones antes del puente')
+        for id, bandera in ((88, 8), (90, 40), (91, 104), (90, 72), (89, 88)):
+            self.elegir_objeto(d, (2, 2), id)
+            if self.andar(d, self.semilla_menu, 65535, 192) is not None:
+                raise ErrorAnalisis('La animación de un botón abandona EDGE.')
+            if d[0x35C9] & 0x78 != bandera:
+                raise ErrorAnalisis(f'El botón {id} no conserva la combinación original.')
+        if d[0x2D12] != 1 or d[0x2D13] != 47:
+            raise ErrorAnalisis('Los cinco botones no despliegan el puente original.')
+        self.hito_borde(d, 'borde_puente')
+        self.auditar(d, 'puente desplegado')
+
     # Continúa desde la aproximación real y conserva por separado las variantes de capítulos siguientes.
     def ejecutar(self):
         origen = self.raiz / 'trabajo/comparacion_recorrido_borde/borde_roca'
@@ -116,6 +162,8 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
         if self.andar(d, self.semilla_menu, 65535, 192) is not None:
             raise ErrorAnalisis('El salto de la primera roca abandona EDGE.')
         self.hito_borde(d, 'borde_roca_saltada')
+        self.rescate_persistente(d)
+        self.guantes_y_puente(d)
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
@@ -123,7 +171,7 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
             'variantes_aisladas': self.variantes,
             'capturas': self.capturas,
             'estados_auditados': self.estados_auditados,
-            'alcance': 'Variantes aisladas de recogidas, guantes, caramelo, botones y roca. Recorrido real de empujar y saltar la primera roca; el resto de EDGE continúa pendiente.',
+            'alcance': 'Variantes aisladas de recogidas, guantes, caramelo, botones y roca. Recorrido real de roca, obstáculo, guantes y puente; rama separada de rescate del pájaro. El resto de EDGE continúa pendiente.',
         }
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'

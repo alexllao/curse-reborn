@@ -46,3 +46,9 @@ Las variantes separadas incluyen108 recogidas (guantes86, caramelo87 y cuerda95)
 El código de acciones está en motor/acciones/borde.cpp. Conserva los mismos servicios de sonido y planificación que las demás escenas. No se entrega ningún objeto en la partida por haber pasado una variante aislada.
 
 Quedan pendientes la continuación real por los obstáculos temporizados, las recogidas del recorrido y la resolución persistente del puente y del resto del acantilado. La cuerda, lanzamiento de piedra, salto del abismo e inscripción devuelven pendiente explícitamente cuando no están trasladados. EDGE sigue detenida en SDL; estos contratos no se presentan como una pantalla completa.
+
+## Obstáculo, rescate y puente desde la partida real
+
+`pnpm comparar:acciones-borde --muestra` amplía el contraste a **6.537 casos/pasos y cinco composiciones**. Después del salto inicial se comprueban dos ramas independientes. La primera entra en contacto con el obstáculo y el pájaro devuelve a Brad al umbral global175. La segunda se detiene en585 mientras cae el obstáculo, continúa por el suelo original, recoge los guantes86 y pulsa1–3–4–3–2. Cada selección usa las listas reales y cada paso contrasta DS completo y azar con el EXE; no se escriben coordenadas ni banderas para franquear el sendero. El puente termina activo con fotograma47 y bits de combinación58h.
+
+Se auditan además los menús al alcanzar los guantes, antes de los botones y después de desplegar el puente. Las cinco capturas incluyen la roca empujada, el salto, el rescate, los guantes recogidos y el puente. Es un recorrido parcial reproducible, no una garantía de todos los estados posibles. No cambia la parada deliberada de EDGE en SDL: siguen pendientes cuerda, personaje eléctrico y el resto del acantilado.
