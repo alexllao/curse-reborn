@@ -26,7 +26,7 @@ En ventanas altas, los paneles laterales se giran90° para cubrir las bandas sup
 
 ## Decorados ampliados
 
-La fachada propia de Frank's Food está en `original/decorados/franks_food.png`, a1586×992, con el arco dibujado en el PNG. Se activa con Mayús+F1 y recibe los filtros del juego. La composición uniforme conserva personajes, objetos, interior y menús; no deforma el arte ni fabrica arcos por código.
+La fachada propia de Frank's Food está en `original/decorados/franks_food.png`, a1586×992, con el arco dibujado en el PNG. Se activa con Mayús+F1 y recibe los filtros del juego. Se superpone el PNG completo sobre la escena: su alfa define el vano y sus piedras pueden quedar delante del fondo, personajes y objetos en el borde. Los menús y el cursor se muestran por encima. No se recorta según los píxeles del original ni se deforma el arte. Los metadatos de reserva y solape no limitan la silueta del PNG.
 
 El decorado del pozo del cubo se ha retirado del catálogo por petición de Àlex: no se adapta bien al original. El pozo conserva su vista original incluso cuando los decorados están activados. El PNG descartado se mantiene como referencia sin asignación, no como una decoración disponible.
 

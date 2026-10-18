@@ -41,9 +41,8 @@ public:
         return &decorado;
     return nullptr;
   }
-  // Sustituye únicamente el vacío exterior; conserva escena, cursor y menú originales.
-  bool componer(unsigned char *rgba, unsigned short escena, int menu_y, unsigned int luz,
-                const unsigned char *fondo, const unsigned char *indices) {
+  // Superpone el PNG completo: su alfa abre el vano y sus bordes quedan delante de la escena.
+  bool componer(unsigned char *rgba, unsigned short escena, int menu_y, unsigned int luz) {
     const auto *seleccion = buscar(escena);
     if (!visible || !seleccion)
       return true;
@@ -62,21 +61,12 @@ public:
       if (actual->muestreo_area)
         preparar_reduccion();
     }
-    const auto &reserva = actual->reserva;
     const auto *fuente = static_cast<const unsigned char *>(imagen->pixels);
     for (int y = 0; y < 200; ++y) {
       if (menu_y >= 0 && y >= menu_y && y < menu_y + 32)
         continue;
       const int sy = y * imagen->h / 200;
       for (int x = 0; x < 320; ++x) {
-        if (indices[y * 320 + x] != fondo[y * 320 + x])
-          continue;
-        bool interior = y >= reserva.y && y < reserva.y + reserva.h && x >= actual->solape &&
-                        x < 320 - actual->solape;
-        for (int vecino = -actual->solape; interior && vecino <= actual->solape; ++vecino)
-          interior = fondo[y * 320 + x + vecino] != 0;
-        if (interior)
-          continue;
         auto *destino = rgba + (y * 320 + x) * 4;
         const int sx = x * imagen->w / 320;
         unsigned int color[4]{};

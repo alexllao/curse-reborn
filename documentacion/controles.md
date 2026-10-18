@@ -99,7 +99,7 @@ F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de
 
 Los marcos se orientan según las bandas: laterales en ventanas anchas y girados90° arriba/abajo en ventanas altas. F1 mantiene su fundido y zoom. El título de ventana numera las vistas como «1: La mazmorra».
 
-Los decorados ampliados pueden solaparse dos píxeles sobre el fondo de la escena para integrar sus bordes, incluido el arco de Frank. Los actores, objetos y menús conservan sus píxeles; al desactivarlos se recupera la imagen original.
+El decorado ampliado de Frank se superpone entero sobre la escena. La transparencia del PNG define su abertura; el arco y las piedras quedan delante del interior y pueden ocultar partes de personajes u objetos en sus bordes. Los menús y el cursor siguen por encima. Al desactivarlo se recupera la imagen original.
 
 La mano original del ratón aparece únicamente dentro de la imagen jugable. Sobre el marco, la habitación o las bandas, y al salir de la ventana, se recupera la flecha normal. Volver al juego restaura la mano a su escala actual, también con zoom. Los paneles DOS ocultan el cursor nativo solo mientras el puntero permanece dentro del juego, para evitar duplicar su mano incorporada.
 

@@ -168,7 +168,7 @@ bool actualizar_textura(Presentacion &presentacion, bool con_decorado = false) {
     for (const auto componente : paleta_visible)
       luz = std::max(luz, static_cast<unsigned int>(componente));
     if (!presentacion.decorados.componer(pixeles, mazmorra.escena_actual(), mazmorra.franja_menu(),
-                                         luz, mazmorra.indices_fondo(), imagen.indices))
+                                         luz))
       return false;
   }
   return presentacion.filtros.actualizar(presentacion.textura, pixeles);
@@ -229,43 +229,46 @@ bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo)
     if (!cambiar_pantalla(carpeta, vista, presentacion))
       return false;
     const auto escena = mazmorra.escena_actual();
-    const auto reserva = DecoradosAmpliados::buscar(escena)->reserva;
-    // La pared admite dos píxeles de solape; los interiores alejados del borde deben coincidir.
-    const auto interior = [&](int x, int y) {
-      if (y < reserva.y || y >= reserva.y + reserva.h || x < 4 || x >= 316)
-        return false;
-      for (int vecino = x - 4; vecino <= x + 4; ++vecino)
-        if (!mazmorra.indices_fondo()[y * 320 + vecino])
-          return false;
-      return true;
+    const char *base = SDL_GetBasePath();
+    const std::string ruta =
+        std::string(base ? base : "") + DecoradosAmpliados::buscar(escena)->archivo;
+    SDL_Surface *fuente = SDL_LoadPNG(ruta.c_str());
+    if (!fuente)
+      return false;
+    // El alfa del asset define el hueco; no se deduce otra silueta de la imagen comercial.
+    const auto opacidad = [&](int x, int y) {
+      Uint8 r = 0, g = 0, b = 0, a = 0;
+      return SDL_ReadSurfacePixel(fuente, x * fuente->w / 320, y * fuente->h / 200, &r, &g, &b, &a)
+                 ? a
+                 : Uint8(0);
     };
     const std::vector<unsigned char> original(pixeles, pixeles + sizeof(pixeles));
     presentacion.decorados.alternar();
     for (int menu : {-1, 0, 168}) {
       auto prueba = original;
-      if (!presentacion.decorados.componer(prueba.data(), escena, menu, 63,
-                                           mazmorra.indices_fondo(), imagen.indices))
+      if (!presentacion.decorados.componer(prueba.data(), escena, menu, 63))
         return false;
-      unsigned int cambios = 0;
+      unsigned int cambios = 0, solapes = 0;
       for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
           const auto p = (y * 320 + x) * 4;
-          const bool protegido =
-              interior(x, y) || (menu >= 0 && y >= menu && y < menu + 32) ||
-              imagen.indices[y * 320 + x] != mazmorra.indices_fondo()[y * 320 + x];
+          const bool protegido = !opacidad(x, y) || (menu >= 0 && y >= menu && y < menu + 32);
           for (int c = 0; c < 4; ++c)
             if (prueba[p + c] != original[p + c]) {
               if (protegido) {
                 registrar_accion("Error de decorado: escena %u, menú %d, píxel %d,%d", escena, menu,
                                  x, y);
-                return SDL_SetError("El decorado altera el interior o un menú original");
+                return SDL_SetError("El decorado altera el vano transparente o un menú original");
               }
               ++cambios;
+              if (mazmorra.indices_fondo()[y * 320 + x])
+                ++solapes;
             }
         }
-      if (!cambios)
-        return SDL_SetError("El decorado no rellena el vacío exterior");
+      if (!cambios || !solapes)
+        return SDL_SetError("El decorado no se superpone al borde de la escena");
     }
+    SDL_DestroySurface(fuente);
     for (unsigned int modo = 0; modo < 6; ++modo) {
       if (!actualizar_textura(presentacion, true) ||
           !SDL_RenderTexture(presentacion.dibujante,
@@ -295,8 +298,9 @@ bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo)
   if (!actualizar_textura(presentacion, true) ||
       !std::equal(original_pozo.begin(), original_pozo.end(), pixeles))
     return SDL_SetError("El pozo no conserva su imagen original");
-  registrar_accion("Decorados: Frank conserva escena y menús con seis filtros; el pozo queda "
-                   "original incluso con la opción activa");
+  registrar_accion(
+      "Decorados: Frank se superpone con su alfa, menús por delante y seis filtros; el pozo queda "
+      "original incluso con la opción activa");
   return true;
 }
 
