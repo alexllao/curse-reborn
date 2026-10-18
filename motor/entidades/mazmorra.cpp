@@ -94,6 +94,55 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Reproduce BEFD sin inventar los efectos de sonido ni alterar sus consumos de azar.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 25) {
+    // 1A74–1ABE: siete intentos de creación, conservando orden y escrituras del descriptor.
+    if (d[0x2c4d] == 12) {
+      constexpr Palabra descriptores[] = {0x13ae, 0x13b7, 0x13c0};
+      for (const Palabra descriptor : descriptores) {
+        const auto campo = static_cast<Palabra>(palabra(d, descriptor + 7) + 8);
+        const unsigned int limite = descriptor == 0x13ae ? 3 : 2;
+        for (unsigned int i = 0; i < limite; ++i) {
+          d[campo] = static_cast<unsigned char>(1 + i * (descriptor == 0x13ae ? 4 : 3));
+          if (!crear_entidad(d, azar, recursos, descriptor).valido)
+            return false;
+        }
+      }
+    }
+    if (d[0x358c] != 19)
+      return true;
+    if (!recursos.fase_probador)
+      return false;
+    const auto fotograma = d[0x2c2c];
+    if (fotograma == 0 || fotograma == 3) {
+      *recursos.fase_probador = fotograma == 3 ? 1 : 0;
+      return true;
+    }
+    if (!((fotograma == 1 && *recursos.fase_probador == 0) ||
+          (fotograma == 2 && *recursos.fase_probador == 1)))
+      return true;
+    // 1B11–1BA1: consume el azar también cuando se agotan los registros libres.
+    const Palabra bases[] = {0x2c90, 0x2c2d, 0x2c6f};
+    for (unsigned int grupo = fotograma == 2 ? 0u : 1u; grupo < 3; ++grupo) {
+      const auto base = bases[grupo];
+      const Palabra ancho = grupo == 1 ? 19 : palabra(d, base + 4);
+      const Palabra alto = grupo == 1 ? 43 : palabra(d, base + 6);
+      for (unsigned int i = 0; i < (grupo == 1 ? 10u : 6u); ++i) {
+        Palabra valor = 0;
+        if (!generar_aleatorio(azar, ancho, valor))
+          return false;
+        guardar(d, 0x14a0, static_cast<Palabra>(valor + palabra(d, base)));
+        if (!generar_aleatorio(azar, alto, valor))
+          return false;
+        guardar(d, 0x14a2, static_cast<Palabra>(valor + palabra(d, base + 2)));
+        if (!generar_aleatorio(azar, 3, valor))
+          return false;
+        d[0x149f] = static_cast<unsigned char>(valor + 15);
+        if (!crear_entidad(d, azar, recursos, 0x149d).valido)
+          return false;
+      }
+    }
+    return true;
+  }
   if (palabra(d, 0x8082) == 24) {
     // 19DF–1A73: proximidad de Benn y quince partículas cuando ya se ha recuperado el ventilador.
     if (!d[0x2c4c])

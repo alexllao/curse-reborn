@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:1A74",
+      "nombre": "Rutina del probador de Benn",
+      "comentario": "1A74–1BA1: siete creaciones en postura12; modelo19 usa fase CS:1BA2 externa a DS. Fotogramas0/3 fijan0/1;1/2 emiten16/22 partículas según fase. Motor/entidades/mazmorra.cpp; comparar:probador contrasta estado completo, azar y byte CS, también sin registros libres."
+    },
+    {
+      "direccion": "0000:1BA2",
+      "nombre": "Fase de partículas fuera de los guardados DOS",
+      "comentario": "Byte de estado en CS. RecursosEntidades aporta un puntero opcional a un byte propio de Mazmorra, inicializado al abrir sesión y conservado entre pasos y cargas DOS. No ocupa memoria DS ni cambia CURSE.SAV. Sin servicio, el modelo19 se rechaza expresamente."
+    },
+    {
+      "direccion": "0000:430F",
+      "nombre": "Ponerse el vestido en el probador",
+      "comentario": "430F–43B1: rechaza fuera de25; retira79, activa422D/421B/421C y canales1FC7/1FCB/1FD1/1FD7. Las demoras derivan de AL de886B, puntuación+5 con envoltura. Despacho Llevar desde3CDF–3CE4. Contrastes aislados y512 pasos posteriores; no acredita la ruta del valle."
+    },
+    {
+      "direccion": "0000:5CAF",
+      "nombre": "Recogida del vestido de Benn",
+      "comentario": "5CAF–5CF3 después de563A–5679: capacidad y puntuación preceden a limpiar2C6D/41EC/41F5, canal97D7, destino128/151 y guiones96DE/96E7. Demora AL+6; comparar:probador incluye inventario lleno e iconos1F/22."
+    },
+    {
       "direccion": "0000:19DF",
       "nombre": "Proximidad y partículas de la tienda de Benn",
       "comentario": "19DF–1A73: entidad2C4C delimita18F5/18F7/18F9/18FB. Bit2 de35C9 prepara1383 o emite15 entidades138A con tres consumos de azar por intento. Motor/entidades/mazmorra.cpp; variantes comparadas con actor0/1/3 y canal0/1383/1A2F."

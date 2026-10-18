@@ -19,4 +19,7 @@ Aunque su imagen coincide con otra tienda abandonada, son escenas distintas.
 
 Las puertas y regresos conservan el inventario y el progreso de la partida.
 F5/F6 sirve para revisar las vistas y abre una sesión nueva en cada una.
-El probador de Benn y las continuaciones posteriores aún no están integrados.
+En Benn, rodear por abajo hacia la izquierda y acceder al probador por el umbral
+de la izquierda. Regresar por la puerta derecha. La oferta del vestido depende
+del progreso posterior; esta visita temprana no lo entrega. Las continuaciones
+posteriores siguen pendientes.

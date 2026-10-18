@@ -186,6 +186,8 @@ private:
   unsigned short salida_pendiente = 0;
   unsigned long long inicio_animacion = 0;
   motor::EstadoAleatorio aleatorio{};
+  // CS:1BA2 sobrevive a los pasos y a cargar DOS; una sesión de desarrollo comienza en cero.
+  unsigned char fase_probador = 0;
   std::string carpeta;
   std::vector<unsigned char> escena, personaje, modelo, iconos, raton, geometria, mapa, fuente;
   unsigned char fondo_menu[10240]{}, panel_menu[64000]{};

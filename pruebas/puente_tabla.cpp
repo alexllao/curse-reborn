@@ -818,12 +818,14 @@ extern "C" EXPORTAR int procesar_geometria(unsigned int operacion, unsigned char
   return r.valida ? 1 : 0;
 }
 
-// Recorre un paso jugable completo con servicios de bancos reales aportados por el comparador.
-extern "C" EXPORTAR int avanzar_jugabilidad(
-    unsigned char *datos, unsigned short *palabras,
-    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
-    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
-    const unsigned char *geometria, unsigned int longitud, unsigned short direccion) {
+// Comparte servicios de bancos y permite aportar el byte original CS:1BA2 del probador.
+static int avanzar_con_fase(unsigned char *datos, unsigned short *palabras,
+                            bool (*dimensiones)(void *, unsigned short, unsigned short,
+                                                unsigned short &, unsigned short &),
+                            bool (*modelo)(void *, const unsigned char *, unsigned short,
+                                           unsigned short),
+                            const unsigned char *geometria, unsigned int longitud,
+                            unsigned short direccion, unsigned char *fase, bool solo_rutina) {
   motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
   const motor::RecursosSecuencias secuencias{nullptr, dimensiones,          0x6400, 0x4000,
                                              0x5400,  omitir_sonido_prueba, modelo};
@@ -832,14 +834,39 @@ extern "C" EXPORTAR int avanzar_jugabilidad(
                             unsigned short &alto) {
     return (*static_cast<decltype(dimensiones) *>(contexto))(nullptr, 0x4000, indice, ancho, alto);
   };
-  const motor::RecursosEntidades entidades{&dimensiones, consultar, 0x4000, nullptr};
-  const auto r =
-      motor::avanzar_escena(datos, azar, secuencias, entidades, geometria, longitud, direccion);
+  const motor::RecursosEntidades entidades{&dimensiones, consultar, 0x4000, nullptr, {}, fase};
+  decltype(motor::avanzar_escena(datos, azar, secuencias, entidades, geometria, longitud,
+                                 direccion)) r{};
+  if (solo_rutina)
+    r.valida = motor::actualizar_rutina_escena(datos, azar, entidades);
+  else
+    r = motor::avanzar_escena(datos, azar, secuencias, entidades, geometria, longitud, direccion);
   palabras[0] = azar.primera;
   palabras[1] = azar.segunda;
   palabras[2] = azar.tercera;
   palabras[3] = azar.cuarta;
   return r.valida ? static_cast<int>(r.acciones) : -1;
+}
+
+// Conserva la ABI anterior para los comparadores de las otras habitaciones.
+extern "C" EXPORTAR int avanzar_jugabilidad(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion) {
+  return avanzar_con_fase(datos, palabras, dimensiones, modelo, geometria, longitud, direccion,
+                          nullptr, false);
+}
+
+// Contrasta tanto el paso integrado como 1A74 aislada, incluida su fase externa a DS.
+extern "C" EXPORTAR int avanzar_probador(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion,
+    unsigned char *fase, bool solo_rutina) {
+  return avanzar_con_fase(datos, palabras, dimensiones, modelo, geometria, longitud, direccion,
+                          fase, solo_rutina);
 }
 
 // Expone exclusivamente el estado de cámara y de su tabla; no ejecuta puertos VGA ni DOS.

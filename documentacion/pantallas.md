@@ -35,10 +35,11 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 27    | 24         | La tienda de disfraces de Benn  | BENN     |
 | 28    | 26         | La tienda de la adivina         | SALLY    |
 | 29    | 27         | La casa abandonada              | DERELICT |
+| 30    | 25         | El probador de Benn             | CHANGE   |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
-Las doce vistas de la población cubren el trayecto de comida y transporte del mago, las dos calles de la fuente, la tienda abandonada y la posada con sus regresos. Benn, la adivina y la segunda casa abandonada ya tienen entrada y regreso. El probador de Benn y las continuaciones posteriores siguen pendientes. El número de vistas no representa pantallas completadas al 100 %. Véanse el [alcance de la población](puzles_poblacion.md) y la [auditoría de rutas](auditoria_pantallas.md).
+Las doce vistas de la población cubren el trayecto de comida y transporte del mago, las dos calles de la fuente, la tienda abandonada y la posada con sus regresos. Benn, la adivina y la segunda casa abandonada ya tienen entrada y regreso. El probador de Benn ya permite entrar y regresar; las continuaciones posteriores siguen pendientes. El número de vistas no representa pantallas completadas al 100 %. Véanse el [alcance de la población](puzles_poblacion.md) y la [auditoría de rutas](auditoria_pantallas.md).
 
 EDGE (escena 30) se identifica como **El borde del mundo (pendiente)**. Se carga al terminar el transporte y permanece detenido; no se ofrece como vista jugable F5/F6.
 

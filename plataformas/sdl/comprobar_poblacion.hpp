@@ -112,6 +112,21 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
       return false;
     if (detener(("tienda_" + std::to_string(salida)).c_str()))
       return true;
+    if (interior == 24 && (detener("probador_entrada") || detener("probador_regreso"))) {
+      for (const auto &p : {std::pair<int, unsigned short>{140, 160}, {100, 155}, {77, 135}}) {
+        if (!ir(p.first, p.second))
+          return false;
+        if (partida.escena_actual() == 25)
+          break;
+      }
+      if (partida.escena_actual() != 25 || !avanzar(128))
+        return false;
+      if (detener("probador_entrada"))
+        return true;
+      if (!ir(160, 160) || !ir(200, 145) || partida.escena_actual() != 24)
+        return false;
+      return avanzar(128);
+    }
     if (interior == 26) {
       if (!ir(120, 178) || !ir(200, 178) || !abrir() || !elegir(4) || !elegir(0) || !avanzar(96))
         return false;
@@ -149,7 +164,8 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
       return false;
     if (detener(nombre))
       return true;
-    if (destino == 19 && (detener("tienda_35") || detener("regreso_tienda_35")))
+    if (destino == 19 && (detener("tienda_35") || detener("regreso_tienda_35") ||
+                          detener("probador_entrada") || detener("probador_regreso")))
       return visitar(24, 35, {{300, 170}, {380, 150}, {380, 120}}, {{200, 155}, {210, 145}}, 19);
     if (destino == 20 && (detener("tienda_38") || detener("regreso_tienda_38") ||
                           detener("adivina_saludo") || detener("adivina_respuesta")))
@@ -216,7 +232,7 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
   if (detener("fuente"))
     return true;
   if (detener("calle_29") || detener("regreso_29") || detener("tienda_35") ||
-      detener("regreso_tienda_35"))
+      detener("regreso_tienda_35") || detener("probador_entrada") || detener("probador_regreso"))
     return rama(19, {{260, 180}, {310, 100}, {319, 70}}, "calle_29", {{160, 195}, {160, 199}}, 17);
   if (detener("calle_30") || detener("regreso_30") || detener("tienda_38") ||
       detener("regreso_tienda_38") || detener("tienda_39") || detener("regreso_tienda_39") ||

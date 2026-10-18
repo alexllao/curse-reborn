@@ -26,7 +26,7 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
 ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 17 || escena > 29 || escena == 25)
+  if (escena < 17 || escena > 29)
     return ResultadoMenu::pendiente;
   // 5C8F elige 2C6D en DRAGON, frente a 2C8E en el camino del asaltante.
   if (escena == 21 && manejador == 0x563a && id == 76)
@@ -55,6 +55,61 @@ ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short ma
     }
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
+  }
+  if (manejador == 0x430f) {
+    // 430F–43B1: vestir el disfraz solo dentro del probador; las demoras dependen de AL de 886B.
+    if (escena != 25) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 79);
+    d[0x422d] = d[0x421b] = 1;
+    guardar(d, 0x4231, static_cast<Palabra>(palabra(d, 0x4231) + 2));
+    d[0x421c] = 13;
+    guardar(d, 0x1a38, 176);
+    guardar(d, 0x1a3a, 157);
+    guardar(d, 0x0ad7, 0x1b8e);
+    guardar(d, 0x0adc, 0x1bb3);
+    constexpr Palabra canales[] = {0x2c7d, 0x2c9e, 0x2ca8, 0x2c5c};
+    constexpr Palabra referencias[] = {0x1fc7, 0x1fcb, 0x1fd1, 0x1fd7};
+    for (unsigned int i = 0; i < 4; ++i) {
+      guardar(d, canales[i], referencias[i]);
+      d[canales[i] + 2] = 0;
+      d[canales[i] + 4] = 2;
+    }
+    guardar(d, 0x2c6f, 136);
+    guardar(d, 0x2c71, 137);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return ResultadoMenu::error;
+    d[0x2c80] = static_cast<unsigned char>(pasos + 14);
+    d[0x2ca1] = d[0x2cab] = static_cast<unsigned char>(pasos + 72);
+    d[0x2c5f] = static_cast<unsigned char>(pasos + 82);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return ResultadoMenu::accion;
+  }
+  if (manejador == 0x563a && escena == 24 && id == 79) {
+    // 563A–5679 y 5CAF–5CF3: capacidad antes de retirar el vestido y animar a Benn.
+    const auto icono = d[0x524e + id * 2];
+    if (icono == 0x1f || icono == 0x22)
+      guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + (icono == 0x1f ? 1 : 2)));
+    else if (!insertar_identificador(d, id)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    d[0x2c6d] = d[0x41ec] = d[0x41f5] = 0;
+    guardar(d, 0x2c5c, 0x97d7);
+    d[0x2c5e] = 0;
+    d[0x2c60] = 2;
+    guardar(d, 0x1a38, 128);
+    guardar(d, 0x1a3a, 151);
+    guardar(d, 0x0ad7, 0x96de);
+    guardar(d, 0x0adc, 0x96e7);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return ResultadoMenu::error;
+    d[0x2c5f] = static_cast<unsigned char>(pasos + 6);
+    return ResultadoMenu::accion;
   }
   if (manejador == 0x419e) {
     // 419E–41D7: comer consume la comida solo con el modelo normal de Brad.

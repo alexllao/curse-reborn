@@ -34,6 +34,7 @@ BANCOS_ESCENA = {
     22: 'MAGE',
     23: 'DERELICT',
     24: 'BENN',
+    25: 'CHANGE',
     26: 'SALLY',
     27: 'DERELICT',
     28: 'INNSIDE',

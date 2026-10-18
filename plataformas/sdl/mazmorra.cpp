@@ -111,6 +111,7 @@ bool Mazmorra::cargar_modelo(void *contexto, const unsigned char *datos, unsigne
 
 // Reconstruye el estado de entrada y carga la lista original de objetos, incluidos los opcionales.
 bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &imagen_fondo) {
+  fase_probador = 0;
   carpeta = ruta;
   size_t longitud = 0;
   void *archivo = SDL_LoadFile((carpeta + "/../CURSE.EXE").c_str(), &longitud);
@@ -137,7 +138,8 @@ bool Mazmorra::iniciar(const std::string &ruta, const motor::ImagenIndexada &ima
   if (!audio.conectar(datos))
     return false;
   const motor::RecursosEntidades recursos{
-      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
+      this,           dimensiones_escena,        referencia_escena,
+      parrafo_escena, {this, reproducir_sonido}, &fase_probador};
   if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
     return false;
   std::vector<unsigned char> menu_comprimido;
@@ -200,7 +202,8 @@ bool Mazmorra::avanzar() {
                                              reproducir_sonido,
                                              cargar_modelo};
   const motor::RecursosEntidades entidades{
-      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
+      this,           dimensiones_escena,        referencia_escena,
+      parrafo_escena, {this, reproducir_sonido}, &fase_probador};
   const auto portero_anterior = datos[0x2c4d];
   const auto resultado =
       motor::avanzar_escena(datos, aleatorio, secuencias, entidades, geometria.data(),
@@ -505,7 +508,7 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 30 || escena_guardada == 25)
+  if (escena_guardada > 30)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;
@@ -670,7 +673,8 @@ bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_s
   if (actualizar_sonido && !audio.cambiar_escena(actual))
     return false;
   const motor::RecursosEntidades recursos{
-      this, dimensiones_escena, referencia_escena, parrafo_escena, {this, reproducir_sonido}};
+      this,           dimensiones_escena,        referencia_escena,
+      parrafo_escena, {this, reproducir_sonido}, &fase_probador};
   if (reconstruir_entidades) {
     if (!motor::cargar_entidades_escena(datos, aleatorio, recursos))
       return false;

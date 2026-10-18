@@ -14,6 +14,8 @@ struct RecursosEntidades {
   // Solo la carga de superposiciones necesita la referencia de párrafos del fotograma.
   bool (*parrafo)(void *contexto, unsigned short indice, unsigned short &referencia) = nullptr;
   ServicioSonido sonido{};
+  // CS:1BA2 pertenece al código original, fuera de DS y CURSE.SAV.
+  unsigned char *fase_probador = nullptr;
 };
 
 // 8B6F–8C25. valido=false identifica recursos o entradas fuera del dominio definido.
