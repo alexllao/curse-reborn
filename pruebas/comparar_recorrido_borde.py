@@ -54,13 +54,23 @@ class ComparacionRecorridoBorde(ComparacionPoblacion):
             anterior = paso
         if not d[0x3594] or palabra(d, 0x8082) != 30:
             raise ErrorAnalisis('La entrada de EDGE no devuelve el control.')
+        # Entradas reales que rodean el primer paso estrecho y siguen hasta la roca; sin escribir estado.
+        sendero = (4, 4, 4, 5, 9, 5, 4, 4, 4) + (4,) * 13 + (6, 4, 5)
+        for direccion in sendero:
+            if self.andar(d, self.semilla_menu, direccion, 8) is not None:
+                raise ErrorAnalisis('El primer sendero abandona EDGE inesperadamente.')
+        if palabra(d, 0x3591) + palabra(d, 0x2C2D) != 441 or not d[0x3594]:
+            raise ErrorAnalisis('El sendero no alcanza la aproximación original a la roca.')
+        if self.andar(d, self.semilla_menu, 0, 1) is not None:
+            raise ErrorAnalisis('Soltar las flechas abandona EDGE.')
+        self.hito_borde(d, 'borde_roca')
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
             'grupos': self.resumen,
             'capturas': self.capturas,
             'referencia_modelo': self.referencia_modelo,
-            'alcance': 'Transporte real, entrada,256 pasos de la escena y cinco composiciones. Interacciones y puzles todavía pendientes.',
+            'alcance': 'Transporte real, entrada,256 pasos de la escena y seis composiciones y aproximación a la primera roca. Interacciones posteriores todavía pendientes.',
         }
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'

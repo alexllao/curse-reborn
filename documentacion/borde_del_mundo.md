@@ -34,3 +34,15 @@ El comparador completo conserva EDGE.SPR en4000, sitúa el modelo sustituible en
 `pnpm comprobar:entrada-borde` prepara las referencias y compara la composición de llegada SDL con el EXE. Se ha comprobado esa captura de64.000 píxeles, reutilizando el ejecutable ya compilado y completando secuencialmente las fases después de un bloqueo de recompilación por una biblioteca en uso. La regresión del probador mantiene sus3.025 casos/pasos y dos composiciones. No ejecutar dos comparaciones que recompilen tabla_acciones.dll al mismo tiempo en Windows.
 
 La llegada SDL sigue detenida. Estas pruebas no resuelven las interacciones ni acreditan el recorrido completo del acantilado. Los resultados nuevos quedan en trabajo/comparacion_recorrido_borde/ y trabajo/comprobacion_entrada_borde_sdl/.
+
+## Primer sendero y contratos de acciones
+
+El recorrido completo amplía ahora su prueba a **1.142 casos/pasos y seis composiciones**, incluida una aproximación real a la primera roca en coordenada global441. La secuencia de teclas sigue el paso estrecho sin modificar posiciones, inventario ni banderas. Se sueltan las flechas antes de abrir el menú, como en la partida normal; el original bloquea recoger/manipular mientras Brad mantiene su secuencia de caminar.
+
+`pnpm comparar:acciones-borde --muestra` contrasta **3.318 casos/pasos**, **2.543 selecciones**, **dos estados de menú auditados** y **dos composiciones**. Desde la aproximación real, empuja la roca con la opción original, espera su caída y salta sobre ella. Coinciden DS completo, estado aleatorio y las dos imágenes posteriores; la roca pasa de altura76 a95 y Brad llega al otro lado con el mismo control y puntuación que el EXE.
+
+Las variantes separadas incluyen108 recogidas (guantes86, caramelo87 y cuerda95),88 usos/llevadas de guantes,44 llevadas de caramelo,2.048 pulsaciones de botón y12 casos para cada verbo de la roca. Se revisan capacidad, iconos, modelo pequeño/normal, puntuación envolvente, distancias y todos los bits de35C9. Cada botón invierte su bit; la condición del puente usa el patrón B. Esto no sustituye todavía el recorrido real hasta los botones.
+
+El código de acciones está en motor/acciones/borde.cpp. Conserva los mismos servicios de sonido y planificación que las demás escenas. No se entrega ningún objeto en la partida por haber pasado una variante aislada.
+
+Quedan pendientes la continuación real por los obstáculos temporizados, las recogidas del recorrido y la resolución persistente del puente y del resto del acantilado. La cuerda, lanzamiento de piedra, salto del abismo e inscripción devuelven pendiente explícitamente cuando no están trasladados. EDGE sigue detenida en SDL; estos contratos no se presentan como una pantalla completa.

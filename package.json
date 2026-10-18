@@ -84,6 +84,7 @@
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
     "comprobar:entrada-borde": "node herramientas/gestionar_proyecto.mjs comprobar:entrada-borde",
+    "comparar:acciones-borde": "node herramientas/gestionar_proyecto.mjs comparar:acciones-borde",
     "comparar:recorrido-borde": "node herramientas/gestionar_proyecto.mjs comparar:recorrido-borde",
     "comparar:borde": "node herramientas/gestionar_proyecto.mjs comparar:borde",
     "comparar:probador": "node herramientas/gestionar_proyecto.mjs comparar:probador",

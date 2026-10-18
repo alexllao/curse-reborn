@@ -344,3 +344,5 @@ El [probador de Benn](documentacion/probador_benn.md) incorpora36/27, rutina1A74
 La [rutina del borde del mundo](documentacion/borde_del_mundo.md) ya tiene contraste aislado: `pnpm comparar:borde` verifica1.244 casos y sus órdenes sonoras. EDGE continúa detenida hasta completar movimiento, composición e interacciones; no se cuenta como vista jugable nueva.
 
 `pnpm comparar:recorrido-borde` contrasta también la entrada real y cinco composiciones de EDGE con sus bancos completos separados. `pnpm comprobar:entrada-borde` añade su captura SDL de llegada. La zona sigue detenida mientras se reconstruyen sus interacciones.
+
+`pnpm comparar:acciones-borde` añade el empuje y salto reales de la primera roca, con3.318 casos/pasos y dos composiciones. Guantes, recogidas, caramelo y botones tienen además contratos contrastados aisladamente. El resto del recorrido sigue pendiente antes de activar EDGE.

@@ -168,6 +168,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     probador: 'comparar_probador.py',
     borde: 'comparar_borde.py',
     recorrido_borde: 'comparar_recorrido_borde.py',
+    acciones_borde: 'comparar_acciones_borde.py',
     opciones: 'auditar_opciones.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
@@ -346,6 +347,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:acciones-borde':
+      compararAcciones('acciones_borde', argumentos);
       break;
     case 'comparar:recorrido-borde':
       compararAcciones('recorrido_borde', argumentos);

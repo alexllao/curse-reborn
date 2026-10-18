@@ -1,6 +1,7 @@
 #include "corredor.hpp"
 #include "asaltante.hpp"
 #include "poblacion.hpp"
+#include "borde.hpp"
 #include "lago.hpp"
 #include "poza.hpp"
 #include "cuevas.hpp"
@@ -102,6 +103,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 30)
+    return ejecutar_interaccion_borde(d, manejador, id, sonido);
   if (palabra(d, 0x8082) >= 17 && palabra(d, 0x8082) <= 29)
     return ejecutar_interaccion_poblacion(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 16)
@@ -335,6 +338,16 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0xa3b8, objeto, sonido, creacion);
       if (accion == 4 && objeto == 53 && palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7)
         return ejecutar_interaccion_inicial(d, 0x9cbe, objeto, sonido, creacion);
+      if (palabra(d, 0x8082) == 30) {
+        if (accion == 2 && objeto == 92)
+          return ejecutar_interaccion_inicial(d, 0xa406, objeto, sonido, creacion);
+        if (accion == 2 && objeto >= 88 && objeto <= 91)
+          return ejecutar_interaccion_inicial(d, static_cast<Palabra>(0xa4a3 + (objeto - 88) * 10),
+                                              objeto, sonido, creacion);
+        if (accion == 4 && (objeto == 86 || objeto == 87))
+          return ejecutar_interaccion_inicial(d, objeto == 86 ? 0xa46a : 0xa52b, objeto, sonido,
+                                              creacion);
+      }
       if (accion == 4 && objeto == 74)
         return ejecutar_interaccion_inicial(d, 0xa2d8, objeto, sonido, creacion);
     } else if (palabra(d, 0xb634) == 6 && objeto == 20 && previo == 17) {
@@ -382,6 +395,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
     }
     const auto escena = palabra(d, 0x8082);
+    if (escena == 30)
+      return ejecutar_interaccion_borde(d, 0x3b53, objeto, sonido);
     if (escena >= 17 && escena <= 29) {
       // 3CDF–3CE4: llevar el vestido comprueba después la habitación en 430F.
       if (palabra(d, 0xb634) == 4 && objeto == 79)

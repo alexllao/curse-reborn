@@ -3,6 +3,31 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:A406",
+      "nombre": "Empuje de la primera roca de EDGE",
+      "comentario": "A406–A467 exige2CB3=76; prepara destino453-cámara/113, guionesA035/A04D y canales diferidos de2CAF/2EBF, puntuación+5. Contraste persistente antes/después del empuje y salto324C–327D. Motor/acciones/borde.cpp."
+    },
+    {
+      "direccion": "0000:A46A",
+      "nombre": "Guantes del acantilado",
+      "comentario": "A46A–A4A0 es compartida por Usar86 y Llevar86. Compara con signo la resta envolvente2C4E-2C2D contra40, sin absoluto; retira86, destino974-cámara/122, guionesA061/A072 y puntos+5. Variantes de distancia, cámara y puntuación contrastadas."
+    },
+    {
+      "direccion": "0000:A4A3",
+      "nombre": "Cuatro botones del puente de EDGE",
+      "comentario": "A4A3/A4AD/A4B7/A4C1 invierten bits08/10/20/40 y eligen2D33/54/75/96. A4CB programaA082/A08C y A105/A107 según fotograma20; patrón(35C9>>3)&F=B añade A12C en2D12. Comparadas256 banderas por cuatro botones y dos fotogramas:2048 selecciones."
+    },
+    {
+      "direccion": "0000:A52B",
+      "nombre": "Caramelo y piedra del acantilado",
+      "comentario": "A52B–A598 conserva distancia de palabra, rechazo fuera de30, retirada87, posición/estado del actor2C8E y demoraAL+4 tras886B; puntuación+5. Por ahora contraste aislado, no recorrido del puzle completo."
+    },
+    {
+      "direccion": "0000:5CF6",
+      "nombre": "Recogidas de guantes, caramelo y cuerda",
+      "comentario": "5CF6–5D2E después de563A:86 usa2C6D y4/1 con61A7;87 escribe2C9C=FFFF,2C8E y5/2 con61A7;95 usa2E1A y5/-2 con615C. Se conservan oferta623D, guiones según modelo20 y demoraAL+6. Contraste aislado con inventario0/9/10, iconos0/1F/22 y puntuación0/FFFF."
+    },
+    {
       "direccion": "0000:C093",
       "nombre": "Rutina aislada del borde del mundo",
       "comentario": "C093–C4DB traducida a motor/entidades/borde.cpp. Modelo20/frame90, rescateC4DC, pájaro y tablaB036, obstáculos, ADCE/DEF, sonido6, creacionesAF37/B125 y objeto94. comparar:borde:1244 casos, DS completo, azar y20 llamadas a5288. EDGE SDL permanece detenida; no implica puzles ni composición integrados."
