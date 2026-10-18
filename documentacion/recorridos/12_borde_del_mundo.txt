@@ -1,0 +1,26 @@
+EL BORDE DEL MUNDO Y EL LORO
+Redacción propia contrastada con el ejecutable DOS; no es una copia de la guía.
+
+1. Llega mediante el transporte del mago con la partida continua. F5/F6 abre una sesión nueva sin sus objetos.
+2. Sigue el sendero estrecho hacia la derecha. Frente a la primera roca, usa Manipular → Empujar/Tirar. Espera su animación y usa Saltar sobre la roca.
+3. Acércate despacio al siguiente tramo: una piedra cae cuando te aproximas. Detente antes de tocarla y espera a que termine de caer. El pájaro te rescata si fallas; puedes volver a intentarlo.
+4. Recoge los guantes rojos que hay a continuación.
+5. Acércate a los cuatro botones. Numéralos de izquierda a derecha y usa Empujar/Tirar en este orden:1,3,4,3,2. El puente queda desplegado.
+6. Cruza el puente y recoge la cuerda.
+7. Espera fuera de la lluvia de rocas hasta que termine su ciclo. Acércate al personaje eléctrico y usa los guantes. Deja terminar la animación; desaparece el obstáculo.
+8. Para afrontar la siguiente lluvia, retrocede a la zona segura y espera otro ciclo. Continúa hacia la derecha y sube hasta el refugio del caramelo. Recógelo.
+9. Espera de nuevo en el refugio y avanza a la derecha. Cerca de la piedra suspendida, usa Manipular → Ponerse con el caramelo. La animación incorpora una piedra al inventario.
+10. Usa Manipular → Lanzar con esa piedra. La roca grande cae y permite seguir.
+11. Continúa hasta el abismo, lanza la cuerda y usa Saltar con el paso de cuerda. Espera el cruce completo.
+12. En el siguiente obstáculo temporizado, vuelve a detenerte antes del contacto y deja caer la piedra.
+13. Continúa hacia la inscripción y examínala. Abre Hablar y escoge el tema que acaba de aparecer: las palabras de apertura.
+14. Con la puerta abierta, vuelve un poco a la izquierda y sube por ella. Entras en la habitación del loro sabio.
+15. Habla con el loro mediante Hi y espera su secuencia completa. El ejecutable comprobado vuelve por la salida73 a la casa abandonada de la población.
+
+COMPROBACIONES
+pnpm comparar:acciones-borde --muestra
+pnpm comparar:loro --muestra
+pnpm comprobar:borde
+
+LÍMITES
+La ruta descrita y sus imágenes están contrastadas; esto no acredita todos los estados de capítulos posteriores. El acceso alternativo del mago por72, GYPSY52 y CHANGE74 se revisan por separado. No se conceden objetos ni transformaciones únicamente porque los mencione la guía de otra versión.

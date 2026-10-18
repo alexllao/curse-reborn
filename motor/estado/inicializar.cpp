@@ -11,8 +11,11 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          6,  7,  7,  7,  8,  9,  10, 11, 12, 13, 14, 12, 15,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
-  if (salida >= sizeof(origenes) / sizeof(origenes[0]) || origenes[salida] == 0xffff ||
-      palabra(d, 0x8082) != origenes[salida])
+  // La salida72 enlaza EDGE30 con WISE31; los índices intermedios aún no están integrados.
+  if (salida == 72   ? palabra(d, 0x8082) != 30
+      : salida == 73 ? palabra(d, 0x8082) != 31
+                     : (salida >= sizeof(origenes) / sizeof(origenes[0]) ||
+                        origenes[salida] == 0xffff || palabra(d, 0x8082) != origenes[salida]))
     return false;
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
   const auto modelo = d[static_cast<Palabra>(descriptor + 13)];

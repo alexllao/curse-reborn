@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las veintinueve vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y dos vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -36,12 +36,14 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 28    | 26         | La tienda de la adivina         | SALLY    |
 | 29    | 27         | La casa abandonada              | DERELICT |
 | 30    | 25         | El probador de Benn             | CHANGE   |
+| 31    | 30         | El borde del mundo              | EDGE     |
+| 32    | 31         | La habitación del loro sabio    | WISE     |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
 Las doce vistas de la población cubren el trayecto de comida y transporte del mago, las dos calles de la fuente, la tienda abandonada y la posada con sus regresos. Benn, la adivina y la segunda casa abandonada ya tienen entrada y regreso. El probador de Benn ya permite entrar y regresar; las continuaciones posteriores siguen pendientes. El número de vistas no representa pantallas completadas al 100 %. Véanse el [alcance de la población](puzles_poblacion.md) y la [auditoría de rutas](auditoria_pantallas.md).
 
-EDGE (escena 30) se identifica como **El borde del mundo (pendiente)**. Se carga al terminar el transporte y permanece detenido; no se ofrece como vista jugable F5/F6.
+EDGE ya tiene recorrido contrastado hasta abrir la puerta y entrar en WISE31. El saludo inicial del loro y el regreso73 a DERELICT27 están reconstruidos. Ambas escenas se ofrecen en F5/F6; estos atajos no conservan el inventario ni representan todos los capítulos posteriores. Véase [el alcance de EDGE y WISE](borde_del_mundo.md).
 
 El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
 

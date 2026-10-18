@@ -19,16 +19,18 @@ El recorrido contrastado de estas cuatro ramas parte de las instantáneas reales
 
 ## Pendientes localizados desde las vistas disponibles
 
-| Origen      | Salida | Destino DOS | Trabajo pendiente                                          |
-| ----------- | ------ | ----------- | ---------------------------------------------------------- |
-| CHANGE (25) | 74     | Escena 43   | Continuación posterior del disfraz; aún sin integrar.      |
-| GYPSY (20)  | 52     | Escena 35   | Continuación posterior; cargador limitado hasta salida 51. |
-| MAGE (22)   | 72     | Escena 31   | Otro destino del mago condicionado por el progreso.        |
+| Origen      | Salida | Destino DOS | Trabajo pendiente                                                    |
+| ----------- | ------ | ----------- | -------------------------------------------------------------------- |
+| CHANGE (25) | 74     | Escena 43   | Continuación posterior del disfraz; aún sin integrar.                |
+| GYPSY (20)  | 52     | Escena 35   | Continuación posterior todavía sin integrar.                         |
+| MAGE (22)   | 72     | Escena 31   | WISE31 ya integrado desde EDGE; falta contrastar esta rama del mago. |
 
 Las rutas 19→24 por35, 20→26 por38 y 20→27 por39 ya están conectadas, con regresos46/48/49. La comparación de tiendas incluye saludo, entrega de dinero a la adivina, fases de oferta de Benn y su rutina de partículas. Se conservan los recursos compartidos entre escenas23/27 con sus estados independientes. Véase [el tramo de tiendas](tiendas_poblacion.md).
 
-EDGE (30) sigue siendo solo el punto de llegada del primer transporte: su rutina C093 ya está trasladada y contrastada aisladamente, pero composición, movimiento y puzles siguen pendientes. Véase [el alcance de EDGE](borde_del_mundo.md). Las escenas fuera del catálogo siguen pendientes de reconstrucción; el informe de 78 tablas permite localizarlas sin contarlas como jugables.
+EDGE30 ya tiene recorrido persistente hasta WISE31 por72, con regreso del loro a DERELICT27 por73. El contraste incluye los puzles del acantilado y el saludo inicial del loro; no equivale a probar todos los estados de las visitas posteriores. Véase [el alcance de EDGE](borde_del_mundo.md). Las escenas fuera del catálogo siguen pendientes de reconstrucción; el informe de 78 tablas permite localizarlas sin contarlas como jugables.
 
 Las escenas iniciales hasta COUNTRY2 conservan sus recorridos y auditorías anteriores. Esto no demuestra exhaustivamente todos los estados de una partida, retornos de capítulos posteriores, opciones de inventario posibles ni equivalencia completa de cadencia. Los errores de disco DOS, macOS y WebAssembly continúan pendientes de validación. Las mejoras gráficas son opcionales y están separadas de estas garantías del motor.
 
 El probador25 ya conecta36/27. Se contrasta1A74 y los manejadores del vestido; el recorrido posterior del valle sigue pendiente. Véase [el alcance del probador](probador_benn.md).
+
+La auditoría de32 vistas detecta también WISE31→64 por112, correspondiente a la continuación posterior. Junto con52/72/74 suma cuatro enlaces pendientes desde el catálogo; no se ocultan los destinos de capítulos posteriores.

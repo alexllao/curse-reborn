@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_borde.hpp"
 #include "../../motor/estado/partidas.hpp"
 #include <memory>
 #include <cstdio>
@@ -256,5 +257,8 @@ bool comprobar_recorrido_poblacion(Mazmorra &partida, const std::string &opcion,
   for (unsigned int i = 0; i < 768 && partida.escena_actual() == 22; ++i)
     if (!avanzar(1))
       return false;
-  return partida.escena_actual() == 30;
+  if (partida.escena_actual() != 30)
+    return false;
+  return opcion.rfind("--comprobar-final-poblacion-borde_", 0) != 0 ||
+         comprobar_recorrido_borde(partida, opcion, avanzar, abrir, elegir, objeto);
 }

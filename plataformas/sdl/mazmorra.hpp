@@ -52,6 +52,10 @@ public:
   bool almeja_cerrada() const {
     return datos[0x2e3c] == 12;
   }
+  // ADCE permite esperar el inicio real del ciclo de rocas en las comprobaciones del acantilado.
+  bool ciclo_rocas_iniciado() const {
+    return datos[0xadce] == 180;
+  }
   // Conserva DS junto a una captura de prueba para localizar divergencias; no es una partida
   // guardada.
   bool guardar_estado_diagnostico(const std::string &ruta) const {

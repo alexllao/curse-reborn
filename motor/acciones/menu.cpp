@@ -105,7 +105,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 30)
     return ejecutar_interaccion_borde(d, manejador, id, sonido, creacion);
-  if (palabra(d, 0x8082) >= 17 && palabra(d, 0x8082) <= 29)
+  if ((palabra(d, 0x8082) >= 17 && palabra(d, 0x8082) <= 29) || palabra(d, 0x8082) == 31)
     return ejecutar_interaccion_poblacion(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 16)
     return ejecutar_interaccion_asaltante(d, manejador, id, sonido, creacion);
@@ -397,7 +397,7 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
     const auto escena = palabra(d, 0x8082);
     if (escena == 30)
       return ejecutar_interaccion_borde(d, 0x3b53, objeto, sonido, creacion);
-    if (escena >= 17 && escena <= 29) {
+    if ((escena >= 17 && escena <= 29) || escena == 31) {
       // 3CDF–3CE4: llevar el vestido comprueba después la habitación en 430F.
       if (palabra(d, 0xb634) == 4 && objeto == 79)
         return ejecutar_interaccion_inicial(d, 0x430f, objeto, sonido, creacion);

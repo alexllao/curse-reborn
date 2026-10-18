@@ -26,8 +26,34 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
 ResultadoMenu ejecutar_interaccion_poblacion(unsigned char *d, unsigned short manejador,
                                              unsigned short id, const ServicioSonido &sonido) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 17 || escena > 29)
+  if (escena < 17 || (escena > 29 && escena != 31))
     return ResultadoMenu::pendiente;
+  if (escena == 31 && manejador == 0x32de && id == 1) {
+    // 361A–3727: primera visita y regreso comparten diálogo; el bit1 conserva la progresión.
+    Palabra registro = 0x009c;
+    guardar(d, 0x0adc, 0x247a);
+    if (!(d[0x35c9] & 1)) {
+      d[0x35c9] |= 1;
+      d[0x41ec] = d[0x41f5] = 3;
+      guardar(d, 0x0adc, 0x2442);
+      actor(d, registro, 0x2c6d, 0x1e0b, 0x256c);
+      registro = static_cast<Palabra>(registro + 10);
+    }
+    guardar(d, 0x1a38, 123);
+    guardar(d, 0x1a3a, 186);
+    guardar(d, 0x0ad7, 0x241d);
+    guardar(d, 0x0ae1, 0x245d);
+    actor(d, registro, 0x2c4c, 0x010b, 0x2571);
+    registro = static_cast<Palabra>(registro + 10);
+    const Palabra canales[][2] = {{0x25e6, 0x25ec}, {0x25f2, 0x25f8}, {0x25fe, 0x2604},
+                                  {0x260a, 0x2610}, {0x2616, 0x261c}, {0x2622, 0x2628}};
+    for (unsigned int n = 0; n < 6; ++n) {
+      actor(d, registro, static_cast<Palabra>(0x2c8e + n * 33), n == 5 ? 0x0273 : 0x0247, 0x25e0,
+            canales[n][0], canales[n][1]);
+      registro = static_cast<Palabra>(registro + 10);
+    }
+    return comenzar(d);
+  }
   // 5C8F elige 2C6D en DRAGON, frente a 2C8E en el camino del asaltante.
   if (escena == 21 && manejador == 0x563a && id == 76)
     return ejecutar_interaccion_asaltante(d, manejador, id, sonido, {});

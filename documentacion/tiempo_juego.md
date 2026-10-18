@@ -8,7 +8,7 @@ El contador es una estadística propia del perfil del usuario, separada del moto
 - Caminar, pensar la solución, usar el inventario y escoger acciones en el menú original.
 - Animaciones, respuestas de personajes y transiciones que forman parte de la partida.
 
-No cuenta Core, título ni introducción, los paneles de guardar/cargar/borrar e información, segundo plano, minimizado ni el apagado/arranque del ordenador virtual. EDGE30 tampoco cuenta mientras siga siendo un punto de llegada detenido. No se exige mover continuamente el ratón: pensar también forma parte del juego.
+No cuenta Core, título ni introducción, los paneles de guardar/cargar/borrar e información, segundo plano, minimizado ni el apagado/arranque del ordenador virtual. EDGE30 y WISE31 ya cuentan como juego activo después de integrar sus recorridos. No se exige mover continuamente el ratón: pensar también forma parte del juego.
 
 ## Cómo se conserva
 

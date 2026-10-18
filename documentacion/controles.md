@@ -62,7 +62,7 @@ En Core y título, una tecla o un clic izquierdo permite avanzar. En la introduc
 | **F5** | Ir directamente a la vista anterior.  |
 | **F6** | Ir directamente a la vista siguiente. |
 
-El orden completo y los nombres están en el [catálogo de pantallas](pantallas.md): Core → título → introducción → las diecisiete vistas jugables, desde **La mazmorra** hasta **El camino del asaltante**. En los extremos no hay otra vista a la que saltar. Los nombres también se muestran en consola y en el título de la ventana. La ruta normal conserva el inventario y continúa por los puzles de las cuevas hasta salir del cubo y recorrer el campo.
+El orden completo y los nombres están en el [catálogo de pantallas](pantallas.md): Core → título → introducción → las32 vistas de desarrollo, desde **La mazmorra** hasta **La habitación del loro sabio**. En los extremos no hay otra vista a la que saltar. Los nombres también se muestran en consola y en el título de la ventana. La ruta normal conserva el inventario y continúa por los puzles de las cuevas hasta salir del cubo y recorrer el campo.
 
 **Al entrar en una vista jugable mediante F5/F6 se prepara una sesión nueva.** Estos saltos sirven para probar pantallas: no conservan el progreso ni resuelven los puzles anteriores. Para continuar la misma partida, utiliza las salidas normales del escenario.
 
@@ -93,9 +93,9 @@ La importación DOS queda como integración de escritorio mediante arrastrar CUR
 
 El último icono del menú abre las cuatro páginas originales con puntuación y créditos. Clic izquierdo, Intro o Espacio avanzan; después de la cuarta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.
 
-La última vista F5/F6 es **El camino del asaltante (COUNTRY2)**, después de **La salida al campo**: diecisiete escenas jugables. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.
+Las últimas vistas F5/F6 son **El borde del mundo (EDGE)** y **La habitación del loro sabio (WISE)**:32 vistas de desarrollo. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.
 
-F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de las maravillas y mago: veintidós vistas de desarrollo. Estos atajos no transfieren inventario. Para probar la compra y el mago en una partida continua, sigue el [recorrido de la población](recorridos/10_paso_del_dragon.txt). El borde del mundo es todavía un punto de llegada detenido; F5/F6 permite volver a las vistas disponibles.
+F5/F6 incluye también la entrada de Paso del Dragón, Frank, plaza de la fuente, calle de las maravillas y mago. Estos atajos no transfieren inventario. Para probar la compra y el mago en una partida continua, sigue el [recorrido de la población](recorridos/10_paso_del_dragon.txt). El borde del mundo ya permite resolver su recorrido hasta el loro y regresar a la población.
 
 Los marcos se orientan según las bandas: laterales en ventanas anchas y girados90° arriba/abajo en ventanas altas. F1 mantiene su fundido y zoom. El título de ventana numera las vistas como «1: La mazmorra».
 
@@ -111,4 +111,6 @@ Si el botón queda fuera de la ventana, aleja el monitor con Ctrl+rueda o Ctrl+�
 
 Al terminar el arranque se cierran los paneles y comienza de nuevo la música, conservando volumen, silencio, perfil de música y efectos, filtros, marco, zoom y pantalla completa. No escribe ni borra partidas guardadas. El clic derecho y los clics fuera del botón no activan la alimentación. La consola registra apagado, encendido y carga del juego. Se puede cerrar la aplicación mediante su ventana en cualquier momento.
 
-F5/F6 incorpora también Benn, la tienda de la adivina y la segunda casa abandonada: veintinueve vistas. Las puertas35/38/39 y sus regresos46/48/49 conservan la partida; el atajo sigue abriendo una sesión independiente.
+El catálogo incluye Benn, la tienda de la adivina, la segunda casa abandonada y el probador. Las puertas35/38/39 y sus regresos46/48/49 conservan la partida; el atajo sigue abriendo una sesión independiente.
+
+F5/F6 añade el borde del mundo y la habitación del loro:32 vistas,64 cambios comprobados. La partida normal conserva el inventario al cruzar el acantilado y regresar a la casa abandonada. Los atajos empiezan otra sesión y no entregan guantes ni cuerda. Los marcos, filtros y teclas existentes conservan su funcionamiento.

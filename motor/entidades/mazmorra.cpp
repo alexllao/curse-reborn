@@ -40,7 +40,7 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
       escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 ||
       escena == 18 || escena == 19 || escena == 21 || escena == 22 || escena == 23 ||
-      escena == 26 || escena == 27 || escena == 28 || escena == 29)
+      escena == 26 || escena == 27 || escena == 28 || escena == 29 || escena == 31)
     return true;
   if (escena == 20) {
     // 19C1–19DE: límite de proximidad de la calle de la adivina según el segundo actor.

@@ -12,7 +12,7 @@ Redacción propia basada en la guía aportada por Àlex y contrastada con el EXE
 9. Espera su secuencia. El traslado termina en el borde del mundo.
 
 LÍMITE ACTUAL
-El borde del mundo solo es el punto de llegada y permanece detenido; su jugabilidad sigue pendiente. Usa F5/F6 para cambiar de vista. No se consideran resueltas las otras rutas de la ciudad ni sus capítulos posteriores.
+El recorrido continúa en 12_borde_del_mundo.txt hasta el loro y su regreso a la población. No se consideran resueltas todas las rutas de los capítulos posteriores.
 
 Para comprobarlo: pnpm comprobar:poblacion
 Para jugar: pnpm ventana

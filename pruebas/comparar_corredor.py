@@ -40,6 +40,7 @@ BANCOS_ESCENA = {
     28: 'INNSIDE',
     29: 'FRANKS',
     30: 'EDGE',
+    31: 'WISE',
 }
 
 

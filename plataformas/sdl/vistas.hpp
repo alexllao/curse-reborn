@@ -41,6 +41,8 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {26, 20, 38, "La tienda de la adivina", "SALLY"},
     {27, 20, 39, "La casa abandonada", "DERELICT"},
     {25, 24, 36, "El probador de Benn", "CHANGE"},
+    {30, 22, 47, "El borde del mundo", "EDGE"},
+    {31, 30, 72, "La habitación del loro sabio", "WISE"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -55,7 +57,7 @@ inline constexpr SalidaIntegrada salidas_integradas[] = {
     {9, 18},  {10, 19}, {11, 20}, {12, 21}, {12, 24}, {13, 22}, {14, 23}, {15, 25}, {16, 26},
     {21, 42}, {21, 43}, {29, 51}, {17, 28}, {17, 31}, {18, 32}, {18, 34}, {22, 44}, {22, 47},
     {17, 29}, {17, 30}, {18, 33}, {21, 41}, {19, 37}, {20, 40}, {23, 45}, {28, 50}, {19, 35},
-    {20, 38}, {20, 39}, {24, 46}, {26, 48}, {27, 49}, {24, 36}, {25, 27}};
+    {20, 38}, {20, 39}, {24, 46}, {26, 48}, {27, 49}, {24, 36}, {25, 27}, {30, 72}, {31, 73}};
 
 // No confunde reconocer una salida original con disponer de su habitación y sus puzles.
 inline bool salida_integrada(unsigned short escena, unsigned short salida) {
@@ -70,7 +72,7 @@ inline const char *nombre_escena(unsigned short escena) {
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == escena)
       return vista.nombre;
-  return escena == 30 ? "El borde del mundo (pendiente)" : "Escena pendiente";
+  return "Escena pendiente";
 }
 
 // Numera el título con el catálogo F5/F6, conservando el identificador DOS para las partidas.

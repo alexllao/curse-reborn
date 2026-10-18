@@ -1657,6 +1657,11 @@ int main(int argc, char *argv[]) {
         if (opcion.rfind("--comprobar-final-poblacion-", 0) == 0 &&
             !comprobar_recorrido_poblacion(mazmorra, opcion, avanzar, abrir, elegir, objeto))
           return fallo("No coincide el recorrido SDL de la población");
+        if ((opcion == "--comprobar-final-poblacion-borde_puente" ||
+             opcion == "--comprobar-final-poblacion-borde_loro_entrada" ||
+             opcion == "--comprobar-final-poblacion-borde_loro_regreso") &&
+            !comprobar_partida_tienda(mazmorra, argv[1]))
+          return fallo("No coincide la restauración DOS en EDGE o durante la visita al loro");
         if (opcion == "--comprobar-final-partidas" &&
             !comprobar_partidas_sdl(partidas, presentacion.ventana, mazmorra, argv[1], imagen))
           return fallo("No coinciden las ranuras y la restauración SDL de partidas");
@@ -1712,9 +1717,8 @@ int main(int argc, char *argv[]) {
     const auto ahora = SDL_GetTicksNS();
     if (!comprobar)
       tiempo_juego.actualizar(
-          TiempoJuego::debe_contar(pantalla >= 3 && mazmorra.escena_actual() != 30,
-                                   SDL_GetWindowFlags(presentacion.ventana), partidas.abierta(),
-                                   presentacion.marcos.reiniciando()),
+          TiempoJuego::debe_contar(pantalla >= 3, SDL_GetWindowFlags(presentacion.ventana),
+                                   partidas.abierta(), presentacion.marcos.reiniciando()),
           ahora);
     // 0516 carga 2100 esperas de retrazo. La plataforma usa una referencia nominal de 70 Hz.
     if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 0 && !fundiendo &&
