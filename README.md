@@ -21,7 +21,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-Los **decorados ampliados** se activan con **Mayús+F1**, independientemente de los marcos exteriores F1. Frank's Food y el pozo del cubo ya tienen ilustraciones propias para rellenar sus huecos negros; reciben los filtros F11 y conservan los gráficos e interacciones originales. Detalles en [Recursos propios](assets/README.md), controles en [Atajos](documentacion/controles.md) y comprobación con `pnpm comprobar:decorados`.
+Los **decorados ampliados están aparcados** por decisión de Àlex: Frank y el pozo conservan sus gráficos originales. Los PNG se guardan como referencia para una revisión futura; el catálogo activo está vacío. Mayús+F1 informa de esta situación y no añade ilustraciones. Los marcos exteriores F1 y el monitor continúan disponibles. Detalles en [Recursos propios](assets/README.md); `pnpm comprobar:decorados` verifica que las escenas permanezcan originales.
 
 **Recorrido reconstruido en C++ y SDL desde la mazmorra, lago y cuevas hasta el asaltante, la compra de comida y el transporte del mago de Paso del Dragón. Hay veintiséis vistas de desarrollo; se han conectado las dos calles de la fuente, la tienda abandonada y la posada. Otras ramas y el resto del juego siguen pendientes. Véase la [auditoría de rutas y pendientes](documentacion/auditoria_pantallas.md). Música y efectos comparten el sistema de audio común.**
 

@@ -1,12 +1,4 @@
 {
-  "decorados": [
-    {
-      "escena": 29,
-      "solape": 2,
-      "archivo": "franks_food.png",
-      "resolucion": [1586, 992],
-      "reservaOriginal": [96, 31, 128, 141]
-    }
-  ],
+  "decorados": [],
   "procedencia": "Arte adicional generado para Curse Reborn y aprobado por Àlex Llaó; no contiene personajes ni interiores extraídos del juego DOS. No asigna una licencia al proyecto."
 }

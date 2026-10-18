@@ -3,7 +3,7 @@
 Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `datos_originales/`.
 
 - `original/marcos/`: marcos de estilo pixel art para acompañar la reconstrucción fiel, opcionales con F1.
-- `original/decorados/`: decorados ampliados propios del port, opcionales con Mayús+F1; rellenan huecos dentro de la imagen del juego y reciben sus filtros.
+- `original/decorados/`: PNG de decorados ampliados conservados como referencia; están aparcados y su catálogo activo está vacío.
 - `remaster/marcos/`: ubicación prevista para futuros marcos del remaster; todavía no contiene material.
 
 `original` identifica el estilo de la versión del port. Estos marcos no proceden del juego DOS. Àlex ha aportado `default.png` y sus metadatos y ha autorizado incluirlos en el repositorio. El PNG se conserva sin editar; su SHA-256 es `083ee51a182d570125cd97cb4d3783c6311333afec90190018f3a3933aadbd93`. Esta atribución no asigna una licencia al resto del proyecto.
@@ -26,11 +26,11 @@ En ventanas altas, los paneles laterales se giran90° para cubrir las bandas sup
 
 ## Decorados ampliados
 
-La fachada propia de Frank's Food está en `original/decorados/franks_food.png`, a1586×992, con el arco dibujado en el PNG. Se activa con Mayús+F1 y recibe los filtros del juego. Se superpone el PNG completo sobre la escena: su alfa define el vano y sus piedras pueden quedar delante del fondo, personajes y objetos en el borde. Los menús y el cursor se muestran por encima. No se recorta según los píxeles del original ni se deforma el arte. Los metadatos de reserva y solape no limitan la silueta del PNG.
+Los decorados de Frank y del pozo están **aparcados y sin asignación** por petición de Àlex. El catálogo activo está vacío; el juego muestra las escenas originales. No volver a habilitarlos sin una nueva decisión del propietario.
 
-El decorado del pozo del cubo se ha retirado del catálogo por petición de Àlex: no se adapta bien al original. El pozo conserva su vista original incluso cuando los decorados están activados. El PNG descartado se mantiene como referencia sin asignación, no como una decoración disponible.
+Se conservan `original/decorados/franks_food.png` (1586×992) y el PNG del pozo como referencias para una revisión posterior de perspectiva, suelo y bordes. No se modifican ni se eliminan estos archivos. Mayús+F1 indica por consola que los decorados están aparcados. Los marcos exteriores y el monitor de F1 permanecen disponibles.
 
-`pnpm comprobar:decorados` verifica Frank con los seis filtros, bandas de menú y restauración exacta al desactivar; también comprueba que pasar al pozo con la opción activa no herede ningún decorado.
+`pnpm comprobar:decorados` verifica el catálogo vacío y que Frank y el pozo mantienen sus píxeles originales con los seis filtros, incluso al intentar activar la opción.
 
 ## Monitor de PC 286 y habitación
 

@@ -76,7 +76,7 @@ export function prepararMarcos(raiz, destino) {
   }
   writeFileSync(
     join(destino, 'catalogo_decorados.hpp'),
-    `// Generado desde assets/original/decorados; no editar.\n#pragma once\ninline constexpr DefinicionDecorado catalogo_decorados[] = {${definiciones.join(',\n')}};\n`,
+    `// Generado desde assets/original/decorados; no editar.\n#pragma once\n#include <array>\ninline constexpr std::array<DefinicionDecorado, ${definiciones.length}> catalogo_decorados = {{${definiciones.join(',\n')}}};\n`,
   );
   copyFileSync(join(origenDecorados, 'catalogo.json'), join(destinoDecorados, 'catalogo.json'));
   const catalogo = JSON.parse(readFileSync(join(origen, 'catalogo.json'), 'utf8'));

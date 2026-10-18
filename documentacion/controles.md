@@ -18,7 +18,7 @@ El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificació
 
 ## Aspecto de pantalla
 
-**Mayús + F1** activa o desactiva los **decorados ampliados**, independientemente de F1. Rellenan el vacío negro dentro de la imagen original con arte adicional propio del port. Están disponibles en Frank's Food; el decorado del pozo se ha retirado a petición de Àlex y esa escena conserva su imagen original. Arrancan desactivados, mantienen la preferencia durante la sesión e informan en consola. Reciben todos los filtros de F11, incluidos xBRZ y 2xSaI. No cambian los clics, las paredes ni los puzles. F2 continúa controlando el límite de FPS.
+**Mayús + F1** queda reservado a los **decorados ampliados**, actualmente aparcados. La consola informa de ello y la imagen permanece original. No hay decorados asignados a ninguna escena; se conservan los PNG como referencia. F1 sigue controlando los marcos exteriores y el monitor, y F2 el límite de FPS.
 
 **F1** recorre **predeterminado → monitor de PC 286 → sin marco**. Arranca sin marco y cada cambio aparece en consola. El predeterminado conserva el PNG de Àlex, su relieve y la entrada/salida con zoom y fundido de 250 ms; en ventanas altas gira sus paneles laterales para ocupar las bandas superior e inferior.
 
@@ -99,7 +99,7 @@ F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de
 
 Los marcos se orientan según las bandas: laterales en ventanas anchas y girados90° arriba/abajo en ventanas altas. F1 mantiene su fundido y zoom. El título de ventana numera las vistas como «1: La mazmorra».
 
-El decorado ampliado de Frank se superpone entero sobre la escena. La transparencia del PNG define su abertura; el arco y las piedras quedan delante del interior y pueden ocultar partes de personajes u objetos en sus bordes. Los menús y el cursor siguen por encima. Al desactivarlo se recupera la imagen original.
+Frank y el pozo se muestran sin decorados ampliados. Su posible revisión visual queda para más adelante; la prioridad vuelve a los puzles y caminos del port fiel.
 
 La mano original del ratón aparece únicamente dentro de la imagen jugable. Sobre el marco, la habitación o las bandas, y al salir de la ventana, se recupera la flecha normal. Volver al juego restaura la mano a su escala actual, también con zoom. Los paneles DOS ocultan el cursor nativo solo mientras el puntero permanece dentro del juego, para evitar duplicar su mano incorporada.
 

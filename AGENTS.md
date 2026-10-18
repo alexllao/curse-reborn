@@ -131,3 +131,7 @@ comprobar:reinicio cubre apagado persistente, segunda pulsación, fases de BIOS/
 ## Orden de capas del decorado de Frank
 
 Corrección expresa de Àlex: el overlay de Frank va POR ENCIMA de la escena. Esta instrucción sustituye los recortes anteriores que protegían fondo y actores, así como el límite de dos píxeles. Componer el PNG entero con su alfa, sin fabricar una máscara usando el fondo o las diferencias entre fondo y actores; el vano ya está dibujado. El borde opaco puede ocultar parte de la escena y sus actores para quedar en primer plano. Menús, paneles y cursor continúan delante; F11 procesa el decorado con el juego. Mayús+F1 restaura el original. No modificar ni deformar el asset aprobado. comprobar:decorados contrasta transparencia, solape sobre píxeles del interior, menús, seis filtros, restauración y ausencia de decorado del pozo.
+
+## Decorados aparcados por decisión posterior
+
+Àlex decide apartar los decorados ampliados y continuar con el port fiel. Retirar Frank del catálogo activo y conservar sus PNG como referencia, igual que el del pozo. Esta decisión sustituye las indicaciones anteriores de mostrar Frank, incluido su orden de capas. El catálogo debe permanecer vacío y Mayús+F1 informar sin activar ilustraciones. No reactivar ni rediseñar estos assets sin nueva petición. Los marcos exteriores y el monitor de F1 siguen disponibles. comprobar:decorados verifica el catálogo vacío y la imagen original de Frank/pozo con seis filtros.

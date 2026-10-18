@@ -24,6 +24,10 @@ public:
   }
   // Mayús+F1 controla esta opción independientemente de los marcos de las bandas.
   void alternar() {
+    if (catalogo_decorados.empty()) {
+      registrar_accion("Decorados ampliados: aparcados; se conserva la imagen original");
+      return;
+    }
     visible = !visible;
     registrar_accion("Decorados ampliados: %s", visible ? "activados" : "desactivados");
   }
