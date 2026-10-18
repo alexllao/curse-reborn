@@ -38,3 +38,5 @@ EDGE (escena 30) se identifica como **El borde del mundo (pendiente)**. Se carga
 El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
 
 Cuando exista el HUD propio, mostrará brevemente el nombre de la pantalla cada vez que se acceda a ella, también al regresar a una ya visitada. Reutilizará este catálogo. La duración y el aspecto quedan pendientes de decidir; este aviso todavía no está implementado.
+
+El título de la ventana incluye el número de vista, por ejemplo «Curse Reborn — 1: La mazmorra» y «Curse Reborn — 4: El fondo del lago». Se actualiza al entrar, volver y cargar una partida; los números DOS del archivo de guardado no cambian.

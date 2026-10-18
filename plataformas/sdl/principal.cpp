@@ -180,7 +180,8 @@ bool cambiar_pantalla(const std::string &carpeta, int pantalla, Presentacion &pr
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
   const std::string titulo =
-      std::string("Curse Reborn — ") + nombre + (pantalla >= 3 ? " (vista de desarrollo)" : "");
+      std::string("Curse Reborn — ") +
+      (pantalla >= 3 ? nombre_numerado_escena(mazmorra.escena_actual()) : nombre);
   return actualizar_textura(presentacion) &&
          SDL_SetWindowTitle(presentacion.ventana, titulo.c_str());
 }
@@ -1210,7 +1211,7 @@ int main(int argc, char *argv[]) {
     if (pantalla >= 3) {
       const auto actual = mazmorra.escena_actual();
       if (actual != escena_titulada) {
-        const std::string titulo = std::string("Curse Reborn — ") + nombre_escena(actual);
+        const std::string titulo = std::string("Curse Reborn — ") + nombre_numerado_escena(actual);
         if (!SDL_SetWindowTitle(presentacion.ventana, titulo.c_str()))
           return fallo("No se ha podido mostrar el nombre de la escena");
         escena_titulada = actual;

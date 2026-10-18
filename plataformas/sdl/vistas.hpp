@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 // Cada atajo inicia la entrada DOS indicada; no copia el inventario de otra vista.
 struct VistaDesarrollo {
@@ -42,4 +43,12 @@ inline const char *nombre_escena(unsigned short escena) {
     if (vista.escena == escena)
       return vista.nombre;
   return escena == 30 ? "El borde del mundo (pendiente)" : "Escena pendiente";
+}
+
+// Numera el título con el catálogo F5/F6, conservando el identificador DOS para las partidas.
+inline std::string nombre_numerado_escena(unsigned short escena) {
+  for (unsigned int i = 0; i < cantidad_vistas; ++i)
+    if (vistas_desarrollo[i].escena == escena)
+      return std::to_string(i + 1) + ": " + vistas_desarrollo[i].nombre;
+  return nombre_escena(escena);
 }

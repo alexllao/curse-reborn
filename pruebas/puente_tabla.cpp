@@ -6,6 +6,7 @@
 #include "../motor/acciones/menu.hpp"
 #include "../motor/estado/partidas.hpp"
 #include "../motor/video/menu.hpp"
+#include "../motor/video/panel_partidas.hpp"
 #include "../motor/video/introduccion.hpp"
 #include "../motor/acciones/construir_tabla.hpp"
 #include "../motor/acciones/seleccionar_coincidencias.hpp"
@@ -917,4 +918,14 @@ extern "C" EXPORTAR int componer_informacion(const unsigned char *datos,
                                      rectangulo[1], rectangulo[2], rectangulo[3])
              ? 1
              : 0;
+}
+
+// E89D y E46D: exporta la composición original para compararla con su dibujante VGA.
+extern "C" EXPORTAR int
+componer_panel_partidas(const unsigned char *datos, const unsigned char *fuente,
+                        unsigned int longitud_fuente, const unsigned char *archivo,
+                        unsigned int longitud_archivo, unsigned int modo, unsigned int editando,
+                        const unsigned char *nombre, unsigned int letras, unsigned char *destino) {
+  return motor::componer_panel_partidas(datos, fuente, longitud_fuente, archivo, longitud_archivo,
+                                        modo, editando != 0, nombre, letras, destino);
 }

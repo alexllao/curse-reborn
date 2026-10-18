@@ -1,3 +1,5 @@
+#include "../../motor/video/panel_partidas.hpp"
+#include "../../motor/video/sprites.hpp"
 #include "../../motor/acciones/lista_identificadores.hpp"
 #include "../../motor/video/camara.hpp"
 #include "../../motor/video/fundido.hpp"
@@ -286,6 +288,40 @@ bool Mazmorra::dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &i
   placa = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(ancho),
            static_cast<float>(alto)};
   return true;
+}
+
+// E89D y E46D: utiliza la placa, el teclado y el cursor DOS sobre un fondo centinela.
+bool Mazmorra::dibujar_panel_partidas(unsigned int modo, const std::vector<unsigned char> &archivo,
+                                      bool editando, const std::string &nombre, int cursor_x,
+                                      int cursor_y, unsigned char fondo_transparente,
+                                      motor::ImagenIndexada &imagen) const {
+  imagen = fondo;
+  for (auto &indice : imagen.indices)
+    indice = fondo_transparente;
+  if (!motor::componer_panel_partidas(datos, fuente.data(),
+                                      static_cast<unsigned int>(fuente.size()), archivo.data(),
+                                      static_cast<unsigned int>(archivo.size()), modo, editando,
+                                      reinterpret_cast<const unsigned char *>(nombre.data()),
+                                      static_cast<unsigned int>(nombre.size()), imagen.indices))
+    return SDL_SetError("Panel original no válido: modo%u, fuente%zu, archivo%zu, nombre%zu", modo,
+                        fuente.size(), archivo.size(), nombre.size());
+  if (!datos[0x2c0a])
+    return true;
+  if (!motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()),
+                                datos[0x2c0b], imagen.indices, cursor_x, cursor_y, false))
+    return SDL_SetError("Cursor original no válido: imagen%u, banco%zu, posición%d,%d",
+                        datos[0x2c0b], raton.size(), cursor_x, cursor_y);
+  return true;
+}
+// BA70 contiene siete teclas por fila, separadas por un espacio y con tres acciones especiales.
+unsigned char Mazmorra::tecla_nombre_partida(unsigned int x, unsigned int y) const {
+  return x >= 8 && x <= 111 && y >= 15 && y <= 74 ? datos[0xba70 + ((y - 15) / 10) * 15 + x / 8]
+                                                  : 0xff;
+}
+// D897/D89E: los índices con signo negativo no tienen glifo en la fuente original.
+bool Mazmorra::admite_letra_partida(unsigned char letra) const {
+  return letra >= 32 && letra < 127 && fuente.size() >= 2 && datos[0xb6b4 + letra] < 128 &&
+         datos[0xb6b4 + letra] * 2u + 2u <= motor::palabra(fuente.data(), 0) * 16u;
 }
 
 // 8B6F: los fragmentos del pozo usan el mismo creador de entidades que las animaciones.

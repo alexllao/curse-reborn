@@ -77,9 +77,11 @@ Colores: **verde**, objetos; **cian**, Brad; **magenta**, zonas de interacción;
 
 Abrir el menú con Escape o botón derecho y elegir el octavo icono, **partidas**. Su submenú ofrece cargar, guardar y borrar. El décimo icono abre la ficha de información y puntuación.
 
-En el panel de partidas, usar ratón o flechas arriba/abajo para seleccionar una de siete ranuras; Intro o **Aceptar** confirma. Escape o **Cancelar** vuelve al juego. Al guardar, escribir el nombre (hasta trece caracteres ASCII); Ctrl+A limpia el campo y Retroceso borra. Reemplazar una ranura o borrarla exige confirmar; mantener Intro pulsado no confirma automáticamente. El juego queda pausado y la música continúa.
+Los paneles mantienen la imagen, los textos y FONT.SPR del original, con ocho ranuras. Ratón o flechas arriba/abajo seleccionan; clic izquierdo o Intro confirman. Borrar actúa directamente, sin confirmación adicional; el perfil conserva copia anterior. Clic derecho cancela y Escape vuelve desde el selector.
 
-**Importar DOS**, dentro de Cargar, abre el selector de archivos. También se puede arrastrar un CURSE.SAV sobre ese panel. Se añaden sus partidas en ranuras libres; no se sobrescriben las existentes ni se modifica el archivo importado. Se pueden conservar partidas de zonas posteriores, pero solo se cargan las zonas ya integradas. El archivo del perfil y su copia anterior se indican por consola. Véanse [formato y comprobaciones](partidas.md).
+Guardar abre el teclado original de trece caracteres. Flechas desplazan el cursor; Insertar pulsa su tecla. También se puede escribir con el teclado físico, usar Espacio y Retroceso, y guardar con Intro. Clic derecho cancela el editor; Escape no lo cierra. No hay Ctrl+A ni botones nuevos. Los huecos entre las letras del teclado en pantalla no escriben.
+
+La importación DOS queda como integración de escritorio mediante arrastrar CURSE.SAV a la ventana; no aparece un botón Importar dentro del panel original. Se añaden partidas en ranuras libres sin sobrescribir las existentes ni modificar el origen. Véanse [formato y límites comprobados](partidas.md), incluida la peculiaridad del borrado de la octava ranura en el EXE.
 
 ### Fichas de información
 
@@ -88,3 +90,5 @@ El último icono del menú abre las cuatro páginas originales con puntuación y
 La última vista F5/F6 es **El camino del asaltante (COUNTRY2)**, después de **La salida al campo**: diecisiete escenas jugables. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.
 
 F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de las maravillas y mago: veintidós vistas de desarrollo. Estos atajos no transfieren inventario. Para probar la compra y el mago en una partida continua, sigue el [recorrido de la población](recorridos/10_paso_del_dragon.txt). El borde del mundo es todavía un punto de llegada detenido; F5/F6 permite volver a las vistas disponibles.
+
+Los marcos se orientan según las bandas: laterales en ventanas anchas y girados90° arriba/abajo en ventanas altas. F1 mantiene su fundido y zoom. El título de ventana numera las vistas como «1: La mazmorra».

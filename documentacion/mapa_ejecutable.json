@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:E89D",
+      "nombre": "Selector original de partidas",
+      "comentario": "E89D–E994: placa negra128×100 en96/50, texto por D87A, ocho filas y cursor relativo B603/B605. Panel_partidas.cpp y23 composiciones originales de64.000 píxeles."
+    },
+    {
+      "direccion": "0000:E997",
+      "nombre": "Ocho nombres del archivo de partidas",
+      "comentario": "E997–E9D3: recorre ocho bits, lee13 bytes o copiaBB7B, avanza15 por fila y salta el bloque de estado. Corrige el límite previo de siete del port; archivos anteriores siguen válidos."
+    },
+    {
+      "direccion": "0000:E46D",
+      "nombre": "Teclado original de nombres",
+      "comentario": "E46D–E6F6: teclado BA62/BA70, campo BADA de13 caracteres y guiones para huecos. Clic/Insertar eligen carácter; código0 espacio,1 borrar,2 aceptar. Los espacios entre teclas se ignoran."
+    },
+    {
+      "direccion": "0000:E831",
+      "nombre": "Máscara original al borrar partidas",
+      "comentario": "E831 aplica XOR7F al bit seleccionado antes de AND: en la octava ranura conserva el bit7. Se mantiene para fidelidad;303 comparaciones de formato incluyen máscaras80 yFF."
+    },
+    {
       "direccion": "0000:358A",
       "nombre": "Respuesta al saludo en MAGE",
       "comentario": "358A–35B0: escena22 y entidad2C4C activa; canal2CE0=1A2F, fase0, espera1, intervalo40 y sonido1. Poblacion.cpp y comparar:poblacion."
@@ -105,7 +125,7 @@
     {
       "direccion": "0000:E718",
       "nombre": "Escritura compatible de las siete partidas DOS",
-      "comentario": "E718–E745: nombres de trece bytes y DS:2C0A con longitud DS:53B1=10151, desplazamientos según E3C4 y máscara en byte inicial. Motor/estado/partidas.cpp, 183 casos frente al EXE."
+      "comentario": "E718–E745: nombres de trece bytes y DS:2C0A con longitud DS:53B1=10151, desplazamientos según E3C4 y máscara de ocho bits en byte inicial. Motor/estado/partidas.cpp, 303 casos frente al EXE."
     },
     {
       "direccion": "0000:320B",

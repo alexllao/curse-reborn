@@ -82,6 +82,7 @@
     "comprobar:catapulta": "node herramientas/gestionar_proyecto.mjs comprobar:catapulta",
     "comparar:final-cuevas": "node herramientas/gestionar_proyecto.mjs comparar:final-cuevas",
     "comprobar:final-cuevas": "node herramientas/gestionar_proyecto.mjs comprobar:final-cuevas",
+    "comparar:panel-partidas": "node herramientas/gestionar_proyecto.mjs comparar:panel-partidas",
     "comparar:partidas": "node herramientas/gestionar_proyecto.mjs comparar:partidas",
     "comprobar:partidas": "node herramientas/gestionar_proyecto.mjs comprobar:partidas",
     "comparar:opciones": "node herramientas/gestionar_proyecto.mjs comparar:opciones",

@@ -38,6 +38,7 @@
   "motor/video/introduccion.cpp",
   "motor/acciones/menu.cpp",
   "motor/video/menu.cpp",
+  "motor/video/panel_partidas.cpp",
   "motor/movimiento/geometria.cpp",
   "motor/estado/paso_escena.cpp",
   "motor/video/camara.cpp",

@@ -858,6 +858,22 @@ export async function gestionarSdl(accion, argumentos) {
               Math.floor(x0 + solapeX) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
             )
           : 0;
+      const margenSuperior =
+        y0 > 0
+          ? (marco.innerPadding?.left ?? 0) *
+            Math.max(
+              (320 * escala) / marco.left.height,
+              Math.floor(y0 + solapeY) / (marco.left.width - (marco.innerPadding?.left ?? 0)),
+            )
+          : 0;
+      const margenInferior =
+        y0 > 0
+          ? (marco.innerPadding?.right ?? 0) *
+            Math.max(
+              (320 * escala) / marco.right.height,
+              Math.floor(y0 + solapeY) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
+            )
+          : 0;
       let modificados = 0;
       let relieve = 0;
       for (let y = 0; y < alto; y++)
@@ -871,8 +887,8 @@ export async function gestionarSdl(accion, argumentos) {
           if (
             x >= Math.ceil(x0 + solapeX + margenIzquierdo) &&
             x < Math.floor(ancho - x0 - solapeX - margenDerecho) &&
-            y >= Math.ceil(y0 + solapeY) &&
-            y < Math.floor(alto - y0 - solapeY)
+            y >= Math.ceil(y0 + solapeY + margenSuperior) &&
+            y < Math.floor(alto - y0 - solapeY - margenInferior)
           )
             throw new Error(`El marco modifica el área del juego: ${opcion}, ${x}, ${y}.`);
           if (
@@ -888,6 +904,8 @@ export async function gestionarSdl(accion, argumentos) {
         throw new Error(`Presencia de marco incorrecta: ${opcion}.`);
       if (x0 > 0 && margenIzquierdo > 0 && relieve === 0)
         throw new Error(`El remate interior sigue cortado: ${opcion}.`);
+      if (y0 > 0 && margenSuperior > 0 && relieve === 0)
+        throw new Error(`El remate girado sigue cortado: ${opcion}.`);
       console.log(
         `${opcion}: F1 reversible; ${modificados} píxeles decorados y ${relieve} de relieve interior conservados.`,
       );
@@ -925,6 +943,7 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: 29,
           animacion_ms: 250,
+          bandas_horizontales: 'paneles laterales girados 90 grados',
           zoom_inicial: 1.1,
           formatos: [
             'apaisado',
@@ -1203,6 +1222,16 @@ export async function gestionarSdl(accion, argumentos) {
       join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
       'comparar:partidas',
     ]);
+    ejecutar(
+      process.platform === 'win32'
+        ? join(raiz, 'trabajo', 'entorno', 'Scripts', 'python.exe')
+        : join(raiz, 'trabajo', 'entorno', 'bin', 'python'),
+      [
+        join(raiz, 'pruebas', 'comparar_panel_partidas.py'),
+        '--biblioteca',
+        join(raiz, 'trabajo', 'comparacion_acciones', 'tabla_acciones.dll'),
+      ],
+    );
     const carpeta = join(raiz, 'trabajo', 'comprobacion_partidas_sdl');
     mkdirSync(carpeta, { recursive: true });
     const perfil = join(carpeta, `perfil_${Date.now()}.sav`);
@@ -1228,9 +1257,13 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          ranuras: 7,
+          ranuras: 8,
           importacion_dos: true,
-          borrado_confirmado: true,
+          panel_original: true,
+          editor_original: true,
+          composiciones_originales: 23,
+          compatibilidad_nombres_anteriores: 4,
+          borrado_inmediato_original: true,
           perfil_aislado: perfil,
         },
         null,
@@ -1238,7 +1271,7 @@ export async function gestionarSdl(accion, argumentos) {
       ) + '\n',
     );
     console.log(
-      'Partidas SDL: guardado, restauración, importación DOS sin sobrescribir otras ranuras y borrado confirmado.',
+      'Partidas SDL: guardado, restauración, importación DOS sin sobrescribir otras ranuras y paneles originales sin botones añadidos.',
     );
     return;
   }

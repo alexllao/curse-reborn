@@ -9,7 +9,7 @@ bool validar_partidas(const unsigned char *archivo, unsigned int longitud) {
       return false;
   return true;
 }
-// E997: consulta una de las siete descripciones sin interpretar sus bytes como instrucciones.
+// E997: consulta una de las ocho descripciones sin interpretar sus bytes como instrucciones.
 bool nombre_partida(const unsigned char *archivo, unsigned int longitud, unsigned int ranura,
                     char *nombre) {
   if (!nombre || ranura >= ranuras_partida || !validar_partidas(archivo, longitud) ||
@@ -32,7 +32,7 @@ bool leer_partida(const unsigned char *archivo, unsigned int longitud, unsigned 
     datos[inicio_estado_partida + i] = archivo[inicio + i];
   return true;
 }
-// E3C4 y E718–E745: rellena con espacios el nombre y conserva los otros seis registros.
+// E3C4 y E718–E745: rellena con espacios el nombre y conserva los otros siete registros.
 bool escribir_partida(unsigned char *archivo, unsigned int capacidad, unsigned int ranura,
                       const char *nombre, const unsigned char *datos) {
   if (!archivo || !nombre || !nombre[0] || !datos || capacidad != bytes_archivo_partidas ||

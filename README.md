@@ -29,7 +29,7 @@ El traslado de [operaciones de sonido y modelos](documentacion/operaciones_secue
 
 El [reproductor del altavoz del PC](documentacion/altavoz_pc.md) ya traslada arranque, parada y avance de notas, incluyendo su conexión con el selector y la animación. El propietario ha confirmado sus **3.312 casos**. Los efectos ya generan PCM y se escuchan mediante una salida SDL compartida; la música de zona [MT-32](documentacion/musica_mt32.md) ya está integrada mediante Munt; AdLib mantiene su tema continuo original y los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados.
 
-Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++ y el propietario ha confirmado sus **1.183 casos** de comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
+Las [copias gráficas y la paleta](documentacion/video_planos.md) ya están trasladadas a C++ y el propietario ha confirmado sus **1.303 casos** de comparación amplia. Se conserva la primera imagen de diagnóstico obtenida con la descompresión original como referencia.
 
 El [descompresor RNC de método uno](documentacion/descompresion_rnc.md) ya está trasladado a C++ y el propietario ha confirmado sus **142 casos** de comparación amplia. **`pnpm titulo` genera la pantalla de título íntegramente con el núcleo C++**, sin ejecutar `CURSE.EXE` ni Unicorn. La imagen coincide con la referencia anterior.
 
@@ -47,7 +47,7 @@ Ya existe una herramienta propia que lee la estructura DOS MZ y sigue llamadas y
 
 El [mapa inicial del ejecutable](documentacion/analisis_ejecutable.md) recoge el arranque y las reubicaciones. El [análisis del bucle central](documentacion/bucle_principal.md) documenta su recorrido y la selección de escenas. El constructor de la [tabla dinámica de acciones](documentacion/tabla_acciones.md), la selección de coincidencias y la interpretación del [retorno de acciones](documentacion/contrato_acciones.md) pasan **1.120 comparaciones contra las instrucciones originales** ejecutadas en un emulador de CPU. Además, hay **25 comprobaciones** del analizador con programas sintéticos que no necesitan el juego.
 
-El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 237 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
+El objetivo es ampliar ese C/C++ hasta disponer de un motor portable. Se conserva un [listado de ensamblador comentado](documentacion/ensamblador_comentado.md) como referencia, con 241 anotaciones propias y enlaces a los bloques trasladados. El núcleo se mantiene independiente de SDL. La [capa SDL](documentacion/ventana_sdl.md) se ha compilado y comprobado en Windows; macOS y la futura compilación web mediante Emscripten siguen pendientes de validar e integrar.
 
 Se ha realizado una primera inspección estática de una copia para DOS:
 
@@ -86,7 +86,7 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 - [x] Trasladar arranque, parada y temporizador del altavoz del PC; muestra de 310 casos coincidente.
 - [x] Confirmar con el propietario los 3.312 casos del altavoz.
 - [x] Trasladar copias por planos y envío de paleta; muestra de 83 casos y referencia visual del título comprobadas.
-- [x] Confirmar con el propietario los 1.183 casos de vídeo.
+- [x] Confirmar con el propietario los 1.303 casos de vídeo.
 - [x] Trasladar RNC de método uno y generar el título con C++; muestra de 38 casos coincidente.
 - [x] Confirmar con el propietario los 142 casos de RNC.
 - [x] Conectar el título a SDL y comprobar sus 64.000 píxeles con dibujante de software y cierre por Escape.
@@ -179,7 +179,7 @@ pnpm comprobar
 | `pnpm comparar:secuencias`  | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos.                                                  |
 | `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos.                          |
 | `pnpm comparar:altavoz`     | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos.                                            |
-| `pnpm comparar:video`       | Compara 1.183 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
+| `pnpm comparar:video`       | Compara 1.303 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
 | `pnpm comparar:rnc`         | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos.                                                          |
 | `pnpm titulo`               | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida.     |
 | `pnpm comparar:graficos`    | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos.                                                 |
@@ -299,7 +299,7 @@ El siguiente bloque incorpora cuarto corredor, SEESAW y cueva del monitor: [cata
 
 El tramo final añade moneda, cuatro agujeros, ramitas, trampa y barro, premios del pozo, casco, máscara y salida por el cubo. `pnpm comparar:final-cuevas --muestra` contrasta 32.629 casos y pasos hasta COUNTRY1; `pnpm comprobar:final-cuevas` añade dieciséis capturas SDL. La auditoría `pnpm comparar:opciones` comprueba 5.642 selecciones en 47 estados, sin manejadores pendientes en sus listas disponibles. Esto delimita lo comprobado; no demuestra todos los estados posibles. Véase [final de las cuevas](documentacion/final_cuevas.md).
 
-Guardar, cargar, borrar e importar ya están disponibles desde el octavo icono del menú original. Las siete ranuras usan el formato CURSE.SAV, con 183 casos contrastados frente a sus instrucciones DOS. La importación añade ranuras libres y permite cargar zonas integradas, conservando el archivo de origen. Véanse [partidas y compatibilidad](documentacion/partidas.md). `pnpm comprobar:partidas` utiliza un perfil temporal para validar restauración, importación y borrado confirmado. El icono de información muestra puntuación y créditos en un panel propio de la plataforma.
+Guardar, cargar y borrar están disponibles desde el octavo icono del menú original; importar es una integración de escritorio por arrastre. Las ocho ranuras usan el formato CURSE.SAV, con 303 casos contrastados frente a sus instrucciones DOS. La importación añade ranuras libres y permite cargar zonas integradas, conservando el archivo de origen. Véanse [partidas y compatibilidad](documentacion/partidas.md). `pnpm comprobar:partidas` utiliza un perfil temporal para validar restauración, importación y borrado inmediato original. El icono de información muestra las cuatro fichas originales de puntuación y créditos.
 
 `pnpm comparar:cuevas --muestra` prolonga la partida hasta la cuerda; `pnpm comprobar:cuevas` añade cuatro capturas SDL y los treinta y cuatro cambios de vista.
 
@@ -326,3 +326,5 @@ Cada escena tiene un nombre en castellano compartido por la consola, el título 
 La pantalla diecisiete, [El camino del asaltante](documentacion/camino_del_asaltante.md), incluye tropiezo, recogida y uso de espada, ataque, dinero y sendero hasta DRAGON. `pnpm comprobar:asaltante` contrasta 3.229 casos/pasos y doce capturas SDL; F5/F6 recorre ahora veintidós vistas. El tramo siguiente incorpora los [puzles de la población](documentacion/puzles_poblacion.md).
 
 La [ruta de Paso del Dragón](documentacion/puzles_poblacion.md) incluye guardias, saludo a Frank, compra y consumo de comida, portal, fuente y transporte del mago. `pnpm comprobar:poblacion` agrupa comparación contra el EXE, doce capturas SDL y cuarenta y cuatro cambios F5/F6. La llegada al borde del mundo está cargada y detenida: su imagen y jugabilidad siguen pendientes de contraste. Las otras rutas de la ciudad todavía no están completas. [Recorrido en castellano](documentacion/recorridos/10_paso_del_dragon.txt).
+
+Los [paneles de partidas](documentacion/partidas.md) conservan ahora el diseño original: placa negra, FONT.SPR, ocho ranuras y teclado de nombres. Se han retirado los botones Aceptar/Cancelar/Importar y las confirmaciones añadidas. `pnpm comprobar:partidas` incluye303 casos del formato,23 composiciones originales y4 casos de nombres anteriores comparados por píxeles y el flujo SDL. La compatibilidad con perfiles anteriores de siete ranuras se conserva.

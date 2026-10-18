@@ -1,8 +1,7 @@
 #include "partidas.hpp"
 #include "registro.hpp"
 #include "../../motor/estado/partidas.hpp"
-#include <cstdint>
-#include <cstdio>
+#include <algorithm>
 
 // El panel se destruye antes que Presentacion y su dibujante.
 PartidasSDL::~PartidasSDL() {
@@ -60,24 +59,23 @@ bool PartidasSDL::persistir() {
          SDL_RenamePath((ruta + ".temporal").c_str(), ruta.c_str());
 }
 
-// Conserva nombres DOS como bytes; el editor nuevo acepta los caracteres ASCII del juego.
+// E3F1/E41E: conserva los trece bytes de la descripción y retira solo sus espacios finales.
 void PartidasSDL::seleccionar(unsigned int ranura) {
   seleccion = ranura;
-  confirmacion = false;
   char texto[motor::caracteres_nombre_partida + 1]{};
   nombre = motor::nombre_partida(archivo.data(), static_cast<unsigned int>(archivo.size()),
                                  seleccion, texto)
                ? texto
-               : "Partida " + std::to_string(seleccion + 1);
+               : "";
   while (!nombre.empty() && nombre.back() == ' ')
     nombre.pop_back();
-  for (auto &c : nombre)
-    if (static_cast<unsigned char>(c) < 32 || static_cast<unsigned char>(c) > 126)
-      c = '?';
+  for (auto &letra : nombre)
+    if (letra >= 'a' && letra <= 'z')
+      letra = static_cast<char>(letra - 'a' + 'A');
+  cursor_y = 70 + static_cast<int>(seleccion) * 10;
   registrar_accion("Partidas: seleccionada ranura %u", seleccion + 1);
 }
-
-// Inicia la edición únicamente al guardar y conserva el juego detenido detrás del panel.
+// E1F5/E376/E7D9: inicia el selector en su primera fila, sin abrir aún el editor de nombre.
 void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana) {
   if (accion != 4)
     preparar();
@@ -86,21 +84,21 @@ void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana) {
   pagina_informacion = 0;
   pagina_preparada = 4;
   modo = accion;
+  if (modo != 4)
+    SDL_HideCursor();
   seleccion = 0;
-  confirmacion = false;
+  editando = false;
+  cursor_x = 108;
+  cursor_y = 70;
+  SDL_StopTextInput(ventana);
   if (disponible && modo != 4) {
     mensaje.clear();
     seleccionar(0);
   }
-  if (modo != 4 && !evento_importacion)
-    evento_importacion = SDL_RegisterEvents(1);
-  if (modo == 2)
-    SDL_StartTextInput(ventana);
   if (modo == 4)
     registrar_accion("Información: página 1 de 4; clic o Intro avanza, Escape vuelve");
 }
-
-// Devuelve la entrada al juego sin que Escape se propague al menú de acciones.
+// Devuelve la entrada al juego sin propagar la pulsación al personaje.
 void PartidasSDL::cerrar(SDL_Window *ventana) {
   if (modo == 4)
     registrar_accion("Información: volver al juego");
@@ -108,19 +106,9 @@ void PartidasSDL::cerrar(SDL_Window *ventana) {
   textura_informacion = nullptr;
   pagina_preparada = 4;
   SDL_StopTextInput(ventana);
+  SDL_ShowCursor();
   modo = 0;
-  confirmacion = false;
-}
-
-// Conserva una ruta independiente del selector y evita acceder a objetos desde su hilo de retorno.
-void SDLCALL PartidasSDL::recibir_archivo(void *contexto, const char *const *archivos, int) {
-  if (!archivos || !archivos[0])
-    return;
-  SDL_Event evento{};
-  evento.type = static_cast<Uint32>(reinterpret_cast<std::uintptr_t>(contexto));
-  evento.user.data1 = SDL_strdup(archivos[0]);
-  if (!evento.user.data1 || !SDL_PushEvent(&evento))
-    SDL_free(evento.user.data1);
+  editando = false;
 }
 
 // Une ranuras compatibles sin sobrescribir partidas existentes ni modificar el archivo importado.
@@ -134,7 +122,7 @@ void PartidasSDL::importar(const char *origen) {
     return;
   }
   unsigned int entrantes = 0, libres = 0;
-  for (unsigned int i = 0; i < 7; ++i) {
+  for (unsigned int i = 0; i < motor::ranuras_partida; ++i) {
     entrantes += bool(bytes[0] & (1u << i));
     libres += !(archivo[0] & (1u << i));
   }
@@ -144,7 +132,7 @@ void PartidasSDL::importar(const char *origen) {
     return;
   }
   auto anterior = archivo;
-  for (unsigned int i = 0, destino = 0; i < 7; ++i) {
+  for (unsigned int i = 0, destino = 0; i < motor::ranuras_partida; ++i) {
     if (!(bytes[0] & (1u << i)))
       continue;
     while (archivo[0] & (1u << destino))
@@ -165,32 +153,36 @@ void PartidasSDL::importar(const char *origen) {
   registrar_accion("Partidas DOS importadas: %u; origen conservado: %s", entrantes, origen);
 }
 
-// La confirmación se exige para las dos operaciones que sustituyen una ranura existente.
+// E23B/E3BC/E81F: seleccionar guardar abre el teclado; cargar y borrar actúan al elegir la fila.
 bool PartidasSDL::aceptar(SDL_Window *ventana, Mazmorra &partida, bool &redibujar) {
-  if (!disponible)
+  if (!disponible) {
+    registrar_accion("Partidas: %s", mensaje.c_str());
     return true;
+  }
   const bool ocupada = archivo[0] & (1u << seleccion);
   if (modo == 1) {
-    if (!ocupada) {
-      mensaje = "Ranura vacia";
-      return true;
+    if (ocupada) {
+      if (!partida.cargar_partida(archivo.data(), static_cast<unsigned int>(archivo.size()),
+                                  seleccion)) {
+        registrar_accion("No se puede cargar la partida: archivo o zona pendiente");
+        return true;
+      }
+      redibujar = true;
     }
-    if (!partida.cargar_partida(archivo.data(), static_cast<unsigned int>(archivo.size()),
-                                seleccion)) {
-      mensaje = "Partida no valida o zona pendiente";
-      return true;
-    }
-    redibujar = true;
     cerrar(ventana);
     return true;
   }
-  if ((modo == 3 || ocupada) && !confirmacion) {
-    if (!ocupada) {
-      mensaje = "Ranura vacia";
-      return true;
-    }
-    confirmacion = true;
-    mensaje = modo == 3 ? "Confirmar borrado: Intro" : "Confirmar reemplazo: Intro";
+  if (modo == 2 && !editando) {
+    editando = true;
+    cursor_x = 108;
+    cursor_y = 70;
+    SDL_StartTextInput(ventana);
+    return true;
+  }
+  if (modo == 2 && nombre.empty())
+    return true;
+  if (modo == 3 && !ocupada) {
+    cerrar(ventana);
     return true;
   }
   auto anterior = archivo;
@@ -201,26 +193,47 @@ bool PartidasSDL::aceptar(SDL_Window *ventana, Mazmorra &partida, bool &redibuja
                                           seleccion, nombre.c_str());
   if (!hecho || !persistir()) {
     archivo.swap(anterior);
-    mensaje = "No se ha podido guardar el cambio";
+    registrar_accion("No se ha podido escribir el archivo de partidas");
     return true;
   }
   registrar_accion("Partida %s: ranura %u", modo == 3 ? "borrada" : "guardada", seleccion + 1);
-  if (modo == 3) {
-    seleccionar(seleccion);
-    mensaje = "Partida borrada";
-  } else
-    cerrar(ventana);
+  cerrar(ventana);
+  return true;
+}
+// E595–E6F6: cero añade espacio, uno borra, dos guarda; el resto escribe la letra del recurso.
+bool PartidasSDL::pulsar_tecla(SDL_Window *ventana, Mazmorra &partida, bool &redibujar) {
+  const auto letra = partida.tecla_nombre_partida(static_cast<unsigned int>(cursor_x - 96),
+                                                  static_cast<unsigned int>(cursor_y - 50));
+  if (letra == 0x20)
+    return true; // E5B7: los espacios entre teclas no seleccionan un carácter.
+  if (letra == 2)
+    return aceptar(ventana, partida, redibujar);
+  if (letra == 1) {
+    if (!nombre.empty())
+      nombre.pop_back();
+  } else if (nombre.size() < 13 && letra != 0xff)
+    nombre += letra ? static_cast<char>(letra) : ' ';
   return true;
 }
 
-// Atiende ratón, flechas, Intro, Escape y texto sin dejar que esas entradas alcancen al personaje.
+// E89D/E4A3: adapta las entradas SDL a las filas y las teclas originales, sin botones añadidos.
 bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra &partida,
                          bool &redibujar) {
-  if (evento_importacion && entrada.type == evento_importacion) {
-    if (modo == 1 && disponible && entrada.user.data1)
-      importar(static_cast<const char *>(entrada.user.data1));
-    SDL_free(entrada.user.data1);
-    return true;
+  // Integración de escritorio: importar por arrastre no añade controles al panel del juego.
+  if (entrada.type == SDL_EVENT_DROP_FILE && entrada.drop.data && (modo == 0 || modo == 1)) {
+    const std::string fichero = entrada.drop.data;
+    if (fichero.size() >= 4) {
+      auto extension = fichero.substr(fichero.size() - 4);
+      for (auto &letra : extension)
+        if (letra >= 'A' && letra <= 'Z')
+          letra = static_cast<char>(letra - 'A' + 'a');
+      if (extension == ".sav") {
+        preparar();
+        if (disponible)
+          importar(entrada.drop.data);
+        return true;
+      }
+    }
   }
   if (!abierta())
     return false;
@@ -242,55 +255,71 @@ bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra
       cerrar(ventana);
     return true;
   }
-  if (entrada.type == SDL_EVENT_DROP_FILE && modo == 1 && disponible && entrada.drop.data) {
-    importar(entrada.drop.data);
+  if (entrada.type == SDL_EVENT_MOUSE_BUTTON_DOWN && entrada.button.button == SDL_BUTTON_RIGHT) {
+    cerrar(ventana);
     return true;
   }
-  if (entrada.type == SDL_EVENT_TEXT_INPUT && modo == 2 && disponible) {
-    confirmacion = false;
-    mensaje.clear();
-    for (const char *p = entrada.text.text; *p && nombre.size() < 13; ++p)
-      if (static_cast<unsigned char>(*p) >= 32 && static_cast<unsigned char>(*p) <= 126)
-        nombre += *p;
+  if (entrada.type == SDL_EVENT_TEXT_INPUT && modo == 2 && editando && disponible) {
+    for (const unsigned char *p = reinterpret_cast<const unsigned char *>(entrada.text.text);
+         *p && nombre.size() < 13; ++p) {
+      auto letra = *p;
+      if (letra >= 'a' && letra <= 'z')
+        letra = static_cast<unsigned char>(letra - 'a' + 'A');
+      if (partida.admite_letra_partida(letra))
+        nombre += static_cast<char>(letra);
+    }
+    return true;
   }
   if (entrada.type == SDL_EVENT_KEY_DOWN) {
-    if (entrada.key.repeat && entrada.key.key == SDLK_RETURN)
+    if (entrada.key.repeat)
       return true;
-    if (entrada.key.key == SDLK_ESCAPE) {
-      if (confirmacion) {
-        confirmacion = false;
-        mensaje.clear();
-      } else
+    const auto tecla = entrada.key.key;
+    if (tecla == SDLK_ESCAPE) {
+      if (!editando)
         cerrar(ventana);
-    } else if (entrada.key.key == SDLK_UP || entrada.key.key == SDLK_DOWN) {
-      seleccionar((seleccion + (entrada.key.key == SDLK_UP ? 6 : 1)) % 7);
-      mensaje.clear();
-    } else if (entrada.key.key == SDLK_BACKSPACE && modo == 2 && !nombre.empty()) {
-      nombre.pop_back();
-      confirmacion = false;
-    } else if (entrada.key.key == SDLK_A && (entrada.key.mod & SDL_KMOD_CTRL) && modo == 2) {
-      nombre.clear();
-      confirmacion = false;
-    } else if (entrada.key.key == SDLK_RETURN)
+    } else if (tecla == SDLK_RETURN || tecla == SDLK_KP_ENTER)
       aceptar(ventana, partida, redibujar);
-  }
-  if (entrada.type == SDL_EVENT_MOUSE_BUTTON_DOWN && entrada.button.button == SDL_BUTTON_LEFT) {
-    const auto x = entrada.button.x, y = entrada.button.y;
-    if (disponible && x >= 32 && x < 288 && y >= 40 && y < 138) {
-      seleccionar(static_cast<unsigned int>(y - 40) / 14);
-      mensaje.clear();
-    } else if (y >= 174 && y < 190) {
-      if (x >= 32 && x < 104)
-        aceptar(ventana, partida, redibujar);
-      else if (x >= 216 && x < 288)
-        cerrar(ventana);
-      else if (disponible && modo == 1 && x >= 110 && x < 210 && evento_importacion) {
-        static const SDL_DialogFileFilter filtro{"Partidas DOS", "sav"};
-        SDL_ShowOpenFileDialog(
-            recibir_archivo,
-            reinterpret_cast<void *>(static_cast<std::uintptr_t>(evento_importacion)), ventana,
-            &filtro, 1, nullptr, false);
+    else if (editando) {
+      if (tecla == SDLK_BACKSPACE) {
+        if (!nombre.empty())
+          nombre.pop_back();
+      } else if (tecla == SDLK_INSERT)
+        pulsar_tecla(ventana, partida, redibujar);
+      else {
+        if (tecla == SDLK_LEFT)
+          cursor_x = std::max(108, cursor_x - 16);
+        if (tecla == SDLK_RIGHT)
+          cursor_x = std::min(204, cursor_x + 16);
+        if (tecla == SDLK_UP)
+          cursor_y = std::max(70, cursor_y - 10);
+        if (tecla == SDLK_DOWN)
+          cursor_y = std::min(120, cursor_y + 10);
       }
+    } else if (tecla == SDLK_UP || tecla == SDLK_DOWN) {
+      if (tecla == SDLK_UP && seleccion > 0)
+        seleccionar(seleccion - 1);
+      if (tecla == SDLK_DOWN && seleccion + 1 < motor::ranuras_partida)
+        seleccionar(seleccion + 1);
+    }
+  }
+  const bool clic =
+      entrada.type == SDL_EVENT_MOUSE_BUTTON_DOWN && entrada.button.button == SDL_BUTTON_LEFT;
+  if (entrada.type == SDL_EVENT_MOUSE_MOTION || clic) {
+    const auto x = clic ? entrada.button.x : entrada.motion.x;
+    const auto y = clic ? entrada.button.y : entrada.motion.y;
+    if (editando) {
+      cursor_x = std::clamp(static_cast<int>(x), 104, 207);
+      cursor_y = std::clamp(static_cast<int>(y), 65, 124);
+      if (clic)
+        pulsar_tecla(ventana, partida, redibujar);
+    } else {
+      const auto fila = static_cast<unsigned int>(std::clamp(static_cast<int>(y - 65) / 10, 0, 7));
+      if (fila != seleccion)
+        seleccionar(fila);
+      cursor_x = std::clamp(static_cast<int>(x), 104, 207);
+      cursor_y = std::clamp(static_cast<int>(y), 65, 144);
+      if (clic)
+        aceptar(ventana, partida, redibujar);
     }
   }
   return true;
@@ -324,37 +353,25 @@ bool PartidasSDL::dibujar(SDL_Renderer *dibujante, const Mazmorra &partida) {
     return SDL_RenderTexture(dibujante, textura_informacion, &placa_informacion,
                              &placa_informacion);
   }
-  const SDL_FRect fondo{24, 12, 272, 180}, borde{26, 14, 268, 176};
-  bool correcto =
-      SDL_SetRenderDrawColor(dibujante, 36, 40, 45, 255) && SDL_RenderFillRect(dibujante, &fondo) &&
-      SDL_SetRenderDrawColor(dibujante, 176, 180, 184, 255) && SDL_RenderRect(dibujante, &borde) &&
-      SDL_SetRenderDrawColor(dibujante, 240, 228, 200, 255) &&
-      SDL_RenderDebugText(dibujante, 36, 22,
-                          modo == 1   ? "Cargar partida"
-                          : modo == 2 ? "Guardar partida"
-                                      : "Borrar partida");
-  for (unsigned int i = 0; i < 7; ++i) {
-    const SDL_FRect fila{32, 40.0f + i * 14, 256, 13};
-    char etiqueta[40]{}, texto[14]{};
-    const bool ocupada =
-        disponible &&
-        motor::nombre_partida(archivo.data(), static_cast<unsigned int>(archivo.size()), i, texto);
-    for (auto &c : texto)
-      if (static_cast<unsigned char>(c) > 126 || (c && c < 32))
-        c = '?';
-    std::snprintf(etiqueta, sizeof(etiqueta), "%u  %s", i + 1, ocupada ? texto : "Vacia");
-    correcto = correcto &&
-               SDL_SetRenderDrawColor(dibujante, i == seleccion ? 100 : 48,
-                                      i == seleccion ? 42 : 52, i == seleccion ? 40 : 58, 255) &&
-               SDL_RenderFillRect(dibujante, &fila) &&
-               SDL_SetRenderDrawColor(dibujante, 232, 232, 224, 255) &&
-               SDL_RenderDebugText(dibujante, 36, fila.y + 2, etiqueta);
+  motor::ImagenIndexada negro{}, blanco{};
+  if (!partida.dibujar_panel_partidas(modo, archivo, editando, nombre, cursor_x, cursor_y, 0,
+                                      negro) ||
+      !partida.dibujar_panel_partidas(modo, archivo, editando, nombre, cursor_x, cursor_y, 255,
+                                      blanco))
+    return false;
+  std::vector<unsigned char> rgba(320 * 200 * 4);
+  for (unsigned int i = 0; i < 64000; ++i) {
+    for (unsigned int c = 0; c < 3; ++c)
+      rgba[i * 4 + c] =
+          static_cast<unsigned char>(negro.paleta[negro.indices[i] * 3 + c] * 255u / 63u);
+    // Dos fondos centinela distinguen la transparencia del negro opaco del cursor original.
+    rgba[i * 4 + 3] = negro.indices[i] == blanco.indices[i] ? 255 : 0;
   }
-  const std::string entrada = modo == 2 ? "Nombre: " + nombre : "";
-  correcto = correcto && SDL_SetRenderDrawColor(dibujante, 240, 228, 200, 255) &&
-             SDL_RenderDebugText(dibujante, 32, 144, entrada.c_str()) &&
-             SDL_RenderDebugText(dibujante, 32, 158, mensaje.c_str()) &&
-             SDL_RenderDebugText(dibujante, 32, 178, "Aceptar") &&
-             SDL_RenderDebugText(dibujante, 216, 178, "Cancelar");
-  return correcto && (modo != 1 || SDL_RenderDebugText(dibujante, 110, 178, "Importar DOS"));
+  SDL_DestroyTexture(textura_informacion);
+  textura_informacion =
+      SDL_CreateTexture(dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
+  return textura_informacion && SDL_SetTextureBlendMode(textura_informacion, SDL_BLENDMODE_BLEND) &&
+         SDL_SetTextureScaleMode(textura_informacion, SDL_SCALEMODE_NEAREST) &&
+         SDL_UpdateTexture(textura_informacion, nullptr, rgba.data(), 320 * 4) &&
+         SDL_RenderTexture(dibujante, textura_informacion, nullptr, nullptr);
 }

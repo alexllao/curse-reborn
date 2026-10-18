@@ -11,7 +11,7 @@ from comparar_objetos import guardar
 
 TAMANO_ESTADO = 10151
 TAMANO_REGISTRO = TAMANO_ESTADO + 13
-TAMANO_ARCHIVO = 1 + 7 * TAMANO_REGISTRO
+TAMANO_ARCHIVO = 1 + 8 * TAMANO_REGISTRO
 
 
 class ComparacionPartidas(ComparacionMenu):
@@ -79,11 +79,11 @@ class ComparacionPartidas(ComparacionMenu):
             raise ErrorAnalisis('La operación de partidas sobrepasa su destino.')
         return resultado, bytes(buffer[: len(archivo)]), bytes(destino[:65536])
 
-    # E718, E253 y E824 se contrastan para siete ranuras, nombres de trece bytes y máscaras distintas.
+    # E718, E253 y E824 se contrastan para ocho ranuras, nombres de trece bytes y máscaras distintas.
     def ejecutar(self):
         total = 0
-        for ranura in range(7):
-            for mascara in (0, 1, 0x55, 0x7F):
+        for ranura in range(8):
+            for mascara in (0, 1, 0x55, 0x7F, 0x80, 0xFF):
                 for nombre in (b'Alex 286', b'Trece letras!'):
                     datos = bytearray(self.base)
                     datos[0x2C0A:0x53B1] = self.azar.randbytes(TAMANO_ESTADO)
@@ -131,7 +131,7 @@ class ComparacionPartidas(ComparacionMenu):
             (b'\x01', 0),
             (b'\x40' + bytes(10), 6),
             (bytes(TAMANO_ARCHIVO + 1), 0),
-            (bytes(TAMANO_ARCHIVO), 7),
+            (bytes(TAMANO_ARCHIVO), 8),
         ):
             for operacion in (1, 2, 3):
                 resultado, salida, datos = self.nativa_archivo(
@@ -146,7 +146,7 @@ class ComparacionPartidas(ComparacionMenu):
         referencia = self.raiz / 'trabajo/comparacion_final_cuevas/final_barro.ds.bin'
         if referencia.exists():
             datos = bytearray(referencia.read_bytes())
-            datos[0xBADA : 0xBADA + 13] = b'DOS original '.ljust(13, b' ')
+            datos[0xBADA : 0xBADA + 13] = b'DOS ORIGINAL '.ljust(13, b' ')
             datos[0xB602] = 1
             self.archivo_dos = bytearray(TAMANO_ARCHIVO)
             self.cursor_dos = 1
@@ -160,7 +160,7 @@ class ComparacionPartidas(ComparacionMenu):
                 {
                     'resultado': 'coinciden',
                     'casos': total,
-                    'ranuras': 7,
+                    'ranuras': 8,
                     'bytes_estado': TAMANO_ESTADO,
                 },
                 indent=2,
@@ -168,7 +168,7 @@ class ComparacionPartidas(ComparacionMenu):
             + '\n',
             encoding='utf-8',
         )
-        print(f'Partidas DOS: {total} casos coincidentes; siete ranuras y límites comprobados.')
+        print(f'Partidas DOS: {total} casos coincidentes; ocho ranuras y límites comprobados.')
 
 
 if __name__ == '__main__':

@@ -22,18 +22,15 @@ const DefinicionMarco *elegir_marco(const char *pantalla) {
 // Conserva el remate interior completo, incluido su relieve transparente sobre el juego.
 bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMarco &panel,
                    const SDL_Rect &banda, const SDL_FRect &juego, bool derecha, bool cubrir,
-                   bool reflejar, float solape, float zoom, bool horizontal = false) {
+                   bool reflejar, float solape, float zoom, int ancho_rotado = 0) {
   if (banda.w <= 0 || banda.h <= 0)
     return true;
   const float cuerpo = panel.ancho - panel.margen;
-  float escala = horizontal ? std::max(banda.w / panel.ancho, banda.h / panel.alto)
-                            : std::max(juego.h / panel.alto, cubrir ? banda.w / cuerpo : 0.0f);
-  SDL_FRect destino{horizontal ? banda.x + (banda.w - panel.ancho * escala) / 2.0f
-                    : derecha  ? juego.x + juego.w - solape - panel.margen * escala
-                               : juego.x + solape - cuerpo * escala,
-                    horizontal ? banda.y + (banda.h - panel.alto * escala) / 2.0f
-                               : juego.y + (juego.h - panel.alto * escala) / 2.0f,
-                    panel.ancho * escala, panel.alto * escala};
+  float escala = std::max(juego.h / panel.alto, cubrir ? banda.w / cuerpo : 0.0f);
+  SDL_FRect destino{derecha ? juego.x + juego.w - solape - panel.margen * escala
+                            : juego.x + solape - cuerpo * escala,
+                    juego.y + (juego.h - panel.alto * escala) / 2.0f, panel.ancho * escala,
+                    panel.alto * escala};
   // La mirilla se aproxima al centro de la ventana; solo se transforma el marco.
   const float centro_x = juego.x + juego.w / 2.0f;
   const float centro_y = juego.y + juego.h / 2.0f;
@@ -43,9 +40,8 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
   destino.h *= zoom;
   escala *= zoom;
   // Solo limita el exterior a la ventana: el margen artístico interior nunca se usa como tijera.
-  const float limite_x = !horizontal && derecha ? destino.x : float(banda.x);
-  const float limite_derecho =
-      !horizontal && !derecha ? destino.x + destino.w : float(banda.x + banda.w);
+  const float limite_x = derecha ? destino.x : float(banda.x);
+  const float limite_derecho = !derecha ? destino.x + destino.w : float(banda.x + banda.w);
   const float x = std::max(destino.x, limite_x);
   const float y = std::max(destino.y, float(banda.y));
   const float ancho = std::min(destino.x + destino.w, limite_derecho) - x;
@@ -55,9 +51,15 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
   const SDL_FRect origen{panel.x + (reflejar ? destino.x + destino.w - x - ancho : x - destino.x) /
                                        escala,
                          panel.y + (y - destino.y) / escala, ancho / escala, alto / escala};
-  const SDL_FRect visible{x, y, ancho, alto};
-  return SDL_RenderTextureRotated(dibujante, textura, &origen, &visible, 0, nullptr,
-                                  reflejar ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+  SDL_FRect visible{x, y, ancho, alto};
+  if (ancho_rotado) {
+    // Gira el panel lateral completo: el remate que miraba al juego queda abajo/arriba.
+    const float centro_real_x = static_cast<float>(ancho_rotado) - (y + alto / 2.0f);
+    const float centro_real_y = x + ancho / 2.0f;
+    visible = {centro_real_x - ancho / 2.0f, centro_real_y - alto / 2.0f, ancho, alto};
+  }
+  return SDL_RenderTextureRotated(dibujante, textura, &origen, &visible, ancho_rotado ? 90.0 : 0.0,
+                                  nullptr, reflejar ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 }
 } // namespace
 
@@ -129,10 +131,13 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   const float deseado = actual->solape * juego.w / 320.0f;
   const float solape_x = std::min(deseado, juego.x * 0.15f);
   const float solape_y = std::min(deseado, juego.y * 0.15f);
-  const int izquierda = static_cast<int>(std::floor(juego.x + solape_x));
-  const int derecha = static_cast<int>(std::ceil(juego.x + juego.w - solape_x));
   const int arriba = static_cast<int>(std::floor(juego.y + solape_y));
   const int abajo = static_cast<int>(std::ceil(juego.y + juego.h - solape_y));
+  // En coordenadas giradas, las bandas superior/inferior son los mismos dos laterales.
+  const SDL_FRect juego_rotado{juego.y, static_cast<float>(ancho) - juego.x - juego.w, juego.h,
+                               juego.w};
+  const int izquierda = static_cast<int>(std::floor(juego.x + solape_x));
+  const int derecha = static_cast<int>(std::ceil(juego.x + juego.w - solape_x));
   const float zoom = 1.0f + 0.10f * (1.0f - nivel);
   const bool opacidad = SDL_SetTextureAlphaMod(textura, static_cast<Uint8>(nivel * 255.0f + 0.5f));
   const bool dibujado =
@@ -141,10 +146,11 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                     actual->cubrir, false, solape_x, zoom) &&
       dibujar_panel(dibujante, textura, actual->derecha, {derecha, 0, ancho - derecha, alto}, juego,
                     true, actual->cubrir, actual->reflejar_derecha, solape_x, zoom) &&
-      dibujar_panel(dibujante, textura, actual->izquierda, {0, 0, ancho, arriba}, juego, false,
-                    true, false, solape_y, zoom, true) &&
-      dibujar_panel(dibujante, textura, actual->derecha, {0, abajo, ancho, alto - abajo}, juego,
-                    false, true, false, solape_y, zoom, true);
+      dibujar_panel(dibujante, textura, actual->izquierda, {0, 0, arriba, ancho}, juego_rotado,
+                    false, actual->cubrir, false, solape_y, zoom, ancho) &&
+      dibujar_panel(dibujante, textura, actual->derecha, {abajo, 0, alto - abajo, ancho},
+                    juego_rotado, true, actual->cubrir, actual->reflejar_derecha, solape_y, zoom,
+                    ancho);
   const bool opacidad_restaurada = SDL_SetTextureAlphaMod(textura, 255);
   const bool restaurado =
       SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);

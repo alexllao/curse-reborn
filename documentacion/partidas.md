@@ -1,40 +1,44 @@
-# Partidas, menús e importación DOS
+# Partidas, paneles originales e importación DOS
 
-El octavo icono del menú de acciones abre Cargar, Guardar y Borrar. El décimo y último icono abre las cuatro fichas de información del original, con puntuación, porcentaje y créditos. Todos estos menús pausan la lógica y mantienen la música. Los paneles de partidas son una adaptación de plataforma en castellano; las fichas informativas utilizan los textos y la tipografía originales del EXE y FONT.SPR.
+El octavo icono abre Cargar, Guardar y Borrar. Los paneles reproducen la placa negra de128×100, la posición96/50, los textos del EXE y FONT.SPR. No hay botones añadidos, lista coloreada, números de ranura ni selector de archivos dentro del panel. Se conservan los rótulos originales de esta edición, en inglés. El décimo icono mantiene sus cuatro fichas originales.
 
 ## Uso
 
-Elegir una ranura con ratón o flechas arriba/abajo y confirmar con Intro o Aceptar. Escape y Cancelar devuelven al juego. Guardar permite editar un nombre de hasta trece caracteres ASCII; Ctrl+A limpia y Retroceso borra. Reemplazar o borrar una ranura exige una segunda confirmación. Mantener Intro pulsado no confirma la operación por repetición de teclado.
+Ratón o flechas arriba/abajo eligen entre **ocho ranuras**; clic izquierdo o Intro ejecutan la selección. Las flechas se detienen en los extremos. Cargar una ranura vacía vuelve al juego, como E251/E2CC. Borrar una ocupada actúa al elegirla, sin segunda confirmación. Clic derecho cancela; Escape cancela la selección de ranura.
 
-Desde Cargar, **Importar DOS** permite seleccionar un CURSE.SAV. También se puede arrastrar ese archivo sobre el panel. Sus partidas se añaden en ranuras libres; si no hay suficientes, no se importa ninguna. El archivo de origen y las ranuras que ya existían se conservan. Después de importar hay que elegir la nueva ranura para cargarla.
+Guardar abre primero el selector y después el teclado original de trece caracteres. Las flechas recorren sus letras, Insertar pulsa la tecla señalada y el ratón permite elegirla directamente. Espacio y Retroceso editan el nombre; Intro lo guarda. El teclado contiene las tres acciones originales: espacio, borrar y aceptar. Los huecos entre teclas no escriben caracteres. Clic derecho cancela el editor; Escape no lo cierra, conforme a E4A3. No se añade Ctrl+A ni una confirmación de reemplazo. La entrada de texto SDL se convierte a mayúsculas representables por la fuente; sustituye el controlador físico de teclado DOS y no pretende emular todos sus códigos de exploración.
 
-El archivo del usuario se guarda en la carpeta devuelta por SDL_GetPrefPath para AlexLlao/CurseReborn y su ruta se registra en consola. Cada modificación conserva `CURSE.SAV.anterior` y escribe primero un temporal junto al destino. Las pruebas usan perfiles aislados dentro de `trabajo/`, mediante CURSE_REBORN_PARTIDAS, y no modifican el perfil normal ni los archivos comerciales.
+Los paneles pausan la lógica y mantienen la música. El cursor usa MOUSE.SPR y sus coordenadas originales. Los errores de plataforma se registran en consola; aún no están reproducidas todas las pantallas de error de disco DOS ni las diferencias de repetición y temporización de los dispositivos originales.
+
+La importación se conserva como integración de escritorio mediante arrastrar un CURSE.SAV a la ventana. Añade sus partidas en ranuras libres y conserva archivo de origen y partidas existentes. No añade botones al menú original. El perfil usa SDL_GetPrefPath(AlexLlao/CurseReborn); las modificaciones conservan CURSE.SAV.anterior y utilizan un temporal. Las pruebas aíslan el perfil mediante CURSE_REBORN_PARTIDAS.
 
 ## Formato reconstruido
 
-| Campo             | Tamaño y significado                                      |
-| ----------------- | --------------------------------------------------------- |
-| Cabecera          | Un byte: siete bits de ocupación                          |
-| Ranuras           | Siete registros, con desplazamiento `1 + indice × 10.164` |
-| Nombre            | Trece bytes, rellenados con espacios                      |
-| Estado            | 10.151 bytes desde DS:2C0A hasta DS:53B0                  |
-| Longitud completa | 71.149 bytes                                              |
+| Campo             | Tamaño y significado                                     |
+| ----------------- | -------------------------------------------------------- |
+| Cabecera          | Un byte: ocho bits de ocupación                          |
+| Ranuras           | Ocho registros, con desplazamiento `1 + indice × 10.164` |
+| Nombre            | Trece bytes, rellenados con espacios                     |
+| Estado            | 10.151 bytes desde DS:2C0A hasta DS:53B0                 |
+| Longitud completa | 81.313 bytes                                             |
 
-Se admiten archivos DOS que no contienen las ranuras finales, siempre que todos los registros activos estén completos. El formato original no guarda la semilla de azar de CS:78DE: no se inventa ese campo en el archivo compatible. Los nombres antiguos se conservan byte a byte; los caracteres que no admite la fuente ASCII del primer panel pueden mostrarse como interrogaciones.
+Se admiten archivos DOS que no contienen las ranuras finales, siempre que todos los registros activos estén completos. La versión anterior del port admitía siete ranuras; sus archivos continúan siendo válidos y se amplían al escribir. E997 recorre ocho descripciones y E89D permite ocho filas, lo que corrige el límite anterior. El formato original no guarda la semilla de azar de CS:78DE: no se inventa ese campo en el archivo compatible. Los nombres antiguos se conservan byte a byte. Para los perfiles creados por el panel SDL anterior, las minúsculas se muestran como mayúsculas y los índices inexistentes en FONT.SPR como interrogaciones; no se modifica el archivo por dibujarlo. El teclado DOS original solo produce las letras mayúsculas de su matriz.
 
-El formato puro está en `motor/estado/partidas.*`, sin acceso al disco. Se reconstruyen E718–E745 (escritura), E253–E27A (lectura) y E824–E84D (borrado). Borrar limpia el bit de ocupación y conserva los datos del registro, igual que DOS.
+El formato puro está en `motor/estado/partidas.*`, sin acceso al disco. Se reconstruyen E718–E745 (escritura), E253–E27A (lectura) y E824–E84D (borrado). Borrar conserva los datos del registro. Se mantiene la peculiaridad de E831: aplica XOR7F a la máscara; en la octava ranura no borra su bit. Esta diferencia también está comparada contra el EXE y no se corrige silenciosamente en el modo fiel.
 
 ## Restauración
 
 El adaptador prepara un estado temporal y comprueba sus recursos antes de sustituir la sesión activa. Conserva los objetos, animaciones, inventario, puntuación y control del personaje guardados. Sigue la rama AL=1 del cargador: **513F–5143 salta a 5185**, por lo que no debe ejecutar el reinicio de 5145 ni recrear entidades mediante 8AA6. E28B–E2B3 adapta los segmentos de los actores y superposiciones a las referencias de los recursos portables; el cursor y Brad reciben sus bancos correspondientes.
 
-Se reconocen las zonas integradas, incluidos COUNTRY1, el camino del asaltante COUNTRY2 y la entrada a DRAGON; los puzles de la población siguen pendientes. Una partida de una zona posterior puede importarse y conservarse, pero no se carga hasta implementar esa zona. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
+Se reconocen las zonas integradas, incluido el trayecto de comida y mago de Paso del Dragón. EDGE solo admite el punto de llegada detenido; su jugabilidad continúa pendiente. Una partida de una zona posterior puede importarse y conservarse, pero no se carga hasta implementar esa zona. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
 
 ## Comprobaciones
 
-`pnpm comparar:partidas` contrasta **183 casos** frente a las instrucciones originales: siete ranuras, nombres, máscaras, conservación de otros registros, lecturas completas y límites con centinelas. Con una instantánea real del recorrido genera además `trabajo/comparacion_partidas/original_dos.sav` usando las escrituras del EXE para probar la importación.
+`pnpm comparar:partidas` contrasta **303 casos** frente a las instrucciones originales: ocho ranuras, nombres, máscaras, conservación de otros registros, lecturas completas y límites con centinelas. Con una instantánea real del recorrido genera además `trabajo/comparacion_partidas/original_dos.sav` usando las escrituras del EXE para probar la importación.
 
-`pnpm comprobar:partidas` compila SDL y prueba guardar, volver a una sesión inicial, restaurar inventario y escena, rechazar una zona pendiente sin cambiar la partida, cargar desde el panel, confirmar el borrado e importar la referencia DOS en otra ranura sin sobrescribir la existente. Tras importar se verifica también que Brad conserva el control. El panel final se captura en un BMP local.
+`pnpm comprobar:partidas` compila SDL y prueba guardar, volver a una sesión inicial, restaurar inventario y escena, rechazar una zona pendiente sin cambiar la partida, cargar desde el panel, borrado directo e importar la referencia DOS en otra ranura sin sobrescribir la existente. Tras importar se verifica también que Brad conserva el control. El teclado se prueba con clics reales en letras, espacio, borrado y aceptación. El panel final se captura en un BMP local.
+
+`pnpm comparar:panel-partidas` compara **23 composiciones de64.000 píxeles** con E997, E89D y E46D/D87A: cargar, guardar, borrar, las ocho posiciones y el teclado vacío, parcial y completo. Otros cuatro casos comprueban la adaptación visual de nombres del panel anterior: se comparan sus minúsculas con la representación en mayúsculas de la fuente original, sin afirmar que sean entradas DOS idénticas. `pnpm comprobar:partidas` agrupa ambos comparadores y la integración SDL. No equivale a validar todos los estados ni todos los errores de disco.
 
 La compatibilidad comprobada corresponde al EXE con la huella del proyecto y a archivos escritos por sus rutinas. No se ha validado una colección de partidas de otras ediciones ni el recorrido de ida y vuelta con una sesión interactiva DOSBox.
 

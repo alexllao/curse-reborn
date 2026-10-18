@@ -34,8 +34,15 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
   SDL_Event tecla{};
   tecla.type = SDL_EVENT_KEY_DOWN;
   tecla.key.key = SDLK_RETURN;
+  // Guardar abre primero el selector y después el teclado de trece caracteres del original.
   panel.abrir(2, ventana);
-  if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
+  if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta())
+    return false;
+  SDL_Event escribir{};
+  escribir.type = SDL_EVENT_TEXT_INPUT;
+  escribir.text.text = "CUEVAS";
+  if (!panel.evento(escribir, ventana, partida, redibujar) ||
+      !panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
     return false;
   size_t longitud = 0;
   auto *guardado = static_cast<unsigned char *>(SDL_LoadFile(ruta, &longitud));
@@ -49,12 +56,7 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
       partida.escena_actual() != 15)
     return false;
   panel.abrir(3, ventana);
-  if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta())
-    return false;
-  guardado = static_cast<unsigned char *>(SDL_LoadFile(ruta, &longitud));
-  const bool sin_confirmar = guardado && guardado[0] == 1;
-  SDL_free(guardado);
-  if (!sin_confirmar || !panel.evento(tecla, ventana, partida, redibujar))
+  if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
     return false;
   guardado = static_cast<unsigned char *>(SDL_LoadFile(ruta, &longitud));
   const bool borrada = guardado && guardado[0] == 0;
@@ -64,7 +66,9 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
   const char *importada = SDL_getenv("CURSE_REBORN_IMPORTAR_PRUEBA");
   if (importada && *importada) {
     panel.abrir(2, ventana);
-    if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
+    if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta() ||
+        !panel.evento(escribir, ventana, partida, redibujar) ||
+        !panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
       return false;
     panel.abrir(1, ventana);
     SDL_Event arrastrar{};
@@ -83,6 +87,45 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
         !partida.conserva_objeto(64) || !partida.movimiento_habilitado())
       return false;
   }
+  // El teclado en pantalla conserva letras, espacio, borrado y aceptación de la tabla BA70.
+  panel.abrir(2, ventana);
+  SDL_Event bajar{};
+  bajar.type = SDL_EVENT_KEY_DOWN;
+  bajar.key.key = SDLK_DOWN;
+  for (unsigned int i = 0; i < 6; ++i)
+    if (!panel.evento(bajar, ventana, partida, redibujar))
+      return false;
+  tecla.key.key = SDLK_RETURN;
+  if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta())
+    return false;
+  SDL_Event clic{};
+  clic.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
+  clic.button.button = SDL_BUTTON_LEFT;
+  constexpr int teclas[][2] = {{108, 70},  {124, 70},  {124, 120},
+                               {140, 120}, {188, 120}, {204, 120}};
+  for (const auto &posicion : teclas) {
+    clic.button.x = static_cast<float>(posicion[0]);
+    clic.button.y = static_cast<float>(posicion[1]);
+    if (!panel.evento(clic, ventana, partida, redibujar))
+      return false;
+  }
+  if (panel.abierta())
+    return false;
+  guardado = static_cast<unsigned char *>(SDL_LoadFile(ruta, &longitud));
+  const auto nombre_seis = 1 + 6 * motor::bytes_ranura_partida;
+  const bool teclado_correcto = guardado && (guardado[0] & 64) && guardado[nombre_seis] == 'A' &&
+                                guardado[nombre_seis + 1] == 'B' &&
+                                guardado[nombre_seis + 2] == ' ' &&
+                                guardado[nombre_seis + 3] == ' ';
+  SDL_free(guardado);
+  if (!teclado_correcto)
+    return false;
+  panel.abrir(3, ventana);
+  for (unsigned int i = 0; i < 6; ++i)
+    if (!panel.evento(bajar, ventana, partida, redibujar))
+      return false;
+  if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
+    return false;
   for (unsigned int i = 0; i < 16; ++i)
     if (!partida.avanzar())
       return false;
@@ -91,7 +134,7 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
   if (!panel.evento(tecla, ventana, partida, redibujar) || panel.abierta())
     return false;
   panel.abrir(2, ventana);
-  return true;
+  return partida.guardar_estado_diagnostico(std::string(ruta) + ".panel.ds.bin");
 }
 
 // Abre el décimo icono real, recorre las fichas y comprueba que no altera la partida ni el perfil.

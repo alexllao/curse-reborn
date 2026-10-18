@@ -67,6 +67,17 @@ public:
   // E160/D623: prepara una ficha con los textos y tipografía originales, sin alterar DS.
   bool dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &imagen,
                            SDL_FRect &placa) const;
+  // E89D/E46D: compone el panel con los recursos originales; el fondo permite obtener su
+  // transparencia.
+  bool dibujar_panel_partidas(unsigned int modo, const std::vector<unsigned char> &archivo,
+                              bool editando, const std::string &nombre, int cursor_x, int cursor_y,
+                              unsigned char fondo_transparente,
+                              motor::ImagenIndexada &imagen) const;
+  // E595: consulta una casilla del teclado original BA70, incluidos espacio, borrar y aceptar.
+  unsigned char tecla_nombre_partida(unsigned int x, unsigned int y) const;
+  // E56B: la entrada de texto SDL admite únicamente caracteres representables por FONT.SPR.
+  bool admite_letra_partida(unsigned char letra) const;
+
   // Abre/cierra el menú original y procesa sus casillas desde entrada SDL en coordenadas lógicas.
   bool entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar);
   // El clic izquierdo propone un destino; el control y las paredes originales deciden el avance.
