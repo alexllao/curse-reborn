@@ -47,10 +47,11 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   // 5D2F–5DD9: entidad, desplazamientos y familia615C/61A7 de cada recogida contrastada.
   const Palabra recogidas[][6] = {
-      {108, 34, 0x2c6d, 45, 0xffea, 1}, {110, 35, 0x2d33, 45, 0xfff4, 1},
-      {111, 35, 0x2c4c, 7, 1, 0},       {112, 35, 0x2c4c, 7, 1, 0},
-      {99, 32, 0x2cf1, 5, 1, 0},        {100, 32, 0x2d75, 15, 0xfffc, 1},
-      {101, 32, 0x2d54, 35, 0xfffc, 1}, {109, 32, 0x2d33, 45, 0xfffc, 1}};
+      {105, 33, 0x2cf1, 3, 1, 0},       {108, 34, 0x2c6d, 45, 0xffea, 1},
+      {110, 35, 0x2d33, 45, 0xfff4, 1}, {111, 35, 0x2c4c, 7, 1, 0},
+      {112, 35, 0x2c4c, 7, 1, 0},       {99, 32, 0x2cf1, 5, 1, 0},
+      {100, 32, 0x2d75, 15, 0xfffc, 1}, {101, 32, 0x2d54, 35, 0xfffc, 1},
+      {109, 32, 0x2d33, 45, 0xfffc, 1}};
   const Palabra *recogida = nullptr;
   for (const auto &fila : recogidas)
     if (fila[0] == id && fila[1] == palabra(d, 0x8082))
@@ -174,6 +175,62 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  // 3DDA–3DF1/AB60–ABD2: inserta cinta105 en113 sin cambiar los otros campos del actor diferido.
+  if (manejador == 0x3b53 && verbo == 1 &&
+      ((id == 113 && previo == 105) || (id == 105 && previo == 113))) {
+    const auto horizontal = static_cast<Palabra>(palabra(d, 0x2c2d) + 8 - palabra(d, 0x2cf3));
+    const auto vertical =
+        static_cast<Palabra>(palabra(d, 0x2c2f) + palabra(d, 0x2c33) - palabra(d, 0x2cf5));
+    if (con_signo(horizontal) < con_signo(palabra(d, 0x2cf7)) &&
+        con_signo(vertical) < con_signo(palabra(d, 0x2cf9))) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 105);
+    d[0x4628] = 1;
+    d[0x4629] = 0x47;
+    guardar(d, 0x462c, static_cast<Palabra>(palabra(d, 0x462c) + 7));
+    guardar(d, 0x1a38, static_cast<Palabra>(752 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 172);
+    guardar(d, 0x0ad7, 0xa362);
+    guardar(d, 0x0adc, 0xa370);
+    guardar(d, 0x009c, 0x2c6d);
+    guardar(d, 0x009e, 0x0209);
+    guardar(d, 0x00a0, 0xa34f);
+    guardar(d, 0x00a4, 0xa355);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  // 3BE8/ABD5–AC5B: el mando108 produce106, conservando las dos pruebas firmadas de posición.
+  if (manejador == 0x3b53 && verbo == 2 && previo == 0xffff && id == 108) {
+    bool permitido = d[0x2c6d] == 1;
+    const auto global = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x3591));
+    const auto y = con_signo(palabra(d, 0x2c2f));
+    if (permitido && !(con_signo(global) >= 735 && y >= 123)) {
+      const auto parcial = static_cast<Palabra>(palabra(d, 0x2c2d) - palabra(d, 0x2cf3));
+      if (con_signo(parcial) < con_signo(palabra(d, 0x2cf7))) {
+        const auto distancia = static_cast<Palabra>(parcial - palabra(d, 0x2cf7));
+        permitido = con_signo(distancia) + 50 >= 0 && y >= 123;
+      }
+    }
+    if (!permitido) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 108);
+    insertar_identificador(d, 106);
+    d[0x4628] = 0;
+    guardar(d, 0x1a38, static_cast<Palabra>(752 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 172);
+    guardar(d, 0x0ad7, 0xa379);
+    guardar(d, 0x0adc, 0xa390);
+    guardar(d, 0x009c, 0x2c6d);
+    guardar(d, 0x009e, 0x023b);
+    guardar(d, 0x00a0, 0xa359);
+    guardar(d, 0x00a4, 0xa35f);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   // 3F5C–3FF6: intercambios y combinaciones posteriores todavía sin trasladar.
   if (manejador == 0x3b53) {
     const auto verbo = palabra(d, 0xb634);
@@ -181,11 +238,9 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
         (verbo == 7 && ((id == 100 && previo == 107) || (id == 107 && previo == 100))))
       return ResultadoMenu::pendiente;
   }
-  if (id == 108 && manejador == 0x3b53 && palabra(d, 0xb634) == 2 && palabra(d, 0xb638) == 0xffff &&
-      d[0x2c6d] == 1)
-    return ResultadoMenu::pendiente; // ABD5 pertenece a la grabación posterior, aún sin trasladar.
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
-      id != 102 && id != 108 && id != 109 && id != 110 && id != 111 && id != 112 && id != 114)
+      id != 102 && id != 105 && id != 106 && id != 108 && id != 109 && id != 110 && id != 111 &&
+      id != 112 && id != 113 && id != 114)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

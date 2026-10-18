@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5D78",
+      "nombre": "Cinta del entorno de CELESTE",
+      "comentario": "5D78–5D86 recoge105 desde2CF1 con desplazamiento3/+1 y familia61A7. comparar:grabacion-valle contrasta108 variantes, recogida real enCELESTE, transporte61 e inserción real enPOST; no acredita todavía la recogida del mando108."
+    },
+    {
+      "direccion": "0000:AB60",
+      "nombre": "Inserción de la cinta de grabación",
+      "comentario": "3DDA–3DF1/AB60–ABD2 acepta105 con113 en ambos órdenes y compara extremos firmados del equipo. Retira105, cambia4628/4629 y462C+7, prepara752-cámara/172, A362/A370 y actor2C6D con209/A34F/A355 en9C/9E/A0/A4: A2 permanece intacto. Puntos+5 y886B. 320 variantes y recorrido persistente real de inserción."
+    },
+    {
+      "direccion": "0000:ABD5",
+      "nombre": "Mando y fin de la grabación",
+      "comentario": "3BE8/ABD5–AC5B exige2C6D=1, conserva las ramas firmadas global735/y123 y distancia respecto al equipo, incluida la aceptación a su derecha sin exigir de nuevo y123. Retira108, inserta106 sin inventar comprobación de capacidad, limpia4628, prepara752-cámara/172 y A379/A390, actor23B/A359/A35F conservandoA2, puntos+5. 1152 variantes AISLADAS; grabación persistente completa aún pendiente."
+    },
+    {
       "direccion": "0000:AA6C",
       "nombre": "Franqueo de la carta",
       "comentario": "3FC5–3FDC/AA6C–AAA0 combina111 con109 en ambos órdenes. Exige retirar111, retira109 sin exigir su presencia, inserta112, escribe4625=A33D/2C5A=112, canales96DE/96E7 y puntos+5 antes de886B. comparar:correo contrasta variantes de ausencia, duplicados, capacidad y puntuación, además de carta/sello obtenidos en la partida real."

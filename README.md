@@ -348,3 +348,5 @@ El [regreso del loro al mago](documentacion/regreso_loro.md) amplía la ruta con
 Las [primeras ramas del valle](documentacion/ramas_valle.md) y el [puzle del pelo y el dinosaurio](documentacion/dinosaurio.md) se contrastan en el núcleo mediante `pnpm comparar:ramas-valle --muestra` y `pnpm comparar:dinosaurio --muestra`. Incluyen ida/regreso reales, estornudo, sello y bolígrafo. Siguen fuera del catálogo SDL mientras se completan sus demás puzles y conexiones.
 
 El [franqueo y envío del correo](documentacion/correo.md) continúan desde el sello obtenido en DINO: `pnpm comparar:correo --muestra` contrasta la recogida de la carta, las dos recetas originales y sus aproximaciones. La devolución posterior y el resto del valle siguen pendientes; no aumenta el catálogo SDL.
+
+La [cinta y su inserción](documentacion/grabacion_valle.md) tienen recorrido real comparado con el EXE mediante `pnpm comparar:grabacion-valle --muestra`; el mandoABD5 tiene variantes aisladas. La grabación completa y la entrega posterior continúan pendientes.
