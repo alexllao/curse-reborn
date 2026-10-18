@@ -22,18 +22,40 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
     guardar(d, registro + 8, c);
 }
 } // namespace
-// 5D89/5DA4 y respuestas comunes: primeras recogidas del valle33–35; los puzles posteriores siguen
+// 5D89/5DA4 y respuestas comunes: primeras recogidas del valle32–35; los puzles posteriores siguen
 // pendientes.
 ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short manejador,
                                          unsigned short id, const ServicioSonido &sonido) {
-  if (palabra(d, 0x8082) != 33 && palabra(d, 0x8082) != 34 && palabra(d, 0x8082) != 35)
+  if (palabra(d, 0x8082) < 32 || palabra(d, 0x8082) > 35)
     return ResultadoMenu::pendiente;
-  if (manejador == 0x32de && id <= 1)
+  if (manejador == 0x32de && id <= 1) {
+    // 372A–3763: el saludo cercano al personaje98 activa su bocadillo, además del sonido común.
+    if (palabra(d, 0x8082) == 32 && id == 1 && d[0x2c4c] == 1) {
+      const auto origen = palabra(d, 0x2c4e), destino = palabra(d, 0x2c2d);
+      auto distancia = static_cast<Palabra>(origen - destino);
+      if (con_signo(origen) < con_signo(destino))
+        distancia = static_cast<Palabra>(0 - distancia);
+      if (con_signo(distancia) <= 64) {
+        guardar(d, 0x2d22, 0x1a2f);
+        d[0x2d24] = 0;
+        d[0x2d25] = 1;
+        d[0x2d26] = 40;
+      }
+    }
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
-  if (manejador == 0x563a && ((palabra(d, 0x8082) == 34 && id == 108) ||
-                              (palabra(d, 0x8082) == 35 && (id == 111 || id == 112)))) {
-    // 563A/5D89–5DB7: recoge108 por615C y111/112 por61A7, con su capacidad y rechazo originales.
+  }
+  // 5D2F–5DD9: entidad, desplazamientos y familia615C/61A7 de cada recogida contrastada.
+  const Palabra recogidas[][6] = {
+      {108, 34, 0x2c6d, 45, 0xffea, 1}, {110, 35, 0x2d33, 45, 0xfff4, 1},
+      {111, 35, 0x2c4c, 7, 1, 0},       {112, 35, 0x2c4c, 7, 1, 0},
+      {99, 32, 0x2cf1, 5, 1, 0},        {100, 32, 0x2d75, 15, 0xfffc, 1},
+      {101, 32, 0x2d54, 35, 0xfffc, 1}, {109, 32, 0x2d33, 45, 0xfffc, 1}};
+  const Palabra *recogida = nullptr;
+  for (const auto &fila : recogidas)
+    if (fila[0] == id && fila[1] == palabra(d, 0x8082))
+      recogida = fila;
+  if (manejador == 0x563a && recogida) {
     const auto icono = d[0x524e + id * 2];
     if (icono == 0x1f || icono == 0x22)
       guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + (icono == 0x1f ? 1 : 2)));
@@ -46,24 +68,61 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }
-    const Palabra entidad = id == 108 ? 0x2c6d : 0x2c4c;
-    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + (id == 108 ? 45 : 7)));
+    if (id == 99)
+      d[0x5314] = 0x90;
+    const Palabra entidad = recogida[2];
+    const bool recogida_normal = recogida[5] != 0;
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + recogida[3]));
     guardar(d, 0x1a3a,
-            static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) +
-                                 (id == 108 ? -22 : 1)));
+            static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) + recogida[4]));
     const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + palabra(d, 0x8082) * 2));
-    d[lista + (id == 108 ? 10 : 1)] = 0;
+    d[static_cast<Palabra>(lista + ((entidad - 0x2c4c) / 33) * 9 + 1)] = 0;
     guardar(d, entidad + 16, 0x1a2e);
     d[entidad + 18] = 0;
     d[entidad + 20] = 1;
     const bool pequeno = d[0x358c] == 20;
-    guardar(d, 0x0ad7, id == 108 ? (pequeno ? 0x96f6 : 0x96c0) : (pequeno ? 0x9705 : 0x96cf));
-    guardar(d, 0x0adc, id == 108 ? (pequeno ? 0x96ff : 0x96c9) : (pequeno ? 0x970e : 0x96d8));
+    guardar(d, 0x0ad7, recogida_normal ? (pequeno ? 0x96f6 : 0x96c0) : (pequeno ? 0x9705 : 0x96cf));
+    guardar(d, 0x0adc, recogida_normal ? (pequeno ? 0x96ff : 0x96c9) : (pequeno ? 0x970e : 0x96d8));
     unsigned short pasos = 0;
     if (!iniciar_accion(d, pasos))
       return ResultadoMenu::error;
     d[entidad + 19] = static_cast<unsigned char>(pasos + 6);
     return ResultadoMenu::accion;
+  }
+  // 3DA6–3DBD/A81A–A8AB: insertar el pelo110 en102 admite ambos órdenes y resta firmada.
+  const auto previo = palabra(d, 0xb638);
+  if (palabra(d, 0x8082) == 32 && manejador == 0x3b53 && palabra(d, 0xb634) == 1 &&
+      ((id == 102 && previo == 110) || (id == 110 && previo == 102))) {
+    const auto horizontal = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x2c31) - 6);
+    const auto vertical =
+        static_cast<Palabra>(palabra(d, 0x2c2f) + palabra(d, 0x2c33) - palabra(d, 0x2c92));
+    if (con_signo(horizontal) >= con_signo(palabra(d, 0x2c90)) &&
+        con_signo(vertical) < con_signo(palabra(d, 0x2c96))) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 110);
+    d[0x45e7] = 0;
+    guardar(d, 0x1a38, static_cast<Palabra>(332 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 141);
+    guardar(d, 0x0ad7, 0xa1be);
+    guardar(d, 0x0adc, 0xa1cc);
+    d[0x2caf] = d[0x2cd0] = 0;
+    d[0x450c] = 29;
+    guardar(d, 0x450d, static_cast<Palabra>(palabra(d, 0x450d) + 55));
+    guardar(d, 0x450f, static_cast<Palabra>(palabra(d, 0x450f) - 39));
+    d[0x4514] = d[0x451d] = 0;
+    actor(d, 0x009c, 0x2c8e, 0x0115, 0xa1d6, 0xa1fc, 0xa215);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  // 3F5C–3FF6: intercambios y combinaciones posteriores todavía sin trasladar.
+  if (manejador == 0x3b53) {
+    const auto verbo = palabra(d, 0xb634);
+    if ((verbo == 6 && id == 98 && (previo == 105 || previo == 106)) ||
+        (verbo == 7 && ((id == 111 && previo == 109) || (id == 109 && previo == 111) ||
+                        (id == 100 && previo == 107) || (id == 107 && previo == 100))))
+      return ResultadoMenu::pendiente;
   }
   // 3DC0–3DD7: insertar114 con112 llamaAAA3; no sustituir ese puzle por un rechazo común.
   if (manejador == 0x3b53 && palabra(d, 0xb634) == 1 && id == 112 && palabra(d, 0xb638) == 114)
@@ -71,7 +130,8 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   if (id == 108 && manejador == 0x3b53 && palabra(d, 0xb634) == 2 && palabra(d, 0xb638) == 0xffff &&
       d[0x2c6d] == 1)
     return ResultadoMenu::pendiente; // ABD5 pertenece a la grabación posterior, aún sin trasladar.
-  if (id != 3 && id != 70 && id != 76 && id != 108 && id != 111 && id != 112)
+  if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
+      id != 102 && id != 108 && id != 109 && id != 110 && id != 111 && id != 112)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

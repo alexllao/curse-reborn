@@ -1,7 +1,7 @@
 #pragma once
 #include "menu.hpp"
 namespace motor {
-// Primeras recogidas y respuestas comunes del valle33–35; grabación y puzles posteriores
+// Primeras recogidas y respuestas comunes del valle32–35; grabación y puzles posteriores
 // pendientes.
 ResultadoMenu ejecutar_interaccion_poste(unsigned char *datos, unsigned short manejador,
                                          unsigned short identificador,

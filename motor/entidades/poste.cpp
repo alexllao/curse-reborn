@@ -4,9 +4,51 @@
 #include "../estado/segmento.hpp"
 
 namespace motor {
-// C714–C793: conserva los umbrales y los tres canales de la reacción de REMOTE.
+// C5E0–C793: umbrales de DINO/CELESTE y canales originales de reacción de REMOTE.
 bool actualizar_ramas_valle(unsigned char *d) {
   const auto escena = palabra(d, 0x8082);
+  if (escena == 32) {
+    // C5E0–C637: las comparaciones de posición son firmadas y conservan los umbrales ajenos.
+    const auto global = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x3591));
+    const Palabra entidad = con_signo(global) <= 250 ? 0x2c4c : 0x2c8e;
+    if (d[entidad] == 1) {
+      const auto x = static_cast<Palabra>(palabra(d, entidad + 2) + palabra(d, 0x3591));
+      const auto y = static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8));
+      guardar(d, 0x18f5, x);
+      guardar(d, 0x18f9, static_cast<Palabra>(x + palabra(d, entidad + 6)));
+      guardar(d, 0x18fb, y);
+      if (entidad == 0x2c8e)
+        guardar(d, 0x18f7, static_cast<Palabra>(y - 15));
+    }
+    if (d[0x2c6d] != 1) {
+      const int cantidad = d[0x3597] < 128 ? d[0x3597] : static_cast<int>(d[0x3597]) - 256;
+      if (cantidad <= 8 && contiene_identificador(d, 121) && contiene_identificador(d, 119) &&
+          contiene_identificador(d, 120) && contiene_identificador(d, 115)) {
+        const Palabra guiones[] = {0xb181, 0xb18d, 0xb197};
+        for (unsigned int i = 0; i < 3; ++i) {
+          const auto campo = static_cast<Palabra>(0x2c7d + i * 5);
+          guardar(d, campo, guiones[i]);
+          d[campo + 2] = 0;
+          d[campo + 3] = 1;
+          d[campo + 4] = 2;
+        }
+      }
+      return true;
+    }
+    const auto x = static_cast<Palabra>(palabra(d, 0x2c6f) + palabra(d, 0x3591));
+    const auto y = static_cast<Palabra>(palabra(d, 0x2c71) + palabra(d, 0x2c75));
+    guardar(d, 0x18f5, x);
+    if (con_signo(static_cast<Palabra>(y - 5 - palabra(d, 0x2c2f))) <=
+        con_signo(palabra(d, 0x2c33))) {
+      guardar(d, 0x18f9, static_cast<Palabra>(x + (palabra(d, 0x2c73) >> 1) - 4));
+      guardar(d, 0x18fb, static_cast<Palabra>(y - 1));
+    } else {
+      guardar(d, 0x18f9, static_cast<Palabra>(x + palabra(d, 0x2c73)));
+      guardar(d, 0x18f7, static_cast<Palabra>(y - 10));
+      guardar(d, 0x18fb, 199);
+    }
+    return true;
+  }
   if (escena == 33) {
     if (d[0x2c4d] != 19) {
       guardar(d, 0x18fb, static_cast<Palabra>(palabra(d, 0x2c50) + palabra(d, 0x2c54)));

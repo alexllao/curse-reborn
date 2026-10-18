@@ -36,3 +36,5 @@ El probador25 ya conecta36/27. Se contrasta1A74 y los manejadores del vestido; e
 La auditoría de32 vistas detecta también WISE31→64 por112, correspondiente a la continuación posterior. Junto con52/72/74 suma cuatro enlaces pendientes desde el catálogo; no se ocultan los destinos de capítulos posteriores.
 
 La revisión siguiente incorpora el adaptador MAGE22→WISE31 por72, contrastado como contrato aislado del cargador. No prueba todavía su activación argumental posterior. Quedan tres enlaces desde las vistas disponibles (52/74/112). POST35 tiene entrada y rutina contrastadas solo en el núcleo; sus caminos60/57/66/71 y puzles permanecen pendientes. Véase [el regreso del loro](regreso_loro.md).
+
+Las tandas nativas siguientes contrastan60/56/61, cargas alternativas55/71 y el recorrido57→DINO→58 con pelo, estornudo, sello y bolígrafo;54 se comprueba desde otra rama deCELESTE. No se añaden vistas SDL: quedan puzles y conexiones tardías pendientes. Alcance y pruebas en [ramas del valle](ramas_valle.md) y [DINO](dinosaurio.md).

@@ -6,7 +6,7 @@ struct RecursosEntidades;
 // C093–C4DB: obstáculos, rescate y creaciones del borde del mundo.
 bool actualizar_borde(unsigned char *datos, EstadoAleatorio &azar,
                       const RecursosEntidades &recursos);
-// C714–C793: proximidad de CELESTE33 y reacción de REMOTE34 sin consumir azar.
+// C5E0–C793: proximidad de CELESTE33 y reacción de REMOTE34 sin consumir azar.
 bool actualizar_ramas_valle(unsigned char *datos);
 // C794–C8B0: encuentro del poste y partículas; conserva inventario y azar originales.
 bool actualizar_poste(unsigned char *datos, EstadoAleatorio &azar,

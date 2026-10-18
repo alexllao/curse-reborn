@@ -3,6 +3,31 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:C5E0",
+      "nombre": "Umbrales y puerta de DINO",
+      "comentario": "C5E0–C713 distingue las mitades por global firmado250 y actores2C4C/2C8E; puerta2C6D usa la comparación firmada tras SUB, conservando OF. Si no está activa, requiere los cuatro identificadores121/119/120/115 y cantidad3597 firmada<=8 para B181/B18D/B197. comparar:dinosaurio contrasta1152 variantes de inventarios, actores, posiciones y envoltura."
+    },
+    {
+      "direccion": "0000:A81A",
+      "nombre": "Pelo y estornudo del monstruo",
+      "comentario": "A81A–A8AB admite insertar110 con102 en ambos órdenes. Conserva las comparaciones firmadas tras SUB, retirada110, bandera45E7, destino332-cámara/141, A1BE/A1CC, cambios persistentes450C/450D/450F/4514/451D y actor2C8E A1D6/A1FC/A215, puntos+5 y886B. Contraste aislado y recorrido real desdePOST hasta el estornudo, sello y bolígrafo."
+    },
+    {
+      "direccion": "0000:5DBA",
+      "nombre": "Recogida del pelo110",
+      "comentario": "5DBA–5DC8 usa2D33, desplazamiento45/-12 y615C. Entrada persistente de POST y demoraAL+6 comprobadas; recorrido real en comparar:dinosaurio, sin insertar el objeto artificialmente."
+    },
+    {
+      "direccion": "0000:5D2F",
+      "nombre": "Recogidas del entorno del dinosaurio",
+      "comentario": "5D2F–5D88 usa100→2D75 (15/-4),101→2D54 (35/-4),109→2D33 (45/-4),99→2CF1 (5/+1 y5314=90). Preserva capacidad y familias615C/61A7; sello109 y bolígrafo101 se recogen en la partida real,99/100 solo variantes aisladas."
+    },
+    {
+      "direccion": "0000:372A",
+      "nombre": "Saludo al personaje con radiocasete",
+      "comentario": "372A–3763 en DINO32 exige2C4C=1 y distancia absoluta firmada<=64; activa2D22=1A2F, fase0/espera1/intervalo40 antes del sonido1 común. Se contrastan54 variantes de actor, cámara y límites de distancia."
+    },
+    {
       "direccion": "0000:C714",
       "nombre": "Umbrales de CELESTE",
       "comentario": "C714–C736 conserva18F5/18F9/18FB desde actor2C4C y cámara, salvo fotograma19. Traslado en motor/entidades/poste.cpp; comparar:ramas-valle contrasta variantes aisladas y entrada real56."
