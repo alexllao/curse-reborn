@@ -269,6 +269,26 @@ SDL_FRect MarcosPantalla::destino_juego(Uint64 ahora) const {
   return {0, (200 - alto) / 2, 320, alto};
 }
 
+// Recrea en trazos VGA el distintivo amarillo de Energy Star de las BIOS de época.
+static bool dibujar_distintivo_energia(SDL_Renderer *dibujante, float x, float y) {
+  // Las coordenadas comparten la escala 8x16 del texto y quedan en la esquina superior derecha.
+  const SDL_FPoint arco[] = {{x + 452, y + 27}, {x + 457, y + 17}, {x + 470, y + 9},
+                             {x + 490, y + 4},  {x + 516, y + 2},  {x + 548, y + 2},
+                             {x + 575, y + 5},  {x + 598, y + 10}};
+  const SDL_FPoint estrella[] = {{x + 596, y + 10}, {x + 602, y + 20}, {x + 624, y + 20},
+                                 {x + 607, y + 26}, {x + 613, y + 36}, {x + 596, y + 30},
+                                 {x + 579, y + 36}, {x + 585, y + 26}, {x + 568, y + 20},
+                                 {x + 590, y + 20}, {x + 596, y + 10}};
+  const SDL_FPoint subrayado[] = {{x + 452, y + 37}, {x + 565, y + 37}, {x + 581, y + 34}};
+  return SDL_SetRenderDrawColor(dibujante, 255, 255, 0, 255) &&
+         SDL_RenderLines(dibujante, arco, int(SDL_arraysize(arco))) &&
+         SDL_RenderDebugText(dibujante, x + 468, y + 24, "energy") &&
+         SDL_RenderLines(dibujante, estrella, int(SDL_arraysize(estrella))) &&
+         SDL_RenderLines(dibujante, subrayado, int(SDL_arraysize(subrayado))) &&
+         SDL_RenderDebugText(dibujante, x + 452, y + 41, "EPA POLLUTION PREVENTER") &&
+         SDL_SetRenderDrawColor(dibujante, 192, 192, 192, 255);
+}
+
 // Recrea el encendido de un 386 con texto de ochenta columnas y tiempos independientes de FPS.
 bool MarcosPantalla::dibujar_arranque(SDL_Renderer *dibujante, const SDL_FRect &juego,
                                       Uint64 ahora) const {
@@ -286,8 +306,8 @@ bool MarcosPantalla::dibujar_arranque(SDL_Renderer *dibujante, const SDL_FRect &
   };
   bool bien = SDL_SetRenderDrawColor(dibujante, 192, 192, 192, 255);
   if (tiempo < 3200) {
-    bien = bien && linea(1, "AMI   American Megatrends") &&
-           linea(3, "Curse Reborn - 80386 DX / 33 MHz") &&
+    bien = bien && dibujar_distintivo_energia(dibujante, x, y) &&
+           linea(1, "AMI   American Megatrends") && linea(3, "Curse Reborn - 80386 DX / 33 MHz") &&
            linea(4, "Adaptador VGA detectado - 256 KB");
     if (tiempo >= 400) {
       const auto memoria = std::min<Uint64>(4096, (tiempo - 400) * 4096 / 1800);
