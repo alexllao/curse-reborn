@@ -3,5 +3,10 @@
   "archivo": "monitor.png",
   "resolucion": [1672, 941],
   "pantalla": [271, 102, 1127, 692],
-  "procedencia": "Carcasa generada para Curse Reborn a partir del concepto aprobado por Àlex Llaó. Sin gráficos del juego DOS."
+  "procedencia": "Carcasa generada para Curse Reborn a partir del concepto aprobado por Àlex Llaó. Sin gráficos del juego DOS. Habitación de época generada para este marco, sin recursos comerciales.",
+  "fondo": {
+    "archivo": "habitacion_90.png",
+    "resolucion": [2172, 724],
+    "descripcion": "Habitación de un joven aficionado a aventuras gráficas: póster ilustrado de Monkey Island, cajas de juegos, disquetes y joystick. Guiños artísticos a títulos de terceros; no son recursos extraídos de sus juegos."
+  }
 }

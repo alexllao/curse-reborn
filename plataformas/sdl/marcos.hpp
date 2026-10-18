@@ -20,6 +20,8 @@ struct DefinicionMonitor {
   const char *archivo;
   int ancho, alto;
   SDL_FRect pantalla;
+  const char *fondo;
+  int ancho_fondo, alto_fondo;
 };
 
 // Los marcos propios rellenan las bandas y admiten un solape mínimo sobre sus bordes.
@@ -31,7 +33,7 @@ public:
   }
   // F1 recorre predeterminado, monitor y sin marco sin avanzar la partida.
   void alternar(Uint64 ahora = SDL_GetTicksNS());
-  // Encaja el monitor completo y adapta el área jugable sin deformar sus 320×200 píxeles.
+  // Conserva el mismo encuadre máximo del juego con cualquiera de los marcos.
   bool preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora = SDL_GetTicksNS()) const;
   // Devuelve el área física del juego, también dentro de la carcasa del monitor.
   static bool area_juego(SDL_Renderer *dibujante, SDL_FRect &juego);
@@ -46,6 +48,7 @@ private:
   bool monitor_en_salida = false;
   bool monitor_presentado = false;
   SDL_Texture *textura_monitor = nullptr;
+  SDL_Texture *textura_habitacion = nullptr;
   float origen_animacion = 0.0f;
   Uint64 inicio_animacion = 0;
   // Interpola desde el nivel actual para que otra pulsación invierta el recorrido sin saltos.

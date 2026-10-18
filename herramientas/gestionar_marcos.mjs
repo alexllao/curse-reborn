@@ -160,7 +160,18 @@ export function prepararMarcos(raiz, destino) {
     throw new Error('Abertura del monitor inválida.');
   copyFileSync(join(origen, monitor.archivo), join(carpeta, monitor.archivo));
   copyFileSync(join(origen, 'monitor.json'), join(carpeta, 'monitor.json'));
-  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  const fondoMonitor = monitor.fondo;
+  if (!/^[a-z0-9_-]+\.png$/.test(fondoMonitor.archivo))
+    throw new Error('Nombre de fondo del monitor inválido.');
+  const imagenFondo = readFileSync(join(origen, fondoMonitor.archivo));
+  if (
+    imagenFondo.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
+    imagenFondo.readUInt32BE(16) !== fondoMonitor.resolucion[0] ||
+    imagenFondo.readUInt32BE(20) !== fondoMonitor.resolucion[1]
+  )
+    throw new Error('Resolución o formato inesperados en la habitación.');
+  copyFileSync(join(origen, fondoMonitor.archivo), join(carpeta, fondoMonitor.archivo));
+  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}},${JSON.stringify(`assets/original/marcos/${fondoMonitor.archivo}`)},${fondoMonitor.resolucion.join(',')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

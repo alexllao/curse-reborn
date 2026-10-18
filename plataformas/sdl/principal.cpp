@@ -213,7 +213,7 @@ bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo)
                                            SDL_TEXTUREACCESS_STATIC, 320, 200);
   if (!presentacion.textura)
     return false;
-  for (int vista : {21, 17}) {
+  for (int vista : {21}) {
     if (!cambiar_pantalla(carpeta, vista, presentacion))
       return false;
     const auto escena = mazmorra.escena_actual();
@@ -275,8 +275,16 @@ bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo)
         !std::equal(original.begin(), original.end(), pixeles))
       return SDL_SetError("Desactivar el decorado no recupera la imagen original");
   }
-  registrar_accion(
-      "Decorados: dos escenas y bandas de menú intactas; seis filtros y restauración comprobados");
+  // Cambiar desde Frank con la opción activa no debe heredar el decorado retirado del pozo.
+  presentacion.decorados.alternar();
+  if (!cambiar_pantalla(carpeta, 17, presentacion) || DecoradosAmpliados::buscar(12))
+    return SDL_SetError("El decorado descartado del pozo sigue asignado");
+  const std::vector<unsigned char> original_pozo(pixeles, pixeles + sizeof(pixeles));
+  if (!actualizar_textura(presentacion, true) ||
+      !std::equal(original_pozo.begin(), original_pozo.end(), pixeles))
+    return SDL_SetError("El pozo no conserva su imagen original");
+  registrar_accion("Decorados: Frank conserva escena y menús con seis filtros; el pozo queda "
+                   "original incluso con la opción activa");
   return true;
 }
 
@@ -330,7 +338,22 @@ bool fallo_monitor(const char *motivo) {
   return false;
 }
 
-// Verifica el encuadre, transparencia y coordenadas reales del monitor en cuatro proporciones.
+// Captura RGBA física y devuelve el estado lógico, sin modificar la imagen ya dibujada.
+SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
+  int ancho = 0, alto = 0;
+  SDL_RendererLogicalPresentation presentacion;
+  if (!SDL_GetRenderLogicalPresentation(dibujante, &ancho, &alto, &presentacion) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+    return nullptr;
+  SDL_Surface *captura = SDL_RenderReadPixels(dibujante, nullptr);
+  const bool restaurado = SDL_SetRenderLogicalPresentation(dibujante, ancho, alto, presentacion);
+  SDL_Surface *rgba =
+      captura && restaurado ? SDL_ConvertSurface(captura, SDL_PIXELFORMAT_RGBA32) : nullptr;
+  SDL_DestroySurface(captura);
+  return rgba;
+}
+
+// Verifica tamaño máximo y píxeles del juego sin cambios, incluido 32:9 y ventana vertical.
 bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
   Presentacion p;
   if (!SDL_Init(SDL_INIT_VIDEO) ||
@@ -340,7 +363,8 @@ bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
     return fallo_monitor("No se ha podido comprobar el monitor");
   p.textura =
       SDL_CreateTexture(p.dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
-  if (!p.textura || !cargar_imagen(carpeta, "TITLE"))
+  if (!p.textura || !SDL_SetTextureScaleMode(p.textura, SDL_SCALEMODE_NEAREST) ||
+      !cargar_imagen(carpeta, "TITLE"))
     return fallo_monitor("No se ha podido comprobar el monitor");
   for (unsigned int i = 0; i < 768; ++i)
     paleta_visible[i] = imagen.paleta[i];
@@ -350,14 +374,25 @@ bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
   p.marcos.alternar(inicio);
   p.marcos.alternar(inicio + 300000000ull);
   const Uint64 ahora = inicio + 600000000ull;
-  for (const auto &tamano :
-       {std::pair<int, int>{1280, 720}, {720, 1280}, {960, 600}, {3440, 1440}}) {
+  for (const auto &tamano : {std::pair<int, int>{1280, 720},
+                             {720, 1280},
+                             {960, 600},
+                             {3440, 1440},
+                             {3840, 1080},
+                             {1279, 721}}) {
+    SDL_FRect encuadre_sin_marco;
     if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) || !SDL_SyncWindow(p.ventana) ||
+        !SDL_SetRenderLogicalPresentation(p.dibujante, 320, 200,
+                                          SDL_LOGICAL_PRESENTATION_LETTERBOX) ||
+        !SDL_GetRenderLogicalPresentationRect(p.dibujante, &encuadre_sin_marco) ||
         !p.marcos.preparar_encuadre(p.dibujante, ahora))
       return fallo_monitor("No se ha podido comprobar el monitor");
     SDL_FRect juego;
     if (!MarcosPantalla::area_juego(p.dibujante, juego))
       return false;
+    if (juego.x != encuadre_sin_marco.x || juego.y != encuadre_sin_marco.y ||
+        juego.w != encuadre_sin_marco.w || juego.h != encuadre_sin_marco.h)
+      return fallo_monitor("El monitor reduce la superficie jugable");
     if (juego.x < 0 || juego.y < 0 || juego.x + juego.w > tamano.first ||
         juego.y + juego.h > tamano.second || std::abs(juego.w / juego.h - 1.6f) > 0.01f)
       return fallo_monitor("El monitor recorta o deforma el juego");
@@ -384,13 +419,34 @@ bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
       return fallo_monitor("El contador ha cambiado el encuadre del monitor");
     const SDL_FRect destino{0, 0, 320, 200};
     if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
-        !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino) ||
-        !p.marcos.dibujar(p.dibujante, "titulo", ahora) ||
-        !SDL_SetRenderViewport(p.dibujante, nullptr) || !SDL_SetRenderScale(p.dibujante, 1, 1))
+        !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino))
+      return fallo_monitor("No se ha podido dibujar la referencia sin marco");
+    SDL_Surface *original = capturar_monitor(p.dibujante);
+    if (!original)
+      return fallo_monitor("No se ha podido capturar la referencia sin marco");
+    if (!p.marcos.dibujar(p.dibujante, "titulo", ahora)) {
+      SDL_DestroySurface(original);
+      return fallo_monitor("No se ha podido dibujar el monitor con habitación");
+    }
+    SDL_Surface *captura = capturar_monitor(p.dibujante);
+    if (!captura) {
+      SDL_DestroySurface(original);
       return fallo_monitor("No se ha podido comprobar el monitor");
-    SDL_Surface *captura = SDL_RenderReadPixels(p.dibujante, nullptr);
-    if (!captura)
-      return fallo_monitor("No se ha podido comprobar el monitor");
+    }
+    bool coinciden = captura->w == original->w && captura->h == original->h;
+    const auto *antes = static_cast<const unsigned char *>(original->pixels);
+    const auto *despues_marco = static_cast<const unsigned char *>(captura->pixels);
+    const int x0 = int(std::ceil(juego.x)), x1 = int(std::floor(juego.x + juego.w));
+    const int y0 = int(std::ceil(juego.y)), y1 = int(std::floor(juego.y + juego.h));
+    for (int y = y0; coinciden && y < y1; ++y)
+      coinciden =
+          std::equal(antes + y * original->pitch + x0 * 4, antes + y * original->pitch + x1 * 4,
+                     despues_marco + y * captura->pitch + x0 * 4);
+    SDL_DestroySurface(original);
+    if (!coinciden) {
+      SDL_DestroySurface(captura);
+      return fallo_monitor("La habitación o el monitor altera píxeles del juego");
+    }
     // La transparencia central debe permitir ver el título, sin incorporar gráficos DOS al PNG.
     Uint8 r = 0, g = 0, b = 0, a = 0;
     const bool centro = SDL_ReadSurfacePixel(captura, int(juego.x + juego.w / 2),
@@ -406,8 +462,8 @@ bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
   if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 300000000ull) ||
       SDL_RenderViewportSet(p.dibujante))
     return fallo_monitor("F1 no restaura la presentación sin marco");
-  registrar_accion("Monitor: cuatro proporciones, centro transparente, coordenadas del ratón y "
-                   "ciclo F1 comprobados");
+  registrar_accion("Monitor: seis proporciones, incluido 32:9; tamaño máximo y píxeles del juego "
+                   "intactos, ratón y ciclo F1 comprobados");
   return true;
 }
 

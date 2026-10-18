@@ -101,3 +101,11 @@ F1 ahora recorre predeterminado → monitor de PC 286 → sin marco. El monitor 
 Esta instrucción sustituye cualquier ajuste por filas descrito arriba: Àlex rechaza expresamente deformar los decorados o fabricar su arco con efectos. Frank usa el PNG1586×992 aprobado con el arco dibujado; pozo recupera su PNG maestro. Ambos se superponen con muestreo uniforme y protección de los actores y menús, sin deformaciones. No atribuir al juicio visual una garantía que solo venga de pruebas automáticas.
 
 La mano original de MOUSE.SPR también se utiliza durante la partida, adaptada a la escala del juego. Los paneles DOS que ya la incorporan ocultan el cursor nativo para evitar duplicarla. comprobar:cursor verifica tres formatos y el relevo de panel.
+
+## Corrección posterior de monitor y pozo
+
+Àlex rechaza el decorado del pozo porque no se adapta al original: escena12 queda SIN asignación en el catálogo. Conservar el original aunque Mayús+F1 esté activado; no volver a añadir esa ilustración sin nueva aprobación. La ilustración descartada permanece solo como referencia. Frank continúa disponible.
+
+Esta decisión sustituye expresamente el ajuste anterior del monitor: F1 NO debe reducir nunca la superficie jugable para hacer caber la carcasa. Todos los modos usan el mismo LETTERBOX320×200. La carcasa rodea ese rectángulo, pudiendo quedar fuera de ventana al tocar sus bordes. La habitación de época habitacion_90.png rellena el exterior detrás; ambas capas se dibujan exclusivamente en las bandas, sin tapar píxeles del juego. No girar las ilustraciones. comprobar:monitor compara el tamaño máximo y cada píxel jugable en seis formatos, incluido32:9 y vertical, además del ratón y la conservación del encuadre al mostrar FPS.
+
+La habitación debe ser la de un joven aficionado a videojuegos, no un despacho genérico. Àlex pide un póster de Monkey Island o Curse of Enchantia: la revisión añade el póster de Monkey Island al extremo izquierdo y cajas de aventuras, incluida Curse, disquetes, revista y joystick. Mantener estos guiños en los laterales visibles, sin esconderlos detrás del monitor. El fondo se ancla arriba para no cortar el título del póster al cubrir32:9. Son ilustraciones de homenaje a terceros, no assets extraídos de esos juegos.

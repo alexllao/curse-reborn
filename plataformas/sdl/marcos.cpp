@@ -19,6 +19,48 @@ const DefinicionMarco *elegir_marco(const char *pantalla) {
   return nullptr;
 }
 
+// Carga únicamente una ilustración propia y conserva su transparencia al reducirla.
+SDL_Texture *cargar_textura_propia(SDL_Renderer *dibujante, const char *archivo) {
+  const char *base = SDL_GetBasePath();
+  const std::string ruta = std::string(base ? base : "") + archivo;
+  SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
+  if (!imagen)
+    return nullptr;
+  SDL_Texture *textura = SDL_CreateTextureFromSurface(dibujante, imagen);
+  SDL_DestroySurface(imagen);
+  if (textura && (!SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND) ||
+                  !SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_LINEAR))) {
+    SDL_DestroyTexture(textura);
+    return nullptr;
+  }
+  return textura;
+}
+
+// La habitación y la carcasa solo ocupan bandas: ni un píxel tapa la imagen jugable.
+bool dibujar_exterior(SDL_Renderer *dibujante, SDL_Texture *textura, const SDL_FRect &destino,
+                      const SDL_FRect &juego, int ancho, int alto) {
+  const int izquierda = int(std::floor(juego.x)), derecha = int(std::ceil(juego.x + juego.w));
+  const int arriba = int(std::floor(juego.y)), abajo = int(std::ceil(juego.y + juego.h));
+  SDL_Rect recorte;
+  const bool recortado = SDL_RenderClipEnabled(dibujante);
+  if (!SDL_GetRenderClipRect(dibujante, &recorte))
+    return false;
+  bool resultado = true;
+  for (const SDL_Rect &banda : {SDL_Rect{0, 0, ancho, arriba},
+                                {0, abajo, ancho, alto - abajo},
+                                {0, arriba, izquierda, abajo - arriba},
+                                {derecha, arriba, ancho - derecha, abajo - arriba}}) {
+    if (banda.w > 0 && banda.h > 0 &&
+        (!SDL_SetRenderClipRect(dibujante, &banda) ||
+         !(textura ? SDL_RenderTexture(dibujante, textura, nullptr, &destino)
+                   : SDL_RenderFillRect(dibujante, &destino)))) {
+      resultado = false;
+      break;
+    }
+  }
+  return SDL_SetRenderClipRect(dibujante, recortado ? &recorte : nullptr) && resultado;
+}
+
 // Conserva el remate interior completo, incluido su relieve transparente sobre el juego.
 bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMarco &panel,
                    const SDL_Rect &banda, const SDL_FRect &juego, bool derecha, bool cubrir,
@@ -91,49 +133,22 @@ void MarcosPantalla::cerrar() {
     SDL_DestroyTexture(textura);
   if (textura_monitor)
     SDL_DestroyTexture(textura_monitor);
+  if (textura_habitacion)
+    SDL_DestroyTexture(textura_habitacion);
+  textura_habitacion = nullptr;
   textura_monitor = nullptr;
   textura = nullptr;
   actual = nullptr;
 }
 
-// Ajusta el rectángulo completo de la carcasa sin girarlo ni recortarlo en ventanas altas.
-bool MarcosPantalla::preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora) const {
-  if (!SDL_SetRenderScale(dibujante, 1, 1) || !SDL_SetRenderViewport(dibujante, nullptr))
-    return false;
-  const bool monitor = modo == 2 || (monitor_en_salida && !visible && nivel_animacion(ahora) > 0);
-  if (!monitor)
-    return SDL_SetRenderLogicalPresentation(dibujante, 320, 200,
-                                            SDL_LOGICAL_PRESENTATION_LETTERBOX);
-  int ancho = 0, alto = 0;
-  if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
-      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
-    return false;
-  const float escala = std::min(float(ancho) / monitor_pc.ancho, float(alto) / monitor_pc.alto);
-  const float centro_x = (ancho - monitor_pc.ancho * escala) / 2 +
-                         (monitor_pc.pantalla.x + monitor_pc.pantalla.w / 2) * escala;
-  const float centro_y = (alto - monitor_pc.alto * escala) / 2 +
-                         (monitor_pc.pantalla.y + monitor_pc.pantalla.h / 2) * escala;
-  const float unidad = std::min(monitor_pc.pantalla.w / 320, monitor_pc.pantalla.h / 200) * escala;
-  const float escala_x = std::round(320 * unidad) / 320;
-  const float escala_y = std::round(200 * unidad) / 200;
-  const SDL_Rect juego{int(std::round(centro_x / escala_x - 160)),
-                       int(std::round(centro_y / escala_y - 100)), 320, 200};
-  return SDL_SetRenderScale(dibujante, escala_x, escala_y) &&
-         SDL_SetRenderViewport(dibujante, &juego);
+// El marco nunca resta espacio al juego: todos los modos comparten el mismo encuadre máximo.
+bool MarcosPantalla::preparar_encuadre(SDL_Renderer *dibujante, Uint64) const {
+  return SDL_SetRenderScale(dibujante, 1, 1) && SDL_SetRenderViewport(dibujante, nullptr) &&
+         SDL_SetRenderLogicalPresentation(dibujante, 320, 200, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }
 
 // Los cursores usan la misma zona física que el dibujo y la conversión de eventos de SDL.
 bool MarcosPantalla::area_juego(SDL_Renderer *dibujante, SDL_FRect &juego) {
-  if (SDL_RenderViewportSet(dibujante)) {
-    SDL_Rect zona;
-    if (!SDL_GetRenderViewport(dibujante, &zona))
-      return false;
-    float sx = 1, sy = 1;
-    if (!SDL_GetRenderScale(dibujante, &sx, &sy))
-      return false;
-    juego = {zona.x * sx, zona.y * sy, zona.w * sx, zona.h * sy};
-    return true;
-  }
   return SDL_GetRenderLogicalPresentationRect(dibujante, &juego);
 }
 
@@ -144,34 +159,44 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
     return true;
   if (modo == 2 || (monitor_en_salida && !visible)) {
     monitor_presentado = true;
-    if (!textura_monitor) {
-      const char *base = SDL_GetBasePath();
-      const std::string ruta = std::string(base ? base : "") + monitor_pc.archivo;
-      SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
-      if (!imagen)
-        return false;
-      textura_monitor = SDL_CreateTextureFromSurface(dibujante, imagen);
-      SDL_DestroySurface(imagen);
-      if (!textura_monitor || !SDL_SetTextureBlendMode(textura_monitor, SDL_BLENDMODE_BLEND) ||
-          !SDL_SetTextureScaleMode(textura_monitor, SDL_SCALEMODE_LINEAR))
-        return false;
-    }
-    SDL_Rect viewport;
-    float sx = 1, sy = 1;
-    int ancho = 0, alto = 0;
-    if (!SDL_GetRenderViewport(dibujante, &viewport) || !SDL_GetRenderScale(dibujante, &sx, &sy) ||
-        !SDL_GetRenderOutputSize(dibujante, &ancho, &alto))
+    if (!textura_monitor)
+      textura_monitor = cargar_textura_propia(dibujante, monitor_pc.archivo);
+    if (!textura_habitacion)
+      textura_habitacion = cargar_textura_propia(dibujante, monitor_pc.fondo);
+    if (!textura_monitor || !textura_habitacion)
       return false;
-    const float escala = std::min(float(ancho) / monitor_pc.ancho, float(alto) / monitor_pc.alto);
-    const SDL_FRect destino{(ancho - monitor_pc.ancho * escala) / 2,
-                            (alto - monitor_pc.alto * escala) / 2, monitor_pc.ancho * escala,
-                            monitor_pc.alto * escala};
-    const bool dibujado = SDL_SetRenderViewport(dibujante, nullptr) &&
-                          SDL_SetRenderScale(dibujante, 1, 1) &&
-                          SDL_SetTextureAlphaMod(textura_monitor, Uint8(nivel * 255 + 0.5f)) &&
-                          SDL_RenderTexture(dibujante, textura_monitor, nullptr, &destino);
+    int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
+    SDL_RendererLogicalPresentation presentacion;
+    SDL_FRect juego;
+    if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
+        !SDL_GetRenderLogicalPresentation(dibujante, &logico_ancho, &logico_alto, &presentacion) ||
+        !SDL_GetRenderLogicalPresentationRect(dibujante, &juego) ||
+        !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+      return false;
+    // La abertura rodea la imagen máxima: la carcasa puede salir de la ventana, el juego nunca.
+    const float escala = std::max(juego.w / monitor_pc.pantalla.w, juego.h / monitor_pc.pantalla.h);
+    const SDL_FRect destino{
+        juego.x + juego.w / 2 - (monitor_pc.pantalla.x + monitor_pc.pantalla.w / 2) * escala,
+        juego.y + juego.h / 2 - (monitor_pc.pantalla.y + monitor_pc.pantalla.h / 2) * escala,
+        monitor_pc.ancho * escala, monitor_pc.alto * escala};
+    const float escala_fondo =
+        std::max(float(ancho) / monitor_pc.ancho_fondo, float(alto) / monitor_pc.alto_fondo);
+    const SDL_FRect habitacion{(ancho - monitor_pc.ancho_fondo * escala_fondo) / 2, 0,
+                               monitor_pc.ancho_fondo * escala_fondo,
+                               monitor_pc.alto_fondo * escala_fondo};
+    const SDL_FRect abertura{destino.x + monitor_pc.pantalla.x * escala,
+                             destino.y + monitor_pc.pantalla.y * escala,
+                             monitor_pc.pantalla.w * escala, monitor_pc.pantalla.h * escala};
+    const auto opacidad = Uint8(nivel * 255 + 0.5f);
+    const bool dibujado =
+        SDL_SetTextureAlphaMod(textura_monitor, opacidad) &&
+        SDL_SetTextureAlphaMod(textura_habitacion, opacidad) &&
+        dibujar_exterior(dibujante, textura_habitacion, habitacion, juego, ancho, alto) &&
+        SDL_SetRenderDrawColor(dibujante, 0, 0, 0, opacidad) &&
+        dibujar_exterior(dibujante, nullptr, abertura, juego, ancho, alto) &&
+        dibujar_exterior(dibujante, textura_monitor, destino, juego, ancho, alto);
     const bool restaurado =
-        SDL_SetRenderViewport(dibujante, &viewport) && SDL_SetRenderScale(dibujante, sx, sy);
+        SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
     return dibujado && restaurado;
   }
   monitor_presentado = false;
