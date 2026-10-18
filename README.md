@@ -350,3 +350,7 @@ Las [primeras ramas del valle](documentacion/ramas_valle.md) y el [puzle del pel
 El [franqueo y envío del correo](documentacion/correo.md) continúan desde el sello obtenido en DINO: `pnpm comparar:correo --muestra` contrasta la recogida de la carta, las dos recetas originales y sus aproximaciones. La devolución posterior y el resto del valle siguen pendientes; no aumenta el catálogo SDL.
 
 La [cinta y su inserción](documentacion/grabacion_valle.md) tienen recorrido real comparado con el EXE mediante `pnpm comparar:grabacion-valle --muestra`; el mandoABD5 tiene variantes aisladas. La grabación completa y la entrega posterior continúan pendientes.
+
+`pnpm comparar:grabacion-completa --muestra` une ahora el estornudo, la salida59 y las recogidas reales del mando y la cinta hasta obtener la grabación106 y enviar después el correo en la misma partida. La [documentación de grabación](documentacion/grabacion_valle.md) distingue esta ruta del contraste aislado anterior y de la entrega posterior, todavía pendiente.
+
+Disponible el [recorrido del valle hasta la grabación y el correo](documentacion/recorridos/13_valle_hasta_grabacion_y_correo.txt), con su límite actual del núcleo y las acciones que aún faltan.

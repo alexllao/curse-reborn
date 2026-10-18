@@ -11,3 +11,15 @@ ABD5 se contrasta con1.152 variantes aisladas de actor, posiciones, cámaras, pu
 Para reproducir esta prueba desde una copia sin resultados locales, preparar antes `comparar:ramas-valle --muestra` y `comparar:correo --muestra`; este último prepara DINO si falta su instantánea. La prueba avisa explícitamente si falta alguno de esos estados.
 
 **La grabación completa permanece pendiente.** El recorrido real de esta prueba solo recoge y coloca105. Los contratos deABD5 parten de otra instantánea dePOST con inventarios preparados explícitamente: no se concede108 a la partida real ni se afirma haber grabado106. Falta unir la recogida del mando tras el estornudo con su uso y las entregas105/106→98. Tampoco se habilita SDL del valle ni cambia su catálogo de32 vistas. Los servicios de sonido comunes siguen intactos; decorados ampliados aparcados, contador/marcos/monitor conservados.
+
+## Grabación persistente con el mando realmente recogido
+
+Esta ampliación resuelve la unión que quedaba pendiente en la prueba anterior de grabación. `pnpm comparar:grabacion-completa --muestra` parte de la instantánea real de DINO después del estornudo, con sello y bolígrafo. No usa los inventarios preparados de las variantes aisladas.
+
+Sale por59 mediante400/185 y550/189 y cargaREMOTE desde el origen32 con el modelo22. Tras256 pasos conserva2C4C=0: A81A dejó45E7=0 y el protector no reaparece al cargar. El mando108 se recoge realmente junto a110/165. Sigue56 haciaCELESTE, recoge105 de la misma forma ya contrastada, vuelve por61 aPOST y coloca la cinta en113 rodeando el equipo por abajo.
+
+Para empujar el mando del inventario hay que abrir Manipular→Empujar, seleccionar la casilla0 que abre el inventario y después108. No confundir la lista de objetos cercanos con la del inventario. El recorrido espera768 pasos originales y obtiene106 mientras desaparecen108 y105. Cada selección y paso compara DS completo y azar; las composiciones abarcan entrada59, mando recogido, cinta y mando juntos, cinta insertada, grabación terminada y las tres fases del correo.
+
+**La grabación106 ya tiene una ruta persistente contrastada en el núcleo.** La entrega a98, la recuperación del pase y los restantes puzles del valle siguen pendientes. Todavía no se activa SDL ni se incrementa el catálogo de32 vistas. La prueba continúa con esa misma grabación106: recoge111, combina el sello109 realmente conservado y envía112 al buzón114. Se comprueba que106 permanece y que105/108/109/111/112 han desaparecido. Resultado:13.171 casos/pasos y ocho composiciones coincidentes; la entrega a98 y la obtención del pase todavía no están unidas ni comprobadas. Los decorados ampliados siguen aparcados; sonido común, contador, marcos y monitor permanecen.
+
+El [recorrido en texto](recorridos/13_valle_hasta_grabacion_y_correo.txt) resume las acciones de esta misma partida hasta dejar la carta en el buzón con la grabación en el inventario.
