@@ -342,15 +342,42 @@ bool fallo_monitor(const char *motivo) {
 SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
   int ancho = 0, alto = 0;
   SDL_RendererLogicalPresentation presentacion;
+  SDL_Rect viewport;
+  const bool viewport_fijado = SDL_RenderViewportSet(dibujante);
+  float sx = 1, sy = 1;
   if (!SDL_GetRenderLogicalPresentation(dibujante, &ancho, &alto, &presentacion) ||
-      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+      !SDL_GetRenderViewport(dibujante, &viewport) || !SDL_GetRenderScale(dibujante, &sx, &sy) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED) ||
+      !SDL_SetRenderViewport(dibujante, nullptr) || !SDL_SetRenderScale(dibujante, 1, 1))
     return nullptr;
   SDL_Surface *captura = SDL_RenderReadPixels(dibujante, nullptr);
-  const bool restaurado = SDL_SetRenderLogicalPresentation(dibujante, ancho, alto, presentacion);
+  const bool restaurado = SDL_SetRenderLogicalPresentation(dibujante, ancho, alto, presentacion) &&
+                          SDL_SetRenderScale(dibujante, sx, sy) &&
+                          SDL_SetRenderViewport(dibujante, viewport_fijado ? &viewport : nullptr);
   SDL_Surface *rgba =
       captura && restaurado ? SDL_ConvertSurface(captura, SDL_PIXELFORMAT_RGBA32) : nullptr;
   SDL_DestroySurface(captura);
   return rgba;
+}
+
+// Revisa los cuatro lados del bisel para detectar rendijas de habitación o restos de color.
+bool comprobar_bisel_monitor(const SDL_Surface *captura, const SDL_FRect &juego) {
+  const auto *rgba = static_cast<const unsigned char *>(captura->pixels);
+  const auto negro = [&](int x, int y) {
+    if (x < 0 || y < 0 || x >= captura->w || y >= captura->h)
+      return true;
+    const auto *p = rgba + y * captura->pitch + x * 4;
+    return p[0] == 0 && p[1] == 0 && p[2] == 0;
+  };
+  const int izquierda = int(std::floor(juego.x)) - 1, derecha = int(std::ceil(juego.x + juego.w));
+  const int arriba = int(std::floor(juego.y)) - 1, abajo = int(std::ceil(juego.y + juego.h));
+  for (int y = arriba; y <= abajo; ++y)
+    if (!negro(izquierda, y) || !negro(derecha, y))
+      return false;
+  for (int x = izquierda; x <= derecha; ++x)
+    if (!negro(x, arriba) || !negro(x, abajo))
+      return false;
+  return true;
 }
 
 // Verifica tamaño máximo y píxeles del juego sin cambios, incluido 32:9 y ventana vertical.
@@ -380,90 +407,151 @@ bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
                              {3440, 1440},
                              {3840, 1080},
                              {1279, 721}}) {
-    SDL_FRect encuadre_sin_marco;
-    if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) || !SDL_SyncWindow(p.ventana) ||
-        !SDL_SetRenderLogicalPresentation(p.dibujante, 320, 200,
-                                          SDL_LOGICAL_PRESENTATION_LETTERBOX) ||
-        !SDL_GetRenderLogicalPresentationRect(p.dibujante, &encuadre_sin_marco) ||
-        !p.marcos.preparar_encuadre(p.dibujante, ahora))
-      return fallo_monitor("No se ha podido comprobar el monitor");
-    SDL_FRect juego;
-    if (!MarcosPantalla::area_juego(p.dibujante, juego))
-      return false;
-    if (juego.x != encuadre_sin_marco.x || juego.y != encuadre_sin_marco.y ||
-        juego.w != encuadre_sin_marco.w || juego.h != encuadre_sin_marco.h)
-      return fallo_monitor("El monitor reduce la superficie jugable");
-    if (juego.x < 0 || juego.y < 0 || juego.x + juego.w > tamano.first ||
-        juego.y + juego.h > tamano.second || std::abs(juego.w / juego.h - 1.6f) > 0.01f)
-      return fallo_monitor("El monitor recorta o deforma el juego");
-    for (const auto &punto : {std::pair<float, float>{0, 0}, {160, 100}, {319, 199}}) {
-      float wx = 0, wy = 0;
-      if (!SDL_RenderCoordinatesToWindow(p.dibujante, punto.first, punto.second, &wx, &wy))
+    for (const int zoom : {100, 70, 50}) {
+      SDL_Event ajuste{};
+      ajuste.type = SDL_EVENT_KEY_DOWN;
+      ajuste.key.mod = SDL_KMOD_CTRL;
+      ajuste.key.key = SDLK_0;
+      if (!p.marcos.evento_zoom(ajuste))
+        return fallo_monitor("No se reconoce Ctrl+0");
+      ajuste.key.key = SDLK_MINUS;
+      for (int paso = 100; paso > zoom; paso -= 10)
+        if (!p.marcos.evento_zoom(ajuste))
+          return fallo_monitor("No se reconoce Ctrl+menos");
+      SDL_FRect encuadre_sin_marco;
+      if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) ||
+          !SDL_SyncWindow(p.ventana) ||
+          !SDL_SetRenderLogicalPresentation(p.dibujante, 320, 200,
+                                            SDL_LOGICAL_PRESENTATION_LETTERBOX) ||
+          !SDL_GetRenderLogicalPresentationRect(p.dibujante, &encuadre_sin_marco) ||
+          !p.marcos.preparar_encuadre(p.dibujante, ahora))
         return fallo_monitor("No se ha podido comprobar el monitor");
-      SDL_Event evento{};
-      evento.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
-      evento.button.windowID = SDL_GetWindowID(p.ventana);
-      evento.button.x = wx;
-      evento.button.y = wy;
-      const bool convertido = SDL_ConvertEventToRenderCoordinates(p.dibujante, &evento);
-      if (!convertido || std::abs(evento.button.x - punto.first) > 0.001f ||
-          std::abs(evento.button.y - punto.second) > 0.001f)
-        return fallo_monitor("El ratón no coincide con la pantalla del monitor");
-    }
-    ContadorFps contador;
-    if (!contador.dibujar(p.dibujante))
-      return fallo_monitor("No se ha podido dibujar el contador sobre el monitor");
-    SDL_FRect despues;
-    if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != juego.x ||
-        despues.y != juego.y || despues.w != juego.w || despues.h != juego.h)
-      return fallo_monitor("El contador ha cambiado el encuadre del monitor");
-    const SDL_FRect destino{0, 0, 320, 200};
-    if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
-        !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino))
-      return fallo_monitor("No se ha podido dibujar la referencia sin marco");
-    SDL_Surface *original = capturar_monitor(p.dibujante);
-    if (!original)
-      return fallo_monitor("No se ha podido capturar la referencia sin marco");
-    if (!p.marcos.dibujar(p.dibujante, "titulo", ahora)) {
+      SDL_FRect juego;
+      if (!MarcosPantalla::area_juego(p.dibujante, juego))
+        return false;
+      if (std::abs(juego.w - encuadre_sin_marco.w * zoom / 100) > 1 ||
+          std::abs(juego.h - encuadre_sin_marco.h * zoom / 100) > 1)
+        return fallo_monitor("El monitor reduce la superficie jugable");
+      if (juego.x < 0 || juego.y < 0 || juego.x + juego.w > tamano.first ||
+          juego.y + juego.h > tamano.second || std::abs(juego.w / juego.h - 1.6f) > 0.01f)
+        return fallo_monitor("El monitor recorta o deforma el juego");
+      for (const auto &punto : {std::pair<float, float>{0, 0}, {160, 100}, {319, 199}}) {
+        float wx = 0, wy = 0;
+        if (!SDL_RenderCoordinatesToWindow(p.dibujante, punto.first, punto.second, &wx, &wy))
+          return fallo_monitor("No se ha podido comprobar el monitor");
+        SDL_Event evento{};
+        evento.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
+        evento.button.windowID = SDL_GetWindowID(p.ventana);
+        evento.button.x = wx;
+        evento.button.y = wy;
+        const bool convertido = SDL_ConvertEventToRenderCoordinates(p.dibujante, &evento);
+        if (!convertido || std::abs(evento.button.x - punto.first) > 0.001f ||
+            std::abs(evento.button.y - punto.second) > 0.001f)
+          return fallo_monitor("El ratón no coincide con la pantalla del monitor");
+      }
+      ContadorFps contador;
+      if (!contador.dibujar(p.dibujante))
+        return fallo_monitor("No se ha podido dibujar el contador sobre el monitor");
+      SDL_FRect despues;
+      if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != juego.x ||
+          despues.y != juego.y || despues.w != juego.w || despues.h != juego.h)
+        return fallo_monitor("El contador ha cambiado el encuadre del monitor");
+      const SDL_FRect destino{0, 0, 320, 200};
+      if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
+          !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino))
+        return fallo_monitor("No se ha podido dibujar la referencia sin marco");
+      SDL_Surface *original = capturar_monitor(p.dibujante);
+      if (!original)
+        return fallo_monitor("No se ha podido capturar la referencia sin marco");
+      if (!p.marcos.dibujar(p.dibujante, "titulo", ahora)) {
+        SDL_DestroySurface(original);
+        return fallo_monitor("No se ha podido dibujar el monitor con habitación");
+      }
+      SDL_Surface *captura = capturar_monitor(p.dibujante);
+      if (!captura) {
+        SDL_DestroySurface(original);
+        return fallo_monitor("No se ha podido comprobar el monitor");
+      }
+      bool coinciden = captura->w == original->w && captura->h == original->h;
+      const auto *antes = static_cast<const unsigned char *>(original->pixels);
+      const auto *despues_marco = static_cast<const unsigned char *>(captura->pixels);
+      const int x0 = int(std::ceil(juego.x)), x1 = int(std::floor(juego.x + juego.w));
+      const int y0 = int(std::ceil(juego.y)), y1 = int(std::floor(juego.y + juego.h));
+      for (int y = y0; coinciden && y < y1; ++y)
+        coinciden =
+            std::equal(antes + y * original->pitch + x0 * 4, antes + y * original->pitch + x1 * 4,
+                       despues_marco + y * captura->pitch + x0 * 4);
       SDL_DestroySurface(original);
-      return fallo_monitor("No se ha podido dibujar el monitor con habitación");
-    }
-    SDL_Surface *captura = capturar_monitor(p.dibujante);
-    if (!captura) {
-      SDL_DestroySurface(original);
-      return fallo_monitor("No se ha podido comprobar el monitor");
-    }
-    bool coinciden = captura->w == original->w && captura->h == original->h;
-    const auto *antes = static_cast<const unsigned char *>(original->pixels);
-    const auto *despues_marco = static_cast<const unsigned char *>(captura->pixels);
-    const int x0 = int(std::ceil(juego.x)), x1 = int(std::floor(juego.x + juego.w));
-    const int y0 = int(std::ceil(juego.y)), y1 = int(std::floor(juego.y + juego.h));
-    for (int y = y0; coinciden && y < y1; ++y)
-      coinciden =
-          std::equal(antes + y * original->pitch + x0 * 4, antes + y * original->pitch + x1 * 4,
-                     despues_marco + y * captura->pitch + x0 * 4);
-    SDL_DestroySurface(original);
-    if (!coinciden) {
+      if (!coinciden) {
+        SDL_DestroySurface(captura);
+        return fallo_monitor("La habitación o el monitor altera píxeles del juego");
+      }
+      if (!comprobar_bisel_monitor(captura, juego)) {
+        SDL_DestroySurface(captura);
+        return fallo_monitor("Hay una rendija o un resto de color junto al bisel");
+      }
+      // La transparencia central debe permitir ver el título, sin incorporar gráficos DOS al PNG.
+      Uint8 r = 0, g = 0, b = 0, a = 0;
+      const bool centro = SDL_ReadSurfacePixel(captura, int(juego.x + juego.w / 2),
+                                               int(juego.y + juego.h / 2), &r, &g, &b, &a);
+      const std::string ruta = prefijo + "." + std::to_string(tamano.first) + "x" +
+                               std::to_string(tamano.second) +
+                               (zoom == 100 ? "" : ".zoom" + std::to_string(zoom)) + ".png";
+      const bool guardada = SDL_SavePNG(captura, ruta.c_str());
       SDL_DestroySurface(captura);
-      return fallo_monitor("La habitación o el monitor altera píxeles del juego");
+      if (!centro || (!r && !g && !b) || !guardada || !SDL_RenderPresent(p.dibujante))
+        return fallo_monitor("El centro del monitor tapa el juego o no se puede capturar");
     }
-    // La transparencia central debe permitir ver el título, sin incorporar gráficos DOS al PNG.
-    Uint8 r = 0, g = 0, b = 0, a = 0;
-    const bool centro = SDL_ReadSurfacePixel(captura, int(juego.x + juego.w / 2),
-                                             int(juego.y + juego.h / 2), &r, &g, &b, &a);
-    const std::string ruta =
-        prefijo + "." + std::to_string(tamano.first) + "x" + std::to_string(tamano.second) + ".png";
-    const bool guardada = SDL_SavePNG(captura, ruta.c_str());
-    SDL_DestroySurface(captura);
-    if (!centro || (!r && !g && !b) || !guardada || !SDL_RenderPresent(p.dibujante))
-      return fallo_monitor("El centro del monitor tapa el juego o no se puede capturar");
   }
+  SDL_FRect al_cincuenta;
+  if (!MarcosPantalla::area_juego(p.dibujante, al_cincuenta))
+    return false;
+  const auto modificadores = SDL_GetModState();
+  SDL_SetModState(SDL_KMOD_CTRL);
+  SDL_Event rueda{};
+  rueda.type = SDL_EVENT_MOUSE_WHEEL;
+  rueda.wheel.y = 1;
+  const bool rueda_aceptada =
+      p.marcos.evento_zoom(rueda) && p.marcos.preparar_encuadre(p.dibujante, ahora);
+  SDL_FRect al_sesenta;
+  const bool rueda_acerca = rueda_aceptada && MarcosPantalla::area_juego(p.dibujante, al_sesenta) &&
+                            al_sesenta.w > al_cincuenta.w;
+  rueda.wheel.direction = SDL_MOUSEWHEEL_FLIPPED;
+  const bool rueda_inversa = p.marcos.evento_zoom(rueda);
+  SDL_SetModState(modificadores);
+  if (!rueda_acerca || !rueda_inversa)
+    return fallo_monitor("No funciona Ctrl con rueda normal o invertida");
+  SDL_Event ajuste{};
+  ajuste.type = SDL_EVENT_KEY_DOWN;
+  ajuste.key.mod = SDL_KMOD_CTRL;
+  ajuste.key.key = SDLK_EQUALS;
+  if (!p.marcos.evento_zoom(ajuste))
+    return fallo_monitor("No se reconoce Ctrl+mas");
+  ajuste.key.key = SDLK_MINUS;
+  p.marcos.evento_zoom(ajuste);
+  p.marcos.evento_zoom(ajuste);
+  SDL_FRect limite;
+  if (!p.marcos.preparar_encuadre(p.dibujante, ahora) ||
+      !MarcosPantalla::area_juego(p.dibujante, limite) || limite.w != al_cincuenta.w)
+    return fallo_monitor("El zoom no conserva su límite del 50 por ciento");
   p.marcos.alternar(ahora);
   if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 300000000ull) ||
       SDL_RenderViewportSet(p.dibujante))
     return fallo_monitor("F1 no restaura la presentación sin marco");
-  registrar_accion("Monitor: seis proporciones, incluido 32:9; tamaño máximo y píxeles del juego "
-                   "intactos, ratón y ciclo F1 comprobados");
+  p.marcos.alternar(ahora + 400000000ull);
+  p.marcos.alternar(ahora + 700000000ull);
+  if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 1000000000ull) ||
+      !MarcosPantalla::area_juego(p.dibujante, limite) || limite.w != al_cincuenta.w)
+    return fallo_monitor("Cambiar con F1 pierde el zoom elegido");
+  ajuste.key.key = SDLK_0;
+  p.marcos.evento_zoom(ajuste);
+  ajuste.key.key = SDLK_PLUS;
+  p.marcos.evento_zoom(ajuste);
+  if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 1000000000ull) ||
+      SDL_RenderViewportSet(p.dibujante))
+    return fallo_monitor("Ctrl+0 no restaura el máximo o Ctrl+mas supera el límite");
+  registrar_accion("Monitor: seis proporciones a 100, 70 y 50%%; píxeles del juego intactos, bisel "
+                   "sin rendijas, ratón, Ctrl+zoom y F1 comprobados");
   return true;
 }
 
@@ -703,6 +791,11 @@ int main(int argc, char *argv[]) {
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla < 3 || comprobar)))
         salir = true;
+      if (!salir && presentacion.marcos.evento_zoom(evento)) {
+        if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante))
+          return fallo("No se ha podido ajustar el zoom del monitor");
+        continue;
+      }
       const auto solicitud = mazmorra.tomar_solicitud_partidas();
       if (solicitud)
         abrir_partidas(solicitud);

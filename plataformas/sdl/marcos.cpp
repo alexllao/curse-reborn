@@ -117,6 +117,39 @@ void MarcosPantalla::alternar(Uint64 ahora) {
                                              : "sin marco");
 }
 
+// El tamaño máximo sigue siendo el inicial; alejar es una preferencia explícita y reversible.
+void MarcosPantalla::aplicar_zoom(int cambio) {
+  if (modo != 2) {
+    registrar_accion("Zoom del monitor: selecciona el monitor con F1");
+    return;
+  }
+  zoom_monitor = cambio ? std::clamp(zoom_monitor + cambio, 50, 100) : 100;
+  registrar_accion("Zoom del monitor: %d%%", zoom_monitor);
+}
+
+// Consume estos gestos antes del menú y el audio para evitar cambios de volumen o saltos de intro.
+bool MarcosPantalla::evento_zoom(const SDL_Event &evento) {
+  if (evento.type == SDL_EVENT_KEY_DOWN && (evento.key.mod & SDL_KMOD_CTRL)) {
+    const auto tecla = evento.key.key;
+    const bool menos = tecla == SDLK_MINUS || tecla == SDLK_KP_MINUS;
+    const bool mas = tecla == SDLK_PLUS || tecla == SDLK_EQUALS || tecla == SDLK_KP_PLUS;
+    const bool reiniciar = tecla == SDLK_0 || tecla == SDLK_KP_0;
+    if (menos || mas || reiniciar) {
+      if (!evento.key.repeat)
+        aplicar_zoom(menos ? -10 : mas ? 10 : 0);
+      return true;
+    }
+  }
+  if (evento.type == SDL_EVENT_MOUSE_WHEEL && (SDL_GetModState() & SDL_KMOD_CTRL)) {
+    const float sentido =
+        evento.wheel.direction == SDL_MOUSEWHEEL_FLIPPED ? -evento.wheel.y : evento.wheel.y;
+    if (sentido != 0)
+      aplicar_zoom(sentido > 0 ? 10 : -10);
+    return true;
+  }
+  return false;
+}
+
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
 float MarcosPantalla::nivel_animacion(Uint64 ahora) const {
   if (!inicio_animacion)
@@ -141,14 +174,34 @@ void MarcosPantalla::cerrar() {
   actual = nullptr;
 }
 
-// El marco nunca resta espacio al juego: todos los modos comparten el mismo encuadre máximo.
-bool MarcosPantalla::preparar_encuadre(SDL_Renderer *dibujante, Uint64) const {
-  return SDL_SetRenderScale(dibujante, 1, 1) && SDL_SetRenderViewport(dibujante, nullptr) &&
-         SDL_SetRenderLogicalPresentation(dibujante, 320, 200, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+// El juego conserva su máximo hasta que el usuario elige alejar expresamente el monitor.
+bool MarcosPantalla::preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora) const {
+  if (!SDL_SetRenderScale(dibujante, 1, 1) || !SDL_SetRenderViewport(dibujante, nullptr))
+    return false;
+  const bool monitor = modo == 2 || (monitor_en_salida && !visible && nivel_animacion(ahora) > 0);
+  if (!monitor || zoom_monitor == 100)
+    return SDL_SetRenderLogicalPresentation(dibujante, 320, 200,
+                                            SDL_LOGICAL_PRESENTATION_LETTERBOX);
+  int ancho = 0, alto = 0;
+  if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+    return false;
+  const float escala = std::min(float(ancho) / 320, float(alto) / 200) * zoom_monitor / 100;
+  const SDL_Rect juego{int(std::round(ancho / escala / 2 - 160)),
+                       int(std::round(alto / escala / 2 - 100)), 320, 200};
+  return SDL_SetRenderScale(dibujante, escala, escala) && SDL_SetRenderViewport(dibujante, &juego);
 }
 
 // Los cursores usan la misma zona física que el dibujo y la conversión de eventos de SDL.
 bool MarcosPantalla::area_juego(SDL_Renderer *dibujante, SDL_FRect &juego) {
+  if (SDL_RenderViewportSet(dibujante)) {
+    SDL_Rect zona;
+    float sx = 1, sy = 1;
+    if (!SDL_GetRenderViewport(dibujante, &zona) || !SDL_GetRenderScale(dibujante, &sx, &sy))
+      return false;
+    juego = {zona.x * sx, zona.y * sy, zona.w * sx, zona.h * sy};
+    return true;
+  }
   return SDL_GetRenderLogicalPresentationRect(dibujante, &juego);
 }
 
@@ -167,11 +220,16 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       return false;
     int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
     SDL_RendererLogicalPresentation presentacion;
+    SDL_Rect viewport;
+    const bool viewport_fijado = SDL_RenderViewportSet(dibujante);
+    float sx = 1, sy = 1;
     SDL_FRect juego;
     if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
         !SDL_GetRenderLogicalPresentation(dibujante, &logico_ancho, &logico_alto, &presentacion) ||
-        !SDL_GetRenderLogicalPresentationRect(dibujante, &juego) ||
-        !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+        !area_juego(dibujante, juego) || !SDL_GetRenderViewport(dibujante, &viewport) ||
+        !SDL_GetRenderScale(dibujante, &sx, &sy) ||
+        !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED) ||
+        !SDL_SetRenderViewport(dibujante, nullptr) || !SDL_SetRenderScale(dibujante, 1, 1))
       return false;
     // La abertura rodea la imagen máxima: la carcasa puede salir de la ventana, el juego nunca.
     const float escala = std::max(juego.w / monitor_pc.pantalla.w, juego.h / monitor_pc.pantalla.h);
@@ -187,16 +245,22 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
     const SDL_FRect abertura{destino.x + monitor_pc.pantalla.x * escala,
                              destino.y + monitor_pc.pantalla.y * escala,
                              monitor_pc.pantalla.w * escala, monitor_pc.pantalla.h * escala};
+    // El PNG tiene restos de color junto al hueco. Este bisel negro cubre solo su borde exterior.
+    const float bisel = 12 * escala;
+    const SDL_FRect borde_limpio{abertura.x - bisel, abertura.y - bisel, abertura.w + 2 * bisel,
+                                 abertura.h + 2 * bisel};
     const auto opacidad = Uint8(nivel * 255 + 0.5f);
     const bool dibujado =
         SDL_SetTextureAlphaMod(textura_monitor, opacidad) &&
         SDL_SetTextureAlphaMod(textura_habitacion, opacidad) &&
         dibujar_exterior(dibujante, textura_habitacion, habitacion, juego, ancho, alto) &&
         SDL_SetRenderDrawColor(dibujante, 0, 0, 0, opacidad) &&
-        dibujar_exterior(dibujante, nullptr, abertura, juego, ancho, alto) &&
-        dibujar_exterior(dibujante, textura_monitor, destino, juego, ancho, alto);
+        dibujar_exterior(dibujante, textura_monitor, destino, juego, ancho, alto) &&
+        dibujar_exterior(dibujante, nullptr, borde_limpio, juego, ancho, alto);
     const bool restaurado =
-        SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
+        SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion) &&
+        SDL_SetRenderScale(dibujante, sx, sy) &&
+        SDL_SetRenderViewport(dibujante, viewport_fijado ? &viewport : nullptr);
     return dibujado && restaurado;
   }
   monitor_presentado = false;

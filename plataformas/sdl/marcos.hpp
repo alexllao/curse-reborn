@@ -33,7 +33,9 @@ public:
   }
   // F1 recorre predeterminado, monitor y sin marco sin avanzar la partida.
   void alternar(Uint64 ahora = SDL_GetTicksNS());
-  // Conserva el mismo encuadre máximo del juego con cualquiera de los marcos.
+  // Ctrl con rueda, +, − o 0 ajusta solo el monitor, sin modificar volumen ni avanzar escenas.
+  bool evento_zoom(const SDL_Event &evento);
+  // Mantiene el máximo salvo que se elija manualmente alejar el monitor.
   bool preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora = SDL_GetTicksNS()) const;
   // Devuelve el área física del juego, también dentro de la carcasa del monitor.
   static bool area_juego(SDL_Renderer *dibujante, SDL_FRect &juego);
@@ -43,6 +45,9 @@ public:
   void cerrar();
 
 private:
+  // Aplica los límites del zoom elegido explícitamente para el monitor.
+  void aplicar_zoom(int cambio);
+  int zoom_monitor = 100;
   bool visible = false;
   unsigned int modo = 0;
   bool monitor_en_salida = false;
