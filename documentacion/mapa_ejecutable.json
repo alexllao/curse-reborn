@@ -3,6 +3,31 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:A599",
+      "nombre": "Piedra y fragmentos del acantilado",
+      "comentario": "A599–A7BB conserva distancia firmada, retirada94, cinco creaciones8B6F y demoras en orden de pila, incluso agotadas en3510. Canales de piedra, roca grande y fragmentos, destino y puntuación+5. Contraste de variantes y recorrido real en comparar:acciones-borde; motor/acciones/borde.cpp."
+    },
+    {
+      "direccion": "0000:A7BC",
+      "nombre": "Cuerda para cruzar el abismo",
+      "comentario": "A7BC–A819 comprueba distancia envolvente firmada<=40 desde61F; retira95, transforma el objeto en96 con alcance30, programa A0B9/A0C7 y A179 y suma5 puntos. Comparación con EXE de distancias, cámara y puntuación."
+    },
+    {
+      "direccion": "0000:3280",
+      "nombre": "Salto del abismo con cuerda",
+      "comentario": "3280–32BE comprueba distancia firmada<=30 desde637-cámara, prepara destino63E/71 y canales22F0/2356/23BB; comparte886B. Contraste aislado y recorrido persistente."
+    },
+    {
+      "direccion": "0000:3AFD",
+      "nombre": "Inscripción del borde del mundo",
+      "comentario": "3AFD–3B3D ofrece tema2 en523D si2F22!=1; destino820-cámara/113,270D y canal2E4B=1A2F con intervalo30 y demoraAL+4. No modifica otros canales."
+    },
+    {
+      "direccion": "0000:3809",
+      "nombre": "Palabras de apertura",
+      "comentario": "3809–3848 retira tema2, programa2F32=1A2C con espera5/intervalo1 y2F53=2561 con espera1/intervalo4; sonido19 vía5288. Abre paso hasta salida72 desde EDGE. No inventa un diálogo de texto."
+    },
+    {
       "direccion": "0000:A406",
       "nombre": "Empuje de la primera roca de EDGE",
       "comentario": "A406–A467 exige2CB3=76; prepara destino453-cámara/113, guionesA035/A04D y canales diferidos de2CAF/2EBF, puntuación+5. Contraste persistente antes/después del empuje y salto324C–327D. Motor/acciones/borde.cpp."

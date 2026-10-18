@@ -18,7 +18,7 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
             else:
                 guardar(d, posicion, valor)
         guardar(d, 0xB60C, manejador)
-        guardar(d, 0xB620, id + 26)
+        guardar(d, 0xB620, id + (23 if manejador == 0x32DE else 26))
         guardar(d, 0xB634, verbo)
         guardar(d, 0xB638, 65535)
         self.seleccionar(d, 0)
@@ -88,6 +88,47 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
                     self.variante(base, 'roca_empujar', 0x3B53, 92, 2, cambios)
                     self.variante(base, 'roca_saltar', 0x3143, 92, 0, cambios)
 
+    # Contrasta distancias de palabra, creación agotada y temas de la segunda mitad del acantilado.
+    def variantes_final(self, base):
+        semilla = list(self.semilla_menu)
+        for distancia in (-41, -40, -31, -30, -1, 0, 30, 31, 40, 41):
+            for camara in (0, 1024):
+                for puntos in (0, 65535):
+                    for id, origen, manejador, verbo in (
+                        (94, 0x551, 0x3B53, 5),
+                        (95, 0x61F, 0x3B53, 5),
+                        (96, 0x637, 0x3143, 0),
+                    ):
+                        cambios = (
+                            (0x2C2D, origen + distancia - camara, False),
+                            (0x3591, camara, False),
+                            (0x35C7, puntos, False),
+                            (0x5225, id, False),
+                        )
+                        self.variante(base, f'final_{id}', manejador, id, verbo, cambios)
+        for libres in (0, 1, 3, 5):
+            for numero in range(4):
+                self.semilla_menu[:] = [(n + numero * 7919) & 65535 for n in semilla]
+                primera = palabra(base, 0x3588)
+                cambios = [(0x2C2D, 1361 - palabra(base, 0x3591), False)]
+                cambios += [
+                    (0x2C0A + n * 33, 0 if n - primera < libres else 1, True)
+                    for n in range(primera, 70)
+                ]
+                self.variante(base, 'fragmentos_piedra', 0x3B53, 94, 5, cambios)
+        for estado in (0, 1, 2, 3):
+            for camara in (0, 1792):
+                self.variante(
+                    base,
+                    'inscripcion',
+                    0x384A,
+                    97,
+                    cambios=((0x2F22, estado, True), (0x3591, camara, False)),
+                )
+                self.variante(base, 'palabras', 0x32DE, 2, cambios=((0x2F22, estado, True),))
+        self.semilla_menu[:] = semilla
+        self.retomar_recursos(base)
+
     # Contrasta una caída y su rescate sin modificar la rama principal del recorrido.
     def rescate_persistente(self, base):
         semilla = list(self.semilla_menu)
@@ -134,6 +175,115 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
         self.hito_borde(d, 'borde_puente')
         self.auditar(d, 'puente desplegado')
 
+    # Usa el ciclo ADCE real para esperar fuera de la lluvia de rocas, sin escribir su fase.
+    def esperar_rocas(self, d):
+        for _ in range(182):
+            if d[0xADCE] == 180:
+                return
+            if self.andar(d, self.semilla_menu, 0, 1) is not None:
+                raise ErrorAnalisis('La espera del ciclo de rocas abandona EDGE.')
+        raise ErrorAnalisis('El temporizador de rocas no inicia un ciclo nuevo.')
+
+    # Conserva entradas, selecciones e imágenes hasta eliminar al personaje eléctrico con los guantes.
+    def cuerda_y_electrico(self, d):
+        for direccion, pasos in ((4, 100), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('El cruce del puente abandona EDGE.')
+        self.auditar(d, 'cuerda del acantilado')
+        self.elegir_objeto(d, (1,), 95)
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None:
+            raise ErrorAnalisis('Recoger la cuerda abandona EDGE.')
+        self.hito_borde(d, 'borde_cuerda')
+        self.esperar_rocas(d)
+        for direccion, pasos in ((4, 42), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('La aproximación al hombre eléctrico abandona EDGE.')
+        self.auditar(d, 'antes del hombre eléctrico')
+        self.elegir_objeto(d, (5,), 86)
+        if self.andar(d, self.semilla_menu, 65535, 48) is not None:
+            raise ErrorAnalisis('Usar los guantes abandona EDGE.')
+        if d[0x2C4C] or not d[0x3594]:
+            raise ErrorAnalisis(
+                'Los guantes no apartan al hombre eléctrico con control restablecido.'
+            )
+        self.hito_borde(d, 'borde_electrico')
+
+    # Recorre el refugio del caramelo y deja que C093 entregue la piedra durante la animación real.
+    def caramelo_y_piedra(self, d):
+        if self.andar(d, self.semilla_menu, 8, 8) is not None:
+            raise ErrorAnalisis('El regreso al refugio abandona EDGE.')
+        self.esperar_rocas(d)
+        for direccion, pasos in ((4, 56), (6, 16), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('El sendero del caramelo abandona EDGE.')
+        self.auditar(d, 'caramelo al alcance')
+        self.elegir_objeto(d, (1,), 87)
+        if self.andar(d, self.semilla_menu, 65535, 96) is not None:
+            raise ErrorAnalisis('Recoger el caramelo abandona EDGE.')
+        self.hito_borde(d, 'borde_caramelo')
+        self.esperar_rocas(d)
+        for direccion, pasos in ((4, 130), (0, 1), (4, 30), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('La aproximación a la piedra abandona EDGE.')
+        self.auditar(d, 'antes de llevar el caramelo')
+        self.elegir_objeto(d, (2, 4), 87)
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None:
+            raise ErrorAnalisis('Llevar el caramelo abandona EDGE.')
+        if 94 not in [palabra(d, 0x5225 + n * 2) for n in range(10)]:
+            raise ErrorAnalisis('La animación del caramelo no incorpora la piedra94.')
+        self.hito_borde(d, 'borde_caramelo_puesto')
+        self.auditar(d, 'piedra pegada al caramelo')
+        self.elegir_objeto(d, (2, 5), 94)
+        if self.andar(d, self.semilla_menu, 65535, 192) is not None:
+            raise ErrorAnalisis('Lanzar la piedra abandona EDGE.')
+        self.hito_borde(d, 'borde_roca_grande')
+
+    # Lanza la cuerda, cruza el abismo y abre el paso mediante la inscripción del original.
+    def abismo_y_salida(self, d):
+        for direccion, pasos in ((4, 100), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('La aproximación al abismo abandona EDGE.')
+        self.auditar(d, 'antes del abismo')
+        self.elegir_objeto(d, (2, 5), 95)
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None:
+            raise ErrorAnalisis('Lanzar la cuerda abandona EDGE.')
+        self.hito_borde(d, 'borde_cuerda_lanzada')
+        self.auditar(d, 'cuerda preparada para el salto')
+        self.elegir_objeto(d, (6,), 96)
+        if self.andar(d, self.semilla_menu, 65535, 192) is not None:
+            raise ErrorAnalisis('El salto abandona EDGE antes de llegar al otro lado.')
+        self.hito_borde(d, 'borde_abismo_saltado')
+        for _ in range(100):
+            if palabra(d, 0x3591) + palabra(d, 0x2C2D) >= 1888:
+                break
+            if self.andar(d, self.semilla_menu, 4, 1) is not None:
+                raise ErrorAnalisis('El sendero final abandona EDGE antes del obstáculo.')
+        if self.andar(d, self.semilla_menu, 0, 32) is not None or d[0x2EE0] or not d[0x3594]:
+            raise ErrorAnalisis('El segundo obstáculo no permite continuar después de esperar.')
+        for direccion, pasos in ((4, 100), (0, 1)):
+            if self.andar(d, self.semilla_menu, direccion, pasos) is not None:
+                raise ErrorAnalisis('La inscripción provoca una salida antes de abrir la puerta.')
+        self.auditar(d, 'inscripción al alcance')
+        self.elegir_objeto(d, (3,), 97)
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None or palabra(d, 0x523D) != 2:
+            raise ErrorAnalisis('Examinar la inscripción no habilita el tema2.')
+        self.hito_borde(d, 'borde_inscripcion')
+        self.auditar(d, 'palabras aprendidas')
+        self.menu(d, (4,))
+        temas = [palabra(d, 0xB620 + n * 2) for n in range(10)]
+        if 25 not in temas:
+            raise ErrorAnalisis('Las palabras no figuran en el menú original de temas.')
+        self.seleccionar(d, temas.index(25))
+        if self.andar(d, self.semilla_menu, 65535, 128) is not None or d[0x2F22] != 1:
+            raise ErrorAnalisis('Las palabras no abren la puerta original.')
+        self.hito_borde(d, 'borde_puerta_abierta')
+        if self.andar(d, self.semilla_menu, 8, 32) is not None:
+            raise ErrorAnalisis('La aproximación a la puerta sale antes de subir.')
+        salida = self.andar(d, self.semilla_menu, 2, 16)
+        if salida != 72:
+            raise ErrorAnalisis(f'La puerta solicita {salida}, esperada72.')
+        self.hito_borde(d, 'borde_salida')
+
     # Continúa desde la aproximación real y conserva por separado las variantes de capítulos siguientes.
     def ejecutar(self):
         origen = self.raiz / 'trabajo/comparacion_recorrido_borde/borde_roca'
@@ -149,6 +299,7 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
         self.variantes_recogidas(d)
         self.variantes_ropa(d)
         self.variantes_botones(d)
+        self.variantes_final(d)
         self.retomar_recursos(d)
         self.auditar(d, 'primera roca antes de empujar')
         self.elegir_objeto(d, (2, 2), 92)
@@ -164,6 +315,9 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
         self.hito_borde(d, 'borde_roca_saltada')
         self.rescate_persistente(d)
         self.guantes_y_puente(d)
+        self.cuerda_y_electrico(d)
+        self.caramelo_y_piedra(d)
+        self.abismo_y_salida(d)
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
@@ -171,7 +325,7 @@ class ComparacionAccionesBorde(ComparacionRecorridoBorde):
             'variantes_aisladas': self.variantes,
             'capturas': self.capturas,
             'estados_auditados': self.estados_auditados,
-            'alcance': 'Variantes aisladas de recogidas, guantes, caramelo, botones y roca. Recorrido real de roca, obstáculo, guantes y puente; rama separada de rescate del pájaro. El resto de EDGE continúa pendiente.',
+            'alcance': 'Recorrido real completo de EDGE hasta solicitar salida72, con rescate alternativo y variantes aisladas. No incluye todavía la habitación del loro ni validación del recorrido SDL.',
         }
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
