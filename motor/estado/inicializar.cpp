@@ -11,8 +11,13 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          6,  7,  7,  7,  8,  9,  10, 11, 12, 13, 14, 12, 15,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
-  // 52 permite la llegada nativa a POST;72 admite sus dos orígenes DOS y73 regresa desde WISE.
-  if (salida == 52   ? palabra(d, 0x8082) != 20
+  // Accesos nativos contrastados del valle y WISE; los demás destinos tardíos siguen detenidos.
+  if (salida == 60   ? palabra(d, 0x8082) != 35
+      : salida == 56 ? palabra(d, 0x8082) != 34
+      : salida == 55 ? palabra(d, 0x8082) != 33
+      : salida == 61 ? palabra(d, 0x8082) != 33
+      : salida == 71 ? palabra(d, 0x8082) != 35
+      : salida == 52 ? palabra(d, 0x8082) != 20
       : salida == 72 ? (palabra(d, 0x8082) != 30 && palabra(d, 0x8082) != 22)
       : salida == 73 ? palabra(d, 0x8082) != 31
                      : (salida >= sizeof(origenes) / sizeof(origenes[0]) ||
@@ -21,7 +26,7 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
   const auto modelo = d[static_cast<Palabra>(descriptor + 13)];
   if (modelo != 0xff && modelo != 5 && modelo != 11 && modelo != 14 && modelo != 18 &&
-      modelo != 19 && modelo != 20)
+      modelo != 19 && modelo != 20 && modelo != 22 && modelo != 23)
     return false;
   guardar(d, 0x3598, salida);
   d[0x2c0b] = 0;

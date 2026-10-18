@@ -1,7 +1,8 @@
 #pragma once
 #include "menu.hpp"
 namespace motor {
-// Respuestas comunes comprobadas de POST35; las acciones de objetos posteriores quedan pendientes.
+// Primeras recogidas y respuestas comunes del valle33–35; grabación y puzles posteriores
+// pendientes.
 ResultadoMenu ejecutar_interaccion_poste(unsigned char *datos, unsigned short manejador,
                                          unsigned short identificador,
                                          const ServicioSonido &sonido);

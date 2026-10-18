@@ -4,6 +4,32 @@
 #include "../estado/segmento.hpp"
 
 namespace motor {
+// C714–C793: conserva los umbrales y los tres canales de la reacción de REMOTE.
+bool actualizar_ramas_valle(unsigned char *d) {
+  const auto escena = palabra(d, 0x8082);
+  if (escena == 33) {
+    if (d[0x2c4d] != 19) {
+      guardar(d, 0x18fb, static_cast<Palabra>(palabra(d, 0x2c50) + palabra(d, 0x2c54)));
+      const auto x = static_cast<Palabra>(palabra(d, 0x2c4e) + palabra(d, 0x3591));
+      guardar(d, 0x18f5, x);
+      guardar(d, 0x18f9, static_cast<Palabra>(x + palabra(d, 0x2c52)));
+    }
+    return true;
+  }
+  if (escena != 34)
+    return false;
+  if (palabra(d, 0x2c5c) || palabra(d, 0x2c2d) < 65 || palabra(d, 0x2c2d) > 200 ||
+      palabra(d, 0x2c2f) < 110)
+    return true;
+  const Palabra secuencias[] = {0xb19c, 0xb1a8, 0xb1b2};
+  for (unsigned int i = 0; i < 3; ++i) {
+    const auto campo = static_cast<Palabra>(0x2c5c + i * 5);
+    guardar(d, campo, secuencias[i]);
+    d[campo + 2] = 0;
+    d[campo + 3] = d[campo + 4] = 1;
+  }
+  return true;
+}
 // C794–C8B0: el encuentro solo consume111/112 fuera del tramo central; las partículas son comunes.
 bool actualizar_poste(unsigned char *d, EstadoAleatorio &azar, const RecursosEntidades &recursos) {
   if (!d[0x2c4c] && (contiene_identificador(d, 111) || contiene_identificador(d, 112))) {

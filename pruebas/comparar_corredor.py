@@ -42,6 +42,8 @@ BANCOS_ESCENA = {
     30: 'EDGE',
     31: 'WISE',
     35: 'POST',
+    33: 'CELESTE',
+    34: 'REMOTE',
 }
 
 

@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:C714",
+      "nombre": "Umbrales de CELESTE",
+      "comentario": "C714–C736 conserva18F5/18F9/18FB desde actor2C4C y cámara, salvo fotograma19. Traslado en motor/entidades/poste.cpp; comparar:ramas-valle contrasta variantes aisladas y entrada real56."
+    },
+    {
+      "direccion": "0000:C737",
+      "nombre": "Reacción de REMOTE",
+      "comentario": "C737–C793 exige canal2C5C cero y límites unsigned x65..200/y>=110. IniciaB19C/B1A8/B1B2 con fase0, espera1 e intervalo1. Comparación DS completo de umbrales y recorrido real desdePOST por60."
+    },
+    {
+      "direccion": "0000:5D89",
+      "nombre": "Recogida protegida de108",
+      "comentario": "5D89–5DA1 rechaza108 si2C4C activo, retirándolo después de capacidad/puntos de563A. Si libre usa2C6D, desplazamiento45/-22 y615C. Contraste aislado de modelo, icono, puntos, capacidad y actor, más rechazo real; no acredita ABD5 ni la grabación."
+    },
+    {
+      "direccion": "0000:5DA4",
+      "nombre": "Recogidas111 y112",
+      "comentario": "5DA4–5DB7 usa2C4C, desplazamiento7/+1 y61A7. Conserva lista persistente, canales y demoraAL+6. comparar:ramas-valle incluye recogida111 real y variantes aisladas de ambos; no concede112 a la partida ni resuelveAAA3."
+    },
+    {
       "direccion": "0000:C794",
       "nombre": "Encuentro y partículas de POST",
       "comentario": "C794–C8B0 conserva comprobación111/112, estado2C4C, umbrales unsigned320/600, retirada de ambos identificadores, canalesB1BC/B1DA oB227/B245 yB201, descriptor461F y coordenadas. Cuatro consumos explícitos de azar antes de8B6F, incluso sin registros libres. comparar:regreso-loro contrasta288 variantes aisladas de esta rutina, además de llegada52 y128 pasos reales. POST todavía no activado en SDL."

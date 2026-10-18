@@ -923,6 +923,11 @@ extern "C" EXPORTAR int procesar_borde(unsigned char *datos, unsigned short *pal
   return valido ? 1 : 0;
 }
 
+// C714–C793: permite contrastar las rutinas sin creación ni servicios externos.
+extern "C" EXPORTAR int procesar_ramas_valle(unsigned char *datos) {
+  return motor::actualizar_ramas_valle(datos) ? 1 : 0;
+}
+
 // C794 aislada: contrasta inventario, fronteras y creaciones del poste con dimensiones reales.
 extern "C" EXPORTAR int procesar_poste(unsigned char *datos, unsigned short *palabras,
                                        bool (*dimensiones)(void *, unsigned short, unsigned short,
