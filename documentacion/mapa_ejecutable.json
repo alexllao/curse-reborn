@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:AA6C",
+      "nombre": "Franqueo de la carta",
+      "comentario": "3FC5–3FDC/AA6C–AAA0 combina111 con109 en ambos órdenes. Exige retirar111, retira109 sin exigir su presencia, inserta112, escribe4625=A33D/2C5A=112, canales96DE/96E7 y puntos+5 antes de886B. comparar:correo contrasta variantes de ausencia, duplicados, capacidad y puntuación, además de carta/sello obtenidos en la partida real."
+    },
+    {
+      "direccion": "0000:AAA3",
+      "nombre": "Envío al buzón",
+      "comentario": "3DC0–3DD7/AAA3–AB5D inserta112 con114 en ambos órdenes. Conserva comparación firmada y ramas de dos/tres nodos1A36/1A3C/1A42, incluyendo1A40 y1A46. Retira112, actualiza44FA=4 si44F9 activo o4526=1, guionesA326/A335 y puntos+5. Contraste de1440 variantes y envío real; no acredita la devolución posterior del correo."
+    },
+    {
       "direccion": "0000:C5E0",
       "nombre": "Umbrales y puerta de DINO",
       "comentario": "C5E0–C713 distingue las mitades por global firmado250 y actores2C4C/2C8E; puerta2C6D usa la comparación firmada tras SUB, conservando OF. Si no está activa, requiere los cuatro identificadores121/119/120/115 y cantidad3597 firmada<=8 para B181/B18D/B197. comparar:dinosaurio contrasta1152 variantes de inventarios, actores, posiciones y envoltura."

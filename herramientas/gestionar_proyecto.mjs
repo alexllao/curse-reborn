@@ -173,6 +173,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     regreso_loro: 'comparar_regreso_loro.py',
     ramas_valle: 'comparar_ramas_valle.py',
     dinosaurio: 'comparar_dinosaurio.py',
+    correo: 'comparar_correo.py',
     opciones: 'auditar_opciones.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
@@ -357,6 +358,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:correo':
+      compararAcciones('correo', argumentos);
       break;
     case 'comparar:dinosaurio':
       compararAcciones('dinosaurio', argumentos);

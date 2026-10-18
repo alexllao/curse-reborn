@@ -116,22 +116,76 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  // 3FC5–3FDC/AA6C: combina carta111 y sello109 en ambos órdenes; exige retirar la carta.
+  const auto verbo = palabra(d, 0xb634);
+  if (manejador == 0x3b53 && verbo == 7 &&
+      ((id == 111 && previo == 109) || (id == 109 && previo == 111))) {
+    if (!retirar_identificador(d, 111)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 109);
+    insertar_identificador(d, 112);
+    guardar(d, 0x4625, 0xa33d);
+    guardar(d, 0x2c5a, 112);
+    guardar(d, 0x2c3b, 0x96de);
+    guardar(d, 0x2c40, 0x96e7);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  // 3DC0–3DD7/AAA3–AB5D: inserta carta112 en buzón114, preservando dos o tres nodos de
+  // aproximación.
+  if (manejador == 0x3b53 && verbo == 1 &&
+      ((id == 114 && previo == 112) || (id == 112 && previo == 114))) {
+    if (con_signo(palabra(d, 0x2c2f)) < 161) {
+      guardar(d, 0x1a38, static_cast<Palabra>(427 - palabra(d, 0x3591)));
+      guardar(d, 0x1a3a, 174);
+      const auto vertical =
+          static_cast<Palabra>(palabra(d, 0x2d16) + palabra(d, 0x2d1a) - palabra(d, 0x2c2f));
+      if (con_signo(vertical) >= con_signo(palabra(d, 0x2c33))) {
+        const auto derecha = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x2c31));
+        const auto diferencia = static_cast<Palabra>(palabra(d, 0x2c2d) - palabra(d, 0x2d14));
+        if (con_signo(derecha) < con_signo(palabra(d, 0x2d14)) ||
+            con_signo(diferencia) >= con_signo(palabra(d, 0x2d18))) {
+          guardar(d, 0x1a3e, palabra(d, 0x1a38));
+          guardar(d, 0x1a40, palabra(d, 0x1a3a));
+          guardar(d, 0x1a36, 0x1a3c);
+          guardar(d, 0x1a38, palabra(d, 0x2c2d));
+        } else {
+          guardar(d, 0x1a44, palabra(d, 0x1a38));
+          guardar(d, 0x1a40, palabra(d, 0x1a3a));
+          guardar(d, 0x1a46, palabra(d, 0x1a3a));
+          guardar(d, 0x1a36, 0x1a3c);
+          guardar(d, 0x1a3c, 0x1a42);
+          const auto lateral = static_cast<Palabra>(palabra(d, 0x2d14) - 16);
+          guardar(d, 0x1a38, lateral);
+          guardar(d, 0x1a3e, lateral);
+          guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2c2f) + 47));
+        }
+      }
+    }
+    retirar_identificador(d, 112);
+    if (d[0x44f9])
+      d[0x44fa] = 4;
+    else
+      d[0x4526] = 1;
+    guardar(d, 0x0ad7, 0xa326);
+    guardar(d, 0x0adc, 0xa335);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   // 3F5C–3FF6: intercambios y combinaciones posteriores todavía sin trasladar.
   if (manejador == 0x3b53) {
     const auto verbo = palabra(d, 0xb634);
     if ((verbo == 6 && id == 98 && (previo == 105 || previo == 106)) ||
-        (verbo == 7 && ((id == 111 && previo == 109) || (id == 109 && previo == 111) ||
-                        (id == 100 && previo == 107) || (id == 107 && previo == 100))))
+        (verbo == 7 && ((id == 100 && previo == 107) || (id == 107 && previo == 100))))
       return ResultadoMenu::pendiente;
   }
-  // 3DC0–3DD7: insertar114 con112 llamaAAA3; no sustituir ese puzle por un rechazo común.
-  if (manejador == 0x3b53 && palabra(d, 0xb634) == 1 && id == 112 && palabra(d, 0xb638) == 114)
-    return ResultadoMenu::pendiente;
   if (id == 108 && manejador == 0x3b53 && palabra(d, 0xb634) == 2 && palabra(d, 0xb638) == 0xffff &&
       d[0x2c6d] == 1)
     return ResultadoMenu::pendiente; // ABD5 pertenece a la grabación posterior, aún sin trasladar.
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
-      id != 102 && id != 108 && id != 109 && id != 110 && id != 111 && id != 112)
+      id != 102 && id != 108 && id != 109 && id != 110 && id != 111 && id != 112 && id != 114)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;
