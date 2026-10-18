@@ -24,3 +24,13 @@ Los resultados locales quedan en trabajo/comparacion_borde/resultado.json. El c�
 Contrastar la secuencia de entrada y el movimiento completo, composición original, rescates persistentes, recogida y uso de los guantes, roca y salto, botones1–3–4–3–2, puente, cuerda, personaje eléctrico, tramos de rocas, caramelo y piedra, abismo y palabras de apertura. Comprobar después los menús ofrecidos y el enlace con la habitación del loro. Seguir la guía local y cada manejador original; no introducir requisitos que no aparezcan en el EXE.
 
 Esta comparación no prueba cadencia, audio físico, SDL, todas las posiciones o todos los estados. Los marcos y el monitor se conservan; los decorados ampliados permanecen aparcados.
+
+## Entrada y composición con bancos separados
+
+El comparador completo conserva EDGE.SPR en4000, sitúa el modelo sustituible en5800 y mantiene STD en6400. Las regiones no se solapan; se verifican los bytes originales después de disponerlas. La referencia del modelo se comparte entre entrada, secuencias, cargaF8, consulta de dimensiones y composición. Los puentes anteriores mantienen su ABI y5400 como valor predeterminado. No se alteran instrucciones ni se normalizan resultados para esconder direcciones distintas.
+
+`pnpm comparar:recorrido-borde --muestra` retoma el transporte real del mago y contrasta730 casos/pasos, incluida entrada47, carga de entidades y256 pasos de EDGE. Cinco composiciones coinciden con EBBD usando simultáneamente los bancos completos. La secuencia termina con el control habilitado para Brad pequeño.
+
+`pnpm comprobar:entrada-borde` prepara las referencias y compara la composición de llegada SDL con el EXE. Se ha comprobado esa captura de64.000 píxeles, reutilizando el ejecutable ya compilado y completando secuencialmente las fases después de un bloqueo de recompilación por una biblioteca en uso. La regresión del probador mantiene sus3.025 casos/pasos y dos composiciones. No ejecutar dos comparaciones que recompilen tabla_acciones.dll al mismo tiempo en Windows.
+
+La llegada SDL sigue detenida. Estas pruebas no resuelven las interacciones ni acreditan el recorrido completo del acantilado. Los resultados nuevos quedan en trabajo/comparacion_recorrido_borde/ y trabajo/comprobacion_entrada_borde_sdl/.

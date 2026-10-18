@@ -107,7 +107,12 @@ class ComparacionCorredor(ComparacionPuzle):
             ancho, alto = struct.unpack_from('<2H', self.modelo, p)
         if (
             not self.nativa.preparar_transicion(
-                (ctypes.c_ubyte * 65536).from_buffer(datos), salida, 0x6400, 0x5400, ancho, alto
+                (ctypes.c_ubyte * 65536).from_buffer(datos),
+                salida,
+                0x6400,
+                self.referencia_modelo,
+                ancho,
+                alto,
             )
             or bytes(datos) != esperado
         ):

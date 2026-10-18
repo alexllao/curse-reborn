@@ -342,3 +342,5 @@ El port contabiliza el **tiempo efectivo de juego del perfil**, excluyendo prese
 El [probador de Benn](documentacion/probador_benn.md) incorpora36/27, rutina1A74 y contratos del vestido79. `pnpm comprobar:probador` contrasta el EXE, las dos capturas SDL y60 cambios F5/F6; la visita temprana no adelanta el progreso del valle.
 
 La [rutina del borde del mundo](documentacion/borde_del_mundo.md) ya tiene contraste aislado: `pnpm comparar:borde` verifica1.244 casos y sus órdenes sonoras. EDGE continúa detenida hasta completar movimiento, composición e interacciones; no se cuenta como vista jugable nueva.
+
+`pnpm comparar:recorrido-borde` contrasta también la entrada real y cinco composiciones de EDGE con sus bancos completos separados. `pnpm comprobar:entrada-borde` añade su captura SDL de llegada. La zona sigue detenida mientras se reconstruyen sus interacciones.

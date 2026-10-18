@@ -15,6 +15,7 @@ class ComparacionMenu(ComparacionComposicion):
     # Reutiliza los bancos y el modelo VGA contrastados y añade el puente del menú.
     def __init__(self, raiz, biblioteca, muestra):
         super().__init__(raiz, biblioteca, muestra)
+        self.referencia_modelo = 0x5400
         memoria = ctypes.POINTER(ctypes.c_ubyte)
         self.nativa.procesar_menu.argtypes = [
             ctypes.c_uint,
@@ -36,6 +37,10 @@ class ComparacionMenu(ComparacionComposicion):
             ctypes.c_uint,
         ]
         self.nativa.componer_menu_escena.restype = ctypes.c_int
+        self.nativa.componer_menu_escena_bancos.argtypes = (
+            self.nativa.componer_menu_escena.argtypes + [ctypes.c_ushort]
+        )
+        self.nativa.componer_menu_escena_bancos.restype = ctypes.c_int
         self.estandar = (self.carpeta / 'STD.BRD').read_bytes()
         self.raton = (self.carpeta / 'MOUSE.SPR').read_bytes()
         self.tipo_dimensiones = ctypes.CFUNCTYPE(
@@ -149,7 +154,7 @@ class ComparacionMenu(ComparacionComposicion):
     def dimensiones_recurso(self, contexto, referencia, indice, ancho, alto):
         banco = {
             0x4000: self.escena,
-            0x5400: self.modelo,
+            self.referencia_modelo: self.modelo,
             0x6400: self.estandar,
             0x7400: self.raton,
         }.get(referencia)
@@ -191,7 +196,7 @@ class ComparacionMenu(ComparacionComposicion):
     def preparar_bancos_originales(self):
         bancos = (
             ('DUNGEON.SPR', 0x40000, self.escena),
-            ('modelo', 0x54000, self.modelo),
+            ('modelo', self.referencia_modelo * 16, self.modelo),
             ('STD.BRD', 0x64000, self.estandar),
             ('MOUSE.SPR', 0x74000, self.raton),
             ('MENU.DAT', 0x76000, bytes(self.fondo_menu)),
@@ -201,7 +206,7 @@ class ComparacionMenu(ComparacionComposicion):
                 raise ErrorAnalisis(
                     f'Bancos de referencia solapados: {anterior[0]} y {siguiente[0]}.'
                 )
-        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5400))
+        self.maquina.mem_write(0x0010, struct.pack('<H', self.referencia_modelo))
         self.maquina.mem_write(0x000E, struct.pack('<H', 0x6400))
         for nombre, direccion, datos in bancos:
             self.maquina.mem_write(direccion, datos)
@@ -381,7 +386,7 @@ class ComparacionMenu(ComparacionComposicion):
             for b in (self.escena, self.modelo, self.estandar)
         ]
         if (
-            not self.nativa.componer_menu_escena(
+            not self.nativa.componer_menu_escena_bancos(
                 (ctypes.c_ubyte * 65536).from_buffer(datos),
                 imagen,
                 bancos[0],
@@ -390,13 +395,14 @@ class ComparacionMenu(ComparacionComposicion):
                 len(self.modelo),
                 bancos[2],
                 len(self.estandar),
+                self.referencia_modelo,
             )
             or bytes(imagen) != esperado
         ):
             raise ErrorAnalisis('La composición de la interacción no coincide.')
         guardar_png(salida / 'interaccion_32_cpp.png', bytes(imagen), fondo.paleta)
         # La composición del fondo utiliza CS:0010; se restablece para el siguiente F8.
-        self.maquina.mem_write(0x0010, struct.pack('<H', 0x5400))
+        self.maquina.mem_write(0x0010, struct.pack('<H', self.referencia_modelo))
         self.logica = True
         self.resumen['composicion_interaccion'] = self.resumen.get('composicion_interaccion', 0) + 1
         return bytes(imagen), fondo.paleta

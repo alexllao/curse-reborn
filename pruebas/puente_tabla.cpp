@@ -766,28 +766,43 @@ extern "C" EXPORTAR int avanzar_menu(unsigned char *datos, unsigned short *palab
 }
 
 namespace {
+struct BancosMenuPrueba {
+  BancoPrueba bancos[3];
+  unsigned short referencia_modelo;
+};
 // Resuelve los tres bancos de la comparación de acciones, sin mezclar STD y el modelo sustituible.
 const unsigned char *banco_menu_prueba(void *contexto, unsigned short referencia,
                                        unsigned int &longitud) {
-  const auto *bancos = static_cast<const BancoPrueba *>(contexto);
-  const int indice = referencia == 0x4000   ? 0
-                     : referencia == 0x5400 ? 1
-                     : referencia == 0x6400 ? 2
-                                            : -1;
+  const auto &contexto_bancos = *static_cast<const BancosMenuPrueba *>(contexto);
+  const auto *bancos = contexto_bancos.bancos;
+  const int indice = referencia == 0x4000                              ? 0
+                     : referencia == contexto_bancos.referencia_modelo ? 1
+                     : referencia == 0x6400                            ? 2
+                                                                       : -1;
   if (indice < 0)
     return nullptr;
   longitud = bancos[indice].longitud;
   return bancos[indice].datos;
 }
 } // namespace
-// Compone el resultado de una acción con modelo dinámico y banco estándar separados.
+// Compone con una referencia de modelo explícita, sin suponer su dirección física DOS.
+extern "C" EXPORTAR int componer_menu_escena_bancos(
+    unsigned char *datos, unsigned char *imagen, const unsigned char *escena, unsigned int n_escena,
+    const unsigned char *modelo, unsigned int n_modelo, const unsigned char *estandar,
+    unsigned int n_estandar, unsigned short referencia_modelo) {
+  BancosMenuPrueba bancos{{{escena, n_escena}, {modelo, n_modelo}, {estandar, n_estandar}},
+                          referencia_modelo};
+  return motor::dibujar_entidades(datos, {&bancos, banco_menu_prueba, 0x4000}, imagen) ? 1 : 0;
+}
+
+// Conserva la ABI de las composiciones anteriores con el modelo en5400.
 extern "C" EXPORTAR int componer_menu_escena(unsigned char *datos, unsigned char *imagen,
                                              const unsigned char *escena, unsigned int n_escena,
                                              const unsigned char *modelo, unsigned int n_modelo,
                                              const unsigned char *estandar,
                                              unsigned int n_estandar) {
-  BancoPrueba bancos[] = {{escena, n_escena}, {modelo, n_modelo}, {estandar, n_estandar}};
-  return motor::dibujar_entidades(datos, {bancos, banco_menu_prueba, 0x4000}, imagen) ? 1 : 0;
+  return componer_menu_escena_bancos(datos, imagen, escena, n_escena, modelo, n_modelo, estandar,
+                                     n_estandar, 0x5400);
 }
 
 // Expone caminos, detección y corrección de colisiones, historial y despacho para contrastar DS.
@@ -819,16 +834,15 @@ extern "C" EXPORTAR int procesar_geometria(unsigned int operacion, unsigned char
 }
 
 // Comparte servicios de bancos y permite aportar el byte original CS:1BA2 del probador.
-static int avanzar_con_fase(unsigned char *datos, unsigned short *palabras,
-                            bool (*dimensiones)(void *, unsigned short, unsigned short,
-                                                unsigned short &, unsigned short &),
-                            bool (*modelo)(void *, const unsigned char *, unsigned short,
-                                           unsigned short),
-                            const unsigned char *geometria, unsigned int longitud,
-                            unsigned short direccion, unsigned char *fase, bool solo_rutina) {
+static int avanzar_con_fase(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion,
+    unsigned char *fase, bool solo_rutina, unsigned short referencia_modelo = 0x5400) {
   motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
-  const motor::RecursosSecuencias secuencias{nullptr, dimensiones,          0x6400, 0x4000,
-                                             0x5400,  omitir_sonido_prueba, modelo};
+  const motor::RecursosSecuencias secuencias{
+      nullptr, dimensiones, 0x6400, 0x4000, referencia_modelo, omitir_sonido_prueba, modelo};
   // Adapta la consulta de dimensiones al banco fijo de las entidades de escena.
   const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
                             unsigned short &alto) {
@@ -867,6 +881,17 @@ extern "C" EXPORTAR int avanzar_probador(
     unsigned char *fase, bool solo_rutina) {
   return avanzar_con_fase(datos, palabras, dimensiones, modelo, geometria, longitud, direccion,
                           fase, solo_rutina);
+}
+
+// Permite contrastar bancos completos que no caben en la distribución DOS fija anterior.
+extern "C" EXPORTAR int avanzar_jugabilidad_bancos(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion,
+    unsigned short referencia_modelo) {
+  return avanzar_con_fase(datos, palabras, dimensiones, modelo, geometria, longitud, direccion,
+                          nullptr, false, referencia_modelo);
 }
 
 // C093 aislada: comparte dimensiones y cuenta las órdenes sonoras sin abrir dispositivos.

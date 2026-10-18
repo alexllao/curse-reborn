@@ -302,7 +302,7 @@ export async function gestionarSdl(accion, argumentos) {
   const comprobarCalles =
     accion === 'comprobar:poblacion' &&
     argumentos.length === 1 &&
-    ['--calles', '--tiendas', '--probador'].includes(argumentos[0]);
+    ['--calles', '--tiendas', '--probador', '--entrada-borde'].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
@@ -1025,19 +1025,22 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:poblacion') {
+    const entradaBorde = argumentos.includes('--entrada-borde');
     const probador = argumentos.includes('--probador');
     const tiendas = argumentos.includes('--tiendas') || probador;
     const calles = argumentos.includes('--calles') || tiendas;
     const carpeta = join(
       raiz,
       'trabajo',
-      probador
-        ? 'comprobacion_probador_sdl'
-        : tiendas
-          ? 'comprobacion_tiendas_sdl'
-          : calles
-            ? 'comprobacion_calles_sdl'
-            : 'comprobacion_poblacion_sdl',
+      entradaBorde
+        ? 'comprobacion_entrada_borde_sdl'
+        : probador
+          ? 'comprobacion_probador_sdl'
+          : tiendas
+            ? 'comprobacion_tiendas_sdl'
+            : calles
+              ? 'comprobacion_calles_sdl'
+              : 'comprobacion_poblacion_sdl',
     );
     mkdirSync(carpeta, { recursive: true });
     const entrada = join(carpeta, 'orden_entrada.bmp');
@@ -1067,45 +1070,52 @@ export async function gestionarSdl(accion, argumentos) {
         join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
         'comparar:probador',
       ]);
-    const capturas = probador
-      ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
-      : tiendas
-        ? [
-            'tienda_35',
-            'regreso_tienda_35',
-            'tienda_38',
-            'adivina_saludo',
-            'adivina_respuesta',
-            'regreso_tienda_38',
-            'tienda_39',
-            'regreso_tienda_39',
-          ].map((nombre) => [nombre, nombre])
-        : calles
+    if (entradaBorde)
+      ejecutar(process.execPath, [
+        join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
+        'comparar:recorrido-borde',
+      ]);
+    const capturas = entradaBorde
+      ? [['borde', 'borde_cargado']]
+      : probador
+        ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
+        : tiendas
           ? [
-              ['calle_29', 'calle_29'],
-              ['regreso_29', 'regreso_29'],
-              ['calle_30', 'calle_30'],
-              ['regreso_30', 'regreso_30'],
-              ['calle_33', 'calle_33'],
-              ['regreso_33', 'regreso_33'],
-              ['calle_41', 'calle_41'],
-              ['posadero', 'posadero'],
-              ['regreso_41', 'regreso_41'],
-            ]
-          : [
-              ['entrada', 'poblacion_entrada'],
-              ['guardias', 'poblacion_guardias'],
-              ['frank', 'poblacion_frank'],
-              ['saludo', 'poblacion_saludo'],
-              ['comida', 'poblacion_comida'],
-              ['comer', 'poblacion_comer'],
-              ['consumida', 'poblacion_consumida'],
-              ['regreso', 'poblacion_regreso'],
-              ['fuente', 'poblacion_fuente'],
-              ['maravillas', 'poblacion_maravillas'],
-              ['mago', 'poblacion_mago'],
-              ['transporte', 'poblacion_transporte'],
-            ];
+              'tienda_35',
+              'regreso_tienda_35',
+              'tienda_38',
+              'adivina_saludo',
+              'adivina_respuesta',
+              'regreso_tienda_38',
+              'tienda_39',
+              'regreso_tienda_39',
+            ].map((nombre) => [nombre, nombre])
+          : calles
+            ? [
+                ['calle_29', 'calle_29'],
+                ['regreso_29', 'regreso_29'],
+                ['calle_30', 'calle_30'],
+                ['regreso_30', 'regreso_30'],
+                ['calle_33', 'calle_33'],
+                ['regreso_33', 'regreso_33'],
+                ['calle_41', 'calle_41'],
+                ['posadero', 'posadero'],
+                ['regreso_41', 'regreso_41'],
+              ]
+            : [
+                ['entrada', 'poblacion_entrada'],
+                ['guardias', 'poblacion_guardias'],
+                ['frank', 'poblacion_frank'],
+                ['saludo', 'poblacion_saludo'],
+                ['comida', 'poblacion_comida'],
+                ['comer', 'poblacion_comer'],
+                ['consumida', 'poblacion_consumida'],
+                ['regreso', 'poblacion_regreso'],
+                ['fuente', 'poblacion_fuente'],
+                ['maravillas', 'poblacion_maravillas'],
+                ['mago', 'poblacion_mago'],
+                ['transporte', 'poblacion_transporte'],
+              ];
     for (const [opcion, nombre] of capturas) {
       const captura = join(carpeta, nombre + '.bmp');
       const registro = ejecutar(
@@ -1123,13 +1133,15 @@ export async function gestionarSdl(accion, argumentos) {
             join(
               raiz,
               'trabajo',
-              probador
-                ? 'comparacion_probador'
-                : tiendas
-                  ? 'comparacion_tiendas'
-                  : calles
-                    ? 'comparacion_calles'
-                    : 'comparacion_poblacion',
+              entradaBorde
+                ? 'comparacion_recorrido_borde'
+                : probador
+                  ? 'comparacion_probador'
+                  : tiendas
+                    ? 'comparacion_tiendas'
+                    : calles
+                      ? 'comparacion_calles'
+                      : 'comparacion_poblacion',
               nombre + '_cpp.png',
             ),
           ),
@@ -1165,7 +1177,9 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: capturas.length,
           pixeles_por_captura: 64000,
-          llegada_borde: 'carga y salida comprobadas; imagen y jugabilidad pendientes de contraste',
+          llegada_borde: entradaBorde
+            ? 'entrada y composición comprobadas; SDL permanece detenida y los puzles siguen pendientes'
+            : 'carga y salida comprobadas; no se contrasta la composición en este comando',
           vistas_desarrollo: 30,
           cambios_de_vista: 60,
         },
