@@ -165,7 +165,7 @@ bool actualizar_textura(Presentacion &presentacion, bool con_decorado = false) {
     for (const auto componente : paleta_visible)
       luz = std::max(luz, static_cast<unsigned int>(componente));
     if (!presentacion.decorados.componer(pixeles, mazmorra.escena_actual(), mazmorra.franja_menu(),
-                                         luz))
+                                         luz, mazmorra.indices_fondo(), imagen.indices))
       return false;
   }
   return presentacion.filtros.actualizar(presentacion.textura, pixeles);
@@ -215,25 +215,36 @@ bool comprobar_decorados(const std::string &carpeta, const std::string &prefijo)
       return false;
     const auto escena = mazmorra.escena_actual();
     const auto reserva = DecoradosAmpliados::buscar(escena)->reserva;
+    // La pared admite dos píxeles de solape; los interiores alejados del borde deben coincidir.
+    const auto interior = [&](int x, int y) {
+      if (y < reserva.y || y >= reserva.y + reserva.h || x < 4 || x >= 316)
+        return false;
+      for (int vecino = x - 4; vecino <= x + 4; ++vecino)
+        if (!mazmorra.indices_fondo()[y * 320 + vecino])
+          return false;
+      return true;
+    };
     const std::vector<unsigned char> original(pixeles, pixeles + sizeof(pixeles));
     presentacion.decorados.alternar();
     for (int menu : {-1, 0, 168}) {
       auto prueba = original;
-      if (!presentacion.decorados.componer(prueba.data(), escena, menu, 63))
+      if (!presentacion.decorados.componer(prueba.data(), escena, menu, 63,
+                                           mazmorra.indices_fondo(), imagen.indices))
         return false;
       unsigned int cambios = 0;
       for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
           const auto p = (y * 320 + x) * 4;
           const bool protegido =
-              (!DecoradosAmpliados::buscar(escena)->ajustar_silueta && x >= reserva.x &&
-               x < reserva.x + reserva.w && y >= reserva.y && y < reserva.y + reserva.h) ||
-              (menu >= 0 && y >= menu && y < menu + 32) || original[p] || original[p + 1] ||
-              original[p + 2];
+              interior(x, y) || (menu >= 0 && y >= menu && y < menu + 32) ||
+              imagen.indices[y * 320 + x] != mazmorra.indices_fondo()[y * 320 + x];
           for (int c = 0; c < 4; ++c)
             if (prueba[p + c] != original[p + c]) {
-              if (protegido)
+              if (protegido) {
+                registrar_accion("Error de decorado: escena %u, menú %d, píxel %d,%d", escena, menu,
+                                 x, y);
                 return SDL_SetError("El decorado altera el interior o un menú original");
+              }
               ++cambios;
             }
         }

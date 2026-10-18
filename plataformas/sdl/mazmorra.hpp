@@ -92,6 +92,10 @@ public:
   int franja_menu() const {
     return menu_visible ? (datos[0xb608] || datos[0xb609] ? 168 : 0) : -1;
   }
+  // Ofrece el fondo sin entidades para limitar el solape gráfico a la pared estática.
+  const unsigned char *indices_fondo() const {
+    return fondo.indices;
+  }
   // Devuelve la petición de cargar, guardar o borrar del menú original y la consume una sola vez.
   unsigned int tomar_solicitud_partidas() {
     const auto solicitud = solicitud_partidas;

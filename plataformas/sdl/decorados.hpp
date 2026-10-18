@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <string>
+#include <vector>
 #include "registro.hpp"
 
 struct DefinicionDecorado {
@@ -10,6 +11,8 @@ struct DefinicionDecorado {
   SDL_Rect reserva, vano;
   int ancho, alto;
   bool ajustar_silueta;
+  bool muestreo_area;
+  int solape;
 };
 #include "catalogo_decorados.hpp"
 
@@ -30,6 +33,7 @@ public:
     SDL_DestroySurface(imagen);
     imagen = nullptr;
     actual = nullptr;
+    integral.clear();
   }
   // Las escenas sin ilustración conservan su vacío original, sin heredar la del lugar anterior.
   static const DefinicionDecorado *buscar(unsigned short escena) {
@@ -39,7 +43,8 @@ public:
     return nullptr;
   }
   // Sustituye únicamente el vacío exterior; conserva escena, cursor y menú originales.
-  bool componer(unsigned char *rgba, unsigned short escena, int menu_y, unsigned int luz) {
+  bool componer(unsigned char *rgba, unsigned short escena, int menu_y, unsigned int luz,
+                const unsigned char *fondo, const unsigned char *indices) {
     const auto *seleccion = buscar(escena);
     if (!visible || !seleccion)
       return true;
@@ -55,6 +60,8 @@ public:
       if (!imagen)
         return false;
       actual = seleccion;
+      if (actual->muestreo_area)
+        preparar_reduccion();
     }
     const auto &reserva = actual->reserva;
     const auto *fuente = static_cast<const unsigned char *>(imagen->pixels);
@@ -65,8 +72,7 @@ public:
       if (actual->ajustar_silueta) {
         int primera = derecha, ultima = izquierda - 1;
         for (int x = izquierda; x < derecha; ++x) {
-          const auto *color = rgba + (y * 320 + x) * 4;
-          if (color[0] || color[1] || color[2]) {
+          if (fondo[y * 320 + x]) {
             primera = std::min(primera, x);
             ultima = x;
           }
@@ -76,6 +82,10 @@ public:
           derecha = ultima + 1;
         }
       }
+      // Solo la pared estática admite el solape; los actores y objetos conservan todos sus píxeles.
+      const int solape = std::min(actual->solape, (derecha - izquierda - 1) / 2);
+      izquierda += solape;
+      derecha -= solape;
       const int sy = std::min(
           proyectar(y, reserva.y, reserva.h, 200, actual->vano.y, actual->vano.h, imagen->h),
           imagen->h - 1);
@@ -83,22 +93,67 @@ public:
         if (x >= izquierda && x < derecha && y >= reserva.y && y < reserva.y + reserva.h)
           continue;
         auto *destino = rgba + (y * 320 + x) * 4;
-        if (destino[0] || destino[1] || destino[2])
+        if (indices[y * 320 + x] != fondo[y * 320 + x])
           continue;
         const int sx = std::min(proyectar(x, izquierda, derecha - izquierda, 320, actual->vano.x,
                                           actual->vano.w, imagen->w),
                                 imagen->w - 1);
-        const auto *color = fuente + sy * imagen->pitch + sx * 4;
+        unsigned int color[4]{};
+        if (actual->muestreo_area) {
+          const int fin_x = std::clamp(proyectar(x + 1, izquierda, derecha - izquierda, 320,
+                                                 actual->vano.x, actual->vano.w, imagen->w),
+                                       sx + 1, imagen->w);
+          const int fin_y = std::clamp(proyectar(y + 1, reserva.y, reserva.h, 200, actual->vano.y,
+                                                 actual->vano.h, imagen->h),
+                                       sy + 1, imagen->h);
+          reducir_area(sx, sy, fin_x, fin_y, color);
+        } else {
+          const auto *muestra = fuente + sy * imagen->pitch + sx * 4;
+          for (int c = 0; c < 3; ++c)
+            color[c] = muestra[c] * muestra[3] / 255u;
+          color[3] = muestra[3];
+        }
         for (int c = 0; c < 3; ++c)
-          destino[c] = static_cast<unsigned char>(color[c] * color[3] * luz / (255u * 63u));
+          destino[c] = static_cast<unsigned char>(color[c] * luz / 63u +
+                                                  destino[c] * (255u - color[3]) / 255u);
       }
     }
     return true;
   }
 
 private:
+  // Suma una vez los colores premultiplicados para reducir sin ruido ni halos de transparencia.
+  void preparar_reduccion() {
+    const auto paso = static_cast<size_t>(imagen->w + 1) * 4u;
+    integral.assign(paso * static_cast<size_t>(imagen->h + 1), 0);
+    const auto *fuente = static_cast<const unsigned char *>(imagen->pixels);
+    for (int y = 0; y < imagen->h; ++y) {
+      Uint32 fila[4]{};
+      for (int x = 0; x < imagen->w; ++x) {
+        const auto *color = fuente + y * imagen->pitch + x * 4;
+        for (int c = 0; c < 4; ++c) {
+          fila[c] += c == 3 ? color[3] : color[c] * color[3] / 255u;
+          const auto p = static_cast<size_t>(y + 1) * paso + static_cast<size_t>(x + 1) * 4u + c;
+          integral[p] = integral[p - paso] + fila[c];
+        }
+      }
+    }
+  }
+  // Promedia la superficie que representa cada píxel lógico en vez de escoger un punto aislado.
+  void reducir_area(int x, int y, int derecha, int abajo, unsigned int *color) const {
+    const auto paso = static_cast<size_t>(imagen->w + 1) * 4u;
+    const unsigned int superficie = static_cast<unsigned int>((derecha - x) * (abajo - y));
+    for (int c = 0; c < 4; ++c)
+      color[c] = (integral[static_cast<size_t>(abajo) * paso + derecha * 4u + c] -
+                  integral[static_cast<size_t>(y) * paso + derecha * 4u + c] -
+                  integral[static_cast<size_t>(abajo) * paso + x * 4u + c] +
+                  integral[static_cast<size_t>(y) * paso + x * 4u + c]) /
+                 superficie;
+  }
   // Alinea por separado cada lado y el vano sin estrechar ni desplazar la escena DOS.
   static int proyectar(int p, int inicio, int largo, int total, int vano, int hueco, int salida) {
+    if (p >= total)
+      return salida;
     if (p < inicio)
       return p * vano / inicio;
     if (p < inicio + largo)
@@ -108,4 +163,5 @@ private:
   bool visible = false;
   SDL_Surface *imagen = nullptr;
   const DefinicionDecorado *actual = nullptr;
+  std::vector<Uint32> integral;
 };

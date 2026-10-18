@@ -69,8 +69,11 @@ export function prepararMarcos(raiz, destino) {
         rect[1] + rect[3] > alto
       )
         throw new Error(`Reserva o vano inválido en ${archivo}.`);
+    const solape = decorado.solape ?? 0;
+    if (!Number.isInteger(solape) || solape < 0 || solape > 4)
+      throw new Error(`Solape de decorado inválido en ${archivo}.`);
     definiciones.push(
-      `{${escena},${JSON.stringify(`assets/original/decorados/${archivo}`)},{${reservaOriginal.join(',')}},{${vanoImagen.join(',')}},${resolucion.join(',')},${decorado.ajustarSilueta === true}}`,
+      `{${escena},${JSON.stringify(`assets/original/decorados/${archivo}`)},{${reservaOriginal.join(',')}},{${vanoImagen.join(',')}},${resolucion.join(',')},${decorado.ajustarSilueta === true},${decorado.muestreoArea === true},${solape}}`,
     );
     copyFileSync(join(origenDecorados, archivo), join(destinoDecorados, archivo));
   }

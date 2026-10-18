@@ -94,3 +94,5 @@ La última vista F5/F6 es **El camino del asaltante (COUNTRY2)**, después de **
 F5/F6 incorpora entrada de Paso del Dragón, Frank, plaza de la fuente, calle de las maravillas y mago: veintidós vistas de desarrollo. Estos atajos no transfieren inventario. Para probar la compra y el mago en una partida continua, sigue el [recorrido de la población](recorridos/10_paso_del_dragon.txt). El borde del mundo es todavía un punto de llegada detenido; F5/F6 permite volver a las vistas disponibles.
 
 Los marcos se orientan según las bandas: laterales en ventanas anchas y girados90° arriba/abajo en ventanas altas. F1 mantiene su fundido y zoom. El título de ventana numera las vistas como «1: La mazmorra».
+
+Los decorados ampliados pueden solaparse dos píxeles sobre el fondo de la escena para integrar sus bordes, incluido el arco de Frank. Los actores, objetos y menús conservan sus píxeles; al desactivarlos se recupera la imagen original.
