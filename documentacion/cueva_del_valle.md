@@ -21,3 +21,7 @@ Resultado: **4.489 casos/pasos, 691 selecciones, tres auditorías de menú y cua
 Prueba: `pnpm comparar:cueva-valle --muestra`. Si falta la instantánea de la nube, se prepara con su comparación previa. Los recursos y resultados permanecen en las carpetas locales ignoradas.
 
 **Límite:** no habilita SDL del valle ni acredita los restantes puzles de DINO/CELESTE/HOLD o ELECTRO. Se mantienen 32 vistas de desarrollo. Decorados ampliados aparcados; sonido, contador, marcos y monitor conservados.
+
+## Integración SDL
+
+`pnpm comprobar:cueva-valle` recorre desde el comienzo la continuidad del valle y entra64 después de volver deCLOUD. Compara cuatro imágenes originales: entrada, derrumbe, detergente y regreso65. Guardar/restaurar en los cuatro estados y76 cambios deF5/F6 entre38 vistas correctos. Se conserva121 durante la recogida120; no se preparan posiciones, inventario ni actores. Se repite el comparador nativo4489 casos/pasos, utilizando las referencias comunes del valle previamente contrastadas.

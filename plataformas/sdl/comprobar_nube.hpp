@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_cueva_valle.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -76,5 +77,6 @@ bool comprobar_nube(Mazmorra &p, const std::string &opcion, Avanzar avanzar, Abr
     return true;
   if (!andar(1, 0) || !automatico(35, 96, 256) || !p.conserva_objeto(121))
     return false;
-  return detener("nube_regreso_post");
+  return detener("nube_regreso_post") ||
+         comprobar_cueva_valle_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }

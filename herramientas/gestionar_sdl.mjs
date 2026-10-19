@@ -296,6 +296,68 @@ function leerCaptura(archivo, ancho = 320, alto = 200) {
 }
 
 // Prepara la dependencia, compila y abre o comprueba la presentación nativa solicitada.
+// Reúne hitos y preparadores del valle para añadir salas sin duplicar el recorrido común.
+function configurarComprobacionValle(argumentos) {
+  const recorridos = [
+    {
+      argumento: '--remoto',
+      nombre: 'remoto',
+      referencia: 'ramas_valle',
+      prefijo: 'borde_',
+      comparadores: ['comparar:ramas-valle'],
+      hitos: ['remote_entrada', 'remote_reaccion', 'remote_rechazo'],
+      alcance: 'entrada60 enREMOTE, reacción y rechazo108; tres imágenes y restauración',
+    },
+    {
+      argumento: '--celeste',
+      nombre: 'celeste',
+      referencia: 'ramas_valle',
+      prefijo: 'borde_',
+      comparadores: ['comparar:ramas-valle'],
+      hitos: ['celeste_entrada', 'post_regreso_rama', 'post_objeto_111'],
+      alcance: 'entrada56 enCELESTE, regreso61 y recogida111; tres imágenes y restauración',
+    },
+    {
+      argumento: '--dinosaurio',
+      nombre: 'dinosaurio',
+      referencia: 'dinosaurio',
+      prefijo: 'borde_',
+      comparadores: ['comparar:dinosaurio'],
+      hitos: [
+        'pelo_recogido',
+        'dinosaurio_desde_post',
+        'dinosaurio_estornudo',
+        'dinosaurio_sello_boligrafo',
+        'dinosaurio_regreso_post',
+        'dinosaurio_desde_celeste',
+      ],
+      alcance:
+        'pelo110, entrada57, estornudo, sello109/bolígrafo101, regreso58 y acceso54; seis imágenes y restauración',
+    },
+    {
+      argumento: '--nube-valle',
+      nombre: 'nube',
+      referencia: 'nube',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:grabacion-completa', 'comparar:entrega-grabacion', 'comparar:nube'],
+      hitos: ['nube_entrada', 'nube_impulso_alternado', 'nube_bolsa_recogida', 'nube_regreso_post'],
+      alcance:
+        'grabación, correo, pase, nube, bolsa121 y regreso67; cuatro imágenes y restauración',
+    },
+    {
+      argumento: '--cueva-valle',
+      nombre: 'cueva_valle',
+      referencia: 'cueva_valle',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:cueva-valle'],
+      hitos: ['cueva_entrada', 'cueva_derrumbe', 'cueva_detergente', 'cueva_regreso_dino'],
+      alcance:
+        'entrada64, petición de ayuda, detergente120 y regreso65; cuatro imágenes y restauración',
+    },
+  ];
+  return recorridos.find((recorrido) => argumentos.includes(recorrido.argumento));
+}
+
 export async function gestionarSdl(accion, argumentos) {
   const sinSonido =
     accion === 'ventana' && argumentos.length === 1 && argumentos[0] === '--sin-sonido';
@@ -314,6 +376,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--celeste',
       '--dinosaurio',
       '--nube-valle',
+      '--cueva-valle',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
@@ -1037,12 +1100,8 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:poblacion') {
-    const nubeValle = argumentos.includes('--nube-valle');
-    const dinosaurio = argumentos.includes('--dinosaurio');
-    const celeste = argumentos.includes('--celeste');
-    const remoto = argumentos.includes('--remoto');
-    const ramasValle = nubeValle || dinosaurio || celeste || remoto;
-    const poste = ramasValle || argumentos.includes('--poste');
+    const pruebaValle = configurarComprobacionValle(argumentos);
+    const poste = Boolean(pruebaValle) || argumentos.includes('--poste');
     const regresoLoro = poste || argumentos.includes('--regreso-loro');
     const cantidadVistas = [
       ...readFileSync(join(raiz, 'plataformas/sdl/vistas.hpp'), 'utf8').matchAll(
@@ -1054,41 +1113,29 @@ export async function gestionarSdl(accion, argumentos) {
     const probador = argumentos.includes('--probador');
     const tiendas = argumentos.includes('--tiendas') || probador;
     const calles = argumentos.includes('--calles') || tiendas;
-    const carpeta = join(
-      raiz,
-      'trabajo',
-      nubeValle
-        ? 'comprobacion_nube_sdl'
-        : dinosaurio
-          ? 'comprobacion_dinosaurio_sdl'
-          : celeste
-            ? 'comprobacion_celeste_sdl'
-            : remoto
-              ? 'comprobacion_remoto_sdl'
-              : poste
-                ? 'comprobacion_poste_sdl'
-                : regresoLoro
-                  ? 'comprobacion_regreso_loro_sdl'
-                  : borde
-                    ? 'comprobacion_borde_sdl'
-                    : entradaBorde
-                      ? 'comprobacion_entrada_borde_sdl'
-                      : probador
-                        ? 'comprobacion_probador_sdl'
-                        : tiendas
-                          ? 'comprobacion_tiendas_sdl'
-                          : calles
-                            ? 'comprobacion_calles_sdl'
-                            : 'comprobacion_poblacion_sdl',
-    );
+    const grupo = pruebaValle
+      ? pruebaValle.nombre
+      : poste
+        ? 'poste'
+        : regresoLoro
+          ? 'regreso_loro'
+          : borde
+            ? 'borde'
+            : entradaBorde
+              ? 'entrada_borde'
+              : probador
+                ? 'probador'
+                : tiendas
+                  ? 'tiendas'
+                  : calles
+                    ? 'calles'
+                    : 'poblacion';
+    const carpeta = join(raiz, 'trabajo', `comprobacion_${grupo}_sdl`);
     mkdirSync(carpeta, { recursive: true });
-    if (ramasValle) {
+    if (pruebaValle) {
       if (!existsSync(join(raiz, 'trabajo/comparacion_regreso_loro/valle_post_entrada.ds.bin')))
         throw new Error('Prepara primero las referencias comunes con pnpm comprobar:poste.');
-      const comparadores = nubeValle
-        ? ['comparar:grabacion-completa', 'comparar:entrega-grabacion', 'comparar:nube']
-        : [dinosaurio ? 'comparar:dinosaurio' : 'comparar:ramas-valle'];
-      for (const comparador of comparadores)
+      for (const comparador of pruebaValle.comparadores)
         ejecutar(process.execPath, [
           join(raiz, 'herramientas/gestionar_proyecto.mjs'),
           comparador,
@@ -1143,99 +1190,78 @@ export async function gestionarSdl(accion, argumentos) {
           'comparar:regreso-loro',
         ]);
     }
-    const capturas = nubeValle
-      ? ['nube_entrada', 'nube_impulso_alternado', 'nube_bolsa_recogida', 'nube_regreso_post'].map(
-          (nombre) => ['borde_valle_' + nombre, nombre],
-        )
-      : dinosaurio
-        ? [
-            'pelo_recogido',
-            'dinosaurio_desde_post',
-            'dinosaurio_estornudo',
-            'dinosaurio_sello_boligrafo',
-            'dinosaurio_regreso_post',
-            'dinosaurio_desde_celeste',
-          ].map((nombre) => ['borde_' + nombre, nombre])
-        : celeste
-          ? ['celeste_entrada', 'post_regreso_rama', 'post_objeto_111'].map((nombre) => [
+    const capturas = pruebaValle
+      ? pruebaValle.hitos.map((nombre) => [pruebaValle.prefijo + nombre, nombre])
+      : poste
+        ? [['borde_valle_post_entrada', 'valle_post_entrada']]
+        : regresoLoro
+          ? ['regreso_mago', 'regreso_mago_pagado', 'regreso_guardia'].map((nombre) => [
               'borde_' + nombre,
               nombre,
             ])
-          : remoto
-            ? ['remote_entrada', 'remote_reaccion', 'remote_rechazo'].map((nombre) => [
-                'borde_' + nombre,
-                nombre,
-              ])
-            : poste
-              ? [['borde_valle_post_entrada', 'valle_post_entrada']]
-              : regresoLoro
-                ? ['regreso_mago', 'regreso_mago_pagado', 'regreso_guardia'].map((nombre) => [
-                    'borde_' + nombre,
-                    nombre,
-                  ])
-                : borde
+          : borde
+            ? [
+                ...[
+                  'borde_roca_empujada',
+                  'borde_roca_saltada',
+                  'borde_guantes',
+                  'borde_puente',
+                  'borde_cuerda',
+                  'borde_electrico',
+                  'borde_caramelo',
+                  'borde_caramelo_puesto',
+                  'borde_roca_grande',
+                  'borde_cuerda_lanzada',
+                  'borde_abismo_saltado',
+                  'borde_inscripcion',
+                  'borde_puerta_abierta',
+                ].map((nombre) => [nombre, nombre]),
+                ...['loro_cargado', 'loro_entrada', 'loro_regreso'].map((nombre) => [
+                  'borde_' + nombre,
+                  nombre,
+                ]),
+              ]
+            : entradaBorde
+              ? [['borde', 'borde_cargado']]
+              : probador
+                ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
+                : tiendas
                   ? [
-                      ...[
-                        'borde_roca_empujada',
-                        'borde_roca_saltada',
-                        'borde_guantes',
-                        'borde_puente',
-                        'borde_cuerda',
-                        'borde_electrico',
-                        'borde_caramelo',
-                        'borde_caramelo_puesto',
-                        'borde_roca_grande',
-                        'borde_cuerda_lanzada',
-                        'borde_abismo_saltado',
-                        'borde_inscripcion',
-                        'borde_puerta_abierta',
-                      ].map((nombre) => [nombre, nombre]),
-                      ...['loro_cargado', 'loro_entrada', 'loro_regreso'].map((nombre) => [
-                        'borde_' + nombre,
-                        nombre,
-                      ]),
-                    ]
-                  : entradaBorde
-                    ? [['borde', 'borde_cargado']]
-                    : probador
-                      ? ['probador_entrada', 'probador_regreso'].map((nombre) => [nombre, nombre])
-                      : tiendas
-                        ? [
-                            'tienda_35',
-                            'regreso_tienda_35',
-                            'tienda_38',
-                            'adivina_saludo',
-                            'adivina_respuesta',
-                            'regreso_tienda_38',
-                            'tienda_39',
-                            'regreso_tienda_39',
-                          ].map((nombre) => [nombre, nombre])
-                        : calles
-                          ? [
-                              ['calle_29', 'calle_29'],
-                              ['regreso_29', 'regreso_29'],
-                              ['calle_30', 'calle_30'],
-                              ['regreso_30', 'regreso_30'],
-                              ['calle_33', 'calle_33'],
-                              ['regreso_33', 'regreso_33'],
-                              ['calle_41', 'calle_41'],
-                              ['posadero', 'posadero'],
-                              ['regreso_41', 'regreso_41'],
-                            ]
-                          : [
-                              ['entrada', 'poblacion_entrada'],
-                              ['guardias', 'poblacion_guardias'],
-                              ['frank', 'poblacion_frank'],
-                              ['saludo', 'poblacion_saludo'],
-                              ['comida', 'poblacion_comida'],
-                              ['comer', 'poblacion_comer'],
-                              ['consumida', 'poblacion_consumida'],
-                              ['regreso', 'poblacion_regreso'],
-                              ['fuente', 'poblacion_fuente'],
-                              ['maravillas', 'poblacion_maravillas'],
-                              ['mago', 'poblacion_mago'],
-                              ['transporte', 'poblacion_transporte'],
-                            ];
+                      'tienda_35',
+                      'regreso_tienda_35',
+                      'tienda_38',
+                      'adivina_saludo',
+                      'adivina_respuesta',
+                      'regreso_tienda_38',
+                      'tienda_39',
+                      'regreso_tienda_39',
+                    ].map((nombre) => [nombre, nombre])
+                  : calles
+                    ? [
+                        ['calle_29', 'calle_29'],
+                        ['regreso_29', 'regreso_29'],
+                        ['calle_30', 'calle_30'],
+                        ['regreso_30', 'regreso_30'],
+                        ['calle_33', 'calle_33'],
+                        ['regreso_33', 'regreso_33'],
+                        ['calle_41', 'calle_41'],
+                        ['posadero', 'posadero'],
+                        ['regreso_41', 'regreso_41'],
+                      ]
+                    : [
+                        ['entrada', 'poblacion_entrada'],
+                        ['guardias', 'poblacion_guardias'],
+                        ['frank', 'poblacion_frank'],
+                        ['saludo', 'poblacion_saludo'],
+                        ['comida', 'poblacion_comida'],
+                        ['comer', 'poblacion_comer'],
+                        ['consumida', 'poblacion_consumida'],
+                        ['regreso', 'poblacion_regreso'],
+                        ['fuente', 'poblacion_fuente'],
+                        ['maravillas', 'poblacion_maravillas'],
+                        ['mago', 'poblacion_mago'],
+                        ['transporte', 'poblacion_transporte'],
+                      ];
     for (const [opcion, nombre] of capturas) {
       const captura = join(carpeta, nombre + '.bmp');
       const registro = ejecutar(
@@ -1253,27 +1279,23 @@ export async function gestionarSdl(accion, argumentos) {
             join(
               raiz,
               'trabajo',
-              nubeValle
-                ? 'comparacion_nube'
-                : dinosaurio
-                  ? 'comparacion_dinosaurio'
-                  : ramasValle
-                    ? 'comparacion_ramas_valle'
-                    : regresoLoro
-                      ? 'comparacion_regreso_loro'
-                      : borde
-                        ? nombre.startsWith('loro_')
-                          ? 'comparacion_loro'
-                          : 'comparacion_acciones_borde'
-                        : entradaBorde
-                          ? 'comparacion_recorrido_borde'
-                          : probador
-                            ? 'comparacion_probador'
-                            : tiendas
-                              ? 'comparacion_tiendas'
-                              : calles
-                                ? 'comparacion_calles'
-                                : 'comparacion_poblacion',
+              pruebaValle
+                ? 'comparacion_' + pruebaValle.referencia
+                : regresoLoro
+                  ? 'comparacion_regreso_loro'
+                  : borde
+                    ? nombre.startsWith('loro_')
+                      ? 'comparacion_loro'
+                      : 'comparacion_acciones_borde'
+                    : entradaBorde
+                      ? 'comparacion_recorrido_borde'
+                      : probador
+                        ? 'comparacion_probador'
+                        : tiendas
+                          ? 'comparacion_tiendas'
+                          : calles
+                            ? 'comparacion_calles'
+                            : 'comparacion_poblacion',
               nombre + '_cpp.png',
             ),
           ),
@@ -1309,23 +1331,17 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: capturas.length,
           pixeles_por_captura: 64000,
-          llegada_borde: nubeValle
-            ? 'grabación, correo, pase, nube, bolsa121 y regreso67; cuatro imágenes y restauración'
-            : dinosaurio
-              ? 'pelo110, entrada57, estornudo, sello109/bolígrafo101, regreso58 y acceso54; seis imágenes y restauración'
-              : celeste
-                ? 'entrada56 enCELESTE, regreso61 y recogida111; tres imágenes y restauración'
-                : remoto
-                  ? 'entrada60 enREMOTE, reacción y rechazo108; tres imágenes y restauración'
-                  : poste
-                    ? 'llegada real aPOST35 desde el guardia y restauración de la partida'
-                    : regresoLoro
-                      ? 'regreso al mago y guardia;3 capturas contrastadas; POST todavía fuera de SDL'
-                      : entradaBorde
-                        ? borde
-                          ? 'recorrido completo de EDGE, visita al loro y regreso;16 capturas contrastadas'
-                          : 'entrada y composición comprobadas; el recorrido se verifica con comprobar:borde'
-                        : 'carga y salida comprobadas; no se contrasta la composición en este comando',
+          llegada_borde: pruebaValle
+            ? pruebaValle.alcance
+            : poste
+              ? 'llegada real aPOST35 desde el guardia y restauración de la partida'
+              : regresoLoro
+                ? 'regreso al mago y guardia;3 capturas contrastadas; POST todavía fuera de SDL'
+                : entradaBorde
+                  ? borde
+                    ? 'recorrido completo de EDGE, visita al loro y regreso;16 capturas contrastadas'
+                    : 'entrada y composición comprobadas; el recorrido se verifica con comprobar:borde'
+                  : 'carga y salida comprobadas; no se contrasta la composición en este comando',
           vistas_desarrollo: cantidadVistas,
           cambios_de_vista: cantidadVistas * 2,
         },
