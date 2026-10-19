@@ -1,0 +1,13 @@
+CALCETÍN Y GUARDIA DEL BARCO — recorrido del núcleo, todavía fuera de SDL
+
+Continuación: misma partida tras recoger detergente120 y volver aDINO.
+1. Pasar por250/170,400/170,450/115 y500/115. Recoger el calcetín100; esperar192 pasos.
+2. Ir por550/150,620/120 y639/110 para entrar aCELESTE por53.
+3. Acercarse por330/170,500/180 y552/163 al montón de monedas107.
+4. Manipular→Combinar: elegir100 y después107. Esperar256 pasos;100 se convierte en104 y suma cinco puntos.
+5. Volver por500/180 y360/170. Elegir Golpear y104; esperar768 pasos. El arma se consume y el guardia queda apartado, con otros cinco puntos.
+6. Ir a340/140 para entrar por62 al interiorHOLD36. La comprobación se detiene tras su llegada y composición; el puzle de los tablones sigue pendiente.
+
+Las coordenadas son destinos de clic y las esperas son pasos lógicos de prueba, no milisegundos ni acciones exactas obligatorias para el jugador.
+Prueba: pnpm comparar:guardia-barco --muestra
+No acredita completar el barco ni activa las vistas del valle en SDL.

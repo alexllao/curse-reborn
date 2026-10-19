@@ -923,7 +923,7 @@ extern "C" EXPORTAR int procesar_borde(unsigned char *datos, unsigned short *pal
   return valido ? 1 : 0;
 }
 
-// C714–C793: permite contrastar las rutinas sin creación ni servicios externos.
+// C5E0–C793/C8B1–C8F8: contrasta las rutinas sin creación ni servicios externos.
 extern "C" EXPORTAR int procesar_ramas_valle(unsigned char *datos) {
   return motor::actualizar_ramas_valle(datos) ? 1 : 0;
 }

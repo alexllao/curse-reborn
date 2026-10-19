@@ -187,6 +187,48 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   // 3FC5–3FDC/AA6C: combina carta111 y sello109 en ambos órdenes; exige retirar la carta.
   const auto verbo = palabra(d, 0xb634);
+  // 3FDF–3FF6/A952: el montón de monedas no se retira; consume100 e intenta insertar104.
+  if (manejador == 0x3b53 && verbo == 7 &&
+      ((id == 100 && previo == 107) || (id == 107 && previo == 100))) {
+    retirar_identificador(d, 100);
+    insertar_identificador(d, 104);
+    guardar(d, 0x1a38, static_cast<Palabra>(552 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 163);
+    guardar(d, 0x0ad7, 0xa2c0);
+    guardar(d, 0x0adc, 0xa2cf);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  // 30DE–30E3/A982–AA69: golpear con104 exige CELESTE y distancia firmada de hasta40.
+  if (manejador == 0x2fca && id == 104) {
+    auto distancia = static_cast<Palabra>(palabra(d, 0x2c2d) - palabra(d, 0x2c4e));
+    if (con_signo(distancia) < 0)
+      distancia = static_cast<Palabra>(0 - distancia);
+    if (escena_valle != 33 || con_signo(distancia) > 40) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 104);
+    d[0x457a] = 19;
+    guardar(d, 0x457b, static_cast<Palabra>(palabra(d, 0x457b) - 2));
+    guardar(d, 0x457d, static_cast<Palabra>(palabra(d, 0x457d) + 21));
+    guardar(d, 0x457f, 0xa314);
+    d[0x4582] = 1;
+    guardar(d, 0x4586, static_cast<Palabra>(palabra(d, 0x4586) + 24));
+    guardar(d, 0x1a38, static_cast<Palabra>(360 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 154);
+    guardar(d, 0x0ad7, 0xa299);
+    guardar(d, 0x0adc, 0xa2a8);
+    guardar(d, 0x0ae1, 0xa2b4);
+    guardar(d, 0x2c5a, 0xffff);
+    actor(d, 0x009c, 0x2c4c, 0x010d, 0xa2db, 0xa2e6, 0xa2ef);
+    actor(d, 0x00a6, 0x2c6d, 0x0121, 0xa2f8, 0xffff, 0xa2fe);
+    actor(d, 0x00b0, 0x2c8e, 0x0121, 0xa306, 0xffff, 0xa309);
+    actor(d, 0x00ba, 0x2caf, 0x0121, 0xa30c, 0xffff, 0xa30f);
+    actor(d, 0x00c4, 0x2cd0, 0x0121, 0xa312);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   if (manejador == 0x3b53 && verbo == 7 &&
       ((id == 111 && previo == 109) || (id == 109 && previo == 111))) {
     if (!retirar_identificador(d, 111)) {
@@ -335,15 +377,10 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
     guardar(d, 0x00a0, 0x1a2c);
     return comenzar(d);
   }
-  // 3F5C–3FF6: intercambios y combinaciones posteriores todavía sin trasladar.
-  if (manejador == 0x3b53) {
-    const auto verbo = palabra(d, 0xb634);
-    if (verbo == 7 && ((id == 100 && previo == 107) || (id == 107 && previo == 100)))
-      return ResultadoMenu::pendiente;
-  }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
-      id != 102 && id != 105 && id != 106 && id != 108 && id != 109 && id != 110 && id != 111 &&
-      id != 112 && id != 113 && id != 114 && id != 116 && id != 120 && id != 121)
+      id != 102 && id != 104 && id != 105 && id != 106 && id != 107 && id != 108 && id != 109 &&
+      id != 110 && id != 111 && id != 112 && id != 113 && id != 114 && id != 116 && id != 120 &&
+      id != 121)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

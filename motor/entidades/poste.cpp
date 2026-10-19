@@ -4,9 +4,21 @@
 #include "../estado/segmento.hpp"
 
 namespace motor {
-// C5E0–C793: umbrales de DINO/CELESTE y canales originales de reacción de REMOTE.
+// C5E0–C793/C8B1–C8F8: umbrales del valle y proximidad de los tablones de HOLD.
 bool actualizar_ramas_valle(unsigned char *d) {
   const auto escena = palabra(d, 0x8082);
+  if (escena == 36) {
+    // C8B1–C8F8: solo los tablones en cuadro2 cambian el rectángulo de proximidad.
+    const bool primero = d[0x2c4d] == 2, segundo = d[0x2c6e] == 2;
+    if (primero || segundo) {
+      const bool ambos = primero && segundo;
+      guardar(d, 0x18f5, ambos ? 151 : 154);
+      guardar(d, 0x18f7, ambos ? 159 : 135);
+      guardar(d, 0x18f9, ambos ? 186 : 182);
+      guardar(d, 0x18fb, ambos ? 165 : 159);
+    }
+    return true;
+  }
   if (escena == 32) {
     // C5E0–C637: las comparaciones de posición son firmadas y conservan los umbrales ajenos.
     const auto global = static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x3591));

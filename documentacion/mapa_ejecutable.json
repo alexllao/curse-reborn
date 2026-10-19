@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:A952",
+      "nombre": "Calcetín con monedas del escenario",
+      "comentario": "3FDF–3FF6/A952–A97F combina100/107 en ambos órdenes: retira100 e intenta insertar104 sin exigir éxito ni retirar107. Destino552-cámara/163, A2C0/A2CF, conserva0AE1 y puntos+5. 48 variantes de orden/inventario/cámara/puntos y combinación real después de recoger100. comparar:guardia-barco continúa la misma partida con120/121."
+    },
+    {
+      "direccion": "0000:A982",
+      "nombre": "Golpe al guardia del barco con el calcetín cargado",
+      "comentario": "30DE/A982–AA69 exige escena33 y distancia firmada con resta/negación16 bits hasta40. Retira104 sin exigir presencia, muta457A–4586, programa cinco actores diferidos conservandoAC/B6/C0/CA/CC y suma5. 28 variantes y golpe real hasta cuadro19, seguido de entrada62. comparar:guardia-barco:8202 casos/pasos y cinco composiciones; interior deHOLD todavía pendiente."
+    },
+    {
+      "direccion": "0000:C8B1",
+      "nombre": "Proximidad de los tablones de HOLD",
+      "comentario": "C8B1–C8F8 solo cambia18F5/18F7/18F9/18FB cuando2C4D o2C6E es2. Ambos:151/159/186/165; uno:154/135/182/159; ninguno: conserva. Dieciséis variantes de cuadros0/1/2/255 y llegada real62 con128 pasos contrastados. No acredita puzle de tablones ni recogida119."
+    },
+    {
       "direccion": "0000:337D",
       "nombre": "Ayuda y derrumbe de las rocas de GHETTO",
       "comentario": "337D–34D6 exige escena37/tipo3 en2DF9; destino159/176,262E/263F,4794=1 y trece ofertas retiradas. Conserva fases/intervalos no escritos; programa trece primeros canales y ocho terceros, con retardos desdeAX tras886B (+4,+9,+10,+12,+13,+14). 48 variantes aisladas y petición real con512 pasos de derrumbe. comparar:cueva-valle:4489 casos/pasos,691 selecciones, tres auditorías y cuatro composiciones. No activaSDL del valle."
