@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "entrada_ms": 800,
+  "entrada_ms": 3000,
   "visible_ms": 5000,
   "salida_ms": 1200,
   "encendido_ms": 2000,
