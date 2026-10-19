@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:A8AE",
+      "nombre": "Respuesta a la cinta sin grabar",
+      "comentario": "3F5C/A8AE–A8DC prepara141-cámara/165 y96DE/96E7, actor2D12 con2805/1A2F; conserva105, puntuación y camposA2/A4. Comparación aislada de cintas105/106 en comparar:entrega-grabacion; no se presenta esta variante como otra entrega persistente."
+    },
+    {
+      "direccion": "0000:A8DF",
+      "nombre": "Entrega de la grabación y pase del correo",
+      "comentario": "3F69/A8DF–A94F retira106 y limpia44F9; destino141-cámara/165,96DE/96E7 y actor2C4C con20D. Si2C4D=4, intenta insertar99 sin añadir una prueba de capacidad,5314=90 y A22E/A23B/A240. Si no, A245/A265/A27F. Ambas suman5. Contraste de864 variantes junto aA8AE y entrega persistente desde grabación y correo reales hasta99."
+    },
+    {
+      "direccion": "0000:AC5E",
+      "nombre": "Acceso con el pase de la grabación",
+      "comentario": "3DF4–3E0B/AC5E–AC8C inserta99 con116 en ambos órdenes. Conserva99 y puntuación, destino910-cámara/140, guionesA3A2/A3B8 y actor2CD0 con109/1A2C, sin escribirA2/A4. 144 variantes y recorrido real hasta petición automática66; CLOUD38 todavía no cargado ni validado."
+    },
+    {
       "direccion": "0000:5D78",
       "nombre": "Cinta del entorno de CELESTE",
       "comentario": "5D78–5D86 recoge105 desde2CF1 con desplazamiento3/+1 y familia61A7. comparar:grabacion-valle contrasta108 variantes, recogida real enCELESTE, transporte61 e inserción real enPOST; no acredita todavía la recogida del mando108."

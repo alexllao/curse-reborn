@@ -1,0 +1,18 @@
+ENTREGA DE LA GRABACIÓN Y PASE
+
+Continuación del recorrido13, con la cinta ya grabada y la carta franqueada
+enviada. Está contrastado en el núcleo; esta ampliación sigue fuera de SDL.
+
+1. Vuelve a la zona del esqueleto de dinosaurio y acércate al personaje que
+   lleva el radiocasete. Después de enviar la carta, su estado ha cambiado.
+2. Usa Dar con la cinta grabada y ese personaje. Espera a que termine.
+   La grabación desaparece y recibes automáticamente el pase del correo.
+3. Regresa al escenario de los músicos y acércate a la puerta de la derecha.
+4. Inserta el pase en el dispositivo de la puerta. El pase no se consume.
+5. El guion abre la puerta y conduce a Brad automáticamente a la salida66.
+
+El contraste actual termina antes de cargar la nube de destino. La nube,
+los demás caminos y los puzles posteriores no están acreditados por esta prueba.
+
+Referencia: pnpm comparar:entrega-grabacion --muestra
+Documentación: documentacion/entrega_grabacion.md

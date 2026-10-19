@@ -354,3 +354,5 @@ La [cinta y su inserción](documentacion/grabacion_valle.md) tienen recorrido re
 `pnpm comparar:grabacion-completa --muestra` une ahora el estornudo, la salida59 y las recogidas reales del mando y la cinta hasta obtener la grabación106 y enviar después el correo en la misma partida. La [documentación de grabación](documentacion/grabacion_valle.md) distingue esta ruta del contraste aislado anterior y de la entrega posterior, todavía pendiente.
 
 Disponible el [recorrido del valle hasta la grabación y el correo](documentacion/recorridos/13_valle_hasta_grabacion_y_correo.txt), con su límite actual del núcleo y las acciones que aún faltan.
+
+La [entrega de la grabación y el pase](documentacion/entrega_grabacion.md) continúa esa misma partida: `pnpm comparar:entrega-grabacion --muestra` comprueba el intercambio y la apertura de la puerta hasta la solicitud66. La nube de destino y el resto del valle siguen pendientes; todavía no se activan en SDL.

@@ -231,16 +231,51 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  // 3F5C–3F73/A8AE–A94F: conserva la respuesta a la cinta vacía y la entrega de la grabación.
+  if (manejador == 0x3b53 && verbo == 6 && id == 98 && (previo == 105 || previo == 106)) {
+    guardar(d, 0x1a38, static_cast<Palabra>(141 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 165);
+    guardar(d, 0x0ad7, 0x96de);
+    guardar(d, 0x0adc, 0x96e7);
+    if (previo == 105) {
+      guardar(d, 0x009c, 0x2d12);
+      guardar(d, 0x009e, 0x2805);
+      guardar(d, 0x00a0, 0x1a2f);
+      return comenzar(d);
+    }
+    retirar_identificador(d, 106);
+    d[0x44f9] = 0;
+    const bool correo = d[0x2c4d] == 4;
+    if (correo) {
+      insertar_identificador(d, 99);
+      d[0x5314] = 0x90;
+    }
+    actor(d, 0x009c, 0x2c4c, 0x020d, correo ? 0xa22e : 0xa245, correo ? 0xa23b : 0xa265,
+          correo ? 0xa240 : 0xa27f);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  // 3DF4–3E0B/AC5E–AC8C: el pase99 abre116 sin consumirse ni sumar puntos.
+  if (manejador == 0x3b53 && verbo == 1 &&
+      ((id == 116 && previo == 99) || (id == 99 && previo == 116))) {
+    guardar(d, 0x1a38, static_cast<Palabra>(910 - palabra(d, 0x3591)));
+    guardar(d, 0x1a3a, 140);
+    guardar(d, 0x0ad7, 0xa3a2);
+    guardar(d, 0x0adc, 0xa3b8);
+    guardar(d, 0x009c, 0x2cd0);
+    guardar(d, 0x009e, 0x0109);
+    guardar(d, 0x00a0, 0x1a2c);
+    return comenzar(d);
+  }
   // 3F5C–3FF6: intercambios y combinaciones posteriores todavía sin trasladar.
   if (manejador == 0x3b53) {
     const auto verbo = palabra(d, 0xb634);
-    if ((verbo == 6 && id == 98 && (previo == 105 || previo == 106)) ||
-        (verbo == 7 && ((id == 100 && previo == 107) || (id == 107 && previo == 100))))
+    if (verbo == 7 && ((id == 100 && previo == 107) || (id == 107 && previo == 100)))
       return ResultadoMenu::pendiente;
   }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
       id != 102 && id != 105 && id != 106 && id != 108 && id != 109 && id != 110 && id != 111 &&
-      id != 112 && id != 113 && id != 114)
+      id != 112 && id != 113 && id != 114 && id != 116)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;
