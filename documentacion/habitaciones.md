@@ -2,7 +2,7 @@
 
 Son una presentación externa al juego. Los marcos decorativos rellenan bandas; las habitaciones representan un ordenador que se enciende y permite entrar al juego. Los decorados ampliados continúan aparcados.
 
-El arranque normal siempre muestra Buhardilla con el ordenador apagado, también con `--sin-sonido`. Botón del PC → BIOS 386 con distintivo Energy Star → DOS → Core/título/introducción dentro del monitor. Tras los siete segundos, clic en pantalla o botón del monitor → acercamiento suave de 650 ms hasta el máximo disponible. Ctrl+R vuelve sin reiniciar escena ni música. Ctrl+H recorre los cinco diseños. Alt+Intro conserva su función de pantalla completa de la ventana.
+El arranque normal siempre muestra Buhardilla con el ordenador apagado, también con `--sin-sonido`. Botón del PC → BIOS 386 con distintivo Energy Star → DOS → Core/título/introducción dentro del monitor. Tras los siete segundos, clic en botón físico del monitor → acercamiento suave de 650 ms hasta el máximo disponible. Ctrl+R vuelve sin reiniciar escena ni música. Ctrl+H recorre los cinco diseños. Alt+Intro conserva su función de pantalla completa de la ventana.
 
 ## Añadir otro diseño
 
@@ -23,3 +23,11 @@ BIOS/DOS son una presentación propia con tiempos de plataforma, no firmware ni 
 Las comparaciones con el EXE omiten esta presentación y siguen entrando directamente al bloque que verifican. Los filtros permanecen limitados a la imagen del juego, incluyendo el cursor original. No se activa ningún decorado ampliado.
 
 Los PNG originales se preservan. La compresión o conversión del paquete final deberá producir copias de distribución y mantener los metadatos coherentes con sus dimensiones; todavía no hay conversión con pérdida ni empaquetado final implementado.
+
+## Cristal transparente y juego en pequeño
+
+La habitación se compone como una textura RGBA sobre el juego: el cristal tiene una abertura transparente y sus bordes originales quedan por delante. `contornoCristal` define un polígono convexo de 16 puntos `[x, y]` en píxeles del PNG. Sigue el cristal completo, incluidas sus esquinas; `pantalla` sigue siendo el rectángulo seguro donde cabe todo el juego. Las zonas libres del cristal dejan ver el negro de fondo, sin conservar la fotografía gris original.
+
+La abertura se prepara una sola vez al cargar o cambiar la variante, con suavizado en el borde y memoria liberada al cambiar. Cada fotograma dibuja la habitación en una sola pasada; no recalcula la máscara. Los PNG maestros permanecen sin cambios y una textura que ya tenga transparencia la conserva.
+
+Clic dentro de la imagen jugable se entrega al juego también en pequeño; no amplía la vista. Solo el botón físico del monitor solicita el acercamiento. Ctrl+R vuelve a la habitación y Escape sigue reservado al juego.

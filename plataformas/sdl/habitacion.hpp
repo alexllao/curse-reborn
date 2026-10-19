@@ -6,6 +6,7 @@ struct VarianteHabitacion {
   int ancho, alto;
   SDL_FRect pantalla, boton_pc, boton_monitor, piloto_pc, piloto_monitor;
   bool boton_pc_auxiliar;
+  SDL_FPoint cristal[16];
 };
 struct TemaHabitacion {
   const char *id, *nombre;

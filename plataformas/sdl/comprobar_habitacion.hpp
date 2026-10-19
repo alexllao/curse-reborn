@@ -37,6 +37,13 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
     bool bien = SDL_ReadSurfacePixel(s, int(juego.x + juego.w / 2), int(juego.y + juego.h / 2), &r,
                                      &g, &b, &a) &&
                 (!negra || (r == 0 && g == 0 && b == 0));
+    // El cristal libre por encima del juego debe ser negro, sin la fotografía gris del PNG.
+    if (!p.habitacion.ampliada(reloj)) {
+      bien =
+          bien &&
+          SDL_ReadSurfacePixel(s, int(juego.x + juego.w / 2), int(juego.y - 2), &r, &g, &b, &a) &&
+          r == 0 && g == 0 && b == 0;
+    }
     bien = bien && SDL_SavePNG(s, (prefijo + "." + nombre + ".png").c_str());
     SDL_DestroySurface(s);
     ++capturas;
@@ -94,8 +101,53 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
       if (!p.habitacion.tomar_reinicio(reloj) || p.habitacion.tomar_reinicio(reloj) ||
           p.habitacion.reiniciando())
         return fallo_monitor("El arranque no entrega una única solicitud");
+      if (pulsar(juego) || p.habitacion.ampliada(reloj))
+        return fallo_monitor("El clic del juego pequeño se intercepta o amplía la pantalla");
       if (tema == 0 && !capturar(nombre + ".juego", false))
         return false;
+      if (tema == 0 && tamano.first == 1280 && tamano.second == 720) {
+        if (!cambiar_pantalla(carpeta, 3, p) || !capturar(nombre + ".mazmorra", false) ||
+            !cambiar_pantalla(carpeta, 0, p))
+          return false;
+      }
+      // Compara todos los píxeles realmente rasterizados antes y después de superponer el PNG.
+      if (!SDL_SetRenderDrawColor(p.dibujante, 210, 40, 200, 255) ||
+          !SDL_RenderFillRect(p.dibujante, nullptr))
+        return false;
+      SDL_Surface *antes = capturar_monitor(p.dibujante);
+      if (!antes)
+        return false;
+      if (!p.habitacion.dibujar(p.dibujante, reloj)) {
+        SDL_DestroySurface(antes);
+        return false;
+      }
+      SDL_Surface *colores = capturar_monitor(p.dibujante);
+      SDL_FRect zona_juego;
+      bool completo = colores && antes->w == colores->w && antes->h == colores->h &&
+                      MarcosPantalla::area_juego(p.dibujante, zona_juego);
+      unsigned int comprobados = 0;
+      for (int y = std::max(0, int(std::floor(zona_juego.y)));
+           completo && y < std::min(antes->h, int(std::ceil(zona_juego.y + zona_juego.h))); ++y) {
+        const auto *a = static_cast<const Uint8 *>(antes->pixels) + y * antes->pitch;
+        const auto *b = static_cast<const Uint8 *>(colores->pixels) + y * colores->pitch;
+        for (int x = std::max(0, int(std::floor(zona_juego.x)));
+             completo && x < std::min(antes->w, int(std::ceil(zona_juego.x + zona_juego.w))); ++x) {
+          if (a[x * 4] == 210 && a[x * 4 + 1] == 40 && a[x * 4 + 2] == 200) {
+            ++comprobados;
+            completo = b[x * 4] == 210 && b[x * 4 + 1] == 40 && b[x * 4 + 2] == 200;
+            if (!completo)
+              std::fprintf(stderr, "Recorte %s: pixel %d,%d: %u,%u,%u; zona %.2f,%.2f %.2fx%.2f\n",
+                           nombre.c_str(), x, y, b[x * 4], b[x * 4 + 1], b[x * 4 + 2], zona_juego.x,
+                           zona_juego.y, zona_juego.w, zona_juego.h);
+          }
+        }
+      }
+      if (!completo && colores)
+        SDL_SavePNG(colores, (prefijo + ".bordes.png").c_str());
+      SDL_DestroySurface(antes);
+      SDL_DestroySurface(colores);
+      if (!completo || comprobados == 0)
+        return fallo_monitor("La habitación recorta píxeles de la imagen del juego");
       if (!pulsar(monitor))
         return fallo_monitor("No responde el botón del monitor");
       reloj += 650000000ull;

@@ -170,7 +170,7 @@ bool Habitacion::evento(SDL_Window *ventana, SDL_Renderer *r, const SDL_Event &e
       }
       return true;
     }
-    if (estado == Estado::encendido && (dentro(monitor) || dentro(pantalla))) {
+    if (estado == Estado::encendido && dentro(monitor)) {
       ajustar_zoom(1, ahora);
       return true;
     }
@@ -244,6 +244,56 @@ static SDL_Texture *crear_piloto_apagado(SDL_Renderer *r, SDL_Surface *s, const 
   return resultado;
 }
 
+// Recorta el cristal una sola vez al cargar la variante; el maestro PNG permanece intacto.
+static SDL_Surface *recortar_cristal(SDL_Surface *original, const VarianteHabitacion &v) {
+  SDL_Surface *rgba = SDL_ConvertSurface(original, SDL_PIXELFORMAT_RGBA32);
+  if (!rgba)
+    return nullptr;
+  float minimo_y = float(v.alto), maximo_y = 0;
+  for (const auto &p : v.cristal) {
+    minimo_y = std::min(minimo_y, p.y);
+    maximo_y = std::max(maximo_y, p.y);
+  }
+  // Cuatro muestras verticales suavizan el contorno; el interior transparente se calcula por fila.
+  for (int y = std::max(0, int(std::floor(minimo_y)));
+       y < std::min(v.alto, int(std::ceil(maximo_y))); ++y) {
+    float izquierdas[4], derechas[4];
+    float minimo_x = float(v.ancho), maximo_x = 0;
+    for (int muestra = 0; muestra < 4; ++muestra) {
+      const float fila = y + (muestra + 0.5f) / 4;
+      float izquierda = float(v.ancho), derecha = 0;
+      for (unsigned int i = 0; i < 16; ++i) {
+        const auto &a = v.cristal[i];
+        const auto &b = v.cristal[(i + 1) % 16];
+        if ((a.y <= fila && b.y > fila) || (b.y <= fila && a.y > fila)) {
+          const float x = a.x + (fila - a.y) * (b.x - a.x) / (b.y - a.y);
+          izquierda = std::min(izquierda, x);
+          derecha = std::max(derecha, x);
+        }
+      }
+      izquierdas[muestra] = izquierda;
+      derechas[muestra] = derecha;
+      minimo_x = std::min(minimo_x, izquierda);
+      maximo_x = std::max(maximo_x, derecha);
+    }
+    auto *fila = static_cast<Uint8 *>(rgba->pixels) + y * rgba->pitch;
+    for (int x = std::max(0, int(std::floor(minimo_x)));
+         x < std::min(v.ancho, int(std::ceil(maximo_x))); ++x) {
+      float cobertura = 0;
+      for (int muestra = 0; muestra < 4; ++muestra)
+        cobertura += std::clamp(std::min(float(x + 1), derechas[muestra]) -
+                                    std::max(float(x), izquierdas[muestra]),
+                                0.0f, 1.0f) /
+                     4;
+      const auto alpha = Uint8(std::round(fila[x * 4 + 3] * (1 - cobertura)));
+      fila[x * 4 + 3] = alpha;
+      if (alpha == 0)
+        fila[x * 4] = fila[x * 4 + 1] = fila[x * 4 + 2] = 0;
+    }
+  }
+  return rgba;
+}
+
 // Compone únicamente el exterior del monitor sobre el juego ya renderizado.
 bool Habitacion::dibujar(SDL_Renderer *r, Uint64 ahora) {
   if (!habilitada || (ampliada(ahora) && estado == Estado::encendido))
@@ -260,16 +310,19 @@ bool Habitacion::dibujar(SDL_Renderer *r, Uint64 ahora) {
     SDL_Surface *s = SDL_LoadPNG(ruta.c_str());
     if (!s)
       return false;
-    textura = SDL_CreateTextureFromSurface(r, s);
+    SDL_Surface *recortada = recortar_cristal(s, v);
+    textura = recortada ? SDL_CreateTextureFromSurface(r, recortada) : nullptr;
+    SDL_DestroySurface(recortada);
     pilotos_rojos[0] = crear_piloto_apagado(r, s, v.piloto_pc);
     pilotos_rojos[1] = crear_piloto_apagado(r, s, v.piloto_monitor);
     SDL_DestroySurface(s);
     if (!textura || !pilotos_rojos[0] || !pilotos_rojos[1] ||
-        !SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_LINEAR))
+        (!SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_LINEAR) ||
+         !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND)))
       return false;
     cargada = &v;
   }
-  // El viewport redondeado es también la abertura excluida: no aparecen rendijas de un píxel.
+  // Comparte el viewport físico redondeado con BIOS, apagado CRT y el ratón.
   SDL_Rect viewport;
   float sx = 1, sy = 1;
   if (!SDL_GetRenderViewport(r, &viewport) || !SDL_GetRenderScale(r, &sx, &sy))
@@ -277,18 +330,8 @@ bool Habitacion::dibujar(SDL_Renderer *r, Uint64 ahora) {
   juego = {viewport.x * sx, viewport.y * sy, viewport.w * sx, viewport.h * sy};
   if (!SDL_SetRenderViewport(r, nullptr) || !SDL_SetRenderScale(r, 1, 1))
     return false;
-  bool bien = true;
-  const int iz = int(std::floor(juego.x)), de = int(std::ceil(juego.x + juego.w)),
-            ar = int(std::floor(juego.y)), ab = int(std::ceil(juego.y + juego.h));
-  for (const SDL_Rect &banda : {SDL_Rect{0, 0, w, ar},
-                                {0, ab, w, h - ab},
-                                {0, ar, iz, ab - ar},
-                                {de, ar, w - de, ab - ar}}) {
-    if (banda.w > 0 && banda.h > 0)
-      bien = bien && SDL_SetRenderClipRect(r, &banda) &&
-             SDL_RenderTexture(r, textura, nullptr, &imagen);
-  }
-  bien = bien && SDL_SetRenderClipRect(r, nullptr);
+  // Una textura RGBA sobre el juego sustituye los cuatro recortes rectangulares por fotograma.
+  bool bien = SDL_RenderTexture(r, textura, nullptr, &imagen);
   const float e = imagen.w / v.ancho;
   // Pilotos discretos cubren las luces dibujadas en los maestros, sin reescribir sus PNG.
   const auto piloto = [&](const SDL_FRect &zona, SDL_Texture *luz) {

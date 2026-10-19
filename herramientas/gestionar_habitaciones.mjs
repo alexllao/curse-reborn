@@ -53,8 +53,36 @@ export function prepararHabitaciones(raiz, destino) {
           return `{${r.join(',')}}`;
         },
       );
+      const contorno = v.contornoCristal;
+      if (
+        !Array.isArray(contorno) ||
+        contorno.length !== 16 ||
+        contorno.some(
+          (p) =>
+            !Array.isArray(p) ||
+            p.length !== 2 ||
+            !p.every(Number.isInteger) ||
+            p[0] < 0 ||
+            p[1] < 0 ||
+            p[0] >= ancho ||
+            p[1] >= alto,
+        )
+      )
+        throw new Error('Contorno del cristal inválido en ' + v.archivo);
+      // La máscara por filas admite contornos convexos; rechazar formas cruzadas o sin área.
+      let sentido = 0;
+      for (let i = 0; i < contorno.length; ++i) {
+        const a = contorno[i],
+          b = contorno[(i + 1) % 16],
+          c = contorno[(i + 2) % 16];
+        const giro = Math.sign((b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]));
+        if (giro && sentido && giro !== sentido)
+          throw new Error('El cristal debe ser convexo: ' + v.archivo);
+        if (giro) sentido = giro;
+      }
+      if (!sentido) throw new Error('El cristal no tiene superficie: ' + v.archivo);
       variantes.push(
-        `{${JSON.stringify(`assets/original/habitaciones/${h.carpeta}/${v.archivo}`)},${ancho},${alto},${zonas.join(',')},${v.botonPCAuxiliar === true}}`,
+        `{${JSON.stringify(`assets/original/habitaciones/${h.carpeta}/${v.archivo}`)},${ancho},${alto},${zonas.join(',')},${v.botonPCAuxiliar === true},{${contorno.map((p) => `{${p.join(',')}}`).join(',')}}}`,
       );
       mkdirSync(join(carpeta, h.carpeta), { recursive: true });
       copyFileSync(join(origen, h.carpeta, v.archivo), join(carpeta, h.carpeta, v.archivo));
