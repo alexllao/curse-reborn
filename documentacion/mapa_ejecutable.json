@@ -3,6 +3,11 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:CFA9",
+      "nombre": "Puerta móvil de la sala de dados",
+      "comentario": "CFA9–CFD1 limita Y2D16 firmada a30..89 y solo al recortar escribe2D2C=0. Diez fronteras, cierre real al recoger140 y apertura al lanzar, incluida segunda tirada. mazmorra.cpp y comparar:dados-palacio."
+    },
+    {
       "direccion": "0000:CF34",
       "nombre": "Reciclado de los cuatro grupos de la entrada del palacio",
       "comentario": "CF34–CFA8:2D98 firmado>=600 restablece x=-20/-30/-40/-50, y152/153/155/157 y solo fases18/23/28 de registros2D33..2D96. Siete límites y recorrido real comparados. mazmorra.cpp."
@@ -1376,7 +1381,7 @@
     {
       "direccion": "0000:B740",
       "nombre": "Preparación y ejecución de la acción de resultados",
-      "comentario": "El propietario confirmó el tramo B740–B939 en 2.048 operaciones. El nuevo C++ continúa por 886B hasta RET: la muestra pasa y la comparación amplia queda pendiente.",
+      "comentario": "B740–B939 y886B ya reconstruidos en preparar_resultados/iniciar_accion. Integrados ahora en el menú de140 con ServicioCreacion.azar, sin otro generador. comparar:dados-palacio5607 casos/pasos,24 semillas del selector, dos tiradas reales y nueve imágenesSDL/restauración. No confundir con todas las habitaciones que abren las marcas.",
       "traslado": "motor/acciones/iniciar_accion.cpp"
     },
     {

@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_dados_palacio.hpp"
 
 // 82/CF34/B68D–B73D: verifica error, cuatro pulsaciones reales y apertura de la puerta.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -36,5 +37,5 @@ bool comprobar_entrada_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanz
     if (detener(hitos[i]))
       return true;
   }
-  return false;
+  return comprobar_dados_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

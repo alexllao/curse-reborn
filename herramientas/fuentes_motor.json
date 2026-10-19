@@ -56,5 +56,6 @@
   "motor/acciones/asaltante.cpp",
   "motor/acciones/nieve.cpp",
   "motor/entidades/nieve.cpp",
-  "motor/acciones/hielo.cpp"
+  "motor/acciones/hielo.cpp",
+  "motor/acciones/palacio.cpp"
 ]

@@ -1199,7 +1199,8 @@ int main(int argc, char *argv[]) {
            mazmorra.escena_actual() == 36 || mazmorra.escena_actual() == 39 ||
            mazmorra.escena_actual() == 43 || mazmorra.escena_actual() == 42 ||
            mazmorra.escena_actual() == 41 || mazmorra.escena_actual() == 40 ||
-           mazmorra.escena_actual() == 44 || mazmorra.escena_actual() == 45) &&
+           mazmorra.escena_actual() == 44 || mazmorra.escena_actual() == 45 ||
+           mazmorra.escena_actual() == 46) &&
           !comprobar_partida_tienda(mazmorra, argv[1]))
         return fallo("Guardar y cargar altera la imagen o la escena de una tienda");
       if (paso_vistas < cantidad_vistas * 2) {

@@ -39,6 +39,15 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 32 || escena == 33 || escena == 34 || escena == 36 || escena == 39)
     return actualizar_ramas_valle(datos);
+  if (escena == 46) {
+    // CFA9–CFD1: detiene la puerta de los dados al recortar sus límites verticales.
+    const auto y = con_signo(palabra(datos, 0x2d16));
+    if (y < 30 || y > 89) {
+      guardar(datos, 0x2d16, y < 30 ? 30 : 89);
+      guardar(datos, 0x2d2c, 0);
+    }
+    return true;
+  }
   if (escena == 45) {
     // CF34–CFA8: recicla los cuatro grupos flotantes conservando referencias y contadores.
     if (con_signo(palabra(datos, 0x2d98)) >= 600) {
