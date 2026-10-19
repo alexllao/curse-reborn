@@ -23,6 +23,7 @@
     "analizar": "node herramientas/gestionar_proyecto.mjs analizar",
     "ensamblador": "node herramientas/gestionar_proyecto.mjs analizar",
     "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar",
+    "comparar:entrada-nieve": "node herramientas/gestionar_proyecto.mjs comparar:entrada-nieve",
     "comparar:rutina-nieve": "node herramientas/gestionar_proyecto.mjs comparar:rutina-nieve",
     "comparar:acciones": "node herramientas/gestionar_proyecto.mjs comparar:acciones",
     "comparar:aleatorio": "node herramientas/gestionar_proyecto.mjs comparar:aleatorio",

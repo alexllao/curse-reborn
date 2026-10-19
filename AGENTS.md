@@ -421,3 +421,7 @@ Investigación siguiente, todavía SIN trasladar: CS17A3[43]=CE35, rangoCE35–C
 ## Rutina inicial de SNOWAST4, antes de integrar la sala
 
 CE35–CF25 está conectada al despacho común para43 y contrastada mediante comparar:rutina-nieve:3600 variantes/7200 llamadas, DS completo, repetición con fases avanzadas, comparaciones firmadas y sumas envolventes. Documentación: documentacion/entrada_nieve.md. No se ha habilitado carga74, cámara43 ni SDL: siguen40 vistas. El punto real continúa en comparacion_regreso_benn/probador_solicitud74. Los cinco descriptores de43 están en4946–496A (terminador4973); no confundir con el primer paisaje nevado descrito informalmente por la guía. Inspeccionar acciones y salidas antes de dar por jugable esta zona.
+
+## Entrada nativa74, todavía sin vista SDL
+
+comparar:entrada-nieve parte de probador_solicitud74 y contrasta636 casos/pasos, dos composiciones,256 pasos y118 selecciones en un estado. Carga74 desde25, cámara43 y BANCOS_ESCENA43/SNOWAST4 están admitidos solo en el motor/comparador; el catálogo SDL sigue40 vistas y no habilita74. La auditoría inicial ya pasa: respuestas neutras del inventario70/76/101/124 en ataque/combinación y sonidos0/1 comunes. No generalizar estos rechazos a objetos nuevos. Siguiente estado real: trabajo/comparacion_entrada_nieve/nieve_control.ds.bin y semilla.json. El fondo de entrada muestra al ser azul, no al esquimal: seguir tablas/guion y no asignar escenas por el orden textual de la guía. Puzles, recorridos, otras posiciones y salidas de43 pendientes.

@@ -5,7 +5,7 @@
     {
       "direccion": "0000:CE35",
       "nombre": "Reacción y proximidad del primer actor de SNOWAST4",
-      "comentario": "CE35–CF25: bit0 de35CA, visibilidad local firmada con suma de16 bits, seis canales B36A/B377/B381 yB38B/B390/B393, proximidad solo para2C4C=1 y postura32. comparar:rutina-nieve contrasta3600 variantes y7200 llamadas con DS completo, incluidas repetición, bits ajenos, inactivos y desbordamientos. Carga, acciones ySDL de43 siguen pendientes."
+      "comentario": "CE35–CF25: bit0 de35CA, visibilidad local firmada con suma de16 bits, seis canales B36A/B377/B381 yB38B/B390/B393, proximidad solo para2C4C=1 y postura32. comparar:rutina-nieve contrasta3600 variantes y7200 llamadas con DS completo, incluidas repetición, bits ajenos, inactivos y desbordamientos. Carga, acciones ySDL de43 siguen pendientes. Entrada74, cinco entidades y256 pasos reales contrastados aparte:636 casos/pasos,118 selecciones y dos imágenes. Los puzles ySDL siguen pendientes."
     },
     {
       "direccion": "0000:5DCB",

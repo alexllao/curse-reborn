@@ -104,6 +104,16 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
+  // 337D–3545/3558–37FF:43 no tiene excepción de ayuda o saludo; conserva sonido0/1.
+  if (palabra(d, 0x8082) == 43 && manejador == 0x32de && id <= 1)
+    return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
+                                                                            : ResultadoMenu::error;
+  // 2FCA–3142/49DA: los objetos traídos del valle no atacan aquí;124 exige escena72.
+  if (palabra(d, 0x8082) == 43 && manejador == 0x2fca &&
+      (id == 70 || id == 76 || id == 101 || id == 124)) {
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
+  }
   if (palabra(d, 0x8082) == 39)
     return ejecutar_interaccion_electro(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 36)
@@ -403,6 +413,12 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
     }
     const auto escena = palabra(d, 0x8082);
+    // 3B53–4142/88A0: respuestas neutras comprobadas del inventario real al llegar por74.
+    if (escena == 43 && (objeto == 70 || objeto == 76 || objeto == 101 || objeto == 124) &&
+        (previo == 0xffff || previo == 70 || previo == 76 || previo == 101 || previo == 124)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
     if (escena == 39)
       return ejecutar_interaccion_electro(d, 0x3b53, objeto, sonido);
     if (escena == 36)

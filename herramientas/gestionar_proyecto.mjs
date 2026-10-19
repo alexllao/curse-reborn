@@ -179,6 +179,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     plataforma_valle: 'comparar_plataforma_valle.py',
     regreso_benn: 'comparar_regreso_benn.py',
     rutina_nieve: 'comparar_rutina_nieve.py',
+    entrada_nieve: 'comparar_entrada_nieve.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -396,6 +397,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:entrada-nieve':
+      compararAcciones('entrada_nieve', argumentos);
       break;
     case 'comparar:rutina-nieve':
       compararAcciones('rutina_nieve', argumentos);

@@ -9,6 +9,7 @@ from comparar_puzle import ComparacionPuzle, ErrorAnalisis
 from comparar_objetos import ComparacionObjetos, guardar, palabra
 
 BANCOS_ESCENA = {
+    43: 'SNOWAST4',
     36: 'HOLD',
     37: 'GHETTO',
     38: 'CLOUD',
