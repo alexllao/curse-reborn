@@ -503,11 +503,14 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
     return false;
   const auto salida = motor::palabra(candidata.datos, 0x3598);
-  if (salida != 0xffff && (salida > 51 && salida != 72 && salida != 73))
+  if (salida != 0xffff && salida > 73)
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));
-  if (escena_guardada > 31)
+  bool integrada = false;
+  for (const auto &vista : vistas_desarrollo)
+    integrada = integrada || vista.escena == escena_guardada;
+  if (!integrada)
     return false;
   candidata.carpeta = carpeta;
   candidata.aleatorio = aleatorio;
@@ -631,7 +634,7 @@ bool Mazmorra::cargar_fondo_visible() {
 // 4AF0: conserva inventario y descriptores mutados; vuelve a cargar las entidades desde esas
 // listas.
 bool Mazmorra::cambiar_habitacion(unsigned short salida) {
-  if ((salida > 51 && salida != 72 && salida != 73))
+  if (!salida_integrada(escena_actual(), salida))
     return false;
   unsigned short ancho = 32, alto = 48;
   const auto modelo_entrada = datos[0x85ac + salida * 14 + 13];

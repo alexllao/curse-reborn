@@ -76,5 +76,9 @@ bool comprobar_regreso_loro(Mazmorra &p, const std::string &opcion, Avanzar avan
                             {20, 165}})
     if (!ir(punto.first, punto.second))
       return false;
-  return detener("regreso_guardia");
+  if (detener("regreso_guardia"))
+    return true;
+  if (!ruta({{0, 165}}, 35))
+    return false;
+  return detener("valle_post_entrada");
 }

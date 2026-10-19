@@ -1192,7 +1192,8 @@ int main(int argc, char *argv[]) {
       if (mazmorra.escena_actual() != vistas_desarrollo[indice].escena)
         return fallo("F5/F6 no han respetado el orden de las escenas");
       if ((mazmorra.escena_actual() == 24 || mazmorra.escena_actual() == 25 ||
-           mazmorra.escena_actual() == 26 || mazmorra.escena_actual() == 27) &&
+           mazmorra.escena_actual() == 26 || mazmorra.escena_actual() == 27 ||
+           mazmorra.escena_actual() == 35) &&
           !comprobar_partida_tienda(mazmorra, argv[1]))
         return fallo("Guardar y cargar altera la imagen o la escena de una tienda");
       if (paso_vistas < cantidad_vistas * 2) {
@@ -1663,7 +1664,8 @@ int main(int argc, char *argv[]) {
           return fallo("No coincide el recorrido SDL de la población");
         if ((opcion == "--comprobar-final-poblacion-borde_puente" ||
              opcion == "--comprobar-final-poblacion-borde_loro_entrada" ||
-             opcion == "--comprobar-final-poblacion-borde_loro_regreso") &&
+             opcion == "--comprobar-final-poblacion-borde_loro_regreso" ||
+             opcion == "--comprobar-final-poblacion-borde_valle_post_entrada") &&
             !comprobar_partida_tienda(mazmorra, argv[1]))
           return fallo("No coincide la restauración DOS en EDGE o durante la visita al loro");
         if (opcion == "--comprobar-final-partidas" &&

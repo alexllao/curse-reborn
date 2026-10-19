@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y dos vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y tres vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -38,6 +38,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 30    | 25         | El probador de Benn             | CHANGE   |
 | 31    | 30         | El borde del mundo              | EDGE     |
 | 32    | 31         | La habitación del loro sabio    | WISE     |
+| 33    | 35         | La encrucijada del valle        | POST     |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -50,3 +51,5 @@ El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se inc
 Cuando exista el HUD propio, mostrará brevemente el nombre de la pantalla cada vez que se acceda a ella, también al regresar a una ya visitada. Reutilizará este catálogo. La duración y el aspecto quedan pendientes de decidir; este aviso todavía no está implementado.
 
 El título de la ventana incluye el número de vista, por ejemplo «Curse Reborn — 1: La mazmorra» y «Curse Reborn — 4: El fondo del lago». Se actualiza al entrar, volver y cargar una partida; los números DOS del archivo de guardado no cambian.
+
+POST35 se incorpora por la salida52 real de la calle de la adivina, después del segundo pago al mago y del guardia. El acceso F5/F6 conserva su papel de sesión nueva de desarrollo. Sus puzles del núcleo ya están documentados; los destinos del valle se activarán en SDL conforme se contrasten sus adaptadores. No confundir esta entrada con la integración SDL de las ocho escenas del valle.

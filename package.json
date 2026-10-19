@@ -83,6 +83,7 @@
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
+    "comprobar:poste": "node herramientas/gestionar_proyecto.mjs comprobar:poste",
     "comprobar:regreso-loro": "node herramientas/gestionar_proyecto.mjs comprobar:regreso-loro",
     "comprobar:borde": "node herramientas/gestionar_proyecto.mjs comprobar:borde",
     "comprobar:entrada-borde": "node herramientas/gestionar_proyecto.mjs comprobar:entrada-borde",

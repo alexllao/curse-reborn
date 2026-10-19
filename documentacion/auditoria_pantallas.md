@@ -38,3 +38,7 @@ La auditoría de32 vistas detecta también WISE31→64 por112, correspondiente a
 La revisión siguiente incorpora el adaptador MAGE22→WISE31 por72, contrastado como contrato aislado del cargador. No prueba todavía su activación argumental posterior. Quedan tres enlaces desde las vistas disponibles (52/74/112). POST35 tiene entrada y rutina contrastadas solo en el núcleo; sus caminos60/57/66/71 y puzles permanecen pendientes. Véase [el regreso del loro](regreso_loro.md).
 
 Las tandas nativas siguientes contrastan60/56/61, cargas alternativas55/71 y el recorrido57→DINO→58 con pelo, estornudo, sello y bolígrafo;54 se comprueba desde otra rama deCELESTE. No se añaden vistas SDL: quedan puzles y conexiones tardías pendientes. Alcance y pruebas en [ramas del valle](ramas_valle.md) y [DINO](dinosaurio.md).
+
+## Activación SDL de POST
+
+La salida52 desdeGYPSY20 ya está conectada aPOST35. `comprobar:poste` recorre la partida hasta esa entrada, compara64000 píxeles y comprueba guardar/restaurar y66 cambios entre33 vistas F5/F6. El núcleo del resto del valle ya está reconstruido hastaELECTRO39 y regreso16; su activación SDL se realiza por sala y sus rutas siguen pendientes en la plataforma hasta comprobarlas. Las anotaciones anteriores sobre52 y las32 vistas corresponden a revisiones previas.
