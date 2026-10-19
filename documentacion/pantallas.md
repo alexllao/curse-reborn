@@ -2,52 +2,53 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las42 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las43 vistas de desarrollo.
 
-| Vista | Escena DOS | Nombre                          | Recurso  |
-| ----- | ---------- | ------------------------------- | -------- |
-| 1     | 0          | La mazmorra                     | DUNGEON  |
-| 2     | 1          | El corredor de las estatuas     | CORRIDOR |
-| 3     | 2          | La caída al lago                | DROP     |
-| 4     | 3          | El fondo del lago               | LAKEBED  |
-| 5     | 8          | La poza de las cuevas           | POOL     |
-| 6     | 4          | Primer corredor de las cuevas   | CAVECOR  |
-| 7     | 5          | Segundo corredor de las cuevas  | CAVECOR  |
-| 8     | 6          | Tercer corredor de las cuevas   | CAVECOR  |
-| 9     | 9          | El pozo de los deseos           | WELL     |
-| 10    | 10         | La cueva del picapedrero        | CAVERBMI |
-| 11    | 7          | Cuarto corredor de las cuevas   | CAVECOR  |
-| 12    | 11         | La cueva de la catapulta        | SEESAW   |
-| 13    | 13         | La cueva del monitor            | CAVE     |
-| 14    | 14         | La cueva de los cuatro agujeros | CAVE     |
-| 15    | 12         | El pozo del cubo                | SHAFT    |
-| 16    | 15         | La salida al campo              | COUNTRY1 |
-| 17    | 16         | El camino del asaltante         | COUNTRY2 |
-| 18    | 21         | La entrada de Paso del Dragón   | DRAGON   |
-| 19    | 29         | La tienda de Frank              | FRANKS   |
-| 20    | 17         | La plaza de la fuente           | XROADS   |
-| 21    | 18         | La calle de las maravillas      | SORCERY  |
-| 22    | 22         | La tienda del mago              | MAGE     |
-| 23    | 19         | La calle de los disfraces       | ROGUE    |
-| 24    | 20         | La calle de la adivina          | GYPSY    |
-| 25    | 23         | La tienda abandonada            | DERELICT |
-| 26    | 28         | La posada Red Dragon            | INNSIDE  |
-| 27    | 24         | La tienda de disfraces de Benn  | BENN     |
-| 28    | 26         | La tienda de la adivina         | SALLY    |
-| 29    | 27         | La casa abandonada              | DERELICT |
-| 30    | 25         | El probador de Benn             | CHANGE   |
-| 31    | 30         | El borde del mundo              | EDGE     |
-| 32    | 31         | La habitación del loro sabio    | WISE     |
-| 33    | 35         | La encrucijada del valle        | POST     |
-| 34    | 34         | El mando del valle              | REMOTE   |
-| 35    | 33         | El barco del valle              | CELESTE  |
-| 36    | 32         | El valle del dinosaurio         | DINO     |
-| 37    | 38         | La nube del valle               | CLOUD    |
-| 38    | 37         | La cueva del detergente         | GHETTO   |
-| 39    | 36         | El interior del barco           | HOLD     |
-| 40    | 39         | La plataforma eléctrica         | ELECTRO  |
-| 41    | 43         | La llanura del ser azul         | SNOWAST4 |
-| 42    | 42         | La morsa y el amigo del hielo   | SNOWAST3 |
+| Vista | Escena DOS | Nombre                           | Recurso  |
+| ----- | ---------- | -------------------------------- | -------- |
+| 1     | 0          | La mazmorra                      | DUNGEON  |
+| 2     | 1          | El corredor de las estatuas      | CORRIDOR |
+| 3     | 2          | La caída al lago                 | DROP     |
+| 4     | 3          | El fondo del lago                | LAKEBED  |
+| 5     | 8          | La poza de las cuevas            | POOL     |
+| 6     | 4          | Primer corredor de las cuevas    | CAVECOR  |
+| 7     | 5          | Segundo corredor de las cuevas   | CAVECOR  |
+| 8     | 6          | Tercer corredor de las cuevas    | CAVECOR  |
+| 9     | 9          | El pozo de los deseos            | WELL     |
+| 10    | 10         | La cueva del picapedrero         | CAVERBMI |
+| 11    | 7          | Cuarto corredor de las cuevas    | CAVECOR  |
+| 12    | 11         | La cueva de la catapulta         | SEESAW   |
+| 13    | 13         | La cueva del monitor             | CAVE     |
+| 14    | 14         | La cueva de los cuatro agujeros  | CAVE     |
+| 15    | 12         | El pozo del cubo                 | SHAFT    |
+| 16    | 15         | La salida al campo               | COUNTRY1 |
+| 17    | 16         | El camino del asaltante          | COUNTRY2 |
+| 18    | 21         | La entrada de Paso del Dragón    | DRAGON   |
+| 19    | 29         | La tienda de Frank               | FRANKS   |
+| 20    | 17         | La plaza de la fuente            | XROADS   |
+| 21    | 18         | La calle de las maravillas       | SORCERY  |
+| 22    | 22         | La tienda del mago               | MAGE     |
+| 23    | 19         | La calle de los disfraces        | ROGUE    |
+| 24    | 20         | La calle de la adivina           | GYPSY    |
+| 25    | 23         | La tienda abandonada             | DERELICT |
+| 26    | 28         | La posada Red Dragon             | INNSIDE  |
+| 27    | 24         | La tienda de disfraces de Benn   | BENN     |
+| 28    | 26         | La tienda de la adivina          | SALLY    |
+| 29    | 27         | La casa abandonada               | DERELICT |
+| 30    | 25         | El probador de Benn              | CHANGE   |
+| 31    | 30         | El borde del mundo               | EDGE     |
+| 32    | 31         | La habitación del loro sabio     | WISE     |
+| 33    | 35         | La encrucijada del valle         | POST     |
+| 34    | 34         | El mando del valle               | REMOTE   |
+| 35    | 33         | El barco del valle               | CELESTE  |
+| 36    | 32         | El valle del dinosaurio          | DINO     |
+| 37    | 38         | La nube del valle                | CLOUD    |
+| 38    | 37         | La cueva del detergente          | GHETTO   |
+| 39    | 36         | El interior del barco            | HOLD     |
+| 40    | 39         | La plataforma eléctrica          | ELECTRO  |
+| 41    | 43         | La llanura del ser azul          | SNOWAST4 |
+| 42    | 42         | La morsa y el amigo del hielo    | SNOWAST3 |
+| 43    | 41         | El agujero del pez y el esquimal | SNOWAST2 |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -80,3 +81,5 @@ ELECTRO39 conserva el acceso68 con los cuatro objetos reales, la limpieza, el bo
 SNOWAST4/43, vista41: entrada74 desde el vestido real, bola134, lanzamiento y transformación. Salida80 hacia42 pendiente hasta integrar su destino. comprobar:ser-azul compara cuatro imágenes y guardar/restaurar; el núcleo incluye variantes y auditorías de sus opciones.
 
 La vista42 incorpora SNOWAST3 y los enlaces80/79 con43. Seis capturasSDL verifican desodorante y saludo; el recorrido nativo continúa por las zonas41/40 hasta cenizas y rescate. Las conexiones78/77 hacia41 se activan con la siguiente vista.
+
+La vista43 activa78/77 entre42 y41. Su entrada perfumada coincide enSDL y restaura la partida; los puzles del tablón, pez y caña ya se contrastan en el núcleo y se comprueban enSDL al habilitar40, donde está el tablón.

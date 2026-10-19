@@ -394,6 +394,16 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--esquimal',
+      nombre: 'esquimal',
+      referencia: 'morsa',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: ['esquimal_entrada'],
+      alcance:
+        'entrada78 desde el perfume real y conservación de la partida; una imagen y restauración; el puzle continúa con el tablón de40',
+    },
+    {
       argumento: '--morsa',
       nombre: 'morsa',
       referencia: 'morsa',
@@ -464,6 +474,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--regreso-benn',
       '--ser-azul',
       '--morsa',
+      '--esquimal',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
