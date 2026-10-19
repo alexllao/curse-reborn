@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:CF34",
+      "nombre": "Reciclado de los cuatro grupos de la entrada del palacio",
+      "comentario": "CF34–CFA8:2D98 firmado>=600 restablece x=-20/-30/-40/-50, y152/153/155/157 y solo fases18/23/28 de registros2D33..2D96. Siete límites y recorrido real comparados. mazmorra.cpp."
+    },
+    {
+      "direccion": "0000:B68D",
+      "nombre": "Secuencia de los cuatro carámbanos del palacio",
+      "comentario": "B68D–B73D/3BFB: IDs136–139; bits1/2 de35CA, reset de error, puerta diferida en último acierto, destinoentidadX+7/145, AAFA/AB03/AB0C/AB15 y96E7. Conserva campos omitidos y puntos.72 variantes y secuencia real hasta83, ocho capturasSDL/restauración. hielo.cpp."
+    },
+    {
       "direccion": "0000:CF26",
       "nombre": "Límite de cámara al llegar la criatura del lago",
       "comentario": "CF26–CF33:2CD1=34 escribe358F=0, sin comprobar actividad.15 variantes, llegada81 y transporte real hasta82. motor/entidades/mazmorra.cpp."

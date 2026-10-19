@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_entrada_palacio.hpp"
 
 // 81/CF26/B579/B5D4: conserva rescate, entrada, salto opcional y cenizas de la misma partida.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -30,5 +31,8 @@ bool comprobar_lago_helado_sdl(Mazmorra &p, const std::string &opcion, Avanzar a
     return false;
   if (detener("lago_cenizas"))
     return true;
-  return avanzar(64) && detener("lago_criatura_64");
+  if (!avanzar(64))
+    return false;
+  return detener("lago_criatura_64") ||
+         comprobar_entrada_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

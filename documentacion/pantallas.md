@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las45 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las46 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                           | Recurso  |
 | ----- | ---------- | -------------------------------- | -------- |
@@ -49,6 +49,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 41    | 43         | La llanura del ser azul          | SNOWAST4 |
 | 44    | 40         | La cornisa de los amigos         | SNOWAST1 |
 | 45    | 44         | El lago helado                   | ICELAKE  |
+| 46    | 45         | La entrada del palacio de hielo  | ICEPAL   |
 | 42    | 42         | La morsa y el amigo del hielo    | SNOWAST3 |
 | 43    | 41         | El agujero del pez y el esquimal | SNOWAST2 |
 
@@ -89,3 +90,5 @@ La vista43 activa78/77 entre42 y41. Su entrada perfumada coincide enSDL y restau
 La vista44 habilita76/75 entre41 y40 y completa enSDL los puzles de las cuatro zonas nevadas hasta pedir81. catorce capturas de tablón, pez, entrega, caña, hielo, cenizas y cornisa coinciden; MAP1 ySPR3 se seleccionan por la tabla original784E. La llegada a44/ICELAKE sigue pendiente.
 
 La vista45 habilita81 desde la cornisa, el salto135 y el transporte mediante131. Seis imágenesSDL y restauración coinciden;82 hacia el palacio permanece como continuación pendiente.
+
+La vista46 habilita82, reproduce los cuatro carámbanos y abre83 según el original. Ocho imágenesSDL incluyen error y aciertos; el interior de83 permanece pendiente de integración.

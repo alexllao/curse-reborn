@@ -39,6 +39,19 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 32 || escena == 33 || escena == 34 || escena == 36 || escena == 39)
     return actualizar_ramas_valle(datos);
+  if (escena == 45) {
+    // CF34–CFA8: recicla los cuatro grupos flotantes conservando referencias y contadores.
+    if (con_signo(palabra(datos, 0x2d98)) >= 600) {
+      static constexpr Palabra alturas[] = {152, 153, 155, 157};
+      for (unsigned int i = 0; i < 4; ++i) {
+        const auto entidad = static_cast<Palabra>(0x2d33 + i * 33);
+        guardar(datos, entidad + 2, static_cast<Palabra>(-20 - static_cast<int>(i) * 10));
+        guardar(datos, entidad + 4, alturas[i]);
+        datos[entidad + 18] = datos[entidad + 23] = datos[entidad + 28] = 0;
+      }
+    }
+    return true;
+  }
   if (escena == 44) {
     // CF26–CF33: la criatura del lago bloquea el desplazamiento derecho al llegar a cuadro34.
     if (datos[0x2cd1] == 34)

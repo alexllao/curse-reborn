@@ -15,15 +15,59 @@ void actor(unsigned char *d, Palabra p, Palabra entidad, Palabra intervalo, Pala
   if (c != 0xffff)
     guardar(d, p + 8, c);
 }
+// B68D–B73D: conserva la secuencia de los cuatro carámbanos y los canales omitidos de la puerta.
+ResultadoMenu pulsar_carambano(unsigned char *d, Palabra id) {
+  const auto indice = static_cast<Palabra>(id - 136);
+  const auto estado = static_cast<unsigned char>((d[0x35ca] >> 1) & 3);
+  if (indice == 0)
+    d[0x35ca] = static_cast<unsigned char>((d[0x35ca] & 0xf9) | 2);
+  else if (indice == 1)
+    d[0x35ca] = static_cast<unsigned char>((d[0x35ca] & 0xf9) | (estado == 1 ? 4 : 0));
+  else if (indice == 2)
+    d[0x35ca] = static_cast<unsigned char>((d[0x35ca] & 0xf9) | (estado == 2 ? 6 : 0));
+  else if (estado == 3) {
+    guardar(d, 0x009c, 0x2c4c);
+    guardar(d, 0x009e, 0x0109);
+    guardar(d, 0x00a0, 0xaa98);
+    guardar(d, 0x00a4, 0xaa9c);
+    guardar(d, 0x00a6, 0x2c6d);
+    guardar(d, 0x00a8, 0x0109);
+    guardar(d, 0x00ae, 0xaacb);
+  } else
+    d[0x35ca] &= 0xf9;
+  static constexpr Palabra guiones[] = {0xaafa, 0xab03, 0xab0c, 0xab15};
+  const auto entidad = static_cast<Palabra>(0x2caf + indice * 33);
+  guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + 7));
+  guardar(d, 0x1a3a, 145);
+  guardar(d, 0x0ad7, guiones[indice]);
+  guardar(d, 0x0adc, 0x96e7);
+  unsigned short pasos = 0;
+  return iniciar_accion(d, pasos) ? ResultadoMenu::accion : ResultadoMenu::error;
+}
 } // namespace
 // B579/B5D4: recoge exactamente los destinos, actores y puntuación de las dos acciones del lago.
 ResultadoMenu ejecutar_interaccion_hielo(unsigned char *d, unsigned short manejador,
                                          unsigned short id, const ServicioSonido &sonido) {
-  if (palabra(d, 0x8082) != 44)
+  const auto escena = palabra(d, 0x8082);
+  if (escena != 44 && escena != 45)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
+  if (escena == 45) {
+    if (manejador == 0x3b53 && palabra(d, 0xb638) == 0xffff && palabra(d, 0xb634) == 2 &&
+        id >= 136 && id <= 139)
+      return pulsar_carambano(d, id);
+    if (id != 76 && id != 124 && (id < 136 || id > 139))
+      return ResultadoMenu::pendiente;
+    if (manejador == 0x384a)
+      return ResultadoMenu::actualizado;
+    if (manejador == 0x2fca || manejador == 0x3143 || manejador == 0x3b53) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    return ResultadoMenu::pendiente;
+  }
   const bool salto = manejador == 0x3143 && id == 135;
   const bool cenizas =
       manejador == 0x3b53 && id == 131 && palabra(d, 0xb634) == 5 && palabra(d, 0xb638) == 0xffff;

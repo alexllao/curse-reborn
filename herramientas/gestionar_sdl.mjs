@@ -394,6 +394,25 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--entrada-palacio',
+      nombre: 'entrada_palacio',
+      referencia: 'entrada_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:entrada-palacio'],
+      hitos: [
+        'palacio_entrada',
+        'palacio_control',
+        'palacio_ante_botones',
+        'palacio_error_139',
+        'palacio_boton_136',
+        'palacio_boton_137',
+        'palacio_boton_138',
+        'palacio_boton_139',
+      ],
+      alcance:
+        'llegada82, error y secuencia de los cuatro carámbanos; ocho imágenes y restauración',
+    },
+    {
       argumento: '--lago-helado',
       nombre: 'lago_helado',
       referencia: 'lago_helado',
@@ -519,6 +538,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--esquimal',
       '--rescate-nieve',
       '--lago-helado',
+      '--entrada-palacio',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

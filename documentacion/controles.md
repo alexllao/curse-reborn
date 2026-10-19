@@ -130,3 +130,5 @@ La vista43 añade el agujero del pez y el esquimal (SNOWAST2), con78/77 y86 camb
 F5/F6 incluye44 vistas hasta la cornisa de los amigos (SNOWAST1);88 cambios comprobados. La navegación normal76/75 conserva tablón, perfume y liberaciones.
 
 La vista45 añade el lago helado (ICELAKE), con salto y cenizas mediante el menú original.90 cambiosF5/F6 contrastados.
+
+La vista46 añade la entrada del palacio (ICEPAL) y el puzle de los cuatro carámbanos.92 cambiosF5/F6 contrastados.
