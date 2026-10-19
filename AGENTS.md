@@ -281,3 +281,15 @@ El recorrido vuelve por58 aPOST, se aproxima850/145 y925/140 e inserta99 con116.
 La acción del pase abre2CD0 y el propio guion solicita66 antes de agotar256 pasos. No añadir otro clic después de esa solicitud ni tratarla como una permanencia enPOST. La prueba se detiene antes de cargarCLOUD38. Resultado:6.286 casos/pasos y cuatro composiciones coincidentes, con DS completo y azar en cada paso real. Las imágenes muestran destinatario con correo, pase recibido, puerta antes del pase y petición66.
 
 **Ya está contrastada la continuidad grabación→correo→entrega→pase→solicitud66 en el núcleo.** La nube38, el interior de la cueva, la combinación100/107 y las demás rutas/puzles del valle todavía no quedan resueltos. Las escenas32–38 siguen fuera del catálogo SDL/F5/F6. No incrementar las32 vistas ni declarar terminado el valle por completar esta rama. Los decorados ampliados siguen aparcados; contador, sonido, marcos y monitor conservados.
+
+## Preferencia de mejoras opcionales (Àlex, 19 de octubre)
+
+La entrega fiel debe dejar las mejoras adicionales desactivadas por defecto. Un futuro menú reunirá las opciones nuevas para activarlas individualmente. Esta preferencia es un objetivo pendiente de unificar: no afirmar que todos los valores iniciales actuales ya lo cumplen. Los controles originales y las correcciones de errores no son efectos opcionales. Conservar los atajos documentados hasta integrar ese menú; no reactivar los decorados ampliados.
+
+## CLOUD38: entrada y deriva contrastadas
+
+`comparar:nube --muestra` retoma puerta_solicitud66 de entrega-grabacion y carga66 desdePOST35 conLOST.BRD. DS3598 aún vale58 antes de cargar: la petición66 es el retorno del paso, ya comprobado por el predecesor. C8F9–CADE trasladada aactualizar_nube: diferencias firmadas dehistorial35C5/35B7, excepciones9808/modelo, parada por4/-4, reciclado único de cuatro nubes y azar3/50/2 en orden.294 variantes aisladas y256 llamadas persistentes,128 pasos de entrada, cuatro tramos64 alternando8/4 y32 soltando:1.388 casos/pasos y dos composiciones. Recogida121 y regreso67 pendientes. No habilitar CLOUD ni32–35 enSDL por esta entrada. Documentación:nube_del_valle.md.
+
+SDL libera flechas al perder foco/minimizar. Las flechas ya estaban implementadas; no se añade otro modelo de movimiento. La preferencia del menú opcional se documenta como pendiente de unificación, sin afirmar que todos los valores iniciales existentes ya la cumplen.
+
+Validación de esta tanda: `pnpm calidad` correcto (150 C++,57 Python); `comprobar:jugabilidad` correcto (658 casos/pasos originales y dos capturas SDL, flechas y ratón); `comparar:entrega-grabacion` repetido con6.286 casos/pasos y cuatro composiciones coincidentes; ensamblador284 comentarios y dos incidencias previas. No se ha comprobado manualmente Alt+Tab; la liberación de foco está compilada en SDL. Siguiente: recoger121 con5E68–5E97 conservando359A después de886B, caída/regreso67; no deformar ni inventar el movimiento. Las mejoras opcionales quedan como criterio pendiente para un futuro menú, no como migración de valores iniciales ya completada.

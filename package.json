@@ -86,6 +86,7 @@
     "comprobar:regreso-loro": "node herramientas/gestionar_proyecto.mjs comprobar:regreso-loro",
     "comprobar:borde": "node herramientas/gestionar_proyecto.mjs comprobar:borde",
     "comprobar:entrada-borde": "node herramientas/gestionar_proyecto.mjs comprobar:entrada-borde",
+    "comparar:nube": "node herramientas/gestionar_proyecto.mjs comparar:nube",
     "comparar:entrega-grabacion": "node herramientas/gestionar_proyecto.mjs comparar:entrega-grabacion",
     "comparar:grabacion-completa": "node herramientas/gestionar_proyecto.mjs comparar:grabacion-completa",
     "comparar:grabacion-valle": "node herramientas/gestionar_proyecto.mjs comparar:grabacion-valle",

@@ -937,6 +937,10 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido actualizar el audio del juego");
     SDL_Event evento;
     while (SDL_PollEvent(&evento)) {
+      // SDL puede omitir KEY_UP al cambiar de aplicación; no dejar una dirección retenida.
+      if (evento.type == SDL_EVENT_WINDOW_FOCUS_LOST || evento.type == SDL_EVENT_WINDOW_MINIMIZED)
+        for (const auto bit : {1, 2, 4, 8})
+          mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
       if (evento.type == SDL_EVENT_QUIT ||
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla < 3 || comprobar)))

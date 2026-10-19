@@ -1044,3 +1044,14 @@ componer_panel_partidas(const unsigned char *datos, const unsigned char *fuente,
   return motor::componer_panel_partidas(datos, fuente, longitud_fuente, archivo, longitud_archivo,
                                         modo, editando != 0, nombre, letras, destino);
 }
+
+// C8F9 aislada: devuelve DS y las cuatro palabras del generador sin servicios de plataforma.
+extern "C" EXPORTAR int procesar_nube(unsigned char *datos, unsigned short *palabras) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const bool valido = motor::actualizar_nube(datos, azar);
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  return valido ? 1 : 0;
+}

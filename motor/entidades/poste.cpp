@@ -114,4 +114,47 @@ bool actualizar_poste(unsigned char *d, EstadoAleatorio &azar, const RecursosEnt
   guardar(d, descriptor + 5, static_cast<Palabra>(valor - limite));
   return crear_entidad(d, azar, recursos, descriptor).valido;
 }
+// C8F9–CADE: deriva firmada de Brad y cuatro nubes; solo reciclar una nube consume azar.
+bool actualizar_nube(unsigned char *d, EstadoAleatorio &azar) {
+  const int deriva = con_signo(static_cast<Palabra>(palabra(d, 0x35c5) - 150)) / 10;
+  guardar(d, 0x2c2d, static_cast<Palabra>(palabra(d, 0x2c2d) - deriva));
+  const auto cuadro = d[0x2c2c];
+  if (palabra(d, 0x2c3b) != 0x9808 && d[0x358c] == 0xff &&
+      ((cuadro <= 8 && deriva >= 4) || (cuadro >= 0x80 && deriva <= -4))) {
+    guardar(d, 0x359a, 0);
+    guardar(d, 0x0dfa, 0);
+    guardar(d, 0x2c3b, 0);
+    guardar(d, 0x2c40, 0);
+    guardar(d, 0x2c45, 0);
+    d[0x2c2c] = cuadro <= 8 ? 0 : 0x80;
+  }
+  const int viento = con_signo(static_cast<Palabra>(palabra(d, 0x35b7) - 150)) / 10;
+  for (unsigned int i = 0; i < 4; ++i) {
+    const auto x = static_cast<Palabra>(0x2c6f + i * 33);
+    guardar(d, x, static_cast<Palabra>(palabra(d, x) - viento));
+  }
+  for (unsigned int i = 0; i < 4; ++i) {
+    const auto actor = static_cast<Palabra>(0x2c6d + i * 33);
+    const int x = con_signo(palabra(d, actor + 2));
+    if (x > 480)
+      guardar(d, actor + 2, static_cast<Palabra>(x - 600));
+    else if (x <= -160)
+      guardar(d, actor + 2, static_cast<Palabra>(x + 600));
+    else
+      continue;
+    Palabra valor = 0;
+    if (!generar_aleatorio(azar, 3, valor))
+      return false;
+    d[actor + 1] = static_cast<unsigned char>(valor + 4);
+    if (!generar_aleatorio(azar, 50, valor))
+      return false;
+    guardar(d, actor + 4, static_cast<Palabra>(valor + i * 50 - 5));
+    if (!generar_aleatorio(azar, 2, valor))
+      return false;
+    guardar(d, actor + 21, static_cast<Palabra>(0xb2e0 + valor * 2));
+    d[actor + 23] = 0;
+    d[actor + 24] = d[actor + 25] = 1;
+  }
+  return true;
+}
 } // namespace motor

@@ -114,3 +114,9 @@ Al terminar el arranque se cierran los paneles y comienza de nuevo la música, c
 El catálogo incluye Benn, la tienda de la adivina, la segunda casa abandonada y el probador. Las puertas35/38/39 y sus regresos46/48/49 conservan la partida; el atajo sigue abriendo una sesión independiente.
 
 F5/F6 añade el borde del mundo y la habitación del loro:32 vistas,64 cambios comprobados. La partida normal conserva el inventario al cruzar el acantilado y regresar a la casa abandonada. Los atajos empiezan otra sesión y no entregan guantes ni cuerda. Los marcos, filtros y teclas existentes conservan su funcionamiento.
+
+## Mejoras opcionales y controles fieles
+
+Las flechas ya permiten mover a Brad cuando el guion lo autoriza, usando el movimiento y las colisiones originales. Al perder el foco o minimizar se liberan las direcciones retenidas; al volver hay que pulsarlas de nuevo.
+
+Àlex pide que las mejoras adicionales estén desactivadas por defecto y se agrupen en un futuro menú para activarlas individualmente. Esta unificación sigue pendiente: los valores iniciales actuales de todos los efectos y ayudas aún no se han revisado. Conservar los atajos de esta página hasta integrar el menú. Las correcciones de errores de entrada no requieren una opción para activarlas.

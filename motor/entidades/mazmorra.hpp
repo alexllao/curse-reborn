@@ -18,4 +18,6 @@ bool actualizar_rutina_escena(unsigned char *datos, EstadoAleatorio &azar,
 void actualizar_escena_cinco(unsigned char *datos);
 // 1791–17A2: despacha solo las escenas con rutina integrada; la escena cero no tiene manejador.
 bool actualizar_rutina_escena(unsigned char *datos);
+// C8F9–CADE: conserva la deriva y el reciclado original de CLOUD38.
+bool actualizar_nube(unsigned char *datos, EstadoAleatorio &azar);
 } // namespace motor

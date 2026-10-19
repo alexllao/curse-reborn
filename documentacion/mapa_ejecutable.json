@@ -3,6 +3,11 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:C8F9",
+      "nombre": "Deriva de Brad y reciclado de las cuatro nubes",
+      "comentario": "C8F9–CADE divide con signo y truncamiento hacia cero las diferencias35C5/35B7 menos150 por10. Resta la primera aBrad; conserva excepciones9808/modelo y umbrales4/-4. Resta la segunda a cuatro nubes y recicla una sola vez fuera de(-160,480], con consumos3/50/2 en orden y segundo canalB2E0/B2E2. comparar:nube:294 variantes aisladas,256 pasos aislados y entrada66 real más impulso alternado;1388 casos/pasos y dos composiciones. Recogida121/regreso67 y SDL del valle todavía pendientes."
+    },
+    {
       "direccion": "0000:A8AE",
       "nombre": "Respuesta a la cinta sin grabar",
       "comentario": "3F5C/A8AE–A8DC prepara141-cámara/165 y96DE/96E7, actor2D12 con2805/1A2F; conserva105, puntuación y camposA2/A4. Comparación aislada de cintas105/106 en comparar:entrega-grabacion; no se presenta esta variante como otra entrega persistente."
