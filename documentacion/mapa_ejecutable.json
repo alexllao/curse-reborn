@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:CF26",
+      "nombre": "Límite de cámara al llegar la criatura del lago",
+      "comentario": "CF26–CF33:2CD1=34 escribe358F=0, sin comprobar actividad.15 variantes, llegada81 y transporte real hasta82. motor/entidades/mazmorra.cpp."
+    },
+    {
+      "direccion": "0000:B579",
+      "nombre": "Salto recuperado en el lago helado",
+      "comentario": "B579–B5D1: destino91-cámara/180, A912/A943/A96B, dos actores diferidos y+2;512 pasos reales recuperan control y conservan131. hielo.cpp, comparar:lago-helado."
+    },
+    {
+      "direccion": "0000:B5D4",
+      "nombre": "Cenizas que llaman a la criatura del lago",
+      "comentario": "B5D4–B68A exige44, retira131,358D=0/358F=500, destino102-cámara/177, cinco actores y+5. Partida real81→solicitud82, seis imágenesSDL/restauración junto con salto135. hielo.cpp."
+    },
+    {
       "direccion": "0000:CBD0",
       "nombre": "Cornisa, perfume y proximidad en las cuatro zonas nevadas",
       "comentario": "CBD0–CF25: rescate de40, desmayo y coordinación del pez de41, proximidad de42 y reacción de43.1152 variantes, recorrido real con mismo inventario y azar. Traslado motor/entidades/nieve.cpp; documentacion/nieve.md."

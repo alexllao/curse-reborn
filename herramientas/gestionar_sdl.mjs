@@ -394,6 +394,23 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--lago-helado',
+      nombre: 'lago_helado',
+      referencia: 'lago_helado',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:lago-helado'],
+      hitos: [
+        'lago_entrada',
+        'lago_control',
+        'lago_ante_cenizas',
+        'lago_salto135',
+        'lago_cenizas',
+        'lago_criatura_64',
+      ],
+      alcance:
+        'rescate y llegada81, salto recuperado y cenizas que llaman a la criatura; seis imágenes y restauración',
+    },
+    {
       argumento: '--rescate-nieve',
       nombre: 'rescate_nieve',
       referencia: 'morsa',
@@ -501,6 +518,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--morsa',
       '--esquimal',
       '--rescate-nieve',
+      '--lago-helado',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

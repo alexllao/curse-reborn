@@ -39,6 +39,12 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 32 || escena == 33 || escena == 34 || escena == 36 || escena == 39)
     return actualizar_ramas_valle(datos);
+  if (escena == 44) {
+    // CF26–CF33: la criatura del lago bloquea el desplazamiento derecho al llegar a cuadro34.
+    if (datos[0x2cd1] == 34)
+      guardar(datos, 0x358f, 0);
+    return true;
+  }
   if (escena >= 40 && escena <= 43)
     return actualizar_nieve(datos);
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||

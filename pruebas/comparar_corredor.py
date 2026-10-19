@@ -10,6 +10,7 @@ from comparar_objetos import ComparacionObjetos, guardar, palabra
 
 BANCOS_ESCENA = {
     43: 'SNOWAST4',
+    44: 'ICELAKE',
     42: 'SNOWAST3',
     41: 'SNOWAST2',
     40: 'SNOWAST1',

@@ -182,6 +182,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     entrada_nieve: 'comparar_entrada_nieve.py',
     ser_azul: 'comparar_ser_azul.py',
     morsa: 'comparar_morsa.py',
+    lago_helado: 'comparar_lago_helado.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -218,6 +219,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:lago-helado':
+      await gestionarSdl('comprobar:poblacion', ['--lago-helado']);
+      break;
     case 'comprobar:rescate-nieve':
       await gestionarSdl('comprobar:poblacion', ['--rescate-nieve']);
       break;
@@ -411,6 +415,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:lago-helado':
+      compararAcciones('lago_helado', argumentos);
       break;
     case 'comparar:morsa':
       compararAcciones('morsa', argumentos);

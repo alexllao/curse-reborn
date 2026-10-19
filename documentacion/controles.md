@@ -128,3 +128,5 @@ La vista42 añade la morsa y el amigo del hielo (SNOWAST3).84 cambiosF5/F6 contr
 La vista43 añade el agujero del pez y el esquimal (SNOWAST2), con78/77 y86 cambiosF5/F6 contrastados.
 
 F5/F6 incluye44 vistas hasta la cornisa de los amigos (SNOWAST1);88 cambios comprobados. La navegación normal76/75 conserva tablón, perfume y liberaciones.
+
+La vista45 añade el lago helado (ICELAKE), con salto y cenizas mediante el menú original.90 cambiosF5/F6 contrastados.

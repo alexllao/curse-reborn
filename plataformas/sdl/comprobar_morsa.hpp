@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_lago_helado.hpp"
 #include <utility>
 
 // CBD0–CF25/B1F8–B576: conserva el recorrido real por las cuatro zonas nevadas y sus regresos.
@@ -105,5 +106,8 @@ bool comprobar_morsa_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar
     return false;
   if (detener("rescate_cornisa"))
     return true;
-  return abrir() && elegir(4) && elegir(1) && detener("rescate_ayuda");
+  if (!abrir() || !elegir(4) || !elegir(1))
+    return false;
+  return detener("rescate_ayuda") ||
+         comprobar_lago_helado_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }
