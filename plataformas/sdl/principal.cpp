@@ -22,6 +22,8 @@
 #include "registro.hpp"
 #include "filtros.hpp"
 #include "contador_fps.hpp"
+#include "avisos_hud.hpp"
+#include "comprobar_avisos_hud.hpp"
 #include "tiempo_juego.hpp"
 #include "comprobar_tiempo.hpp"
 #include "vistas.hpp"
@@ -704,6 +706,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-avisos" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(SDL_INIT_VIDEO) && comprobar_avisos_hud(argv[3])
+               ? 0
+               : fallo("No coincide el aviso temporal");
+  }
   if (opcion == "--comprobar-tiempo" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_tiempo_juego(argv[3])
@@ -833,6 +841,7 @@ int main(int argc, char *argv[]) {
   const std::string carpeta = argv[1];
   Presentacion presentacion;
   ContadorFps contador_fps(!comprobar || comprobar_fps);
+  AvisosHud avisos(!comprobar);
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
   if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
@@ -1022,6 +1031,7 @@ int main(int argc, char *argv[]) {
           const bool bajar = evento.key.key == SDLK_MINUS || evento.key.key == SDLK_KP_MINUS;
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
+          avisos.mostrar("Volumen: " + std::to_string(mazmorra.nivel_volumen()) + "%");
           continue;
         }
         if (evento.key.key == SDLK_F2) {
@@ -1038,6 +1048,7 @@ int main(int argc, char *argv[]) {
         if (evento.key.key == SDLK_F11) {
           if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
             return fallo("No se ha podido cambiar el filtro de pantalla");
+          avisos.mostrar(std::string("Filtro: ") + presentacion.filtros.nombre_actual());
           continue;
         }
         if (evento.key.key == SDLK_F3) {
@@ -1855,6 +1866,8 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido dibujar el contador FPS");
     if (!presentacion.marcos.reiniciando() && !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
+    if (!presentacion.marcos.reiniciando() && !avisos.dibujar(presentacion.dibujante))
+      return fallo("No se ha podido dibujar el aviso temporal");
     if (!comprobar && !presentacion.cursor.actualizar(
                           presentacion.ventana, presentacion.dibujante, mazmorra,
                           pantalla >= 3 && !presentacion.marcos.reiniciando(),

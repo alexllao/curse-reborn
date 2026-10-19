@@ -13,6 +13,12 @@ public:
   void cerrar();
   // F11 recorre original, suavizado, líneas de escaneo, CRT suave, xBRZ 2x y 2xSaI.
   bool alternar(SDL_Renderer *dibujante, SDL_Texture *original, const unsigned char *rgba);
+  // Nombre breve para el aviso blanco de F11, sin depender de la consola.
+  const char *nombre_actual() const {
+    static constexpr const char *nombres[] = {"Original",  "Suavizado", "Lineas de escaneo",
+                                              "CRT suave", "xBRZ 2x",   "2xSaI"};
+    return nombres[modo];
+  }
   // Actualiza la textura original y, cuando corresponde, la imagen auxiliar de 640 por 400.
   bool actualizar(SDL_Texture *original, const unsigned char *rgba);
   // El modo cero conserva exactamente la textura original y su muestreo por vecino más próximo.

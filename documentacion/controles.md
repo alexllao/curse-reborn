@@ -146,3 +146,5 @@ Vista51: habitación del gato mecánico.102 cambiosF5/F6 comprobados; en partida
 Vista52: habitación de la lupa, con entrada93 y regreso94.104 cambiosF5/F6 contrastados; el recorrido normal conserva el gato149 y la lupa150 al volver a los dados.
 
 Vista53: habitación del arma, entrada95 y regreso96. La escoba baja la repisa en partida normal;106 cambiosF5/F6 contrastados.
+
+F11 y +/− muestran un aviso de letras blancas en la esquina superior izquierda: nombre del filtro o porcentaje de volumen. Entra en120ms,permanece1,2s yse desvanece en500ms. Las pulsaciones seguidas actualizan yprolongan eltexto. No pausa la partida ysu tamaño sigue la resolución física.

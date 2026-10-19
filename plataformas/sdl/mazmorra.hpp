@@ -171,6 +171,10 @@ public:
     return audio.alternar_silencio();
   }
 
+  // Consulta el porcentaje aplicado por la salida común para el aviso temporal.
+  unsigned int nivel_volumen() const {
+    return audio.nivel_volumen();
+  }
   // Modifica la ganancia común solicitada por los atajos + y - sin afectar la partida.
   bool ajustar_volumen(int cambio) {
     return audio.ajustar_volumen(cambio);

@@ -1060,6 +1060,17 @@ export async function gestionarSdl(accion, argumentos) {
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
     return;
   }
+  if (accion === 'comprobar:avisos') {
+    const programa = await compilar();
+    const carpeta = join(raiz, 'trabajo', 'comprobacion_avisos');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-avisos', join(carpeta, 'aviso')], {
+      ...process.env,
+      SDL_VIDEODRIVER: 'dummy',
+    });
+    console.log('Avisos SDL: letras blancas, fundido, desaparición y encuadre conservado.');
+    return;
+  }
   if (accion === 'comprobar:tiempo') {
     const carpeta = join(raiz, 'trabajo', 'comprobacion_tiempo');
     mkdirSync(carpeta, { recursive: true });
