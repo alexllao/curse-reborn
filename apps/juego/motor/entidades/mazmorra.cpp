@@ -129,6 +129,77 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  // CFD2–D113: recorre los cuatro reflectores y destruye el emisor al cerrar el circuito.
+  if (palabra(d, 0x8082) == 56) {
+    // 10EC/1119–1129/1791: esta sala no usa manejadores de entidad >=0400.
+    // AX conserva el tipo del último actor activo; BX recibe CFD2 del despachador.
+    // F29A ordena también actores inactivos: conservar estas escrituras de D10C.
+    if (!d[0x2d75]) {
+      Palabra ax = 0x0f31;
+      for (Palabra i = 0; i < 68; ++i) {
+        const auto actor = static_cast<Palabra>(0x2c4c + i * 33);
+        if (d[actor] != 1)
+          continue;
+        ax = palabra(d, actor + 14);
+        if (con_signo(ax) >= 0x400)
+          return false;
+      }
+      guardar(d, 0x2d77, ax);
+      guardar(d, 0x2d79, 0xcfd2);
+      return true;
+    }
+    if (d[0x2e1a] == 1) {
+      d[0x2d75] = 0;
+      constexpr Palabra canales[] = {0x2da6, 0x2dc7, 0x2de8, 0x2e09, 0x2e2a};
+      for (const Palabra canal : canales) {
+        guardar(d, canal, 0x1a2e);
+        d[canal + 2] = 0;
+        d[canal + 3] = 18;
+        d[canal + 4] = 1;
+      }
+      constexpr Palabra banderas[] = {0x5379, 0x537f, 0x5381, 0x536f};
+      for (const Palabra bandera : banderas)
+        d[bandera] &= 0xfd;
+      Palabra ax = 0;
+      for (Palabra i = 0; i < 6; ++i) {
+        guardar(d, 0xb399, palabra(d, static_cast<Palabra>(0xb3c2 + i * 4)));
+        guardar(d, 0xb39b, palabra(d, static_cast<Palabra>(0xb3c4 + i * 4)));
+        constexpr Palabra campos[] = {0xb3a7, 0xb3ab, 0xb3af};
+        for (const Palabra campo : campos)
+          d[campo] = static_cast<unsigned char>(12 + i * 3);
+        const auto creada = crear_entidad(d, azar, recursos, 0xb396);
+        if (!creada.valido)
+          return false;
+        // B396 tiene flags01: 8BEA devuelve el banco; sin hueco, 8B80 conserva la base reservada.
+        ax = creada.creada ? recursos.segmento_original
+                           : static_cast<Palabra>(0x2c0a + d[0x3588] * 33);
+      }
+      guardar(d, 0x2d77, ax);
+      guardar(d, 0x2d79, 0xb396);
+      return true;
+    }
+    d[0x2db7] = d[0x2dd8] = d[0x2df9] = 3;
+    Palabra x = 257, y = 163;
+    if (d[0x2cd0] == 1 && d[0x2cd1] == 30) {
+      d[0x2db7] = 1;
+      x = static_cast<Palabra>(x - 183);
+      y = static_cast<Palabra>(y - 10);
+      if (d[0x2cf1] == 1 && d[0x2cf2] == 27) {
+        d[0x2dd8] = 1;
+        x = static_cast<Palabra>(x - 40);
+        y = static_cast<Palabra>(y + 35);
+        if (d[0x2d12] == 1 && d[0x2d13] == 34) {
+          d[0x2df9] = 1;
+          x = static_cast<Palabra>(x + 239);
+          if (d[0x2d33] == 1 && d[0x2d34] == 14)
+            d[0x2e1a] = 1;
+        }
+      }
+    }
+    guardar(d, 0x2d77, x);
+    guardar(d, 0x2d79, y);
+    return true;
+  }
   if (palabra(d, 0x8082) == 38)
     return actualizar_nube(d, azar);
   if (palabra(d, 0x8082) == 35)

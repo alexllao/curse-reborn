@@ -1071,3 +1071,22 @@ extern "C" EXPORTAR int procesar_nube(unsigned char *datos, unsigned short *pala
 extern "C" EXPORTAR int procesar_rutina_nieve(unsigned char *datos) {
   return motor::actualizar_rutina_escena(datos) ? 1 : 0;
 }
+
+// 10EC–17A2/CFD2: incluye el contexto que deja el recorrido de entidades, sin normalizar DS.
+extern "C" EXPORTAR int procesar_laser(unsigned char *datos, unsigned short *palabras,
+                                       bool (*dimensiones)(void *, unsigned short, unsigned short,
+                                                           unsigned short &, unsigned short &)) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
+                            unsigned short &alto) {
+    return (*static_cast<decltype(dimensiones) *>(contexto))(nullptr, 0x4000, indice, ancho, alto);
+  };
+  const motor::RecursosEntidades recursos{&dimensiones, consultar, 0x4000};
+  const bool valido = motor::actualizar_entidades(datos, azar, recursos) &&
+                      motor::actualizar_rutina_escena(datos, azar, recursos);
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  return valido ? 1 : 0;
+}

@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_laser_palacio.hpp"
 
 // B968/B9F4/BA1F: resuelve las poleas y rompe la ventana usando solo los útiles recogidos.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -61,5 +62,7 @@ bool comprobar_resolucion_palacio_sdl(Mazmorra &p, const std::string &opcion, Av
     return true;
   if (!accion(5, 148) || !avanzar(512))
     return false;
-  return detener("ventana_abierta");
+  if (detener("ventana_abierta"))
+    return true;
+  return comprobar_laser_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

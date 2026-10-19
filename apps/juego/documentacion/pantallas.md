@@ -116,3 +116,5 @@ Vista51: sala del gato149, entrada91 elegida por dados y regreso92. Se comprueba
 Vista52: lupa150, entrada93 y regreso94 con inventario persistente. Se conservan las tiradas de los dados y se revisan104 cambiosF5/F6. Las otras cuatro habitaciones laterales siguen pendientes.
 
 Vista53: arma151 de la repisa, caída con escoba141, recogida y regreso96.106 cambiosF5/F6 comprobados.
+
+La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro reflectores recuperables y gato bajo la reja. Nueve imágenesSDL y114 cambiosF5/F6 comprobados. La salida103 y su habitación de destino siguen pendientes. Véase [la documentación](laser_palacio.md).

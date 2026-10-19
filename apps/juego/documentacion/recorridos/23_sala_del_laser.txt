@@ -1,0 +1,3 @@
+Sala del láser (escena56)
+
+Saltar por la ventana abierta del corredor. Usar la lupa en el primer soporte, el cubito en el segundo, el carámbano en el tercero y el cristal en el último. Seleccionar primero la pieza y después el soporte. Una pieza equivocada se puede recoger para intentarlo de nuevo. Tras destruir el emisor, insertar el gato mecánico bajo la reja. La salida103 solicita la siguiente habitación, todavía pendiente de integración.

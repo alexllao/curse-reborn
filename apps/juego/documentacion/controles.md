@@ -160,3 +160,5 @@ Vista55: La habitación del cubito de hielo, entrada99/regreso100; 110 cambiosF5
 Vista56: La habitación del carámbano, entrada101/regreso102; 112 cambiosF5/F6 contrastados.
 
 Con los filtros F11, la mano original se compone antes de filtrar el fotograma, también en los paneles de partidas e información. Fuera de la imagen jugable se recupera la flecha del escritorio; al volver al modo original se conserva el cursor nativo. La mano filtrada se recorta al área del juego y no deja rastros.
+
+La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro reflectores recuperables y gato bajo la reja. Nueve imágenesSDL y114 cambiosF5/F6 comprobados. La salida103 y su habitación de destino siguen pendientes. Véase [la documentación](laser_palacio.md).

@@ -440,6 +440,26 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--laser-palacio',
+      nombre: 'laser_palacio',
+      referencia: 'laser_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'laser_entrada',
+        'laser_control',
+        'laser_pieza_erronea',
+        'laser_pieza_recuperada',
+        'laser_lupa',
+        'laser_cubito',
+        'laser_carambano',
+        'laser_cristal',
+        'laser_reja_32',
+      ],
+      alcance:
+        'entrada90, error y recuperación de pieza, cuatro reflectores, explosión y gato bajo la reja; nueve imágenes y restauración; destino103 pendiente',
+    },
+    {
       argumento: '--resolucion-palacio',
       nombre: 'resolucion_palacio',
       referencia: 'resolucion_palacio',
@@ -748,6 +768,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--arma-palacio',
       '--carambano-palacio',
       '--resolucion-palacio',
+      '--laser-palacio',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

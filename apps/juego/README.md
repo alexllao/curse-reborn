@@ -374,3 +374,5 @@ La vista55 añade la habitación del cubito de hielo, con su objeto153, entrada9
 La vista56 añade la habitación del carámbano, con su objeto154, entrada101 y regreso102. `pnpm comprobar:carambano-palacio` compara9 imágenes, restauración y112 cambiosF5/F6 desde el recorrido real de los laterales.
 
 Los seis laterales del palacio ya se recorren conservando los objetos y las tiradas. `pnpm comprobar:resolucion-palacio` verifica diez imágenesSDL de las poleas, aceite/cristal, silbato, combinación y ventana abierta. El salto está contrastado en el núcleo hasta90; la sala del láser siguiente aún está pendiente. El aviso blanco de F11 y volumen se verifica con `pnpm comprobar:avisos`.
+
+La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro reflectores recuperables y gato bajo la reja. Nueve imágenesSDL y114 cambiosF5/F6 comprobados. La salida103 y su habitación de destino siguen pendientes. Véase [la documentación](documentacion/laser_palacio.md).

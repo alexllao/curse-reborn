@@ -28,13 +28,20 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
     return ResultadoMenu::accion;
   }
   const bool dados = id == 140;
+  // 5FFD–6060: retirar un reflector conserva el soporte elegido, no la habitación de origen.
+  const bool reflector =
+      palabra(d, 0x8082) == 56 && (id == 150 || id == 153 || id == 154 || id == 145);
   const bool sobre_mesa = dados || id == 144 || id == 145;
-  const bool baja = id == 147 || (id >= 149 && id <= 154);
-  const Palabra entidad = dados || (id >= 149 && id <= 154) ? 0x2c4c
-                          : id == 141                       ? 0x2cf1
-                          : id == 144                       ? 0x2caf
-                                                            : 0x2c8e;
-  if (id == 144 || id == 145 || id == 149 || id == 150 || (id >= 152 && id <= 154))
+  const bool baja = !reflector && (id == 147 || (id >= 149 && id <= 154));
+  const Palabra entidad = reflector                           ? (palabra(d, 0x2cde) == id   ? 0x2cd0
+                                                                 : palabra(d, 0x2cff) == id ? 0x2cf1
+                                                                 : palabra(d, 0x2d41) == id ? 0x2d33
+                                                                                            : 0x2d12)
+                          : dados || (id >= 149 && id <= 154) ? 0x2c4c
+                          : id == 141                         ? 0x2cf1
+                          : id == 144                         ? 0x2caf
+                                                              : 0x2c8e;
+  if (!reflector && (id == 144 || id == 145 || id == 149 || id == 150 || (id >= 152 && id <= 154)))
     actualizar_oferta_silbato(d);
   if (dados) {
     guardar(d, 0x009c, 0x2d12);
@@ -45,7 +52,8 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
   guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + (id == 141 ? 9 : 5)));
   guardar(d, 0x1a3a,
           static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) +
-                               (dados       ? 25
+                               (reflector   ? 1
+                                : dados     ? 25
                                 : id == 141 ? 3
                                 : id == 149 ? -16
                                 : id == 153 ? -5
@@ -58,13 +66,13 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
   d[entidad + 18] = 0;
   d[entidad + 20] = 1;
   guardar(d, 0x0ad7,
-          sobre_mesa ? 0x96de
-          : baja     ? (d[0x358c] == 20 ? 0x96f6 : 0x96c0)
-                     : (d[0x358c] == 20 ? 0x9705 : 0x96cf));
+          sobre_mesa && !reflector ? 0x96de
+          : baja                   ? (d[0x358c] == 20 ? 0x96f6 : 0x96c0)
+                                   : (d[0x358c] == 20 ? 0x9705 : 0x96cf));
   guardar(d, 0x0adc,
-          sobre_mesa ? 0x96e7
-          : baja     ? (d[0x358c] == 20 ? 0x96ff : 0x96c9)
-                     : (d[0x358c] == 20 ? 0x970e : 0x96d8));
+          sobre_mesa && !reflector ? 0x96e7
+          : baja                   ? (d[0x358c] == 20 ? 0x96ff : 0x96c9)
+                                   : (d[0x358c] == 20 ? 0x970e : 0x96d8));
   unsigned short pasos = 0;
   if (!iniciar_accion(d, pasos))
     return ResultadoMenu::error;
@@ -77,7 +85,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 55)
+  if (escena < 46 || escena > 56)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
@@ -85,7 +93,8 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
   if (manejador == 0x563a &&
       ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
        (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150) ||
-       (escena >= 52 && escena <= 55 && id == escena + 99)))
+       (escena >= 52 && escena <= 55 && id == escena + 99) ||
+       (escena == 56 && (id == 150 || id == 153 || id == 154 || id == 145))))
     return recoger(d, id);
   if (manejador == 0x3b53 && palabra(d, 0xb638) == 0xffff && palabra(d, 0xb634) == 5 && id == 140) {
     if (!creacion.azar)
@@ -174,6 +183,60 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   const auto previo = palabra(d, 0xb638), verbo = palabra(d, 0xb634);
+  // BB8D–BC6E: los cuatro útiles pueden colocarse en cualquiera de los cuatro soportes.
+  if (escena == 56 && manejador == 0x3b53 && (verbo == 7 || verbo == 1)) {
+    const auto soporte = id;
+    const auto pieza = previo;
+    const auto imagen = pieza == 150   ? 30
+                        : pieza == 153 ? 27
+                        : pieza == 154 ? 34
+                        : pieza == 145 ? 14
+                                       : 0;
+    if (verbo == 7 && soporte >= 155 && soporte <= 158 && imagen) {
+      const auto entidad = static_cast<Palabra>(0x2cd0 + (soporte - 155) * 33);
+      if (d[entidad] == 1) {
+        marcar_accion_rechazada(d);
+        return ResultadoMenu::accion;
+      }
+      retirar_identificador(d, pieza);
+      guardar(d, entidad + 14, pieza);
+      d[entidad + 1] = static_cast<unsigned char>(imagen);
+      d[entidad] = 3;
+      guardar(d, 0x1a38, palabra(d, entidad + 2));
+      guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, entidad + 4) + 7));
+      guardar(d, 0x0ad7, 0x96cf);
+      guardar(d, 0x0adc, 0x96d8);
+      guardar(d, 0x009c, entidad);
+      guardar(d, 0x009e, 0x0107);
+      guardar(d, 0x00a0, 0xacbe);
+      return comenzar(d);
+    }
+    // BC71–BCDC: el gato mecánico eleva la reja cuando ya no está su protector.
+    if (verbo == 1 && ((id == 149 && previo == 159) || (id == 159 && previo == 149))) {
+      if (d[0x2d96]) {
+        marcar_accion_rechazada(d);
+        return ResultadoMenu::accion;
+      }
+      retirar_identificador(d, 149);
+      guardar(d, 0x1a38, 251);
+      guardar(d, 0x1a3a, 163);
+      guardar(d, 0x0ad7, 0xac5a);
+      guardar(d, 0x0adc, 0xac76);
+      guardar(d, 0x0ae1, 0xac8b);
+      guardar(d, 0x009c, 0x2e3b);
+      guardar(d, 0x009e, 0x080f);
+      guardar(d, 0x00a4, 0xaca0);
+      guardar(d, 0x00a6, 0x2e5c);
+      guardar(d, 0x00a8, 0x0403);
+      guardar(d, 0x00aa, 0xaca3);
+      guardar(d, 0x00ac, 0xacb0);
+      guardar(d, 0x00b0, 0x2e7d);
+      guardar(d, 0x00b2, 0x0403);
+      guardar(d, 0x00b4, 0xacb7);
+      guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+      return comenzar(d);
+    }
+  }
   if (manejador == 0x3b53 && verbo == 1 &&
       ((id == 142 && previo == 151) || (id == 151 && previo == 142))) {
     retirar_identificador(d, 151);
@@ -207,7 +270,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && (id < 140 || id > 154))
+  if (id != 76 && id != 124 && (id < 140 || id > 159))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

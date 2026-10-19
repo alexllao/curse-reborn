@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,56 vistasSDL
+## Estado vigente: 19 de octubre,57 vistasSDL
 
-CatálogoSDL0–55,56 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales y la resolución de las poleas y la ventana. Calidad180 C++/74 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: la sala del láser56 y el capítulo siguiente aún faltan;56 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–56,57 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales y la resolución de las poleas y la ventana. Calidad180 C++/74 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: la sala del láser56 y el capítulo siguiente aún faltan;56 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -603,3 +603,7 @@ Verificado monorepo59fuentes/159includes/133referencias, analizador25pruebas, ac
 Àlex exige que tampoco queden en raíz .clang-format,ruff.toml ni CMakeLists.txt. .clang-format yruff.toml viven en apps/juego; cache-dir de Ruff es trabajo/cache/ruff relativo al paquete. Se elimina el CMake delegador de raíz; la única entrada es apps/juego/CMakeLists.txt y gestionar_sdl usa esa fuente en plataformas CMake. pnpmcalidad desde raíz sigue detectando ambas configuraciones correctamente:181C++/75Python. No volver a dejar configuraciones del juego en raíz invocando conveniencia del monorepo. Las configuraciones JavaScript/Markdown de workspace siguen comunes.
 
 Retomada investigación de sala56ICEGUARD tras permiso para continuar. Pendiente implementar y comprobar, sin nueva vista publicada: entrada90 desde49; CS17A3[56]=CFD2–D113, accionesBB8D–BCDC. Guía: lupa150,cubito153,carámbano154,cristal145 en cuatro soportes; gato149 bajo reja. Listado parcial en trabajo/investigacion_laser.txt (rango inicialBB4E cae dentro de instrucción: no usar esa decodificación como contrato). CFD2 escribe coordenadas del emisor con AX/BX incluso cuando queda inactivo; analizar el contexto y efectos observables antes de traducir, sin inventar valores ni ignorar diferencias sin documentarlo.
+
+## Sala del láser comprobada
+
+La vista57 integra escena56, ICEROOM según784E e ICEPAL.SFX, entrada90 desde49. Sustituye la hipótesis anterior ICEGUARD. Reflectores150/153/154/145, retirada y gato149 bajo159 contrastados;103 conduce a escena57, todavía pendiente. comparar:laser-palacio:7877 casos/pasos,216 variantes de colocación/reja,96 retiradas,268 rutinas completas, nueve imágenes y siete estados auditados. DS y azar completos sin normalizar actores inactivos: se reconstruye AX/BX del despacho y del creador. comprobar:laser-palacio: nueve capturas, restauración y114 cambiosF5/F6. Documentación laser_palacio.md. Decorados ampliados siguen aparcados.

@@ -35,12 +35,12 @@
     {
       "direccion": "0000:6062",
       "nombre": "Recogida de la lupa del palacio",
-      "comentario": "6062–6075 fuera de56:150,6285,entidad2C4C,x+5/y+alto−4,615C. Variantes de capacidad, iconos, modelo y oferta147; recorrido real tras93 y regreso94. La rama6004 de la sala del láser56 sigue pendiente. palacio.cpp."
+      "comentario": "6062–6075 fuera de56:150,6285,entidad2C4C,x+5/y+alto−4,615C. Variantes de capacidad, iconos, modelo y oferta147; recorrido real tras93 y regreso94. La rama6004 de la sala del láser56 sigue pendiente. palacio.cpp. La rama de recuperación5FFD de la sala56 está implementada y contrastada."
     },
     {
       "direccion": "0000:BA76",
       "nombre": "Salto por la ventana del corredor",
-      "comentario": "Exige2C4C=0;destino171/165,ABFC/AC0A/AC13,+5.12 variantes y salto real tras romper la ventana, contrastado hasta solicitar90. El destino56 aún pendiente de integrar; palacio.cpp."
+      "comentario": "Exige2C4C=0;destino171/165,ABFC/AC0A/AC13,+5.12 variantes y salto real tras romper la ventana, contrastado hasta solicitar90. El destino56 aún pendiente de integrar; palacio.cpp. La entrada90 a56 está contrastada con ICEROOM; véase laser_palacio.md."
     },
     {
       "direccion": "0000:BA1F",
@@ -1784,6 +1784,36 @@
       "direccion": "0000:49DA",
       "nombre": "ataque_del_ventilador_en_escena_72",
       "comentario": "El ataque124 comprueba escena72 antes de probar el estado de35CA; fuera salta88A0. Se conserva ese rechazo en el inventario real deCOUNTRY2 tras volver del valle. El efecto exitoso de72 sigue pendiente; no se implementa por esta anotación."
+    },
+    {
+      "direccion": "0000:5FFD",
+      "nombre": "Recuperar reflectores",
+      "comentario": "5FFD–6060/61A7: recuperar piezas150/153/154/145 en escena56 sin6285;96 variantes contrastadas.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:61A7",
+      "nombre": "Retirada persistente del reflector",
+      "comentario": "Retira el descriptor y programa recogida preservando iconos, capacidad y modelo.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:BB8D",
+      "nombre": "Colocar piezas del láser",
+      "comentario": "BB8D–BC6E: pieza previa y soporte155–158 actual; orden inverso rechazado.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:BC71",
+      "nombre": "Gato bajo la reja",
+      "comentario": "BC71–BCDC: Insertar149/159, protector2D96 apagado, canales originales y puntuación.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:CFD2",
+      "nombre": "Circuito de reflectores",
+      "comentario": "CFD2–D113: circuito, partículas y registro de extremo; contraste DS completo y azar desde10EC.",
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
     }
   ],
   "tablas": [
