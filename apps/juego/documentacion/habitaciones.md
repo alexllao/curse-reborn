@@ -2,11 +2,11 @@
 
 Son una presentación externa al juego. Los marcos decorativos rellenan bandas; las habitaciones representan un ordenador que se enciende y permite entrar al juego. Los decorados ampliados continúan aparcados.
 
-El arranque normal siempre muestra Buhardilla con el ordenador apagado, también con `--sin-sonido`. Botón del PC → BIOS 386 con distintivo Energy Star → DOS → Core/título/introducción dentro del monitor. Tras los siete segundos, clic en botón físico del monitor → acercamiento suave de 650 ms hasta el máximo disponible. Ctrl+R vuelve sin reiniciar escena ni música. Ctrl+H recorre los cinco diseños. Alt+Intro conserva su función de pantalla completa de la ventana.
+El arranque normal muestra primero el banner silencioso del lanzador durante cinco segundos (entrada0,8s, visible3s, salida1,2s), escogiendo su variante por proporción y cubriendo la ventana sin deformar. Después aparece Buhardilla con el ordenador apagado. A los dos segundos se enciende automáticamente una sola vez, también con `--sin-sonido`. Un clic previo en el botón anula ese plazo y conserva el control manual. Encendido → BIOS 386 con distintivo Energy Star → DOS → Core/título/introducción dentro del monitor. Tras los siete segundos, clic en botón físico del monitor → acercamiento suave de 650 ms hasta el máximo disponible. Ctrl+R vuelve sin reiniciar escena ni música. Ctrl+H recorre los cinco diseños. Alt+Intro conserva su función de pantalla completa de la ventana.
 
 ## Añadir otro diseño
 
-1. Crear una carpeta en `packages/assets/original/habitaciones/` con las imágenes PNG, manteniendo sus dimensiones originales.
+1. Crear una carpeta en `packages/assets/lanzador/habitaciones/` con las imágenes PNG, manteniendo sus dimensiones originales.
 2. Añadir una entrada a `habitaciones.json`: `id`, `nombre`, `carpeta` y `variantes`. `inicial` elige el identificador al abrir.
 3. Cada variante declara `archivo`, `resolucion: [ancho, alto]` y cinco rectángulos `[x, y, ancho, alto]`: `pantalla`, `botonPC`, `botonMonitor`, `pilotoPC`, `pilotoMonitor`. Todas las coordenadas están en píxeles del PNG, nunca de la ventana. `pantalla` es el interior útil del cristal, sin bisel. El juego cabe dentro sin estirarse ni recortarse.
 4. Volver a compilar con `pnpm sdl:compilar` o iniciar con `pnpm ventana`. Node valida tamaños, rutas relativas seguras, proporciones únicas y zonas dentro de la imagen, genera el catálogo y copia únicamente las imágenes registradas. No hay que modificar C++ para añadir una habitación. **En esta versión el catálogo se incorpora durante la compilación; editar el JSON junto a un ejecutable ya construido no lo recarga.**
@@ -38,4 +38,10 @@ El monitor pequeño utiliza siempre el muestreo original, sin filtros F11. La se
 
 El botón de la torre reproduce siete segundos de ventilador/disco, clic y pulsos del recuento de RAM. Apagar sustituye el arranque por un clic; el botón del monitor también tiene clic. Los clics del juego no producen ese sonido. Al entrar en Core se vacía la cola antes de reiniciar la música original. Un flujo SDL independiente permite oír la BIOS mientras el audio DOS permanece pausado; comparte M y volumen, y respeta --sin-sonido. Los fallos del recurso se informan y no bloquean el juego.
 
-Los WAV redistribuibles están en packages/assets/original/sonidos_pc junto a ORIGEN.txt. Ventilador/disco derivan de la vista previa CC0 de squashy555; clic/RAM son síntesis propia CC0. No se afirma que la grabación proceda de un 386. generar_sonidos_pc.py permite regenerar los recursos con Python/ffmpeg; no se necesita ffmpeg para jugar.
+Los WAV redistribuibles están en packages/assets/lanzador/sonidos_pc junto a ORIGEN.txt. Ventilador/disco derivan de la vista previa CC0 de squashy555; clic/RAM son síntesis propia CC0. No se afirma que la grabación proceda de un 386. generar_sonidos_pc.py permite regenerar los recursos con Python/ffmpeg; no se necesita ffmpeg para jugar.
+
+## Recursos del lanzador
+
+`packages/assets/lanzador/` reúne `habitaciones/`, `presentacion/` y `sonidos_pc/`, fuera de `original`. `presentacion/presentacion.json` declara las variantes y los tiempos de entrada, permanencia, salida y espera del encendido en milisegundos. El logo independiente se conserva como fuente y no se copia al arranque. Los PNG maestros no se recomprimen ni editan. La presentación permite cerrar la ventana y alternar Alt+Intro; los clics durante el banner no llegan al juego. No tiene música, sonido ni filtros. El motor, su música y el contador efectivo permanecen suspendidos hasta que termine BIOS/DOS.
+
+La prueba oculta `pnpm comprobar:habitaciones` añade seis capturas de banner (cinco proporciones y ventana vertical), negro inicial y plazos simulados: dos segundos de espera, siete segundos completos de BIOS/DOS, una sola solicitud y cancelación manual del encendido pendiente. También conserva las comprobaciones de habitación, ratón y audio.

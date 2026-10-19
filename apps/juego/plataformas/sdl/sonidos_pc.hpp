@@ -53,7 +53,7 @@ private:
     Uint8 *muestras = nullptr;
     Uint32 cantidad = 0;
     const std::string ruta =
-        std::string(SDL_GetBasePath()) + "assets/original/sonidos_pc/" + nombre;
+        std::string(SDL_GetBasePath()) + "assets/lanzador/sonidos_pc/" + nombre;
     if (!SDL_LoadWAV(ruta.c_str(), &formato, &muestras, &cantidad))
       return false;
     const bool valido = formato.format == SDL_AUDIO_S16LE && formato.channels == 1 &&

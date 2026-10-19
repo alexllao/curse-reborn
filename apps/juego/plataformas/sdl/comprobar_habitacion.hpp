@@ -61,6 +61,66 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
     e.button.y = (zona.y + zona.h / 2) * vh / h;
     return p.habitacion.evento(p.ventana, p.dibujante, e, reloj);
   };
+  // Comprueba fundidos y variantes con reloj simulado, sin esperar ni abrir ventanas visibles.
+  p.banner.iniciar(reloj);
+  if (!p.banner.activo(reloj) || p.banner.opacidad(reloj) != 0 ||
+      p.banner.opacidad(reloj + 800000000ull) != 255 ||
+      p.banner.opacidad(reloj + 3800000000ull) != 255 ||
+      p.banner.opacidad(reloj + 4400000000ull) < 126 ||
+      p.banner.opacidad(reloj + 4400000000ull) > 129 ||
+      p.banner.activo(reloj + BannerLanzador::duracion()))
+    return fallo_monitor("El banner no respeta los fundidos y sus cinco segundos");
+  for (const auto &tamano : {std::pair<int, int>{1280, 720},
+                             {1280, 800},
+                             {1920, 720},
+                             {2560, 720},
+                             {960, 720},
+                             {720, 1280}}) {
+    if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) || !SDL_SyncWindow(p.ventana) ||
+        !p.banner.dibujar(p.dibujante, reloj))
+      return false;
+    SDL_Surface *negro = SDL_RenderReadPixels(p.dibujante, nullptr);
+    Uint8 rojo = 0, verde = 0, azul = 0, alfa = 0;
+    const bool apagado = negro &&
+                         SDL_ReadSurfacePixel(negro, tamano.first / 2, tamano.second / 2, &rojo,
+                                              &verde, &azul, &alfa) &&
+                         rojo == 0 && verde == 0 && azul == 0;
+    SDL_DestroySurface(negro);
+    if (!apagado || !p.banner.dibujar(p.dibujante, reloj + 2000000000ull))
+      return false;
+    const auto &v = BannerLanzador::variante(tamano.first, tamano.second);
+    if (tamano.first != 720 &&
+        std::abs(float(v.ancho) / v.alto - float(tamano.first) / tamano.second) > 0.001f)
+      return fallo_monitor("Se selecciona un banner de proporción incorrecta");
+    SDL_Surface *banner = SDL_RenderReadPixels(p.dibujante, nullptr);
+    const bool guardado =
+        banner && SDL_SavePNG(banner, (prefijo + ".banner_" + std::to_string(tamano.first) + "x" +
+                                       std::to_string(tamano.second) + ".png")
+                                          .c_str());
+    SDL_DestroySurface(banner);
+    if (!guardado)
+      return false;
+  }
+  p.banner.cerrar();
+  // El encendido automático conserva el sonido, los siete segundos completos y una sola solicitud.
+  p.habitacion.programar_encendido(reloj + 2000000000ull);
+  if (p.habitacion.tomar_reinicio(reloj + 1999999999ull) || p.habitacion.tomar_sonido() != 0 ||
+      p.habitacion.tomar_reinicio(reloj + 2000000000ull) || p.habitacion.tomar_sonido() != 1 ||
+      p.habitacion.tomar_reinicio(reloj + 8999999999ull) ||
+      !p.habitacion.tomar_reinicio(reloj + 9000000000ull) ||
+      p.habitacion.tomar_reinicio(reloj + 10000000000ull))
+    return fallo_monitor("El encendido automático acorta o repite BIOS/DOS");
+  p.habitacion.iniciar();
+  // Un clic manual anula el plazo: apagar durante el arranque debe seguir dejando el PC apagado.
+  SDL_FRect pc_auto, monitor_auto;
+  p.habitacion.programar_encendido(reloj + 2000000000ull);
+  if (!p.habitacion.controles(p.dibujante, pc_auto, monitor_auto, reloj) || !pulsar(pc_auto) ||
+      p.habitacion.tomar_sonido() != 1 || !pulsar(pc_auto) || p.habitacion.tomar_sonido() != 2)
+    return false;
+  p.habitacion.tomar_reinicio(reloj + 3000000000ull);
+  if (p.habitacion.tomar_sonido() != 0 || !p.habitacion.reiniciando())
+    return fallo_monitor("El plazo automático vuelve a encender un PC apagado manualmente");
+  p.habitacion.iniciar();
   for (unsigned int tema = 0; tema < 5; ++tema) {
     for (const auto &tamano : {std::pair<int, int>{1280, 720},
                                {1280, 800},

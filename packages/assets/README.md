@@ -1,8 +1,10 @@
 # Recursos propios del port
 
-Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `apps/juego/datos_originales/` (en la raíz del repositorio).
+Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `apps/juego/datos_originales/`.
 
-- `original/habitaciones/`: habitaciones interactivas, cinco diseños con cinco proporciones y catálogo independiente.
+- `lanzador/presentacion/`: banners de arranque y tiempos en `presentacion.json`, sin música.
+- `lanzador/sonidos_pc/`: sonidos de botón y hardware durante BIOS/DOS.
+- `lanzador/habitaciones/`: habitaciones interactivas, cinco diseños con cinco proporciones y catálogo independiente.
 - `original/marcos/`: marcos de estilo pixel art para acompañar la reconstrucción fiel, opcionales con F1.
 - `original/decorados/`: PNG de decorados ampliados conservados como referencia; están aparcados y su catálogo activo está vacío.
 - `remaster/marcos/`: ubicación prevista para futuros marcos del remaster; todavía no contiene material.
@@ -35,6 +37,6 @@ Se conservan `original/decorados/franks_food.png` (1586×992) y el PNG del pozo 
 
 ## Habitaciones interactivas
 
-Las ilustraciones aportadas de `01-misterio` a `05-ciencia-ficcion` viven ahora en `original/habitaciones/`, con el catálogo `habitaciones.json`. Los PNG maestros se conservan byte por byte. Se han retirado `marcos/monitor.png`, `marcos/habitacion_90.png` y sus metadatos antiguos por petición de Àlex; no se utilizan en el arranque. Las otras cinco variantes `habitacion-90-*` aportadas en la misma subida se conservan en `habitaciones/alternativas/`, sin asignación ni copia a la aplicación.
+Las ilustraciones aportadas de `01-misterio` a `05-ciencia-ficcion` viven ahora en `lanzador/habitaciones/`, con el catálogo `habitaciones.json`. Los PNG maestros se conservan byte por byte. Se han retirado `marcos/monitor.png`, `marcos/habitacion_90.png` y sus metadatos antiguos por petición de Àlex; no se utilizan en el arranque. Las otras cinco variantes `habitacion-90-*` aportadas en la misma subida se conservan en `habitaciones/alternativas/`, sin asignación ni copia a la aplicación.
 
 El catálogo especifica cada carpeta, imagen y sus controles; instrucciones y límites en [Habitaciones](../../apps/juego/documentacion/habitaciones.md). Los maestros no se recomprimen ni se reducen al compilar. La optimización de imágenes del paquete final queda para la distribución, separada de estos originales.

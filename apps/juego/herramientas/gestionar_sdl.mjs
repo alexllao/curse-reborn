@@ -3,6 +3,7 @@ import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 import { prepararMt32 } from './gestionar_mt32.mjs';
 import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { prepararSonidosPC } from './gestionar_sonidos_pc.mjs';
+import { prepararPresentacion } from './gestionar_presentacion.mjs';
 import { prepararMarcos } from './gestionar_marcos.mjs';
 /** Compilación y comprobación de Curse Reborn con SDL, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
@@ -158,6 +159,7 @@ async function compilar() {
   prepararMarcos(raiz, aplicacion);
   prepararHabitaciones(raiz, aplicacion);
   prepararSonidosPC(raiz, aplicacion);
+  prepararPresentacion(raiz, aplicacion);
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
   console.log('Compilando Curse Reborn con SDL…');

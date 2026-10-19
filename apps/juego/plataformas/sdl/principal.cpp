@@ -37,6 +37,7 @@
 #include "comprobar_partidas.hpp"
 #include "marcos.hpp"
 #include "habitacion.hpp"
+#include "banner_lanzador.hpp"
 #include "sonidos_pc.hpp"
 #include "decorados.hpp"
 #include "cursor.hpp"
@@ -76,6 +77,7 @@ struct Presentacion {
   FiltrosPantalla filtros;
   MarcosPantalla marcos;
   Habitacion habitacion;
+  BannerLanzador banner;
   SonidosPC sonidos_pc;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
@@ -87,6 +89,7 @@ struct Presentacion {
     filtros.cerrar();
     marcos.cerrar();
     habitacion.cerrar();
+    banner.cerrar();
     decorados.cerrar();
     cursor.cerrar();
     if (textura)
@@ -714,6 +717,9 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido preparar el PC apagado");
     SDL_SetWindowTitle(presentacion.ventana, "Curse Reborn — Habitación");
   }
+  if (!comprobar && !comprobar_arranque)
+    presentacion.banner.iniciar(SDL_GetTicksNS());
+  bool programar_pc = !comprobar && !comprobar_arranque;
   bool salir = false, capturada = false, fundiendo = false;
   bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false,
        jugabilidad_comprobada = false, caida_comprobada = false;
@@ -759,6 +765,28 @@ int main(int argc, char *argv[]) {
   };
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
+    // Durante el banner solo se atienden cierre y pantalla completa; el PC sigue apagado.
+    if (presentacion.banner.activo(SDL_GetTicksNS())) {
+      SDL_Event entrada;
+      while (SDL_PollEvent(&entrada)) {
+        if (entrada.type == SDL_EVENT_QUIT)
+          salir = true;
+        if (entrada.type == SDL_EVENT_KEY_DOWN && !entrada.key.repeat &&
+            (entrada.key.key == SDLK_RETURN || entrada.key.key == SDLK_KP_ENTER) &&
+            (entrada.key.mod & SDL_KMOD_ALT)) {
+          pantalla_completa = !pantalla_completa;
+          if (!SDL_SetWindowFullscreen(presentacion.ventana, pantalla_completa))
+            return fallo("No se ha podido ampliar la presentación");
+        }
+      }
+      if (salir)
+        break;
+      if (!presentacion.banner.dibujar(presentacion.dibujante, SDL_GetTicksNS()) ||
+          !SDL_RenderPresent(presentacion.dibujante))
+        return fallo("No se ha podido mostrar el banner del lanzador");
+      SDL_Delay(8);
+      continue;
+    }
     if (!presentacion.marcos.preparar_encuadre(
             presentacion.dibujante, comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido preparar el encuadre del juego");
@@ -1034,6 +1062,8 @@ int main(int argc, char *argv[]) {
       inicio_pantalla = ultimo_paso_escena = siguiente_presentacion = SDL_GetTicksNS();
     }
     presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
+    if (!presentacion.sonidos_pc.reproducir(presentacion.habitacion.tomar_sonido()))
+      std::fprintf(stderr, "Sonidos del PC no disponibles: %s\n", SDL_GetError());
     const auto solicitud = mazmorra.tomar_solicitud_partidas();
     if (solicitud)
       abrir_partidas(solicitud);
@@ -1784,6 +1814,13 @@ int main(int argc, char *argv[]) {
     }
     if (!SDL_RenderPresent(presentacion.dibujante))
       return fallo("No se ha podido presentar el título");
+    if (programar_pc) {
+      // Cuenta dos segundos desde el primer fotograma visible, incluida la carga del PNG.
+      presentacion.habitacion.programar_encendido(SDL_GetTicksNS() +
+                                                  banner_encendido_ms * 1000000ull);
+      programar_pc = false;
+      presentacion.banner.cerrar();
+    }
     if (!salir && !comprobar && limitar_presentacion) {
       siguiente_presentacion += intervalo_presentacion_ns;
       const Uint64 fin = SDL_GetTicksNS();

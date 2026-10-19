@@ -75,7 +75,8 @@ try {
   revisarMapa(mapa);
   for (const archivo of [
     'original/marcos/catalogo.json',
-    'original/habitaciones/habitaciones.json',
+    'lanzador/habitaciones/habitaciones.json',
+    'lanzador/presentacion/presentacion.json',
     'original/decorados/catalogo.json',
   ])
     exigir(existsSync(rutaAssets(raiz, archivo)), `Falta el recurso compartido ${archivo}.`);

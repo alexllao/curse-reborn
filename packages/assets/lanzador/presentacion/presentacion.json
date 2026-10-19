@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entrada_ms": 800,
+  "visible_ms": 3000,
+  "salida_ms": 1200,
+  "encendido_ms": 2000,
+  "variantes": [
+    {
+      "archivo": "curse-of-enchantia-reborn-16x10-1920x1200.png",
+      "ancho": 1920,
+      "alto": 1200
+    },
+    {
+      "archivo": "curse-of-enchantia-reborn-16x9-1920x1080.png",
+      "ancho": 1920,
+      "alto": 1080
+    },
+    {
+      "archivo": "curse-of-enchantia-reborn-24x9-3840x1440.png",
+      "ancho": 3840,
+      "alto": 1440
+    },
+    {
+      "archivo": "curse-of-enchantia-reborn-32x9-5120x1440.png",
+      "ancho": 5120,
+      "alto": 1440
+    },
+    {
+      "archivo": "curse-of-enchantia-reborn-4x3-1920x1440.png",
+      "ancho": 1920,
+      "alto": 1440
+    }
+  ]
+}

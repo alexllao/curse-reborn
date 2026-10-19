@@ -2,6 +2,7 @@ import { rutaAssets } from './rutas_proyecto.mjs';
 /** Valida los marcos propios y prepara el catálogo C++ y sus imágenes junto a la aplicación. */
 import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { prepararSonidosPC } from './gestionar_sonidos_pc.mjs';
+import { prepararPresentacion } from './gestionar_presentacion.mjs';
 import { createHash } from 'node:crypto';
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -155,4 +156,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   prepararMarcos(raiz, resolve(process.argv[2]));
   prepararHabitaciones(raiz, resolve(process.argv[2]));
   prepararSonidosPC(raiz, resolve(process.argv[2]));
+  prepararPresentacion(raiz, resolve(process.argv[2]));
 }

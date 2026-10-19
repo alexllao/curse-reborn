@@ -5,8 +5,8 @@ import { join } from 'node:path';
 
 // Comprueba cada imagen y cada zona antes de generar el catálogo usado por SDL.
 export function prepararHabitaciones(raiz, destino) {
-  const origen = rutaAssets(raiz, 'original/habitaciones');
-  const carpeta = join(destino, 'assets/original/habitaciones');
+  const origen = rutaAssets(raiz, 'lanzador/habitaciones');
+  const carpeta = join(destino, 'assets/lanzador/habitaciones');
   const catalogo = JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8'));
   const variantes = [],
     habitaciones = [],
@@ -83,7 +83,7 @@ export function prepararHabitaciones(raiz, destino) {
       }
       if (!sentido) throw new Error('El cristal no tiene superficie: ' + v.archivo);
       variantes.push(
-        `{${JSON.stringify(`assets/original/habitaciones/${h.carpeta}/${v.archivo}`)},${ancho},${alto},${zonas.join(',')},${v.botonPCAuxiliar === true},{${contorno.map((p) => `{${p.join(',')}}`).join(',')}}}`,
+        `{${JSON.stringify(`assets/lanzador/habitaciones/${h.carpeta}/${v.archivo}`)},${ancho},${alto},${zonas.join(',')},${v.botonPCAuxiliar === true},{${contorno.map((p) => `{${p.join(',')}}`).join(',')}}}`,
       );
       mkdirSync(join(carpeta, h.carpeta), { recursive: true });
       copyFileSync(join(origen, h.carpeta, v.archivo), join(carpeta, h.carpeta, v.archivo));

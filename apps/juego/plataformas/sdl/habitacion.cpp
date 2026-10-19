@@ -12,6 +12,7 @@ void Habitacion::iniciar() {
   tema = habitacion_inicial;
   estado = Estado::apagado;
   sonido_pendiente = 0;
+  encendido_programado = 0;
   inicio_estado = inicio_zoom = 0;
   zoom_origen = zoom_destino = 0;
   registrar_accion("Habitación: %s; pulsa el botón del PC para encender",
@@ -159,11 +160,9 @@ bool Habitacion::evento(SDL_Window *ventana, SDL_Renderer *r, const SDL_Event &e
   };
   if (!ampliada(ahora) && evento.button.button == SDL_BUTTON_LEFT) {
     if (dentro(pc)) {
+      encendido_programado = 0;
       if (estado == Estado::apagado) {
-        estado = Estado::arrancando;
-        sonido_pendiente = 1;
-        inicio_estado = ahora;
-        registrar_accion("PC: encendido; BIOS y DOS completos");
+        encender(ahora);
       } else if (estado != Estado::apagando) {
         imagen_al_apagar = estado == Estado::encendido;
         estado = Estado::apagando;
@@ -182,8 +181,22 @@ bool Habitacion::evento(SDL_Window *ventana, SDL_Renderer *r, const SDL_Event &e
   return reiniciando() || !dentro(juego);
 }
 
+// Usa exactamente el mismo arranque al pulsar el botón o vencer el plazo inicial.
+void Habitacion::encender(Uint64 ahora) {
+  encendido_programado = 0;
+  estado = Estado::arrancando;
+  sonido_pendiente = 1;
+  inicio_estado = ahora;
+  registrar_accion("PC: encendido; BIOS y DOS completos");
+}
+
 // La solicitud se entrega una vez, después de siete segundos íntegros de BIOS y DOS.
 bool Habitacion::tomar_reinicio(Uint64 ahora) {
+  if (habilitada && encendido_programado && ahora >= encendido_programado) {
+    encendido_programado = 0;
+    if (estado == Estado::apagado)
+      encender(ahora);
+  }
   if (!habilitada || ahora < inicio_estado)
     return false;
   if (estado == Estado::apagando && ahora - inicio_estado >= 700000000ull)

@@ -23,6 +23,10 @@ public:
   }
   // Todo arranque normal empieza en la habitación con el ordenador apagado.
   void iniciar();
+  // Programa solo el primer encendido; los botones posteriores conservan control manual.
+  void programar_encendido(Uint64 ahora) {
+    encendido_programado = ahora;
+  }
   // Entrega solo pulsaciones aceptadas de la torre o del monitor, nunca clics del juego.
   unsigned int tomar_sonido() {
     return std::exchange(sonido_pendiente, 0u);
@@ -64,7 +68,9 @@ private:
   unsigned int sonido_pendiente = 0;
   bool imagen_al_apagar = false;
   unsigned int tema = 0;
-  Uint64 inicio_estado = 0, inicio_zoom = 0;
+  Uint64 inicio_estado = 0, inicio_zoom = 0, encendido_programado = 0;
+  // Comparte el mismo arranque y sonido entre el botón y el plazo automático.
+  void encender(Uint64 ahora);
   float zoom_origen = 0, zoom_destino = 0;
   SDL_Texture *textura = nullptr;
   SDL_Texture *pilotos_rojos[2] = {nullptr, nullptr};

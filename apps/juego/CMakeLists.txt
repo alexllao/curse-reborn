@@ -9,13 +9,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 # Preparar únicamente recursos propios; los archivos comerciales siguen siendo locales.
 find_program(NODE_EXECUTABLE node REQUIRED)
-file(GLOB_RECURSE FUENTES_HABITACIONES CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/habitaciones/*")
+file(GLOB_RECURSE FUENTES_HABITACIONES CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/habitaciones/*")
 file(GLOB FUENTES_MARCOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/marcos/*")
 file(GLOB FUENTES_DECORADOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/decorados/*")
-file(GLOB FUENTES_SONIDOS_PC CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/sonidos_pc/*")
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp"
+file(GLOB FUENTES_PRESENTACION CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/presentacion/*")
+file(GLOB FUENTES_SONIDOS_PC CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/sonidos_pc/*")
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/catalogo_presentacion.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp"
   COMMAND "${NODE_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs" "${CMAKE_CURRENT_BINARY_DIR}"
-  DEPENDS ${FUENTES_HABITACIONES} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} ${FUENTES_SONIDOS_PC} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_sonidos_pc.mjs" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs"
+  DEPENDS ${FUENTES_PRESENTACION} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_presentacion.mjs" ${FUENTES_HABITACIONES} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} ${FUENTES_SONIDOS_PC} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_sonidos_pc.mjs" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs"
   VERBATIM)
 
 # Compartir la lista de fuentes con las herramientas Node de compilación y comparación.
@@ -29,12 +30,12 @@ endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fuentes_motor.json")
 add_executable(curse-reborn plataformas/sdl/contador_fps.cpp plataformas/sdl/filtros.cpp plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp plataformas/sdl/opl2.cpp plataformas/sdl/ymfm_opl.cpp plataformas/sdl/ymfm_adpcm.cpp plataformas/sdl/ymfm_pcm.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
-target_sources(curse-reborn PRIVATE plataformas/sdl/partidas.cpp plataformas/sdl/tiempo_juego.cpp plataformas/sdl/marcos.cpp plataformas/sdl/habitacion.cpp "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp")
+target_sources(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/catalogo_presentacion.hpp" plataformas/sdl/partidas.cpp plataformas/sdl/tiempo_juego.cpp plataformas/sdl/marcos.cpp plataformas/sdl/habitacion.cpp "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp")
 target_include_directories(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL CMAKE_BINARY_DIR OR CMAKE_CONFIGURATION_TYPES)
   add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_BINARY_DIR}/assets/original/habitaciones"
-    "$<TARGET_FILE_DIR:curse-reborn>/assets/original/habitaciones")
+    "${CMAKE_CURRENT_BINARY_DIR}/assets/lanzador/habitaciones"
+    "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/habitaciones")
 endif()
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${RAIZ_ASSETS}/original/marcos"
@@ -44,8 +45,8 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
   "$<TARGET_FILE_DIR:curse-reborn>/assets/original/decorados")
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-  "${RAIZ_ASSETS}/original/sonidos_pc"
-  "$<TARGET_FILE_DIR:curse-reborn>/assets/original/sonidos_pc")
+  "${RAIZ_ASSETS}/lanzador/sonidos_pc"
+  "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/sonidos_pc")
 if(MSVC)
   target_compile_options(curse-reborn PRIVATE /W4 /WX /utf-8)
 else()
@@ -98,5 +99,12 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
 
 # Las habitaciones interactivas son independientes de los marcos decorativos.
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
- "${RAIZ_ASSETS}/original/habitaciones"
- "$<TARGET_FILE_DIR:curse-reborn>/assets/original/habitaciones")
+ "${RAIZ_ASSETS}/lanzador/habitaciones"
+ "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/habitaciones")
+
+# El preparador ya copia solo los banners registrados; no incluir el logo fuente.
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL CMAKE_BINARY_DIR OR CMAKE_CONFIGURATION_TYPES)
+  add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_BINARY_DIR}/assets/lanzador/presentacion"
+    "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/presentacion")
+endif()
