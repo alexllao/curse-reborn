@@ -1,6 +1,7 @@
 # Recursos originales y resultados locales de investigación
 /datos_originales/*
 !/datos_originales/.gitkeep
+!/datos_originales/README.md
 /recursos_extraidos/
 /trabajo/
 *.zip
