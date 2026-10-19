@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre, después de ELECTRO
+## Estado vigente: 19 de octubre,50 vistasSDL
 
-Hay40 vistasSDL (escenas0–39) y el recorrido principal del valle está contrastado hasta volver al campo con el ventilador124. Última tanda: plataforma17039 casos/pasos, doce imágenesSDL y80 cambiosF5/F6. El regreso argumental aBenn y el vestido ya están contrastados; el siguiente trabajo esSNOWAST4/43; leer las últimas secciones para continuidad y límites. Los recuentos y pendientes anteriores se conservan como historia y quedan superados por las ampliaciones posteriores.
+CatálogoSDL0–49,50 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad172 C++/71 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -483,3 +483,11 @@ SDL48 {47,46,84},enlaces46/84,47/85,guardado85. comprobar:poleas-palacio cinco c
 ## ICECORR/48 enSDL, vista49
 
 Activos47/86 y48/87,guardado87 yrestauración48. comprobar:pasillo-hielo dos imágenes hielo_pasillo2/hielo_vuelta1,restauración y98 cambiosF5/F6. Reutiliza las13 referencias de comparar:corredores-palacio, sin recompilar DLL ni repetir el núcleo sin cambios. Próximo50 escena49 salida88 desde48,regreso89,guardado89 yprincipal49. El checker ya recorre inspección146/rechazo de salto y retornos; objetivo seis imágenes restantes.147oculto,útiles laterales ysalida90 aún pendientes.
+
+## ICECORR/49 enSDL, vista50 y objetivo alcanzado
+
+Activos48/88 y49/89,guardado89 yrestauración49. comprobar:ventana-palacio seis imágenes hielo_pasillo3/ante_ventana/ventana/ventana_cerrada/vuelta2/fin_corredores,restauración y100 cambiosF5/F6. Junto con poleas(5) ypasillo(2),13 referencias del comparador nativo5791 casos/pasos.50 vistas no significa todas las rutas/objetos completados.
+
+Continuación pendiente: salida90→56 (revisar recursos/guion antes de integrar), laterales91/93/95/97/99/101 con puertas condicionadas por4B2C/35/3E/47/50/59; no abrirlas por conveniencia. Útiles149/150/151/152/153/154 y144/145 deben obtenerse mediante sus habitaciones originales antes de ofrecer147 y resolver148/ventana146. Manejadores aislados ya contrastados enpalacio.cpp; falta recorrido real y auditorías con esos objetos, no confundir con variantes sintéticas. Referencia actual trabajo/comparacion_corredores_palacio/hielo_fin_corredores.ds.bin ysemilla.json. No reactivar decorados ampliados.
+
+Auditoría final auditar:rutas:78 tablas, ocho salidas pendientes desde vistas disponibles:31/112→64;47/91→50,47/93→51;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55. La tabla real90 lleva a56, no a50; respetar esta corrección al continuar.

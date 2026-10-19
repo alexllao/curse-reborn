@@ -13,3 +13,7 @@ Las salidas laterales91/93/95/97/99/101 conservan las condiciones originales de 
 La vista48 añade el primer corredor y su regreso a los dados. `pnpm comprobar:poleas-palacio` compara cinco capturas de64000 píxeles, restauración y96 cambiosF5/F6 entre48 vistas. Las referencias nativas se generan antes con el comparador y se reutilizan al comprobarSDL.
 
 La vista49 habilita el segundo corredor. `pnpm comprobar:pasillo-hielo` compara dos imágenes, guardar/restaurar y98 cambiosF5/F6. La comprobación conserva las marcas aleatorias del mismo recorrido y vuelve por87 al primer corredor.
+
+La vista50 añade el corredor de la ventana. `pnpm comprobar:ventana-palacio` compara las seis imágenes restantes del recorrido, guardar/restaurar y100 cambiosF5/F6 entre50 vistas. Entre las tres comprobacionesSDL se cubren las trece referencias nativas. No se abre la ventana ni se ofrece147 antes de cumplir el contrato original.
+
+`pnpm auditar:rutas` revisa78 tablas y detecta ocho salidas pendientes desde las vistas actuales:112 del loro y las siete del palacio (91,93,95,97,90,99,101). Las seis laterales conducen a50..55;90 continúa a56. Se conservan como pendientes explícitos, sin desviar al jugador a otra habitación.

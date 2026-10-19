@@ -394,6 +394,23 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--ventana-palacio',
+      nombre: 'ventana_palacio',
+      referencia: 'corredores_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'hielo_pasillo3',
+        'hielo_ante_ventana',
+        'hielo_ventana',
+        'hielo_ventana_cerrada',
+        'hielo_vuelta2',
+        'hielo_fin_corredores',
+      ],
+      alcance:
+        'entrada88, inspección146, salto rechazado sin abrir la ventana y regreso89; seis imágenes y restauración',
+    },
+    {
       argumento: '--pasillo-hielo',
       nombre: 'pasillo_hielo',
       referencia: 'corredores_palacio',
@@ -586,6 +603,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--dados-palacio',
       '--poleas-palacio',
       '--pasillo-hielo',
+      '--ventana-palacio',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

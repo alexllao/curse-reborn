@@ -138,3 +138,5 @@ La vista47 añade la sala de dados (ICEROOM). Recoger140 cierra su puerta y Lanz
 La vista48 es el corredor de las poleas, con entrada84 y regreso85.96 cambiosF5/F6 contrastados; los atajos no resuelven las puertas de los dados.
 
 La vista49 añade el segundo corredor de hielo, entrada86 y regreso87, con98 cambiosF5/F6 comprobados.
+
+El catálogo llega a50 vistas con el corredor de la ventana, entrada88 y regreso89. F5/F6 permite recorrerlas y se contrasta en100 cambios. Las puertas y los objetos del recorrido normal conservan sus condiciones originales.
