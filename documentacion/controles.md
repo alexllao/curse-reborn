@@ -134,3 +134,5 @@ La vista45 añade el lago helado (ICELAKE), con salto y cenizas mediante el men�
 La vista46 añade la entrada del palacio (ICEPAL) y el puzle de los cuatro carámbanos.92 cambiosF5/F6 contrastados.
 
 La vista47 añade la sala de dados (ICEROOM). Recoger140 cierra su puerta y Lanzar140 la abre con el azar original; hay94 cambiosF5/F6 contrastados.
+
+La vista48 es el corredor de las poleas, con entrada84 y regreso85.96 cambiosF5/F6 contrastados; los atajos no resuelven las puertas de los dados.

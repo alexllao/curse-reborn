@@ -3,6 +3,41 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:BA76",
+      "nombre": "Salto por la ventana del corredor",
+      "comentario": "Exige2C4C=0; destino171/165 yABFC/AC0A/AC13,+5.12 variantes; la partida real conserva ventana cerrada y se compara el rechazo. palacio.cpp."
+    },
+    {
+      "direccion": "0000:BA1F",
+      "nombre": "Apertura de ventana mediante148",
+      "comentario": "Solo2C4C=1, retira148, oculta4B9C, programa dos actores y canales parciales,+5.12 variantes; obtención real de148 pendiente del capítulo posterior. palacio.cpp."
+    },
+    {
+      "direccion": "0000:B9F4",
+      "nombre": "Combinación de silbato y globo",
+      "comentario": "147+152 en ambos órdenes; exige retirar147, retira152 e inserta148 sin otra condición; dos canales96DE/96E7 y+5. Variantes aisladas, sin fabricar estos objetos en la partida real. palacio.cpp."
+    },
+    {
+      "direccion": "0000:B9CE",
+      "nombre": "Inspección de la ventana del tercer corredor",
+      "comentario": "Destino159/164, soloAD7=ABC4 y actor9C para2C6D/0203/ABCA; conserva los canales omitidos. Recorrido real y auditoría de opciones; palacio.cpp."
+    },
+    {
+      "direccion": "0000:B968",
+      "nombre": "Inserción del arma en el mecanismo",
+      "comentario": "151+142 en ambos órdenes; retira151, cambia descriptores4B00/4B0C/4B11/4B1A y actores2C8E/2CAF, canales parciales, destino89/180 y+5. Contrato aislado: el arma aún se obtiene en habitaciones posteriores pendientes. palacio.cpp."
+    },
+    {
+      "direccion": "0000:B93D",
+      "nombre": "Inspección del soporte del primer corredor",
+      "comentario": "Exige fotograma2C4D=9, sin comprobar actividad. Destino231/182 y tres canalesAB9F/ABAA/ABB0; nueve variantes y recorrido real. palacio.cpp."
+    },
+    {
+      "direccion": "0000:6285",
+      "nombre": "Oferta del silbato tras reunir los siete útiles",
+      "comentario": "6285–62C8 exige153,154,152,149,150,144,145; retira141 y pone4BAE=1. Se conserva3 mientras falten útiles.256 combinaciones de inventario en comparar:corredores-palacio; palacio.cpp."
+    },
+    {
       "direccion": "0000:CFA9",
       "nombre": "Puerta móvil de la sala de dados",
       "comentario": "CFA9–CFD1 limita Y2D16 firmada a30..89 y solo al recortar escribe2D2C=0. Diez fronteras, cierre real al recoger140 y apertura al lanzar, incluida segunda tirada. mazmorra.cpp y comparar:dados-palacio."

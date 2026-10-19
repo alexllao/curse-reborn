@@ -23,6 +23,7 @@
     "analizar": "node herramientas/gestionar_proyecto.mjs analizar",
     "ensamblador": "node herramientas/gestionar_proyecto.mjs analizar",
     "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar",
+    "comparar:corredores-palacio": "node herramientas/gestionar_proyecto.mjs comparar:corredores-palacio",
     "comparar:dados-palacio": "node herramientas/gestionar_proyecto.mjs comparar:dados-palacio",
     "comparar:entrada-palacio": "node herramientas/gestionar_proyecto.mjs comparar:entrada-palacio",
     "comparar:lago-helado": "node herramientas/gestionar_proyecto.mjs comparar:lago-helado",
@@ -149,7 +150,8 @@
     "comparar:asaltante": "node herramientas/gestionar_proyecto.mjs comparar:asaltante",
     "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante",
     "comprobar:monitor": "node herramientas/gestionar_proyecto.mjs comprobar:monitor",
-    "comprobar:reinicio": "node herramientas/gestionar_proyecto.mjs comprobar:reinicio"
+    "comprobar:reinicio": "node herramientas/gestionar_proyecto.mjs comprobar:reinicio",
+    "comprobar:poleas-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:poleas-palacio"
   },
   "repository": {
     "type": "git",

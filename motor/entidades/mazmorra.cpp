@@ -39,6 +39,9 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 32 || escena == 33 || escena == 34 || escena == 36 || escena == 39)
     return actualizar_ramas_valle(datos);
+  // CS17A3: los tres primeros corredores del palacio tienen manejador nulo.
+  if (escena >= 47 && escena <= 49)
+    return true;
   if (escena == 46) {
     // CFA9–CFD1: detiene la puerta de los dados al recortar sus límites verticales.
     const auto y = con_signo(palabra(datos, 0x2d16));

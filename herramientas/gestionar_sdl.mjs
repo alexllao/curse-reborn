@@ -394,6 +394,21 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--poleas-palacio',
+      nombre: 'poleas_palacio',
+      referencia: 'corredores_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'poleas_entrada',
+        'poleas_ante_inspeccion',
+        'poleas_inspeccion',
+        'poleas_regreso_dados',
+        'poleas_regreso',
+      ],
+      alcance: 'inspección143 y regreso persistente a los dados; cinco imágenes y restauración',
+    },
+    {
       argumento: '--dados-palacio',
       nombre: 'dados_palacio',
       referencia: 'dados_palacio',
@@ -560,6 +575,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--lago-helado',
       '--entrada-palacio',
       '--dados-palacio',
+      '--poleas-palacio',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

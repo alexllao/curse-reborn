@@ -4,6 +4,20 @@
 #include "../estado/segmento.hpp"
 namespace motor {
 namespace {
+// 6285–62C8: ofrece147 al reunir los siete útiles y retira la escoba ya innecesaria.
+void actualizar_oferta_silbato(unsigned char *d) {
+  static constexpr Palabra requeridos[] = {153, 154, 152, 149, 150, 144, 145};
+  for (const auto id : requeridos)
+    if (!contiene_identificador(d, id))
+      return;
+  retirar_identificador(d, 141);
+  d[0x4bae] = 1;
+}
+// 886B: mantiene el contrato común de planificación y el resultado de la acción.
+ResultadoMenu comenzar(unsigned char *d) {
+  unsigned short pasos = 0;
+  return iniciar_accion(d, pasos) ? ResultadoMenu::accion : ResultadoMenu::error;
+}
 // 563A/5F67/5F8E: conserva capacidad, iconos de puntuación y animaciones de dados y escoba.
 ResultadoMenu recoger(unsigned char *d, Palabra id) {
   const auto icono = d[0x524e + id * 2];
@@ -14,24 +28,37 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
     return ResultadoMenu::accion;
   }
   const bool dados = id == 140;
-  const Palabra entidad = dados ? 0x2c4c : 0x2cf1;
+  const bool sobre_mesa = dados || id == 144 || id == 145;
+  const bool baja = id == 147;
+  const Palabra entidad = dados ? 0x2c4c : id == 141 ? 0x2cf1 : id == 144 ? 0x2caf : 0x2c8e;
+  if (id == 144 || id == 145)
+    actualizar_oferta_silbato(d);
   if (dados) {
     guardar(d, 0x009c, 0x2d12);
     guardar(d, 0x009e, 0x0109);
     guardar(d, 0x00a0, 0x9819);
     guardar(d, 0x00a4, 0x981c);
   }
-  guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + (dados ? 5 : 9)));
-  guardar(
-      d, 0x1a3a,
-      static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) + (dados ? 25 : 3)));
+  guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + (id == 141 ? 9 : 5)));
+  guardar(d, 0x1a3a,
+          static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) +
+                               (dados       ? 25
+                                : id == 141 ? 3
+                                : baja      ? -4
+                                            : 33)));
   const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + palabra(d, 0x8082) * 2));
   d[static_cast<Palabra>(lista + ((entidad - 0x2c4c) / 33) * 9 + 1)] = 0;
   guardar(d, entidad + 16, 0x1a2e);
   d[entidad + 18] = 0;
   d[entidad + 20] = 1;
-  guardar(d, 0x0ad7, dados ? 0x96de : (d[0x358c] == 20 ? 0x9705 : 0x96cf));
-  guardar(d, 0x0adc, dados ? 0x96e7 : (d[0x358c] == 20 ? 0x970e : 0x96d8));
+  guardar(d, 0x0ad7,
+          sobre_mesa ? 0x96de
+          : baja     ? (d[0x358c] == 20 ? 0x96f6 : 0x96c0)
+                     : (d[0x358c] == 20 ? 0x9705 : 0x96cf));
+  guardar(d, 0x0adc,
+          sobre_mesa ? 0x96e7
+          : baja     ? (d[0x358c] == 20 ? 0x96ff : 0x96c9)
+                     : (d[0x358c] == 20 ? 0x970e : 0x96d8));
   unsigned short pasos = 0;
   if (!iniciar_accion(d, pasos))
     return ResultadoMenu::error;
@@ -43,12 +70,15 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
 ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short manejador,
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
-  if (palabra(d, 0x8082) != 46)
+  const auto escena = palabra(d, 0x8082);
+  if (escena < 46 || escena > 49)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
-  if (manejador == 0x563a && (id == 140 || id == 141))
+  if (manejador == 0x563a &&
+      ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
+       (escena == 49 && id == 147)))
     return recoger(d, id);
   if (manejador == 0x3b53 && palabra(d, 0xb638) == 0xffff && palabra(d, 0xb634) == 5 && id == 140) {
     if (!creacion.azar)
@@ -57,8 +87,96 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return ejecutar_accion_resultados(d, *creacion.azar, ax) ? ResultadoMenu::accion
                                                              : ResultadoMenu::error;
   }
+  // B93D/B9CE: inspecciones de poleas y ventana, con los canales que escribe cada una.
+  if (manejador == 0x384a && (id == 143 || id == 146)) {
+    if (id == 143) {
+      if (d[0x2c4d] != 9) {
+        marcar_accion_rechazada(d);
+        return ResultadoMenu::accion;
+      }
+      guardar(d, 0x1a38, 231);
+      guardar(d, 0x1a3a, 182);
+      guardar(d, 0x0ad7, 0xab9f);
+      guardar(d, 0x0adc, 0xabaa);
+      guardar(d, 0x0ae1, 0xabb0);
+    } else {
+      guardar(d, 0x1a38, 159);
+      guardar(d, 0x1a3a, 164);
+      guardar(d, 0x0ad7, 0xabc4);
+      guardar(d, 0x009c, 0x2c6d);
+      guardar(d, 0x009e, 0x0203);
+      guardar(d, 0x00a0, 0xabca);
+    }
+    return comenzar(d);
+  }
+  if (manejador == 0x3143 && id == 146) {
+    if (d[0x2c4c]) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    guardar(d, 0x1a38, 171);
+    guardar(d, 0x1a3a, 165);
+    guardar(d, 0x0ad7, 0xabfc);
+    guardar(d, 0x0adc, 0xac0a);
+    guardar(d, 0x0ae1, 0xac13);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if (manejador == 0x2fca && id == 148) {
+    if (d[0x2c4c] != 1) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 148);
+    d[0x4b9c] = 0;
+    guardar(d, 0x1a38, 142);
+    guardar(d, 0x1a3a, 165);
+    guardar(d, 0x0ad7, 0xabd6);
+    guardar(d, 0x0adc, 0xabe1);
+    guardar(d, 0x009c, 0x2caf);
+    guardar(d, 0x009e, 0x2805);
+    guardar(d, 0x00a0, 0x1a32);
+    guardar(d, 0x00a6, 0x2c4c);
+    guardar(d, 0x00a8, 0x0211);
+    guardar(d, 0x00aa, 0xabe9);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  const auto previo = palabra(d, 0xb638), verbo = palabra(d, 0xb634);
+  if (manejador == 0x3b53 && verbo == 1 &&
+      ((id == 142 && previo == 151) || (id == 151 && previo == 142))) {
+    retirar_identificador(d, 151);
+    d[0x4b00] = 12;
+    guardar(d, 0x4b0c, static_cast<Palabra>(palabra(d, 0x4b0c) + 24));
+    d[0x4b11] = d[0x4b1a] = d[0x2c8e] = d[0x2caf] = 7;
+    guardar(d, 0x1a38, 89);
+    guardar(d, 0x1a3a, 180);
+    guardar(d, 0x0ad7, 0x96de);
+    guardar(d, 0x0adc, 0x96e7);
+    guardar(d, 0x009c, 0x2c4c);
+    guardar(d, 0x009e, 0x0209);
+    guardar(d, 0x00a0, 0xabb6);
+    guardar(d, 0x00a6, 0x2c6d);
+    guardar(d, 0x00a8, 0x0209);
+    guardar(d, 0x00ae, 0xabc0);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
+  if (manejador == 0x3b53 && verbo == 7 &&
+      ((id == 147 && previo == 152) || (id == 152 && previo == 147))) {
+    if (!retirar_identificador(d, 147)) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 152);
+    insertar_identificador(d, 148);
+    guardar(d, 0x2c3b, 0x96de);
+    guardar(d, 0x2c40, 0x96e7);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && id != 140 && id != 141)
+  if (id != 76 && id != 124 && (id < 140 || id > 148) && id != 151 && id != 152)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_corredores_palacio.hpp"
 
 // 83/CFA9/5F67/B740: recoge escoba y dados, abre la puerta y repite una tirada sin reiniciar el
 // azar.
@@ -53,5 +54,5 @@ bool comprobar_dados_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanzar
       return true;
     return abrir() && elegir(2) && elegir(5) && objeto(140) && avanzar(512);
   }
-  return false;
+  return comprobar_corredores_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }
