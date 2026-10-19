@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,53 vistasSDL
+## Estado vigente: 19 de octubre,54 vistasSDL
 
-CatálogoSDL0–52,53 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–53,54 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -517,3 +517,7 @@ Resolución siguiente nativa preparada en comparar_resolucion_palacio.py desde l
 Resolución nativa ya contrastada:9608 casos/pasos,10 composiciones,9auditorías/3200selecciones (consultarJSON si cambia).147 está2C8E x256/y187:aproximar261/188. Para combinar147+152,después de147 seleccionarcasilla0 de volver alinventario,después152. Llegada de salto90 guardadaenventana_solicitud90.ds.bin/.semilla.json sincomponer imagen transitoria. FaltaSDLdelasotras3salas yresolución.
 
 HUDmínimo solicitado:avisos_hud.hpp,letrasblancasarribaizquierda,F11nombrefiltro y+/−porcentaje.120msentrada+1200visible+500salida,actualizacionesconservanlectura;sinplacas ni iconos. RelojSDLms independiente,restaura viewport/escala/presentación/mezcla/color. No aparece enlascomparacionesDOS; comprobar:avisos usa SDLsoftware sinventana ycomprueba fundido,desaparición,píxeles fuera de texto yestado deldibujante. Capturastrabajo/comprobacion_avisos.
+
+## Vista54: La habitación del megáfono
+
+CatálogoSDLescena53,origen48,salida97/regreso98;guardado98yprincipal53. comprobar:megafono-palacio 7imágenes,restauración y108cambiosF5. Referencias compartidascomparacion_laterales_palacio,29136casos/pasos/31imágenes. No repetirnativo sin cambios. HUDblancoF11yvolumenpreservado,decoradosampliadosaparcados.

@@ -503,7 +503,7 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
   if (!motor::leer_partida(archivo, longitud, ranura, candidata.datos))
     return false;
   const auto salida = motor::palabra(candidata.datos, 0x3598);
-  if (salida != 0xffff && salida > 96)
+  if (salida != 0xffff && salida > 98)
     return false;
   const auto escena_guardada =
       motor::palabra(candidata.datos, static_cast<unsigned short>(0x7482 + salida * 2));

@@ -160,7 +160,8 @@
     "comparar:laterales-palacio": "node herramientas/gestionar_proyecto.mjs comparar:laterales-palacio",
     "comprobar:arma-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:arma-palacio",
     "comparar:resolucion-palacio": "node herramientas/gestionar_proyecto.mjs comparar:resolucion-palacio",
-    "comprobar:avisos": "node herramientas/gestionar_proyecto.mjs comprobar:avisos"
+    "comprobar:avisos": "node herramientas/gestionar_proyecto.mjs comprobar:avisos",
+    "comprobar:megafono-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:megafono-palacio"
   },
   "repository": {
     "type": "git",

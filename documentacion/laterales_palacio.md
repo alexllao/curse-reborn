@@ -13,3 +13,5 @@ La vista53 añade la habitación del arma. `pnpm comprobar:arma-palacio` compara
 Los útiles enlazan con las poleas y la ventana de los corredores. La resolución se comprueba desde la partida con todos los objetos; los resultados de variantes aisladas anteriores no sustituyen ese recorrido.
 
 `pnpm comparar:resolucion-palacio` ya contrasta9608 casos/pasos y diez composiciones: insertar151 en142, recoger144/145, oferta147 por6285, recogida, combinación147/152, apertura con148 y salto146 hasta solicitar90. Las capturasSDL de esta resolución se incorporan al habilitar las tres vistas laterales siguientes.
+
+Vista54: La habitación del megáfono. `pnpm comprobar:megafono-palacio` verifica7 imágenes, restauración y108 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
