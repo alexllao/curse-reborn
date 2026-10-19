@@ -11,3 +11,5 @@ Los manejadoresB968/B9F4/BA1F/BA76 y las recogidas144/145/147 se contrastan tamb
 Las salidas laterales91/93/95/97/99/101 conservan las condiciones originales de las puertas elegidas por los dados. Sus habitaciones, la continuación90 y la solución final de la ventana siguen pendientes de integrar. Un corredor accesible no equivale a todo el palacio jugable.
 
 La vista48 añade el primer corredor y su regreso a los dados. `pnpm comprobar:poleas-palacio` compara cinco capturas de64000 píxeles, restauración y96 cambiosF5/F6 entre48 vistas. Las referencias nativas se generan antes con el comparador y se reutilizan al comprobarSDL.
+
+La vista49 habilita el segundo corredor. `pnpm comprobar:pasillo-hielo` compara dos imágenes, guardar/restaurar y98 cambiosF5/F6. La comprobación conserva las marcas aleatorias del mismo recorrido y vuelve por87 al primer corredor.

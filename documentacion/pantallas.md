@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las48 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las49 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                           | Recurso  |
 | ----- | ---------- | -------------------------------- | -------- |
@@ -47,13 +47,14 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 39    | 36         | El interior del barco            | HOLD     |
 | 40    | 39         | La plataforma eléctrica          | ELECTRO  |
 | 41    | 43         | La llanura del ser azul          | SNOWAST4 |
+| 42    | 42         | La morsa y el amigo del hielo    | SNOWAST3 |
+| 43    | 41         | El agujero del pez y el esquimal | SNOWAST2 |
 | 44    | 40         | La cornisa de los amigos         | SNOWAST1 |
 | 45    | 44         | El lago helado                   | ICELAKE  |
 | 46    | 45         | La entrada del palacio de hielo  | ICEPAL   |
 | 47    | 46         | La sala de los dados             | ICEROOM  |
-| 42    | 42         | La morsa y el amigo del hielo    | SNOWAST3 |
-| 43    | 41         | El agujero del pez y el esquimal | SNOWAST2 |
 | 48    | 47         | El corredor de las poleas        | ICECORR  |
+| 49    | 48         | El segundo corredor de hielo     | ICECORR  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -98,3 +99,5 @@ La vista46 habilita82, reproduce los cuatro carámbanos y abre83 según el origi
 La vista47 incorpora83, escoba141, dados140 y su puerta con dos tiradas persistentes contrastadas. Nueve imágenesSDL; los corredores después de84 siguen como siguiente ampliación.
 
 Vista48: entrada84, inspección143 y regreso85 comprobados enSDL; los laterales del palacio siguen pendientes, véase corredores_palacio.md.
+
+Vista49: segundo corredor, enlaces86/87 y regreso persistente a las poleas. Las marcas de las puertas continúan siendo las elegidas por los dados originales.

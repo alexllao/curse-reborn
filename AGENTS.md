@@ -479,3 +479,7 @@ comparar:corredores-palacio5791 casos/pasos,13 imágenes,10 auditorías/1377 sel
 palacio.cpp traduce recogidas144/145/147,6285,B93D/B968/B9CE/B9F4/BA1F/BA76. Variantes aisladas:256 condiciones de oferta, capacidad/iconos, actividad/imagen/azar, inserción151+142 y combinación147+152. Las habitaciones que dan los útiles siguen pendientes, no llamar completa esa solución.47/48/49 tienen despachoCS17A3cero, cargas84..89 y cámaras ya contrastadas en núcleo. Lateral91/93/95/97/99/101 y continuación90 pendientes. Decorados ampliados aparcados.
 
 SDL48 {47,46,84},enlaces46/84,47/85,guardado85. comprobar:poleas-palacio cinco capturas/restauración/96 cambiosF5. Referencias comparacion_corredores_palacio. Próximos SDL49 {48,47,86},enlaces47/86,48/87;SDL50 {49,48,88},enlaces48/88,49/89. El checker compartido ya contiene el recorrido; detener antes de una vista aún no catalogada. No repetir el comparador nativo si no cambia el núcleo.
+
+## ICECORR/48 enSDL, vista49
+
+Activos47/86 y48/87,guardado87 yrestauración48. comprobar:pasillo-hielo dos imágenes hielo_pasillo2/hielo_vuelta1,restauración y98 cambiosF5/F6. Reutiliza las13 referencias de comparar:corredores-palacio, sin recompilar DLL ni repetir el núcleo sin cambios. Próximo50 escena49 salida88 desde48,regreso89,guardado89 yprincipal49. El checker ya recorre inspección146/rechazo de salto y retornos; objetivo seis imágenes restantes.147oculto,útiles laterales ysalida90 aún pendientes.
