@@ -3,9 +3,14 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5E68",
+      "nombre": "Recogida especial de la bolsa de canicas en CLOUD",
+      "comentario": "5E68–5E97/623D desactiva la oferta persistente de2C4C y prepara1A2E/fase0/intervalo1, canales deBrad9808/9814 conservando el tercero. 886B reinicia acción; el contador de la bolsa esAL de359A más6, noAX de retorno. 36 variantes de capacidad/iconos/puntos/canal; recogida real y salida inferior67 hasta aterrizar enPOST. comparar:nube:2620 casos/pasos,400 selecciones, dos auditorías, cuatro composiciones; SDL del valle pendiente."
+    },
+    {
       "direccion": "0000:C8F9",
       "nombre": "Deriva de Brad y reciclado de las cuatro nubes",
-      "comentario": "C8F9–CADE divide con signo y truncamiento hacia cero las diferencias35C5/35B7 menos150 por10. Resta la primera aBrad; conserva excepciones9808/modelo y umbrales4/-4. Resta la segunda a cuatro nubes y recicla una sola vez fuera de(-160,480], con consumos3/50/2 en orden y segundo canalB2E0/B2E2. comparar:nube:294 variantes aisladas,256 pasos aislados y entrada66 real más impulso alternado;1388 casos/pasos y dos composiciones. Recogida121/regreso67 y SDL del valle todavía pendientes."
+      "comentario": "C8F9–CADE divide con signo y truncamiento hacia cero las diferencias35C5/35B7 menos150 por10. Resta la primera aBrad; conserva excepciones9808/modelo y umbrales4/-4. Resta la segunda a cuatro nubes y recicla una sola vez fuera de(-160,480], con consumos3/50/2 en orden y segundo canalB2E0/B2E2. comparar:nube:294 variantes aisladas,256 pasos aislados y entrada66 real más impulso alternado;1388 casos/pasos y dos composiciones. Recogida121/regreso67 y SDL del valle todavía pendientes. Ampliación posterior: bolsa121 y regreso67 también contrastados;2620 casos/pasos y cuatro composiciones en la misma partida. SDL sigue pendiente."
     },
     {
       "direccion": "0000:A8AE",

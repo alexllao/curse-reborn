@@ -1,4 +1,4 @@
-"""Contrasta C8F9 y la entrada real66 desde el pase; no acredita aún el puzle de CLOUD."""
+"""Contrasta C8F9 y la entrada real66 desde el pase; incluye bolsa121 y regreso67 desde la partida real."""
 
 import argparse
 import ctypes
@@ -60,6 +60,28 @@ class ComparacionNube(ComparacionEntregaGrabacion):
         self.resumen['secuencia_C8F9_aislada'] = 256
         self.retomar_recursos(base)
 
+    # Verifica la adquisición real sin cambiar los diez identificadores del inventario.
+    def tiene_bolsa(self, d):
+        return 121 in [palabra(d, 0x5225 + i * 2) for i in range(10)]
+
+    # 563A/5E68: capacidad, iconos, puntos y tercer canal en copias del estado de CLOUD.
+    def variantes_bolsa(self, base):
+        self.variantes = {}
+        for ocupadas in (0, 9, 10):
+            for icono in (0, 0x1F, 0x22):
+                for puntos in (0, 65535):
+                    for canal in (0, 0xCAFE):
+                        cambios = [
+                            (0x524E + 121 * 2, icono, True),
+                            (0x35C7, puntos, False),
+                            (0x2C45, canal, False),
+                        ]
+                        cambios += [
+                            (0x5225 + i * 2, 3 if i < ocupadas else 65535, False) for i in range(10)
+                        ]
+                        self.variante(base, 'recoger_bolsa', 0x563A, 121, cambios=cambios)
+        self.retomar_recursos(base)
+
     # Continúa la solicitud66 real sin alterar inventario, carga CLOUD y compara sus primeros pasos.
     def ejecutar(self):
         origen = self.raiz / 'trabajo/comparacion_entrega_grabacion/puerta_solicitud66'
@@ -87,12 +109,34 @@ class ComparacionNube(ComparacionEntregaGrabacion):
             self.esperar(d, 64, direccion)
         self.esperar(d, 32, 0)
         self.hito_borde(d, 'nube_impulso_alternado')
+        self.esperar(d, 32, 8)
+        self.esperar(d, 16, 4)
+        self.esperar(d, 1, 0)
+        self.auditar(d, 'CLOUD cerca de la bolsa')
+        self.variantes_bolsa(d)
+        puntos = palabra(d, 0x35C7)
+        self.elegir_objeto(d, (1,), 121)
+        self.esperar(d, 96)
+        if not self.tiene_bolsa(d) or d[0x2C4C] or palabra(d, 0x35C7) != puntos:
+            raise ErrorAnalisis('La bolsa no se recoge conservando la puntuación original.')
+        self.hito_borde(d, 'nube_bolsa_recogida')
+        salida = self.andar(d, self.semilla_menu, 1, 96)
+        if salida != 67:
+            raise ErrorAnalisis(f'La salida inferior de la nube solicita{salida}, esperada67.')
+        self.cambiar(d, self.semilla_menu, 67)
+        self.esperar(d, 256)
+        if palabra(d, 0x8082) != 35 or d[0x358C] != 255 or not self.tiene_bolsa(d):
+            raise ErrorAnalisis('El regreso no termina enPOST con modelo normal y bolsa121.')
+        self.hito_borde(d, 'nube_regreso_post')
+        self.auditar(d, 'POST después de la nube')
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
             'grupos': self.resumen,
             'capturas': self.capturas,
-            'alcance': 'C8F9 aislada y entrada66 con primeros pasos e impulso alternado real. No acredita recogida121, regreso67 ni SDL del valle.',
+            'estados_auditados': self.estados_auditados,
+            'variantes_recogida': 36,
+            'alcance': 'C8F9 aislada y entrada66 real, balanceo, recogida121 y salida inferior67 con aterrizaje enPOST. No acredita restantes rutas/puzles del valle ni su integración SDL.',
         }
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'

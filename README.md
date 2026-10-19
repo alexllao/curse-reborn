@@ -357,4 +357,4 @@ Disponible el [recorrido del valle hasta la grabación y el correo](documentacio
 
 La [entrega de la grabación y el pase](documentacion/entrega_grabacion.md) continúa esa misma partida: `pnpm comparar:entrega-grabacion --muestra` comprueba el intercambio y la apertura de la puerta hasta la solicitud66. La nube de destino y el resto del valle siguen pendientes; todavía no se activan en SDL.
 
-La [nube del valle](documentacion/nube_del_valle.md) ya tiene entrada y movimiento contrastados desde el pase real: 1.388 casos/pasos y dos composiciones frente al EXE. Recogida de la bolsa y regreso todavía pendientes; no amplía las 32 vistas SDL. Las mejoras opcionales se reunirán en un menú y quedarán desactivadas por defecto; esa unificación sigue pendiente.
+La [nube del valle](documentacion/nube_del_valle.md) ya tiene entrada, movimiento, bolsa y regreso contrastados desde el pase real: 2.620 casos/pasos y cuatro composiciones frente al EXE. Las demás rutas y puzles del valle siguen pendientes; no amplía las 32 vistas SDL. Las mejoras opcionales se reunirán en un menú y quedarán desactivadas por defecto; esa unificación sigue pendiente.

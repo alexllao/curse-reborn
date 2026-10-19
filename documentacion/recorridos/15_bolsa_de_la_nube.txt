@@ -1,0 +1,14 @@
+BOLSA DE LA NUBE — recorrido contrastado en el núcleo, todavía sin SDL del valle
+
+Continuación: misma grabación, correo y pase de los recorridos13/14.
+1. La puerta abierta solicita66; cargar CLOUD38 con el modelo original LOST.BRD.
+2. Esperar128 pasos de entrada. El comparador alterna izquierda/derecha cuatro veces de64 pasos y suelta32.
+3. Mantener izquierda32 pasos, derecha16 y soltar un paso. Abrir Recoger y elegir la bolsa121 ofrecida.
+4. Esperar96 pasos:121 aparece en el inventario y desaparece la entidad de la bolsa. No suma puntos en esta partida.
+5. Bajar hacia el límite inferior. La prueba espera hasta96 pasos y se detiene cuando BOXDET solicita67.
+6. Cargar POST35 y dejar256 pasos de aterrizaje. Brad vuelve a su modelo normal y conserva bolsa, pase y demás objetos.
+
+Los números son pasos lógicos de la prueba, no milisegundos ni pulsaciones obligatorias para jugar. No hay cambios directos de posición/inventario para esta ruta.
+Prueba: pnpm comparar:nube --muestra
+Resultado:2620 casos/pasos,400 selecciones,36 variantes aisladas de recogida, dos auditorías y cuatro imágenes frente al original.
+No prueba las demás rutas del valle ni activa sus vistas de desarrollo SDL.

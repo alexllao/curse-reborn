@@ -22,11 +22,12 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
     guardar(d, registro + 8, c);
 }
 } // namespace
-// 5D89/5DA4 y respuestas comunes: primeras recogidas del valle32–35; los puzles posteriores siguen
+// 5D89/5DA4 y respuestas comunes: recogidas del valle32–35 y CLOUD38; los puzles posteriores siguen
 // pendientes.
 ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short manejador,
                                          unsigned short id, const ServicioSonido &sonido) {
-  if (palabra(d, 0x8082) < 32 || palabra(d, 0x8082) > 35)
+  const auto escena_valle = palabra(d, 0x8082);
+  if (escena_valle < 32 || (escena_valle > 35 && escena_valle != 38))
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1) {
     // 372A–3763: el saludo cercano al personaje98 activa su bocadillo, además del sonido común.
@@ -51,7 +52,7 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
       {110, 35, 0x2d33, 45, 0xfff4, 1}, {111, 35, 0x2c4c, 7, 1, 0},
       {112, 35, 0x2c4c, 7, 1, 0},       {99, 32, 0x2cf1, 5, 1, 0},
       {100, 32, 0x2d75, 15, 0xfffc, 1}, {101, 32, 0x2d54, 35, 0xfffc, 1},
-      {109, 32, 0x2d33, 45, 0xfffc, 1}};
+      {109, 32, 0x2d33, 45, 0xfffc, 1}, {121, 38, 0x2c4c, 0, 0, 2}};
   const Palabra *recogida = nullptr;
   for (const auto &fila : recogidas)
     if (fila[0] == id && fila[1] == palabra(d, 0x8082))
@@ -72,6 +73,19 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
     if (id == 99)
       d[0x5314] = 0x90;
     const Palabra entidad = recogida[2];
+    // 5E68–5E97: no aproxima a la bolsa; conserva el tercer canal y usa 359A tras 886B.
+    if (id == 121) {
+      const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + escena_valle * 2));
+      d[static_cast<Palabra>(lista + 1)] = 0;
+      guardar(d, entidad + 16, 0x1a2e);
+      d[entidad + 18] = 0;
+      d[entidad + 20] = 1;
+      guardar(d, 0x2c3b, 0x9808);
+      guardar(d, 0x2c40, 0x9814);
+      const auto resultado = comenzar(d);
+      d[entidad + 19] = static_cast<unsigned char>(palabra(d, 0x359a) + 6);
+      return resultado;
+    }
     const bool recogida_normal = recogida[5] != 0;
     guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + recogida[3]));
     guardar(d, 0x1a3a,
@@ -89,6 +103,18 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
       return ResultadoMenu::error;
     d[entidad + 19] = static_cast<unsigned char>(pasos + 6);
     return ResultadoMenu::accion;
+  }
+  // CLOUD no hereda intercambios de POST; solo las respuestas comunes ya comprobadas.
+  if (escena_valle == 38) {
+    if (id != 3 && id != 70 && id != 76 && id != 99 && id != 101 && id != 121)
+      return ResultadoMenu::pendiente;
+    if (manejador == 0x384a)
+      return ResultadoMenu::actualizado;
+    if (manejador == 0x2fca || manejador == 0x3143 || manejador == 0x3b53) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    return ResultadoMenu::pendiente;
   }
   // 3DA6–3DBD/A81A–A8AB: insertar el pelo110 en102 admite ambos órdenes y resta firmada.
   const auto previo = palabra(d, 0xb638);
@@ -275,7 +301,7 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
       id != 102 && id != 105 && id != 106 && id != 108 && id != 109 && id != 110 && id != 111 &&
-      id != 112 && id != 113 && id != 114 && id != 116)
+      id != 112 && id != 113 && id != 114 && id != 116 && id != 121)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;
