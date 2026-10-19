@@ -177,6 +177,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     grabacion_valle: 'comparar_grabacion_valle.py',
     grabacion_completa: 'comparar_grabacion_completa.py',
     plataforma_valle: 'comparar_plataforma_valle.py',
+    regreso_benn: 'comparar_regreso_benn.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -213,6 +214,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:regreso-benn':
+      await gestionarSdl('comprobar:poblacion', ['--regreso-benn']);
+      break;
     case 'comprobar:plataforma-valle':
       await gestionarSdl('comprobar:poblacion', ['--plataforma-valle']);
       break;
@@ -391,6 +395,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:regreso-benn':
+      compararAcciones('regreso_benn', argumentos);
       break;
     case 'comparar:enlaces-valle':
       compararAcciones('enlaces_valle', argumentos);

@@ -393,6 +393,23 @@ function configurarComprobacionValle(argumentos) {
       alcance:
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
+    {
+      argumento: '--regreso-benn',
+      nombre: 'regreso_benn',
+      referencia: 'regreso_benn',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:regreso-benn'],
+      hitos: [
+        'benn_regreso',
+        'benn_frente_vendedor',
+        'benn_pago_real',
+        'benn_vestido_real',
+        'probador_regreso_valle',
+        'probador_vestido_real',
+      ],
+      alcance:
+        'regreso después del ventilador, pago real aBenn, vestido79 y probador; seis imágenes y restauración. No carga la sala43.',
+    },
   ];
   return recorridos.find((recorrido) => argumentos.includes(recorrido.argumento));
 }
@@ -418,6 +435,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--cueva-valle',
       '--barco-valle',
       '--plataforma-valle',
+      '--regreso-benn',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

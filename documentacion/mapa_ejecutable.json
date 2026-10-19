@@ -1639,6 +1639,11 @@
       "direccion": "0000:82C6",
       "nombre": "Interrupción de final de bloque digital",
       "comentario": "Continúa DMA en la página siguiente si quedan bytes; con restantes cero, 82E5 libera CS:8351. El adaptador PCM conserva la muestra contigua y libera la prioridad al terminar."
+    },
+    {
+      "direccion": "0000:49DA",
+      "nombre": "ataque_del_ventilador_en_escena_72",
+      "comentario": "El ataque124 comprueba escena72 antes de probar el estado de35CA; fuera salta88A0. Se conserva ese rechazo en el inventario real deCOUNTRY2 tras volver del valle. El efecto exitoso de72 sigue pendiente; no se implementa por esta anotación."
     }
   ],
   "tablas": [

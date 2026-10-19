@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_regreso_benn.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -87,8 +88,9 @@ bool comprobar_plataforma_valle_sdl(Mazmorra &p, const std::string &opcion, Avan
   for (unsigned int i = 0; i < 256 && p.escena_actual() == 39; ++i)
     if (!avanzar(1))
       return false;
-  return p.escena_actual() == 16 && avanzar(128) && p.conserva_objeto(124) &&
-         !p.conserva_objeto(3) && !p.conserva_objeto(99) &&
-         p.puntuacion() == static_cast<unsigned short>(puntos + 30) &&
-         detener("plataforma_regreso_campo");
+  if (p.escena_actual() != 16 || !avanzar(128) || !p.conserva_objeto(124) || p.conserva_objeto(3) ||
+      p.conserva_objeto(99) || p.puntuacion() != static_cast<unsigned short>(puntos + 30))
+    return false;
+  return detener("plataforma_regreso_campo") ||
+         comprobar_regreso_benn_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }

@@ -894,6 +894,17 @@ extern "C" EXPORTAR int avanzar_jugabilidad_bancos(
                           nullptr, false, referencia_modelo);
 }
 
+// Conserva bancos completos y CS:1BA2 en los regresos reales al probador después del valle.
+extern "C" EXPORTAR int avanzar_probador_bancos(
+    unsigned char *datos, unsigned short *palabras,
+    bool (*dimensiones)(void *, unsigned short, unsigned short, unsigned short &, unsigned short &),
+    bool (*modelo)(void *, const unsigned char *, unsigned short, unsigned short),
+    const unsigned char *geometria, unsigned int longitud, unsigned short direccion,
+    unsigned short referencia_modelo, unsigned char *fase) {
+  return avanzar_con_fase(datos, palabras, dimensiones, modelo, geometria, longitud, direccion,
+                          fase, false, referencia_modelo);
+}
+
 // C093 aislada: comparte dimensiones y cuenta las órdenes sonoras sin abrir dispositivos.
 extern "C" EXPORTAR int procesar_borde(unsigned char *datos, unsigned short *palabras,
                                        bool (*dimensiones)(void *, unsigned short, unsigned short,

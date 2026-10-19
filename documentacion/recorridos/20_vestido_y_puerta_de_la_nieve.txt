@@ -1,0 +1,17 @@
+REGRESO A BENN DESPUÉS DEL VALLE
+
+Requisito: haber obtenido el ventilador y vuelto al campo por la puerta de la plataforma eléctrica.
+
+1. Vuelve a la entrada del pueblo por el sendero del campo.
+2. Entra en la plaza de la fuente y toma la calle de los disfraces, a la derecha.
+3. Entra en la tienda de Benn y acércate al vendedor.
+4. Da dinero al vendedor. Desde la entrada aún está demasiado lejos para elegirlo como destinatario.
+5. Recoge el vestido que ofrece. El dinero se conserva, como en el original.
+6. Entra en el probador de la izquierda.
+7. Usa la acción de vestir/ponerse con el vestido.
+8. Espera la animación: Brad se viste y vuelve a aparecer con su ropa normal; se abre la puerta del siguiente capítulo.
+9. Camina hacia esa puerta para solicitar la salida a la nieve.
+
+ALCANCE COMPROBADO
+
+Partida real contrastada hasta solicitar la salida74, sin añadir el vestido al inventario manualmente. En SDL se comparan seis imágenes hasta el final de vestir, incluido guardar/cargar. La sala nevada43 todavía no está integrada; su puerta queda como continuación pendiente y no se cuenta como sala jugable nueva.

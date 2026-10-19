@@ -21,3 +21,7 @@ Además compara80 variantes de1A74 (modelo normal/19, fotogramas0–4, fase0/1, 
 `pnpm comprobar:probador` prepara las referencias con el mismo orden inicial de dibujo, compara entrada y regreso en SDL y recorre las30 vistas F5/F6, incluida restauración en memoria del probador. No toca perfiles ni partidas del usuario. Los resultados quedan en trabajo/comparacion_probador/ y trabajo/comprobacion_probador_sdl/.
 
 La visita temprana no fabrica la oferta de Benn, el vestido ni las condiciones del capítulo posterior. La salida74 desde CHANGE hacia la escena43 y los destinos posteriores siguen fuera del alcance integrado. EDGE30 continúa detenido hasta reconstruir y contrastar C093. Esta tanda no declara el puzle entero del disfraz ni todos los estados del juego completos.
+
+## Continuación posterior al valle
+
+El vestido ya se obtiene en la misma partida que vuelve con el ventilador124: pagar aBenn, recoger79, entrar36, vestir y solicitar74. La comparación nueva distingue este recorrido de las variantes aisladas preparadas anteriormente. Incluye10.109 casos/pasos nativos, siete composiciones y seis capturasSDL con guardar/restaurar. No carga la sala43 ni aumenta las40 vistas. Alcance detallado en [regreso aBenn](regreso_benn.md).

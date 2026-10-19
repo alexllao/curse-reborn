@@ -441,8 +441,12 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }
-    if (palabra(d, 0x8082) == 16 && (objeto == 3 || objeto == 70 || objeto == 75 || objeto == 76) &&
-        (previo == 0xffff || previo == 3 || previo == 70 || previo == 75 || previo == 76)) {
+    // 3B53/88A0: también conserva las respuestas neutras de101/124 al volver del valle.
+    if (palabra(d, 0x8082) == 16 &&
+        (objeto == 3 || objeto == 70 || objeto == 75 || objeto == 76 || objeto == 101 ||
+         objeto == 124) &&
+        (previo == 0xffff || previo == 3 || previo == 70 || previo == 75 || previo == 76 ||
+         previo == 101 || previo == 124)) {
       marcar_accion_rechazada(d);
       return ResultadoMenu::accion;
     }

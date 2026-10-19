@@ -111,7 +111,8 @@ ResultadoMenu ejecutar_interaccion_asaltante(unsigned char *d, unsigned short ma
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
-  if (id == 3 || id == 70 || id == 75 || id == 76) {
+  // 3136–313E/49DA: el ventilador solo ataca en72;101/124 se rechazan en el campo.
+  if (id == 3 || id == 70 || id == 75 || id == 76 || id == 101 || id == 124) {
     if (manejador == 0x384a)
       return ResultadoMenu::actualizado;
     if (manejador == 0x2fca || manejador == 0x3143) {
