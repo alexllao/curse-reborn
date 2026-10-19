@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5FC4",
+      "nombre": "Recogida del gato mecánico del palacio",
+      "comentario": "5FC4–5FD7:149,6285,entidad2C4C,x+5/y+alto−16,615C. Se conservan capacidad/iconos/modelo/puntuación y listas persistentes. Tiradas reales de B740 abren91; regreso92 conserva149. palacio.cpp y comparar:utiles-palacio."
+    },
+    {
+      "direccion": "0000:6062",
+      "nombre": "Recogida de la lupa del palacio",
+      "comentario": "6062–6075 fuera de56:150,6285,entidad2C4C,x+5/y+alto−4,615C. Variantes de capacidad, iconos, modelo y oferta147; recorrido real tras93 y regreso94. La rama6004 de la sala del láser56 sigue pendiente. palacio.cpp."
+    },
+    {
       "direccion": "0000:BA76",
       "nombre": "Salto por la ventana del corredor",
       "comentario": "Exige2C4C=0; destino171/165 yABFC/AC0A/AC13,+5.12 variantes; la partida real conserva ventana cerrada y se compara el rechazo. palacio.cpp."

@@ -153,7 +153,9 @@
     "comprobar:reinicio": "node herramientas/gestionar_proyecto.mjs comprobar:reinicio",
     "comprobar:poleas-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:poleas-palacio",
     "comprobar:pasillo-hielo": "node herramientas/gestionar_proyecto.mjs comprobar:pasillo-hielo",
-    "comprobar:ventana-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:ventana-palacio"
+    "comprobar:ventana-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:ventana-palacio",
+    "comparar:utiles-palacio": "node herramientas/gestionar_proyecto.mjs comparar:utiles-palacio",
+    "comprobar:gato-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:gato-palacio"
   },
   "repository": {
     "type": "git",

@@ -16,6 +16,8 @@ BANCOS_ESCENA = {
     47: 'ICECORR',
     48: 'ICECORR',
     49: 'ICECORR',
+    50: 'ICEROOM',
+    51: 'ICEROOM',
     42: 'SNOWAST3',
     41: 'SNOWAST2',
     40: 'SNOWAST1',

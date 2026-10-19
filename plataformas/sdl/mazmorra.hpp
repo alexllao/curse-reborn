@@ -42,6 +42,11 @@ public:
   int casilla_objeto(unsigned short id) const;
   // partida.
   bool conserva_objeto(unsigned short identificador) const;
+  // B822/B84B: consulta las puertas persistentes del gato y la lupa sin alterar la tirada.
+  bool puerta_lateral_abierta(unsigned short escena) const {
+    return escena == 50 ? datos[0x4b2c] == 1 : escena == 51 && datos[0x4b35] == 1;
+  }
+
   // El guion 0F94 es el golpe de las estatuas; permite detener una captura en esa fase real.
   bool golpe_estatua() const;
   // Consulta la amenaza y la secuencia de descarga para comprobar el uso real de la picana.

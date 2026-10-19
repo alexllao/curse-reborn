@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,50 vistasSDL
+## Estado vigente: 19 de octubre,51 vistasSDL
 
-CatálogoSDL0–49,50 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad172 C++/71 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–50,51 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad173 C++/72 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -491,3 +491,9 @@ Activos48/88 y49/89,guardado89 yrestauración49. comprobar:ventana-palacio seis 
 Continuación pendiente: salida90→56 (revisar recursos/guion antes de integrar), laterales91/93/95/97/99/101 con puertas condicionadas por4B2C/35/3E/47/50/59; no abrirlas por conveniencia. Útiles149/150/151/152/153/154 y144/145 deben obtenerse mediante sus habitaciones originales antes de ofrecer147 y resolver148/ventana146. Manejadores aislados ya contrastados enpalacio.cpp; falta recorrido real y auditorías con esos objetos, no confundir con variantes sintéticas. Referencia actual trabajo/comparacion_corredores_palacio/hielo_fin_corredores.ds.bin ysemilla.json. No reactivar decorados ampliados.
 
 Auditoría final auditar:rutas:78 tablas, ocho salidas pendientes desde vistas disponibles:31/112→64;47/91→50,47/93→51;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55. La tabla real90 lleva a56, no a50; respetar esta corrección al continuar.
+
+## Primera habitación lateral, vista51: gato149
+
+SDL{50,47,91},enlaces47/91,50/92,guardado92. comprobar:gato-palacio seis imágenes/restauración/102 cambiosF5. Parte del checker de los corredores tras hielo_fin_corredores; vuelve89/87/85 +128 cada transición. B740se repite sin fijar semilla hasta4B2C1 (dos tiradas adicionales en esta partida).84+128,rodear puntos80/182,49/182,70/190,50/190,40/182→91+128;116/180,recoger149/192;280/165→92+128,160/199→85+128. No cambiar colisiones para acortar ese rodeo.
+
+Core también50/51: CS17A3nulo,transiciones91–94 ycamera,recoger149/5FC4 y150/6062.149entidad2C4C,+5/y+alto−16;150mismoactor,+5/y+alto−4;615C y6285. Hastaoferta147 no inventar153/154/152/144/145. Variantes164porobjeto (36capacidad/modelo/icono/puntos +128oferta). Archivo comparar_utiles_palacio.py continúa con la lupa51: tres tiradas,entrada93,242/180 y242/165 antes de seleccionar150;resultado nativo17640 casos/pasos,13 imágenes,10auditorías/1594selecciones. No confundir referencia anticipada con vistaSDL aún sin habilitar. PróximoSDL52{51,47,93},salidas47/93,51/94,guardado94 yprincipal51. Decorados ampliados aparcados.

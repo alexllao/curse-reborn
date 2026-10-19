@@ -61,6 +61,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {47, 46, 84, "El corredor de las poleas", "ICECORR"},
     {48, 47, 86, "El segundo corredor de hielo", "ICECORR"},
     {49, 48, 88, "El corredor de la ventana", "ICECORR"},
+    {50, 47, 91, "La habitación del gato mecánico", "ICEROOM"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -80,7 +81,7 @@ inline constexpr SalidaIntegrada salidas_integradas[] = {
     {32, 58}, {33, 54}, {32, 53}, {33, 70}, {32, 71}, {32, 59}, {35, 66}, {38, 67}, {32, 64},
     {37, 65}, {33, 62}, {36, 63}, {32, 68}, {39, 69}, {25, 74}, {43, 80}, {42, 79}, {42, 78},
     {41, 77}, {41, 76}, {40, 75}, {40, 81}, {44, 82}, {45, 83}, {46, 84}, {47, 85}, {47, 86},
-    {48, 87}, {48, 88}, {49, 89}};
+    {48, 87}, {48, 88}, {49, 89}, {47, 91}, {50, 92}};
 
 // No confunde reconocer una salida original con disponer de su habitación y sus puzles.
 inline bool salida_integrada(unsigned short escena, unsigned short salida) {

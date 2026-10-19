@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_utiles_palacio.hpp"
 
 // 84–89/B93D/B9CE: recorre los corredores reales y conserva cerrada la ventana sin sus útiles.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -71,5 +72,7 @@ bool comprobar_corredores_palacio_sdl(Mazmorra &p, const std::string &opcion, Av
     return true;
   if (!ruta(160, 166, 88, 49))
     return false;
-  return detener("hielo_fin_corredores");
+  if (detener("hielo_fin_corredores"))
+    return true;
+  return comprobar_utiles_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

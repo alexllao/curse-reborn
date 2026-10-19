@@ -79,7 +79,7 @@ bool preparar_vista_escena(unsigned char *d) {
   if (escena > 31 && escena != 32 && escena != 33 && escena != 34 && escena != 35 && escena != 36 &&
       escena != 37 && escena != 38 && escena != 39 && escena != 40 && escena != 41 &&
       escena != 42 && escena != 43 && escena != 44 && escena != 45 && escena != 46 &&
-      escena != 47 && escena != 48 && escena != 49)
+      escena != 47 && escena != 48 && escena != 49 && escena != 50 && escena != 51)
     return false;
   const auto tabla = palabra(d, static_cast<Palabra>(0x757e + escena * 2));
   if (d[tabla] < 10 || static_cast<unsigned int>(tabla) + d[tabla] >= 65536u)
