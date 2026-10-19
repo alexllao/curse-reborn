@@ -1180,6 +1180,7 @@ export async function gestionarSdl(accion, argumentos) {
     ejecutar(programa, [datos, '--comprobar-cursor', join(carpeta, 'mano_original.png')], {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
+      CURSE_REBORN_PARTIDAS: join(carpeta, 'perfil_cursor.sav'),
     });
     return;
   }

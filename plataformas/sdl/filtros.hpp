@@ -19,6 +19,10 @@ public:
                                               "CRT suave", "xBRZ 2x",   "2xSaI"};
     return nombres[modo];
   }
+  // El modo original conserva el cursor del sistema; los filtros componen la mano con la escena.
+  bool aplicado() const {
+    return modo != 0;
+  }
   // Actualiza la textura original y, cuando corresponde, la imagen auxiliar de 640 por 400.
   bool actualizar(SDL_Texture *original, const unsigned char *rgba);
   // El modo cero conserva exactamente la textura original y su muestreo por vecino más próximo.

@@ -375,3 +375,31 @@ bool PartidasSDL::dibujar(SDL_Renderer *dibujante, const Mazmorra &partida) {
          SDL_UpdateTexture(textura_informacion, nullptr, rgba.data(), 320 * 4) &&
          SDL_RenderTexture(dibujante, textura_informacion, nullptr, nullptr);
 }
+
+// Usa los mismos dibujantes DOS que la textura de paneles, para filtrar también su cursor.
+bool PartidasSDL::componer_rgba(const Mazmorra &partida, unsigned char *rgba) const {
+  if (!abierta())
+    return true;
+  motor::ImagenIndexada negro{}, blanco{};
+  SDL_FRect placa{};
+  if (modo == 4) {
+    if (!partida.dibujar_informacion(pagina_informacion, negro, placa))
+      return false;
+  } else if (!partida.dibujar_panel_partidas(modo, archivo, editando, nombre, cursor_x, cursor_y, 0,
+                                             negro) ||
+             !partida.dibujar_panel_partidas(modo, archivo, editando, nombre, cursor_x, cursor_y,
+                                             255, blanco))
+    return false;
+  for (unsigned int y = 0; y < 200; ++y)
+    for (unsigned int x = 0; x < 320; ++x) {
+      const auto i = y * 320 + x;
+      if (modo == 4 ? x < placa.x || x >= placa.x + placa.w || y < placa.y || y >= placa.y + placa.h
+                    : negro.indices[i] != blanco.indices[i])
+        continue;
+      for (unsigned int c = 0; c < 3; ++c)
+        rgba[i * 4 + c] =
+            static_cast<unsigned char>(negro.paleta[negro.indices[i] * 3 + c] * 255u / 63u);
+      rgba[i * 4 + 3] = 255;
+    }
+  return true;
+}

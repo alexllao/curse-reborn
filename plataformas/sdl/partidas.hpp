@@ -15,6 +15,8 @@ public:
   bool evento(const SDL_Event &evento, SDL_Window *ventana, Mazmorra &partida, bool &redibujar);
   // Presenta las fichas originales o las ranuras en el encuadre lógico del juego.
   bool dibujar(SDL_Renderer *dibujante, const Mazmorra &partida);
+  // Compone el panel y su mano incorporada antes del filtro, conservando sus píxeles transparentes.
+  bool componer_rgba(const Mazmorra &partida, unsigned char *rgba) const;
   // Cierra el panel y termina la entrada de texto antes de devolver el control al juego.
   void cerrar(SDL_Window *ventana);
   // Permite pausar exclusivamente la lógica mientras la música continúa.

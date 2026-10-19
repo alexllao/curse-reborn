@@ -75,6 +75,7 @@ struct Presentacion {
   MarcosPantalla marcos;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
+  bool actualizacion_diferida = false;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
     mazmorra.cerrar_audio();
@@ -175,7 +176,8 @@ bool actualizar_textura(Presentacion &presentacion, bool con_decorado = false) {
                                          luz))
       return false;
   }
-  return presentacion.filtros.actualizar(presentacion.textura, pixeles);
+  return presentacion.actualizacion_diferida ||
+         presentacion.filtros.actualizar(presentacion.textura, pixeles);
 }
 
 // Recorre las vistas de desarrollo; cada entrada a la mazmorra prepara una sesión nueva sin
@@ -336,8 +338,112 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
                                       false) ||
       SDL_GetCursor() != SDL_GetDefaultCursor())
     return false;
+  if (!SDL_SetWindowSize(presentacion.ventana, 960, 600) || !SDL_SyncWindow(presentacion.ventana) ||
+      !SDL_SetRenderViewport(presentacion.dibujante, nullptr) ||
+      !SDL_SetRenderScale(presentacion.dibujante, 1, 1) ||
+      !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
+                                        SDL_LOGICAL_PRESENTATION_LETTERBOX) ||
+      !SDL_SetTextureScaleMode(presentacion.textura, SDL_SCALEMODE_NEAREST) ||
+      !actualizar_textura(presentacion))
+    return false;
+  const std::vector<unsigned char> base(pixeles, pixeles + sizeof(pixeles));
+  std::vector<unsigned char> cursor_original;
+  PartidasSDL panel;
+  const auto capturar = [&](const std::string &nombre, std::vector<unsigned char> &salida,
+                            bool dibujar = true) {
+    if (dibujar && (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
+                    !SDL_RenderClear(presentacion.dibujante) ||
+                    !SDL_RenderTexture(presentacion.dibujante,
+                                       presentacion.filtros.textura_visible(presentacion.textura),
+                                       nullptr, nullptr)))
+      return false;
+    SDL_Surface *leida = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
+    SDL_Surface *captura = leida ? SDL_ConvertSurface(leida, SDL_PIXELFORMAT_RGBA32) : nullptr;
+    SDL_DestroySurface(leida);
+    if (!captura)
+      return false;
+    const bool guardada = captura->w == 960 && captura->h == 600 &&
+                          SDL_SavePNG(captura, (destino + nombre + ".png").c_str());
+    if (guardada) {
+      salida.resize(960 * 600 * 4);
+      for (int y = 0; y < 600; ++y)
+        std::copy_n(static_cast<unsigned char *>(captura->pixels) + y * captura->pitch, 960 * 4,
+                    salida.data() + y * 960 * 4);
+    }
+    SDL_DestroySurface(captura);
+    return guardada;
+  };
+  for (unsigned int modo = 0; modo < 6; ++modo) {
+    SDL_FPoint centro;
+    auto con_mano = base;
+    if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, 160, 100, &centro.x, &centro.y) ||
+        !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                mazmorra, true, false, &centro, true) ||
+        SDL_CursorVisible() || !presentacion.cursor.componer_rgba(mazmorra, con_mano.data()) ||
+        con_mano == base || !presentacion.filtros.actualizar(presentacion.textura, con_mano.data()))
+      return false;
+    std::vector<unsigned char> captura;
+    if (!capturar(".filtro_" + std::to_string(modo), captura))
+      return false;
+    if (modo == 0)
+      cursor_original = captura;
+    if (modo == 2) {
+      bool probado = false;
+      for (unsigned int i = 0; i < 256 && !probado; ++i) {
+        if (!rgba[i * 4 + 3])
+          continue;
+        const auto p = ((100 + i / 16) * 3 + 2) * 960 * 4 + ((160 + i % 16) * 3 + 1) * 4;
+        for (unsigned int c = 0; c < 3; ++c)
+          if (cursor_original[p + c] > 100) {
+            if (captura[p + c] >= cursor_original[p + c])
+              return SDL_SetError("La mano no recibe las líneas de escaneo");
+            probado = true;
+            break;
+          }
+      }
+      if (!probado)
+        return SDL_SetError("La prueba no ha encontrado un píxel opaco de la mano");
+    }
+    for (const auto &punto : {SDL_FPoint{0.25f, 0.25f}, SDL_FPoint{319.75f, 199.75f}}) {
+      SDL_FPoint ventana;
+      auto borde = base;
+      if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, punto.x, punto.y, &ventana.x,
+                                         &ventana.y) ||
+          !presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                  mazmorra, true, false, &ventana, true) ||
+          !presentacion.cursor.componer_rgba(mazmorra, borde.data()))
+        return false;
+    }
+    auto sin_mano = base;
+    if (!presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                mazmorra, true, false, nullptr, true) ||
+        !SDL_CursorVisible() || SDL_GetCursor() != SDL_GetDefaultCursor() ||
+        !presentacion.cursor.componer_rgba(mazmorra, sin_mano.data()) || sin_mano != base)
+      return SDL_SetError("Salir del juego deja restos del cursor filtrado");
+    panel.abrir(2, presentacion.ventana);
+    auto con_panel = base;
+    if (!presentacion.cursor.actualizar_puntero(presentacion.ventana, presentacion.dibujante,
+                                                mazmorra, true, true, &centro, true) ||
+        !panel.componer_rgba(mazmorra, con_panel.data()) ||
+        !presentacion.cursor.componer_rgba(mazmorra, con_panel.data()) ||
+        !presentacion.filtros.actualizar(presentacion.textura, con_panel.data()) ||
+        !capturar(".panel_" + std::to_string(modo), captura))
+      return false;
+    if (modo == 0) {
+      std::vector<unsigned char> referencia;
+      if (!presentacion.filtros.actualizar(presentacion.textura, base.data()) ||
+          !SDL_RenderClear(presentacion.dibujante) ||
+          !SDL_RenderTexture(presentacion.dibujante, presentacion.textura, nullptr, nullptr) ||
+          !panel.dibujar(presentacion.dibujante, mazmorra) ||
+          !capturar(".panel_referencia", referencia, false) || captura != referencia)
+        return SDL_SetError("La composición del panel cambia sus píxeles originales");
+    }
+    panel.cerrar(presentacion.ventana);
+    if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, base.data()))
+      return false;
+  }
   registrar_accion("Cursor: tres formatos con y sin zoom; cuatro bordes, salida de ventana, "
-                   "regreso de la mano y relevo del panel comprobados");
+                   "regreso de la mano, seis filtros y panel sin duplicación comprobados");
   return true;
 }
 
@@ -840,6 +946,7 @@ int main(int argc, char *argv[]) {
   }
   const std::string carpeta = argv[1];
   Presentacion presentacion;
+  presentacion.actualizacion_diferida = !comprobar;
   ContadorFps contador_fps(!comprobar || comprobar_fps);
   AvisosHud avisos(!comprobar);
   if (!SDL_Init(SDL_INIT_VIDEO))
@@ -1839,6 +1946,16 @@ int main(int argc, char *argv[]) {
     if (!presentacion.marcos.preparar_encuadre(
             presentacion.dibujante, comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido actualizar el encuadre del juego");
+    const bool cursor_filtrado = presentacion.filtros.aplicado();
+    if (!comprobar &&
+        (!presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
+                                         pantalla >= 3 && !presentacion.marcos.reiniciando(),
+                                         partidas.incorpora_cursor(), cursor_filtrado) ||
+         !actualizar_textura(presentacion, pantalla >= 3) ||
+         (cursor_filtrado && (!partidas.componer_rgba(mazmorra, pixeles) ||
+                              !presentacion.cursor.componer_rgba(mazmorra, pixeles))) ||
+         !presentacion.filtros.actualizar(presentacion.textura, pixeles)))
+      return fallo("No se ha podido componer el cursor con el filtro");
     const auto area_imagen = presentacion.marcos.destino_juego();
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
@@ -1865,15 +1982,11 @@ int main(int argc, char *argv[]) {
       return fallo("No se han podido dibujar las cajas de depuración");
     if (!presentacion.marcos.reiniciando() && !contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
-    if (!presentacion.marcos.reiniciando() && !partidas.dibujar(presentacion.dibujante, mazmorra))
+    if (!presentacion.marcos.reiniciando() && (comprobar || !cursor_filtrado) &&
+        !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
     if (!presentacion.marcos.reiniciando() && !avisos.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el aviso temporal");
-    if (!comprobar && !presentacion.cursor.actualizar(
-                          presentacion.ventana, presentacion.dibujante, mazmorra,
-                          pantalla >= 3 && !presentacion.marcos.reiniciando(),
-                          partidas.incorpora_cursor() && !presentacion.marcos.reiniciando()))
-      return fallo("No se ha podido actualizar el cursor original");
     if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.
       if ((comprobar_fps || comprobar_marcos) &&
