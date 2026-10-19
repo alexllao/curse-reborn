@@ -1,0 +1,13 @@
+PUENTE Y TRAPO DEL BARCO — recorrido del núcleo, todavía fuera de SDL
+
+Continuación: misma partida después de apartar al guardia y entrar aHOLD36 por62.
+1. Pasar por225/185,160/185,85/180 y70/173; Recoger117 y esperar192 pasos.
+2. Llevarlo por100/180,170/180 y136/166. Manipular→Empujar, abrir inventario y elegir117. Esperar256 pasos: queda horizontal (fotograma9).
+3. Volver por170/180,95/180 y91/171; Recoger118 y esperar192 pasos.
+4. Llevarlo por170/180,175/166 y163/166. Empujar118 del inventario y esperar256 pasos: completa el puente (fotograma10).
+5. Cruzar por170/165,170/150,170/120,230/105 y281/102. Recoger el trapo119; esperar192 pasos.
+6. Regresar por170/120,170/175 y280/199: salida63 haciaCELESTE, conservando119.
+
+La prueba usa pasos lógicos y clics; no son milisegundos ni pulsaciones exactas obligatorias para el jugador. No llevar los dos tablones simultáneamente: el original rechaza esa recogida.
+Prueba: pnpm comparar:puente-barco --muestra
+Las demás rutas y puzles del valle y su integración SDL siguen pendientes.

@@ -362,3 +362,5 @@ La [nube del valle](documentacion/nube_del_valle.md) ya tiene entrada, movimient
 La [cueva del valle](documentacion/cueva_del_valle.md) continúa esa misma partida: entrada 64, petición de ayuda, derrumbe, detergente120 y regreso 65 a DINO. Se contrastan 4.489 casos/pasos y cuatro composiciones; las otras ramas del valle y su integración SDL siguen pendientes.
 
 El [guardia del barco](documentacion/guardia_del_barco.md) ya se aparta mediante el calcetín y las monedas realmente obtenidos:8.202 casos/pasos y cinco composiciones contrastan la recogida100, combinación104, golpe y entrada62 aHOLD. Los tablones/trapo y la integración SDL del valle siguen pendientes.
+
+El [puente del barco](documentacion/puente_del_barco.md) prolonga la misma partida: dos tablones, colocación horizontal/vertical, cruce, trapo119 y regreso63. Se contrastan11.453 casos/pasos y cinco composiciones; las demás ramas del valle y SDL siguen pendientes.

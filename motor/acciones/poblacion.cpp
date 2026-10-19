@@ -379,8 +379,8 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
       id != 102 && id != 104 && id != 105 && id != 106 && id != 107 && id != 108 && id != 109 &&
-      id != 110 && id != 111 && id != 112 && id != 113 && id != 114 && id != 116 && id != 120 &&
-      id != 121)
+      id != 110 && id != 111 && id != 112 && id != 113 && id != 114 && id != 116 && id != 119 &&
+      id != 120 && id != 121)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

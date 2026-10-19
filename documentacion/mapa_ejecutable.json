@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5DDC",
+      "nombre": "Recogida excluyente de los dos tablones del barco",
+      "comentario": "5DDC–5E43/563A permite117/118 pero rechaza llevar ambos después del preámbulo de capacidad/iconos. Entidades2C4C/2C6D, destino+35/+2,97EE/97FA/9801 y1A34 con intervalo2/contadorAX+8 tras886B. Preserva oferta persistente. Comparación de duplicados, capacidad, puntos y otro tablón presente, además de ambas recogidas reales con modeloFE."
+    },
+    {
+      "direccion": "0000:AC8F",
+      "nombre": "Colocación del primer tablón y caída fuera de su emplazamiento",
+      "comentario": "AC8F–AE26/AE29–AFBB comparten uso del tablón llevado si falta el señalado; Empujar y Lanzar. Retira117/118 antes de probar el estado del otro flag. Ventanas firmadas119–139/90–100 para horizontal o146–166/90–100 para vertical; conserva diferencias de descriptores/campos. Fuera, A422/A42A/A42F yA434 dejan el tablón en el suelo. 320 variantes aisladas y puente real montado con ambos tablones. Sin puntuación añadida."
+    },
+    {
+      "direccion": "0000:AE29",
+      "nombre": "Colocación simétrica del segundo tablón",
+      "comentario": "AE29–AFBB emplea118 si está presente; si no, usa117 medianteAC8F. No uniformizar campos preservados: horizontal escribeFE70 yA3FE; vertical los conserva. preparar puente contrastado en comparar:puente-barco, incluidos los campos de ambos actores y descriptores."
+    },
+    {
+      "direccion": "0000:5E46",
+      "nombre": "Recogida del trapo tras el puente del barco",
+      "comentario": "5E46–5E54/615C usa2C8E con+5/-2 y retira su oferta persistente (tercer registro deHOLD). Recogida119 real tras cruzar el puente y regreso63 aCELESTE conDS/azar/dibujo contrastados. comparar:puente-barco:11453 casos/pasos, cinco composiciones; otros puzles del valle ySDL pendientes."
+    },
+    {
       "direccion": "0000:A952",
       "nombre": "Calcetín con monedas del escenario",
       "comentario": "3FDF–3FF6/A952–A97F combina100/107 en ambos órdenes: retira100 e intenta insertar104 sin exigir éxito ni retirar107. Destino552-cámara/163, A2C0/A2CF, conserva0AE1 y puntos+5. 48 variantes de orden/inventario/cámara/puntos y combinación real después de recoger100. comparar:guardia-barco continúa la misma partida con120/121."
