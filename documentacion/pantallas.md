@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y cinco vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y seis vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -41,6 +41,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 33    | 35         | La encrucijada del valle        | POST     |
 | 34    | 34         | El mando del valle              | REMOTE   |
 | 35    | 33         | El barco del valle              | CELESTE  |
+| 36    | 32         | El valle del dinosaurio         | DINO     |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -59,3 +60,5 @@ POST35 se incorpora por la salida52 real de la calle de la adivina, después del
 REMOTE34 permite entrar por60 desdePOST. Se contrasta en SDL la llegada con el modelo22, su reacción y el rechazo original de recoger108 mientras su protector permanece activo. La recogida tras el estornudo deDINO y su uso posterior están contrastados en el núcleo; esa continuidad SDL se añadirá con las salas siguientes. F5/F6 inicia una visita nueva y no elimina al protector.
 
 CELESTE33 enlaza conREMOTE por55/56 y conPOST por61/71; el destino52 de su umbral aleatorio también está catalogado. Las otras rutas se activan con sus salas. Se contrasta la llegada56, el regreso61 y la recogida111 después de volver, con restauración y navegaciónF5/F6. Los enlaces haciaDINO yHOLD todavía no se presentan como integrados enSDL.
+
+DINO32 incorpora las entradas57 desdePOST,54/70 desdeCELESTE y los regresos58/53/71; su camino59 también enlaza conREMOTE. El núcleo permite todos esos enlaces. La comprobaciónSDL reproduce el pelo110, su inserción en102, el estornudo, sello109 y bolígrafo101, el regreso58 y una segunda entrada54 desde el barco. El interiorGHETTO37 y la plataformaELECTRO39 esperan todavía su adaptadorSDL.

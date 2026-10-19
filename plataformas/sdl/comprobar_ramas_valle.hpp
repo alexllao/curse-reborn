@@ -1,11 +1,13 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_dinosaurio.hpp"
 #include <initializer_list>
 
 // C737 y5D89: recorre POST→REMOTE y prueba la reacción que protege el mando108.
-template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ruta>
+template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir,
+          typename Ruta>
 bool comprobar_ramas_valle(Mazmorra &p, const std::string &opcion, Avanzar avanzar, Abrir abrir,
-                           Elegir elegir, Objeto objeto, Ruta ruta) {
+                           Elegir elegir, Objeto objeto, Ir ir, Ruta ruta) {
   // Detiene la comparación en la imagen exacta de cada hito original.
   const auto detener = [&](const char *nombre) {
     return opcion == std::string("--comprobar-final-poblacion-borde_") + nombre;
@@ -38,10 +40,15 @@ bool comprobar_ramas_valle(Mazmorra &p, const std::string &opcion, Avanzar avanz
     return false;
   if (detener("celeste_entrada"))
     return true;
+  if (detener("dinosaurio_desde_celeste"))
+    return ruta({{200, 134}}, 32);
   if (!ruta({{100, 198}}, 35))
     return false;
   if (detener("post_regreso_rama"))
     return true;
+  if (opcion.rfind("--comprobar-final-poblacion-borde_dinosaurio_", 0) == 0 ||
+      detener("pelo_recogido"))
+    return comprobar_dinosaurio(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
   if (!abrir() || !elegir(1) || !objeto(111) || !avanzar(128) || !p.conserva_objeto(111))
     return false;
   return detener("post_objeto_111");

@@ -82,5 +82,5 @@ bool comprobar_regreso_loro(Mazmorra &p, const std::string &opcion, Avanzar avan
   if (!ruta({{0, 165}}, 35))
     return false;
   return detener("valle_post_entrada") ||
-         comprobar_ramas_valle(p, opcion, avanzar, abrir, elegir, objeto, ruta);
+         comprobar_ramas_valle(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }

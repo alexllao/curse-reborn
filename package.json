@@ -83,6 +83,7 @@
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
+    "comprobar:dinosaurio": "node herramientas/gestionar_proyecto.mjs comprobar:dinosaurio",
     "comprobar:celeste": "node herramientas/gestionar_proyecto.mjs comprobar:celeste",
     "comprobar:remoto": "node herramientas/gestionar_proyecto.mjs comprobar:remoto",
     "comprobar:poste": "node herramientas/gestionar_proyecto.mjs comprobar:poste",
