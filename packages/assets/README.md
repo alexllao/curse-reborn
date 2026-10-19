@@ -1,6 +1,6 @@
 # Recursos propios del port
 
-Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `datos_originales/` (en la raíz del repositorio).
+Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `apps/juego/datos_originales/` (en la raíz del repositorio).
 
 - `original/habitaciones/`: habitaciones interactivas, cinco diseños con cinco proporciones y catálogo independiente.
 - `original/marcos/`: marcos de estilo pixel art para acompañar la reconstrucción fiel, opcionales con F1.
@@ -37,4 +37,4 @@ Se conservan `original/decorados/franks_food.png` (1586×992) y el PNG del pozo 
 
 Las ilustraciones aportadas de `01-misterio` a `05-ciencia-ficcion` viven ahora en `original/habitaciones/`, con el catálogo `habitaciones.json`. Los PNG maestros se conservan byte por byte. Se han retirado `marcos/monitor.png`, `marcos/habitacion_90.png` y sus metadatos antiguos por petición de Àlex; no se utilizan en el arranque. Las otras cinco variantes `habitacion-90-*` aportadas en la misma subida se conservan en `habitaciones/alternativas/`, sin asignación ni copia a la aplicación.
 
-El catálogo especifica cada carpeta, imagen y sus controles; instrucciones y límites en [Habitaciones](../../documentacion/habitaciones.md). Los maestros no se recomprimen ni se reducen al compilar. La optimización de imágenes del paquete final queda para la distribución, separada de estos originales.
+El catálogo especifica cada carpeta, imagen y sus controles; instrucciones y límites en [Habitaciones](../../apps/juego/documentacion/habitaciones.md). Los maestros no se recomprimen ni se reducen al compilar. La optimización de imágenes del paquete final queda para la distribución, separada de estos originales.

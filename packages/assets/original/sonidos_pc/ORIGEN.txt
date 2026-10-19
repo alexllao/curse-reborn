@@ -20,6 +20,6 @@ CC0 1.0 Universal. El clic también se utiliza al apagar y ampliar el monitor.
 No representan efectos ni música del juego DOS original.
 
 Regeneración, con Python y ffmpeg disponibles:
-python herramientas/generar_sonidos_pc.py <vista-previa.mp3> packages/assets/original/sonidos_pc
+python apps/juego/herramientas/generar_sonidos_pc.py <vista-previa.mp3> packages/assets/original/sonidos_pc
 Los WAV ya preparados se incluyen en el repositorio; ffmpeg no es necesario
 para compilar ni para jugar.

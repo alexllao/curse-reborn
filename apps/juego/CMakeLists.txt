@@ -14,8 +14,8 @@ file(GLOB FUENTES_MARCOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/marcos/*")
 file(GLOB FUENTES_DECORADOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/decorados/*")
 file(GLOB FUENTES_SONIDOS_PC CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/sonidos_pc/*")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp"
-  COMMAND "${NODE_EXECUTABLE}" "${RAIZ_REPOSITORIO}/herramientas/gestionar_marcos.mjs" "${CMAKE_CURRENT_BINARY_DIR}"
-  DEPENDS ${FUENTES_HABITACIONES} "${RAIZ_REPOSITORIO}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} ${FUENTES_SONIDOS_PC} "${RAIZ_REPOSITORIO}/herramientas/gestionar_sonidos_pc.mjs" "${RAIZ_REPOSITORIO}/herramientas/gestionar_marcos.mjs"
+  COMMAND "${NODE_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs" "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS ${FUENTES_HABITACIONES} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} ${FUENTES_SONIDOS_PC} "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_sonidos_pc.mjs" "${CMAKE_CURRENT_SOURCE_DIR}/herramientas/gestionar_marcos.mjs"
   VERBATIM)
 
 # Compartir la lista de fuentes con las herramientas Node de compilación y comparación.

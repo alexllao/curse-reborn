@@ -97,7 +97,7 @@ class ComparacionRnc2(ComparacionRnc):
 
     # Contrasta datos reales y programas que fuerzan los códigos y límites de la API.
     def ejecutar(self):
-        carpeta = self.raiz / 'datos_originales/CURSE/DATA'
+        carpeta = self.raiz / 'apps/juego/datos_originales/CURSE/DATA'
         reales = [
             (p.name, p.read_bytes())
             for p in sorted(carpeta.glob('*.DAT'))

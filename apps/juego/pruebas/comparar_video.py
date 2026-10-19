@@ -142,7 +142,7 @@ class ComparacionVideo(Comparacion):
         return bytes(nativos)
 
     def titulo_original(self):
-        archivo = self.raiz / 'datos_originales/CURSE/DATA/TITLE.DAT'
+        archivo = self.raiz / 'apps/juego/datos_originales/CURSE/DATA/TITLE.DAT'
         comprimido = archivo.read_bytes()
         if comprimido[:4] != b'RNC\x01' or int.from_bytes(comprimido[4:8], 'big') != 64000:
             raise ErrorAnalisis('La pantalla de título no tiene la cabecera esperada.')
@@ -170,7 +170,7 @@ class ComparacionVideo(Comparacion):
         self.caso_video('titulo', 1, vuelta, (320, 200, 112, 0, 0, 112, 0), planos)
         if vuelta[:64000] != imagen:
             raise ErrorAnalisis('El título no coincide después de subir y recuperar los planos.')
-        paleta = (self.raiz / 'datos_originales/CURSE/DATA/TITLE.PAL').read_bytes()
+        paleta = (self.raiz / 'apps/juego/datos_originales/CURSE/DATA/TITLE.PAL').read_bytes()
         if len(paleta) != 768 or max(paleta) > 63:
             raise ErrorAnalisis('La paleta del título no tiene el formato observado.')
         self.caso_video('titulo', 3, bytearray(paleta.ljust(65536, b'\0')), (256, 1, 0, 0, 0, 0, 0))

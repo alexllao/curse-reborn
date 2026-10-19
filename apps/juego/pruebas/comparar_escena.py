@@ -40,7 +40,7 @@ class ComparacionEscena(ComparacionVideo):
             ctypes.c_int,
         ]
         self.nativa.dibujar_fotograma.restype = ctypes.c_int
-        self.carpeta = raiz / 'datos_originales/CURSE/DATA'
+        self.carpeta = raiz / 'apps/juego/datos_originales/CURSE/DATA'
 
     # Reinicia los registros VGA y la memoria de planos antes de cada caso.
     def reiniciar_video(self):

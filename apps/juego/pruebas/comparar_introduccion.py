@@ -26,7 +26,7 @@ class ComparacionIntroduccion(ComparacionVideo):
             memoria,
         ]
         self.nativa.pagina_introduccion.restype = ctypes.c_int
-        self.carpeta = raiz / 'datos_originales/CURSE/DATA'
+        self.carpeta = raiz / 'apps/juego/datos_originales/CURSE/DATA'
         self.imagenes = (
             [f'CAULDRN{i}.DAT' for i in range(1, 5)]
             + [f'BALCONY{i}.DAT' for i in range(1, 6)]

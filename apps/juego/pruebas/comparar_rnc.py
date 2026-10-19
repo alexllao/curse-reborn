@@ -177,7 +177,7 @@ class ComparacionRnc(Comparacion):
             (False, True),
             (False,) if self.muestra else (False, True),
         ):
-            paquete = (self.raiz / 'datos_originales/CURSE/DATA' / nombre).read_bytes()
+            paquete = (self.raiz / 'apps/juego/datos_originales/CURSE/DATA' / nombre).read_bytes()
             capacidad = int.from_bytes(paquete[4:8], 'big') if exacta else 65536
             salida = self.contrastar('archivos_reales', paquete, patron, compartido, capacidad)
             self.archivos[nombre] = {

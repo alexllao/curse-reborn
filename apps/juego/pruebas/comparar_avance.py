@@ -10,7 +10,7 @@ import random
 import struct
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'herramientas'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps' / 'juego' / 'herramientas'))
 from analizar_ejecutable import ErrorAnalisis, leer_mz
 
 
@@ -27,10 +27,12 @@ class Comparacion:
         self.muestra = muestra
         self.biblioteca = biblioteca
         self.cabecera, imagen = leer_mz(
-            (raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes()
+            (raiz / 'apps' / 'juego' / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes()
         )
         mapa = json.loads(
-            (raiz / 'documentacion' / 'mapa_ejecutable.json').read_text(encoding='utf-8')
+            (raiz / 'apps' / 'juego' / 'documentacion' / 'mapa_ejecutable.json').read_text(
+                encoding='utf-8'
+            )
         )
         if self.cabecera['sha256'] != mapa['sha256']:
             raise ErrorAnalisis('El ejecutable no corresponde a la copia trasladada.')

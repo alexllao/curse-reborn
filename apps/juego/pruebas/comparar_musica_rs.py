@@ -84,7 +84,9 @@ class ComparacionMusicaRS(Comparacion):
     def ejecutar(self):
         casos = 0
         for indice in range(5):
-            banco = (self.raiz / f'datos_originales/CURSE/DATA/CURSE.RS{indice + 1}').read_bytes()
+            banco = (
+                self.raiz / f'apps/juego/datos_originales/CURSE/DATA/CURSE.RS{indice + 1}'
+            ).read_bytes()
             self.maquina.mem_write(0x60000, banco)
             datos = bytearray(self.base)
             datos[0x9955] = 0

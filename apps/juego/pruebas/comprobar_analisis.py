@@ -5,7 +5,7 @@ import struct
 import sys
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'herramientas'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps' / 'juego' / 'herramientas'))
 from analizar_ejecutable import ErrorAnalisis, crear_listado, leer_mapa, leer_mz, seguir_flujo
 
 

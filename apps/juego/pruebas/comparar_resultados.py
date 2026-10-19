@@ -9,7 +9,7 @@ import random
 import struct
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'herramientas'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps' / 'juego' / 'herramientas'))
 from analizar_ejecutable import ErrorAnalisis, leer_mz
 
 
@@ -19,8 +19,14 @@ def comparar(raiz, biblioteca):
         from unicorn import x86_const as r
     except ImportError as error:
         raise ErrorAnalisis('Falta Unicorn. Ejecuta «pnpm preparar».') from error
-    mapa = json.loads((raiz / 'documentacion' / 'mapa_ejecutable.json').read_text(encoding='utf-8'))
-    cabecera, imagen = leer_mz((raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes())
+    mapa = json.loads(
+        (raiz / 'apps' / 'juego' / 'documentacion' / 'mapa_ejecutable.json').read_text(
+            encoding='utf-8'
+        )
+    )
+    cabecera, imagen = leer_mz(
+        (raiz / 'apps' / 'juego' / 'datos_originales' / 'CURSE' / 'CURSE.EXE').read_bytes()
+    )
     if cabecera['sha256'] != mapa['sha256']:
         raise ErrorAnalisis('El ejecutable no corresponde a la versión trasladada.')
     maquina = unicorn.Uc(unicorn.UC_ARCH_X86, unicorn.UC_MODE_16)

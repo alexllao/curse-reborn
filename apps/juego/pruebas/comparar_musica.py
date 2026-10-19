@@ -14,7 +14,7 @@ class ComparacionMusica(Comparacion):
     # Conserva la imagen CS separada de DS, pues el reproductor modifica sus propios datos CS.
     def __init__(self, raiz, biblioteca, muestra):
         super().__init__(raiz, biblioteca, muestra)
-        self.codigo = (raiz / 'datos_originales/CURSE/CURSE.EXE').read_bytes()[512:66048]
+        self.codigo = (raiz / 'apps/juego/datos_originales/CURSE/CURSE.EXE').read_bytes()[512:66048]
         self.nativa.procesar_musica.argtypes = [
             ctypes.c_uint,
             ctypes.POINTER(ctypes.c_ubyte),

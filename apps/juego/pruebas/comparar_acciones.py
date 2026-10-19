@@ -10,7 +10,7 @@ import random
 import struct
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'herramientas'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'apps' / 'juego' / 'herramientas'))
 from analizar_ejecutable import ErrorAnalisis, leer_mz
 
 
@@ -215,11 +215,13 @@ def principal():
     opciones = argumentos.parse_args()
     try:
         comparar(
-            raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE',
+            raiz / 'apps' / 'juego' / 'datos_originales' / 'CURSE' / 'CURSE.EXE',
             opciones.biblioteca,
             raiz / 'apps' / 'juego' / 'trabajo' / 'comparacion_acciones' / 'resultado.json',
             json.loads(
-                (raiz / 'documentacion' / 'mapa_ejecutable.json').read_text(encoding='utf-8')
+                (raiz / 'apps' / 'juego' / 'documentacion' / 'mapa_ejecutable.json').read_text(
+                    encoding='utf-8'
+                )
             ),
         )
     except (OSError, ErrorAnalisis) as error:

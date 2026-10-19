@@ -79,7 +79,7 @@ class ComparacionFundidos(ComparacionVideo):
     # Comprueba las paletas del arranque; la muestra usa sus 32 pasos originales.
     def ejecutar(self):
         for nombre in ('CORE.PAL', 'TITLE.PAL'):
-            paleta = (self.raiz / 'datos_originales/CURSE/DATA' / nombre).read_bytes()
+            paleta = (self.raiz / 'apps/juego/datos_originales/CURSE/DATA' / nombre).read_bytes()
             for pasos in (32,) if self.muestra else (1, 3, 7, 32):
                 self.caso(paleta, pasos)
         informe = {

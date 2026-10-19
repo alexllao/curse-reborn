@@ -40,7 +40,7 @@ class SintetizadorReferencia:
         if not self.contexto:
             raise ValueError('No se ha creado el sintetizador de referencia.')
         for nombre in ('MT32_CONTROL.ROM', 'MT32_PCM.ROM'):
-            ruta = str(raiz / 'datos_originales/ROMS' / nombre).encode('utf-8')
+            ruta = str(raiz / 'apps/juego/datos_originales/ROMS' / nombre).encode('utf-8')
             if self.api.mt32emu_add_rom_file(self.contexto, ruta) < 0:
                 self.cerrar()
                 raise ValueError('Las ROM de referencia no se han reconocido.')
@@ -75,7 +75,9 @@ class SintetizadorReferencia:
 
 # 7DF9–7EA1 genera los bytes de puerto; este decodificador separado restituye el estado MIDI.
 def paquetes_originales(comparador, indice):
-    banco = (comparador.raiz / f'datos_originales/CURSE/DATA/CURSE.RS{indice}').read_bytes()
+    banco = (
+        comparador.raiz / f'apps/juego/datos_originales/CURSE/DATA/CURSE.RS{indice}'
+    ).read_bytes()
     comparador.maquina.mem_write(0x60000, banco)
     datos = bytearray(comparador.base)
     datos[0x9955] = 0

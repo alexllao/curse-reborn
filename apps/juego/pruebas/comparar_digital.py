@@ -47,7 +47,7 @@ class ComparacionDigital(Comparacion):
         self.orden = None
         self.puertos = []
         self.dsp = []
-        self.general = (raiz / 'datos_originales/CURSE/DATA/STD.SFX').read_bytes()
+        self.general = (raiz / 'apps/juego/datos_originales/CURSE/DATA/STD.SFX').read_bytes()
         self.bancos = []
 
     # El estado preparado siempre presenta el DSP listo; no se simula la temporización de su bus ISA.
@@ -207,7 +207,9 @@ class ComparacionDigital(Comparacion):
             ):
                 raise ErrorAnalisis('Referencia SFX de escena diferente.')
             if nombre:
-                banco = (self.raiz / 'datos_originales/CURSE/DATA' / nombre.upper()).read_bytes()
+                banco = (
+                    self.raiz / 'apps/juego/datos_originales/CURSE/DATA' / nombre.upper()
+                ).read_bytes()
                 grupo = self.base[0x9048 + escena]
                 if (grupo, nombre) not in grupos:
                     grupos.add((grupo, nombre))
@@ -262,7 +264,7 @@ class ComparacionDigital(Comparacion):
                 total_muestras += len(esperado)
                 efectos += 1
         # La voz general cero tiene prioridad FF: un efecto ambiental no puede interrumpirla.
-        banco = (self.raiz / 'datos_originales/CURSE/DATA/DUNGEON.SFX').read_bytes()
+        banco = (self.raiz / 'apps/juego/datos_originales/CURSE/DATA/DUNGEON.SFX').read_bytes()
         self.conectar(0, banco)
         self.operar(1, 0)
         if self.seleccionar_original(15, 255, 1) is not None:

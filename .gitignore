@@ -1,7 +1,9 @@
 # Recursos originales y resultados locales de investigación
-/datos_originales/*
-!/datos_originales/.gitkeep
-!/datos_originales/README.md
+/apps/juego/datos_originales/*
+!/apps/juego/datos_originales/.gitkeep
+!/apps/juego/datos_originales/README.md
+# Copias locales anteriores, hasta migrarlas dentro del juego.
+/datos_originales/
 /recursos_extraidos/
 /apps/juego/trabajo/
 # Compatibilidad hasta trasladar el trabajo local de una copia anterior.

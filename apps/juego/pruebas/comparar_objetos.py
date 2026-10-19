@@ -40,7 +40,7 @@ class ComparacionObjetos(Comparacion):
         self.nativa.leer_datos_iniciales.argtypes = [memoria, ctypes.c_uint, memoria]
         self.nativa.leer_datos_iniciales.restype = ctypes.c_int
         self.maquina.hook_add(self.unicorn.UC_HOOK_INTR, self.servicio_dos)
-        self.carpeta = raiz / 'datos_originales/CURSE/DATA'
+        self.carpeta = raiz / 'apps/juego/datos_originales/CURSE/DATA'
 
     # Sustituye solo apertura, lectura y cierre del modelo, cuyo contenido ya está en memoria.
     def servicio_dos(self, maquina, numero, contexto):
@@ -120,7 +120,7 @@ class ComparacionObjetos(Comparacion):
 
     # Combina listas reales con condiciones de escena, claves de orden y fronteras de proximidad.
     def ejecutar(self):
-        ejecutable = (self.raiz / 'datos_originales/CURSE/CURSE.EXE').read_bytes()
+        ejecutable = (self.raiz / 'apps/juego/datos_originales/CURSE/CURSE.EXE').read_bytes()
         datos = (ctypes.c_ubyte * 65536)()
         if (
             not self.nativa.leer_datos_iniciales(

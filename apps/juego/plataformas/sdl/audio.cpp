@@ -42,8 +42,8 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
     perfil = conservar_seleccion ? perfil : 3;
   else {
     perfil = conservar_seleccion && perfil != 3 ? perfil : 1;
-    std::printf(
-        "MT-32 no disponible: revisa MT32_CONTROL.ROM y MT32_PCM.ROM en datos_originales/ROMS.\n");
+    std::printf("MT-32 no disponible: revisa MT32_CONTROL.ROM y MT32_PCM.ROM en "
+                "apps/juego/datos_originales/ROMS.\n");
   }
   SDL_free(archivo);
   if (!preparada || !efectos_preparados) {
