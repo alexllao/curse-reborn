@@ -228,6 +228,9 @@ try {
     case 'comprobar:megafono-palacio':
       await gestionarSdl('comprobar:poblacion', ['--megafono-palacio']);
       break;
+    case 'comprobar:hielo-palacio':
+      await gestionarSdl('comprobar:poblacion', ['--hielo-palacio']);
+      break;
     case 'comprobar:arma-palacio':
       await gestionarSdl('comprobar:poblacion', ['--arma-palacio']);
       break;

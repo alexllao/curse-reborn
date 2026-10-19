@@ -411,6 +411,23 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida152, puertas reales y regreso98; 7 imágenes y restauración',
     },
     {
+      argumento: '--hielo-palacio',
+      nombre: 'hielo_palacio',
+      referencia: 'laterales_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'hielo_tirada',
+        'hielo_puerta',
+        'hielo_entrada',
+        'hielo_ante_objeto',
+        'hielo_recogido',
+        'hielo_regreso',
+        'hielo_dados',
+      ],
+      alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
+    },
+    {
       argumento: '--arma-palacio',
       nombre: 'arma_palacio',
       referencia: 'laterales_palacio',
@@ -677,6 +694,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--gato-palacio',
       '--lupa-palacio',
       '--arma-palacio',
+      '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')

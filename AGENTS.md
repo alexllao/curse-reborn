@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,54 vistasSDL
+## Estado vigente: 19 de octubre,55 vistasSDL
 
-CatálogoSDL0–53,54 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–54,55 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -521,3 +521,7 @@ HUDmínimo solicitado:avisos_hud.hpp,letrasblancasarribaizquierda,F11nombrefiltr
 ## Vista54: La habitación del megáfono
 
 CatálogoSDLescena53,origen48,salida97/regreso98;guardado98yprincipal53. comprobar:megafono-palacio 7imágenes,restauración y108cambiosF5. Referencias compartidascomparacion_laterales_palacio,29136casos/pasos/31imágenes. No repetirnativo sin cambios. HUDblancoF11yvolumenpreservado,decoradosampliadosaparcados.
+
+## Vista55: La habitación del cubito de hielo
+
+CatálogoSDLescena54,origen49,salida99/regreso100;guardado100yprincipal54. comprobar:hielo-palacio 7imágenes,restauración y110cambiosF5. Referencias compartidascomparacion_laterales_palacio,29136casos/pasos/31imágenes. No repetirnativo sin cambios. HUDblancoF11yvolumenpreservado,decoradosampliadosaparcados.

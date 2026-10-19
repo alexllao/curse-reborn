@@ -150,3 +150,5 @@ Vista53: habitación del arma, entrada95 y regreso96. La escoba baja la repisa e
 F11 y +/− muestran un aviso de letras blancas en la esquina superior izquierda: nombre del filtro o porcentaje de volumen. Entra en120ms,permanece1,2s yse desvanece en500ms. Las pulsaciones seguidas actualizan yprolongan eltexto. No pausa la partida ysu tamaño sigue la resolución física.
 
 Vista54: La habitación del megáfono, entrada97/regreso98; 108 cambiosF5/F6 contrastados.
+
+Vista55: La habitación del cubito de hielo, entrada99/regreso100; 110 cambiosF5/F6 contrastados.

@@ -15,3 +15,5 @@ Los útiles enlazan con las poleas y la ventana de los corredores. La resolució
 `pnpm comparar:resolucion-palacio` ya contrasta9608 casos/pasos y diez composiciones: insertar151 en142, recoger144/145, oferta147 por6285, recogida, combinación147/152, apertura con148 y salto146 hasta solicitar90. Las capturasSDL de esta resolución se incorporan al habilitar las tres vistas laterales siguientes.
 
 Vista54: La habitación del megáfono. `pnpm comprobar:megafono-palacio` verifica7 imágenes, restauración y108 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
+
+Vista55: La habitación del cubito de hielo. `pnpm comprobar:hielo-palacio` verifica7 imágenes, restauración y110 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
