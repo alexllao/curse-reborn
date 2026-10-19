@@ -24,4 +24,4 @@ Antes de jugar, coloca tu copia del juego y las ROM según la [guía de datos or
 
 Consulta [los controles](apps/juego/documentacion/controles.md), [la documentación del port](apps/juego/README.md) y [la organización del repositorio](apps/juego/documentacion/monorepo.md).
 
-La raíz conserva las configuraciones generales de pnpm, CMake, formato y calidad. El juego original, las ROM, las partidas y los resultados locales no se distribuyen en este repositorio.
+La raíz conserva pnpm y las configuraciones generales de JavaScript/Markdown del monorepositorio. CMake, clang-format y Ruff pertenecen a `apps/juego`. El juego original, las ROM, las partidas y los resultados locales no se distribuyen en este repositorio.

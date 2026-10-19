@@ -30,7 +30,7 @@ pnpm --filter @curse-reborn/juego comprobar
 
 Las herramientas resuelven la raíz desde su ubicación, así que también se pueden ejecutar mediante `pnpm --filter` sin depender del directorio actual. `apps/juego/herramientas/rutas_proyecto.mjs` comparte la ubicación de fuentes y recursos.
 
-El CMake de la raíz delega en `apps/juego/CMakeLists.txt`. También se admite configurar directamente `apps/juego`. En ambos casos el ejecutable queda en la raíz del directorio de compilación, con las DLL y recursos relativos que necesita.
+La compilación se configura desde `apps/juego/CMakeLists.txt`; no hay un CMake adicional en la raíz. `.clang-format` y `ruff.toml` también están en `apps/juego`, junto al código que configuran. Los comandos de pnpm se siguen ejecutando desde la raíz; el ejecutable queda en el directorio de compilación, con las DLL y recursos relativos que necesita.
 
 ## Rutas de desarrollo y distribución
 

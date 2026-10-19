@@ -59,7 +59,7 @@ Esta comprobación verifica la ruta de software con ventana oculta y cierre por 
 
 ## Otras plataformas
 
-[CMakeLists.txt](../../../CMakeLists.txt) prepara la compilación del mismo código con CMake 3.21 o posterior y una instalación de SDL3 3.4.18 o compatible con su configuración CMake. En macOS y Linux, `pnpm sdl:compilar` utiliza esa ruta. No se ha comprobado todavía en esos sistemas. El paquete automático de Windows no sirve para ellos.
+[CMakeLists.txt](../CMakeLists.txt) prepara la compilación del mismo código con CMake 3.21 o posterior y una instalación de SDL3 3.4.18 o compatible con su configuración CMake. En macOS y Linux, `pnpm sdl:compilar` configura desde `apps/juego`. No se ha comprobado todavía en esos sistemas. El paquete automático de Windows no sirve para ellos.
 
 La compilación WebAssembly y la adaptación del bucle de presentación al navegador siguen pendientes. El núcleo se conserva independiente de la ventana para poder realizar ese paso después.
 

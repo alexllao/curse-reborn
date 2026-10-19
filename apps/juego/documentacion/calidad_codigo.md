@@ -26,7 +26,7 @@ pnpm calidad
 - `calidad` agrupa las comprobaciones de formato y los analizadores.
 - `lint:corregir` permite las correcciones automáticas de ESLint y después revisa Python; no aplica correcciones Python que puedan cambiar el comportamiento.
 
-Las configuraciones están en `.prettierrc.json`, `.prettierignore`, `eslint.config.mjs`, `.clang-format` y `ruff.toml`. ESLint utiliza su configuración plana y desactiva reglas de estilo que pueden entrar en conflicto con Prettier, siguiendo las [indicaciones de integración de Prettier](https://prettier.io/docs/install.html) y la [configuración oficial de ESLint](https://eslint.org/docs/latest/use/configure/configuration-files).
+Las configuraciones de C++ y Python están en `apps/juego/.clang-format` y `apps/juego/ruff.toml`. `.prettierrc.json`, `.prettierignore` y `eslint.config.mjs` configuran JavaScript/Markdown del workspace desde la raíz. ESLint utiliza su configuración plana y desactiva reglas de estilo que pueden entrar en conflicto con Prettier, siguiendo las [indicaciones de integración de Prettier](https://prettier.io/docs/install.html) y la [configuración oficial de ESLint](https://eslint.org/docs/latest/use/configure/configuration-files).
 
 El formateador de C++ no es un analizador semántico. El núcleo y la ventana siguen compilándose con los avisos del compilador tratados como errores. Los comandos de calidad no sustituyen las comparaciones contra el ejecutable original ni ejecutan una partida.
 

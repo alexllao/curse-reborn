@@ -149,7 +149,7 @@ async function compilar() {
     )
       throw new Error(`La fuente OPL2 no coincide con la revisión documentada: ${archivo}.`);
   if (process.platform !== 'win32') {
-    ejecutar('cmake', ['-S', raiz, '-B', aplicacion, '-DCMAKE_BUILD_TYPE=Release']);
+    ejecutar('cmake', ['-S', rutaJuego(raiz), '-B', aplicacion, '-DCMAKE_BUILD_TYPE=Release']);
     ejecutar('cmake', ['--build', aplicacion, '--config', 'Release']);
     const directo = join(aplicacion, 'curse-reborn');
     return existsSync(directo) ? directo : join(aplicacion, 'Release', 'curse-reborn');
