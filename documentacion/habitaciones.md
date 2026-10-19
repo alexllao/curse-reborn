@@ -33,3 +33,9 @@ La abertura se prepara una sola vez al cargar o cambiar la variante, con suaviza
 Clic dentro de la imagen jugable se entrega al juego también en pequeño; no amplía la vista. Solo el botón físico del monitor solicita el acercamiento. Ctrl+R vuelve a la habitación y Escape sigue reservado al juego.
 
 El monitor pequeño utiliza siempre el muestreo original, sin filtros F11. La selección para la vista ampliada permanece guardada; no se calculan xBRZ, 2xSaI ni CRT mientras se ve la habitación. Al ampliar se recupera el filtro, incluida la mano original. F11 en pequeño muestra un aviso y no cambia la selección.
+
+## Sonidos de presentación
+
+El botón de la torre reproduce siete segundos de ventilador/disco, clic y pulsos del recuento de RAM. Apagar sustituye el arranque por un clic; el botón del monitor también tiene clic. Los clics del juego no producen ese sonido. Al entrar en Core se vacía la cola antes de reiniciar la música original. Un flujo SDL independiente permite oír la BIOS mientras el audio DOS permanece pausado; comparte M y volumen, y respeta --sin-sonido. Los fallos del recurso se informan y no bloquean el juego.
+
+Los WAV redistribuibles están en packages/assets/original/sonidos_pc junto a ORIGEN.txt. Ventilador/disco derivan de la vista previa CC0 de squashy555; clic/RAM son síntesis propia CC0. No se afirma que la grabación proceda de un 386. generar_sonidos_pc.py permite regenerar los recursos con Python/ffmpeg; no se necesita ffmpeg para jugar.

@@ -11,6 +11,7 @@ void Habitacion::iniciar() {
   habilitada = true;
   tema = habitacion_inicial;
   estado = Estado::apagado;
+  sonido_pendiente = 0;
   inicio_estado = inicio_zoom = 0;
   zoom_origen = zoom_destino = 0;
   registrar_accion("Habitación: %s; pulsa el botón del PC para encender",
@@ -160,17 +161,20 @@ bool Habitacion::evento(SDL_Window *ventana, SDL_Renderer *r, const SDL_Event &e
     if (dentro(pc)) {
       if (estado == Estado::apagado) {
         estado = Estado::arrancando;
+        sonido_pendiente = 1;
         inicio_estado = ahora;
         registrar_accion("PC: encendido; BIOS y DOS completos");
       } else if (estado != Estado::apagando) {
         imagen_al_apagar = estado == Estado::encendido;
         estado = Estado::apagando;
+        sonido_pendiente = 2;
         inicio_estado = ahora;
         registrar_accion("PC: apagando");
       }
       return true;
     }
     if (estado == Estado::encendido && dentro(monitor)) {
+      sonido_pendiente = 3;
       ajustar_zoom(1, ahora);
       return true;
     }

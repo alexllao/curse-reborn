@@ -1,0 +1,25 @@
+Sonidos de presentación del ordenador de Curse Reborn
+
+arranque.wav: siete segundos derivados de «computer startup.wav», squashy555.
+Fuente: https://freesound.org/people/squashy555/sounds/273736/
+Licencia declarada por el autor: CC0 1.0 Universal.
+Texto: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Descarga pública utilizada (vista previa de alta calidad, no WAV original):
+https://cdn.freesound.org/previews/273/273736_1149179-hq.mp3
+Fecha de consulta y descarga: 19 de octubre de 2026.
+SHA256 del MP3: 346cbd73b821fa4f19e197922fac6d6844e20e552ab51a0bcc6b846238fa5dfd
+
+El autor describe ventiladores y disco durante el arranque de un ordenador.
+No se identifica como grabación de un 386 ni se garantiza una fecha del hardware.
+Adaptación: primeros siete segundos, mono PCM de 24 kHz/16 bits, filtro de
+80–7000 Hz, normalización y fundidos. Se añaden el clic y 32 pulsos propios
+durante el recuento de RAM de la BIOS. No contiene melodía de Windows.
+
+boton.wav y pulsos de RAM: síntesis propia de Curse Reborn, publicada bajo
+CC0 1.0 Universal. El clic también se utiliza al apagar y ampliar el monitor.
+No representan efectos ni música del juego DOS original.
+
+Regeneración, con Python y ffmpeg disponibles:
+python herramientas/generar_sonidos_pc.py <vista-previa.mp3> packages/assets/original/sonidos_pc
+Los WAV ya preparados se incluyen en el repositorio; ffmpeg no es necesario
+para compilar ni para jugar.

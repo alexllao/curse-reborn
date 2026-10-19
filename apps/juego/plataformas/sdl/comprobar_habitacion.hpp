@@ -86,6 +86,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
         return fallo_monitor("No empieza apagado o no responde el PC");
       if (p.habitacion.tomar_reinicio(reloj + 6999000000ull))
         return fallo_monitor("BIOS/DOS se han saltado");
+      if (p.habitacion.tomar_sonido() != 1 || p.habitacion.tomar_sonido() != 0)
+        return fallo_monitor("El encendido no solicita una única secuencia sonora");
       if (tema == 0 && tamano.first == 1280 && tamano.second == 720) {
         const auto inicio = reloj;
         for (const auto &fase : {std::pair<Uint64, const char *>{1200000000ull, "bios"},
@@ -103,6 +105,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
         return fallo_monitor("El arranque no entrega una única solicitud");
       if (pulsar(juego) || p.habitacion.ampliada(reloj))
         return fallo_monitor("El clic del juego pequeño se intercepta o amplía la pantalla");
+      if (p.habitacion.tomar_sonido() != 0)
+        return fallo_monitor("Un clic del juego produce sonido de botón del PC");
       if (tema == 0 && !capturar(nombre + ".juego", false))
         return false;
       if (tema == 0 && tamano.first == 1280 && tamano.second == 720) {
@@ -150,6 +154,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
         return fallo_monitor("La habitación recorta píxeles de la imagen del juego");
       if (!pulsar(monitor))
         return fallo_monitor("No responde el botón del monitor");
+      if (p.habitacion.tomar_sonido() != 3)
+        return fallo_monitor("El monitor no solicita el clic de su botón");
       reloj += 650000000ull;
       if (!p.habitacion.preparar_encuadre(p.dibujante, reloj) ||
           !p.habitacion.geometria(p.dibujante, imagen, pantalla, juego, reloj) ||
@@ -183,6 +189,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
           !p.habitacion.controles(p.dibujante, pc, monitor, reloj) || !pulsar(pc))
         return false;
       reloj += 800000000ull;
+      if (p.habitacion.tomar_sonido() != 2)
+        return fallo_monitor("El apagado no sustituye el arranque por el clic");
       p.habitacion.tomar_reinicio(reloj);
       if (!p.habitacion.reiniciando())
         return fallo_monitor("Apagar no conserva el PC apagado");
@@ -205,6 +213,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
       audio.perfil_musical() != perfil)
     return fallo_monitor("El encendido no conserva silencio, volumen o perfil");
   audio.cerrar();
+  if (!comprobar_sonidos_pc())
+    return fallo_monitor("Sonidos del PC: cola, mute, volumen o parada incorrectos");
   registrar_accion("Habitaciones: cinco diseños, cinco proporciones y ventana vertical; PC "
                    "apagado, BIOS/DOS completos, botones, zoom máximo y ratón. %u capturas",
                    capturas);

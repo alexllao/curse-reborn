@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include <utility>
 
 struct VarianteHabitacion {
   const char *archivo;
@@ -22,6 +23,10 @@ public:
   }
   // Todo arranque normal empieza en la habitación con el ordenador apagado.
   void iniciar();
+  // Entrega solo pulsaciones aceptadas de la torre o del monitor, nunca clics del juego.
+  unsigned int tomar_sonido() {
+    return std::exchange(sonido_pendiente, 0u);
+  }
   // Deja el arranque DOS original de las comparaciones fuera de esta presentación.
   bool activa() const {
     return habilitada;
@@ -56,6 +61,7 @@ private:
   enum class Estado { apagado, arrancando, encendido, apagando };
   Estado estado = Estado::encendido;
   bool habilitada = false;
+  unsigned int sonido_pendiente = 0;
   bool imagen_al_apagar = false;
   unsigned int tema = 0;
   Uint64 inicio_estado = 0, inicio_zoom = 0;

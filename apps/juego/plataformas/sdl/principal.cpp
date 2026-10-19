@@ -37,6 +37,7 @@
 #include "comprobar_partidas.hpp"
 #include "marcos.hpp"
 #include "habitacion.hpp"
+#include "sonidos_pc.hpp"
 #include "decorados.hpp"
 #include "cursor.hpp"
 
@@ -75,11 +76,13 @@ struct Presentacion {
   FiltrosPantalla filtros;
   MarcosPantalla marcos;
   Habitacion habitacion;
+  SonidosPC sonidos_pc;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
   bool actualizacion_diferida = false;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
+    sonidos_pc.cerrar();
     mazmorra.cerrar_audio();
     filtros.cerrar();
     marcos.cerrar();
@@ -706,6 +709,7 @@ int main(int argc, char *argv[]) {
   }
   if (!comprobar) {
     presentacion.habitacion.iniciar();
+    presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque);
     if (!mazmorra.pausar_audio_reinicio())
       return fallo("No se ha podido preparar el PC apagado");
     SDL_SetWindowTitle(presentacion.ventana, "Curse Reborn — Habitación");
@@ -770,6 +774,9 @@ int main(int argc, char *argv[]) {
           mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
       if (!comprobar &&
           presentacion.habitacion.evento(presentacion.ventana, presentacion.dibujante, evento)) {
+        presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
+        if (!presentacion.sonidos_pc.reproducir(presentacion.habitacion.tomar_sonido()))
+          std::fprintf(stderr, "Sonidos del PC no disponibles: %s\n", SDL_GetError());
         if (presentacion.habitacion.reiniciando() && !mazmorra.pausar_audio_reinicio())
           return fallo("No se ha podido pausar el audio del PC");
         if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante) ||
@@ -1013,6 +1020,7 @@ int main(int argc, char *argv[]) {
     if (salir)
       break;
     if (presentacion.habitacion.tomar_reinicio()) {
+      presentacion.sonidos_pc.parar();
       if (!reiniciar_presentacion(carpeta, presentacion, partidas))
         return fallo("No se ha podido reiniciar la presentación desde Core");
       pantalla = 0;
@@ -1025,6 +1033,7 @@ int main(int argc, char *argv[]) {
       inicio_fundido = 0;
       inicio_pantalla = ultimo_paso_escena = siguiente_presentacion = SDL_GetTicksNS();
     }
+    presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
     const auto solicitud = mazmorra.tomar_solicitud_partidas();
     if (solicitud)
       abrir_partidas(solicitud);

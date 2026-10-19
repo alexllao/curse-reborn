@@ -12,9 +12,10 @@ find_program(NODE_EXECUTABLE node REQUIRED)
 file(GLOB_RECURSE FUENTES_HABITACIONES CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/habitaciones/*")
 file(GLOB FUENTES_MARCOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/marcos/*")
 file(GLOB FUENTES_DECORADOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/decorados/*")
+file(GLOB FUENTES_SONIDOS_PC CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/sonidos_pc/*")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp"
   COMMAND "${NODE_EXECUTABLE}" "${RAIZ_REPOSITORIO}/herramientas/gestionar_marcos.mjs" "${CMAKE_CURRENT_BINARY_DIR}"
-  DEPENDS ${FUENTES_HABITACIONES} "${RAIZ_REPOSITORIO}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} "${RAIZ_REPOSITORIO}/herramientas/gestionar_marcos.mjs"
+  DEPENDS ${FUENTES_HABITACIONES} "${RAIZ_REPOSITORIO}/herramientas/gestionar_habitaciones.mjs" ${FUENTES_MARCOS} ${FUENTES_DECORADOS} ${FUENTES_SONIDOS_PC} "${RAIZ_REPOSITORIO}/herramientas/gestionar_sonidos_pc.mjs" "${RAIZ_REPOSITORIO}/herramientas/gestionar_marcos.mjs"
   VERBATIM)
 
 # Compartir la lista de fuentes con las herramientas Node de compilación y comparación.
@@ -42,6 +43,9 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
   "${RAIZ_ASSETS}/original/decorados"
   "$<TARGET_FILE_DIR:curse-reborn>/assets/original/decorados")
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
+add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${RAIZ_ASSETS}/original/sonidos_pc"
+  "$<TARGET_FILE_DIR:curse-reborn>/assets/original/sonidos_pc")
 if(MSVC)
   target_compile_options(curse-reborn PRIVATE /W4 /WX /utf-8)
 else()
