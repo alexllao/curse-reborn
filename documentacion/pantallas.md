@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las51 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las52 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                           | Recurso  |
 | ----- | ---------- | -------------------------------- | -------- |
@@ -57,6 +57,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 49    | 48         | El segundo corredor de hielo     | ICECORR  |
 | 50    | 49         | El corredor de la ventana        | ICECORR  |
 | 51    | 50         | La habitación del gato mecánico  | ICEROOM  |
+| 52    | 51         | La habitación de la lupa         | ICEROOM  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -107,3 +108,5 @@ Vista49: segundo corredor, enlaces86/87 y regreso persistente a las poleas. Las 
 Vista50: tercer corredor con inspección146, salto rechazado mientras esté cerrado y regreso89. El catálogo llega a50 vistasSDL; las habitaciones laterales y los útiles del puzle posterior continúan pendientes.
 
 Vista51: sala del gato149, entrada91 elegida por dados y regreso92. Se comprueban recogida, inventario y restauración; los demás útiles del palacio continúan por habitaciones independientes.
+
+Vista52: lupa150, entrada93 y regreso94 con inventario persistente. Se conservan las tiradas de los dados y se revisan104 cambiosF5/F6. Las otras cuatro habitaciones laterales siguen pendientes.

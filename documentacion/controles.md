@@ -142,3 +142,5 @@ La vista49 añade el segundo corredor de hielo, entrada86 y regreso87, con98 cam
 El catálogo llega a50 vistas con el corredor de la ventana, entrada88 y regreso89. F5/F6 permite recorrerlas y se contrasta en100 cambios. Las puertas y los objetos del recorrido normal conservan sus condiciones originales.
 
 Vista51: habitación del gato mecánico.102 cambiosF5/F6 comprobados; en partida normal la puerta91 depende de los dados, no del atajo.
+
+Vista52: habitación de la lupa, con entrada93 y regreso94.104 cambiosF5/F6 contrastados; el recorrido normal conserva el gato149 y la lupa150 al volver a los dados.

@@ -394,6 +394,24 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--lupa-palacio',
+      nombre: 'lupa_palacio',
+      referencia: 'utiles_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'lupa_tirada',
+        'lupa_puerta',
+        'lupa_entrada',
+        'lupa_ante_objeto',
+        'lupa_recogido',
+        'lupa_regreso',
+        'utiles_dados',
+      ],
+      alcance:
+        'tiradas persistentes, entrada93, lupa150, regreso94 y vuelta a los dados; siete imágenes y restauración',
+    },
+    {
       argumento: '--gato-palacio',
       nombre: 'gato_palacio',
       referencia: 'utiles_palacio',
@@ -621,6 +639,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--pasillo-hielo',
       '--ventana-palacio',
       '--gato-palacio',
+      '--lupa-palacio',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

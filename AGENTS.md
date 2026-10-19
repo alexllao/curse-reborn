@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,51 vistasSDL
+## Estado vigente: 19 de octubre,52 vistasSDL
 
-CatálogoSDL0–50,51 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad173 C++/72 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–51,52 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad173 C++/72 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -497,3 +497,11 @@ Auditoría final auditar:rutas:78 tablas, ocho salidas pendientes desde vistas d
 SDL{50,47,91},enlaces47/91,50/92,guardado92. comprobar:gato-palacio seis imágenes/restauración/102 cambiosF5. Parte del checker de los corredores tras hielo_fin_corredores; vuelve89/87/85 +128 cada transición. B740se repite sin fijar semilla hasta4B2C1 (dos tiradas adicionales en esta partida).84+128,rodear puntos80/182,49/182,70/190,50/190,40/182→91+128;116/180,recoger149/192;280/165→92+128,160/199→85+128. No cambiar colisiones para acortar ese rodeo.
 
 Core también50/51: CS17A3nulo,transiciones91–94 ycamera,recoger149/5FC4 y150/6062.149entidad2C4C,+5/y+alto−16;150mismoactor,+5/y+alto−4;615C y6285. Hastaoferta147 no inventar153/154/152/144/145. Variantes164porobjeto (36capacidad/modelo/icono/puntos +128oferta). Archivo comparar_utiles_palacio.py continúa con la lupa51: tres tiradas,entrada93,242/180 y242/165 antes de seleccionar150;resultado nativo17640 casos/pasos,13 imágenes,10auditorías/1594selecciones. No confundir referencia anticipada con vistaSDL aún sin habilitar. PróximoSDL52{51,47,93},salidas47/93,51/94,guardado94 yprincipal51. Decorados ampliados aparcados.
+
+## Segunda habitación lateral, vista52: lupa150
+
+SDL{51,47,93},enlaces47/93,51/94,guardado94 yprincipal51. comprobar:lupa-palacio siete imágenes/restauración/104 cambiosF5. Referencias comparacion_utiles_palacio:17640 casos/pasos,13 imágenes,10auditorías/1594selecciones;36variantesrecogida +128ofertaporobjeto. Tras gato_regreso y85+128, tres tiradas adicionales abren4B35;84+128,220/175 y242/172→93+128;242/180 seguido242/165 (en180 no hay proximidad vertical),recoger150/192;41/165→94+128;160/199→85+128. Ambos149/150 se conservan. ComprobacionesSDL gato6+lupa7 cubren13 imágenes.
+
+Continuación real trabajo/comparacion_utiles_palacio/utiles_dados.ds.bin/.semilla.json. Faltan habitaciones52/53/54/55: entradas95/97/99/101 desde48/48/49/49,vueltas96/98/100/102; todasCS17A3nulo,ICEROOM. Descriptores702Fid151,7041id152,7053id153,7065id154. Recoger1515FD8 no6285,entidad2C4C,+5/−4;1525FE9/1536076/154609E sí6285. Escoba141/BAA6 en52 o55 exige2C4C1 eY2C5059, aumenta posición persistente4C12/4C60en62 y programa caída; no tratar recogida del objeto alto como si ya estuviera a mano. Ver EXE yguía antes de traducir.147 permanece oculto hasta153/154/152/149/150/144/145; tras151+142 se bajan144/145. No resolver con banderas fabricadas. Decorados ampliados aparcados.
+
+Auditoría tras52 vistas: seis salidas pendientes desde el catálogo (31/112→64;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55). Calidad173 C++/72 Python correcta. Gato/lupa conservan los13 fotogramas completos,DS yazar contrastados; próximas salas requieren traducir caída de objetos altos antes de publicarlas.

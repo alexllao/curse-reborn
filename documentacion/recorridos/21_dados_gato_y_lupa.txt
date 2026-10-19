@@ -1,0 +1,14 @@
+DADOS, GATO MECÁNICO Y LUPA
+Recorrido propio contrastado contra el ejecutable DOS. Continuación parcial del palacio.
+
+1. En la sala de los dados recoge la escoba y después los dados de la mesa.
+2. Usa Lanzar con los dados. La puerta principal vuelve a abrirse y la tirada determina las puertas laterales disponibles. No todas las tiradas abren una puerta.
+3. Entra al primer corredor y comprueba la puerta lateral izquierda. Si está cerrada, regresa a la mesa, recoge otra vez los dados y lánzalos de nuevo.
+4. Cuando abra la puerta izquierda, entra rodeando el borde del corredor. Recoge el gato mecánico que está en el suelo de esa habitación.
+5. Sal por la puerta derecha de la habitación para regresar al corredor y vuelve a la sala de los dados. El gato permanece en el inventario.
+6. Repite las tiradas hasta abrir la puerta lateral derecha del primer corredor. Entra y acércate a la pequeña lupa del suelo antes de seleccionar Recoger.
+7. Sal por la puerta izquierda para regresar al corredor. Puedes volver a los dados conservando tanto el gato como la lupa.
+
+La reproducción automatizada necesitó dos tiradas para la primera puerta y otras tres para la segunda. Es un resultado de esa partida, no una combinación fija ni una instrucción para alterar el azar.
+
+El gato, la lupa y la escoba se necesitan posteriormente. Faltan las otras cuatro habitaciones laterales y el resto de útiles para completar el palacio; este recorrido termina al regresar a los dados. No utiliza F5/F6 para resolver puertas ni entregar inventario.
