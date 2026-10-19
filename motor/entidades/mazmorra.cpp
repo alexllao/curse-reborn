@@ -39,6 +39,33 @@ bool actualizar_rutina_escena(unsigned char *datos) {
   const auto escena = palabra(datos, 0x8082);
   if (escena == 32 || escena == 33 || escena == 34 || escena == 36 || escena == 39)
     return actualizar_ramas_valle(datos);
+  if (escena == 43) {
+    // CE35–CF25: reacción única al entrar entero y proximidad según postura del primer actor.
+    const auto x = palabra(datos, 0x2c4e);
+    const auto ancho = palabra(datos, 0x2c52);
+    if (!(datos[0x35ca] & 1) && con_signo(x) >= 0 &&
+        con_signo(static_cast<Palabra>(x + ancho)) <= 320) {
+      datos[0x35ca] |= 1;
+      configurar_secuencia(datos, 0x2c5c, 0xb36a, 10, 2);
+      configurar_secuencia(datos, 0x2c61, 0xb377, 10, 2);
+      configurar_secuencia(datos, 0x2c66, 0xb381, 10, 2);
+      configurar_secuencia(datos, 0x2c9e, 0xb38b, 12, 2);
+      configurar_secuencia(datos, 0x2ca3, 0xb390, 12, 2);
+      configurar_secuencia(datos, 0x2ca8, 0xb393, 12, 2);
+    }
+    if (datos[0x2c4c] == 1) {
+      const auto izquierda = static_cast<Palabra>(x + palabra(datos, 0x3591));
+      const auto abajo = static_cast<Palabra>(palabra(datos, 0x2c50) + palabra(datos, 0x2c54));
+      const bool postura = datos[0x2c4d] == 32;
+      guardar(datos, 0x18f5, izquierda);
+      guardar(datos, 0x18f9, static_cast<Palabra>(izquierda + ancho - (postura ? 12 : 8)));
+      guardar(datos, 0x18fb, abajo);
+      guardar(datos, 0x18f7,
+              postura ? static_cast<Palabra>(palabra(datos, 0x2c50) + 16)
+                      : static_cast<Palabra>(abajo - 12));
+    }
+    return true;
+  }
   if (escena == 0 || escena == 2 || escena == 4 || escena == 7 || escena == 9 || escena == 10 ||
       escena == 11 || escena == 12 || escena == 13 || escena == 14 || escena == 15 ||
       escena == 18 || escena == 19 || escena == 21 || escena == 22 || escena == 23 ||

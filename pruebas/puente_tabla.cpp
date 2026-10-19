@@ -1066,3 +1066,8 @@ extern "C" EXPORTAR int procesar_nube(unsigned char *datos, unsigned short *pala
   palabras[3] = azar.cuarta;
   return valido ? 1 : 0;
 }
+
+// CE35–CF25: verifica el despacho real de SNOWAST4 sin servicios externos ni carga de sala.
+extern "C" EXPORTAR int procesar_rutina_nieve(unsigned char *datos) {
+  return motor::actualizar_rutina_escena(datos) ? 1 : 0;
+}

@@ -3,6 +3,11 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:CE35",
+      "nombre": "Reacción y proximidad del primer actor de SNOWAST4",
+      "comentario": "CE35–CF25: bit0 de35CA, visibilidad local firmada con suma de16 bits, seis canales B36A/B377/B381 yB38B/B390/B393, proximidad solo para2C4C=1 y postura32. comparar:rutina-nieve contrasta3600 variantes y7200 llamadas con DS completo, incluidas repetición, bits ajenos, inactivos y desbordamientos. Carga, acciones ySDL de43 siguen pendientes."
+    },
+    {
       "direccion": "0000:5DCB",
       "nombre": "Bandeja del volcán del valle",
       "comentario": "5DCB–5DD9/615C recoge115 con2C8E/+5/-2 y retira su oferta persistente. Dieciocho variantes de capacidad/iconos/puntos y recogida real desde la partida con119/120/121. Juntos activan la puerta deDINO antes de la ruta68."
