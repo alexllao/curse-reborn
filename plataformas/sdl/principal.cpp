@@ -439,6 +439,33 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
     if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, base.data()))
       return false;
   }
+  // Los seis filtros se omiten en pequeño y recuperan exactamente su imagen y selección al ampliar.
+  std::vector<unsigned char> sin_filtro;
+  if (!presentacion.filtros.actualizar(presentacion.textura, base.data()) ||
+      !capturar(".sin_filtro", sin_filtro))
+    return false;
+  for (unsigned int modo = 0; modo < 6; ++modo) {
+    const std::string nombre = presentacion.filtros.nombre_actual();
+    std::vector<unsigned char> antes, pequeno, despues;
+    if (!presentacion.filtros.actualizar(presentacion.textura, base.data()) ||
+        !capturar(".filtro_guardado_" + std::to_string(modo), antes))
+      return false;
+    presentacion.filtros.suspender(true);
+    SDL_ScaleMode escala;
+    if (!presentacion.filtros.actualizar(presentacion.textura, base.data()) ||
+        presentacion.filtros.aplicado() ||
+        presentacion.filtros.textura_visible(presentacion.textura) != presentacion.textura ||
+        !SDL_GetTextureScaleMode(presentacion.textura, &escala) ||
+        escala != SDL_SCALEMODE_NEAREST || !capturar(".pequeno_" + std::to_string(modo), pequeno) ||
+        pequeno != sin_filtro)
+      return SDL_SetError("El monitor pequeño conserva un filtro o cambia los píxeles originales");
+    presentacion.filtros.suspender(false);
+    if (!presentacion.filtros.actualizar(presentacion.textura, base.data()) ||
+        nombre != presentacion.filtros.nombre_actual() ||
+        !capturar(".filtro_recuperado_" + std::to_string(modo), despues) || antes != despues ||
+        !presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, base.data()))
+      return SDL_SetError("Ampliar el monitor no recupera el filtro elegido");
+  }
   registrar_accion("Cursor: tres formatos con y sin habitación; cuatro bordes, salida de ventana, "
                    "regreso de la mano, seis filtros y panel sin duplicación comprobados");
   return true;
@@ -845,6 +872,11 @@ int main(int argc, char *argv[]) {
           continue;
         }
         if (evento.key.key == SDLK_F11) {
+          if (!presentacion.habitacion.ampliada()) {
+            registrar_accion("Filtros: disponibles al ampliar el juego");
+            avisos.mostrar("Filtros: disponibles al ampliar");
+            continue;
+          }
           if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
             return fallo("No se ha podido cambiar el filtro de pantalla");
           avisos.mostrar(std::string("Filtro: ") + presentacion.filtros.nombre_actual());
@@ -1641,6 +1673,7 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido actualizar el encuadre del juego");
     if (!presentacion.habitacion.preparar_encuadre(presentacion.dibujante))
       return fallo("No se ha podido actualizar la habitación");
+    presentacion.filtros.suspender(!presentacion.habitacion.ampliada());
     const bool cursor_filtrado = presentacion.filtros.aplicado();
     if (!comprobar &&
         (!presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,

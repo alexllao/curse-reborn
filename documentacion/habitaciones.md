@@ -31,3 +31,5 @@ La habitación se compone como una textura RGBA sobre el juego: el cristal tiene
 La abertura se prepara una sola vez al cargar o cambiar la variante, con suavizado en el borde y memoria liberada al cambiar. Cada fotograma dibuja la habitación en una sola pasada; no recalcula la máscara. Los PNG maestros permanecen sin cambios y una textura que ya tenga transparencia la conserva.
 
 Clic dentro de la imagen jugable se entrega al juego también en pequeño; no amplía la vista. Solo el botón físico del monitor solicita el acercamiento. Ctrl+R vuelve a la habitación y Escape sigue reservado al juego.
+
+El monitor pequeño utiliza siempre el muestreo original, sin filtros F11. La selección para la vista ampliada permanece guardada; no se calculan xBRZ, 2xSaI ni CRT mientras se ve la habitación. Al ampliar se recupera el filtro, incluida la mano original. F11 en pequeño muestra un aviso y no cambia la selección.

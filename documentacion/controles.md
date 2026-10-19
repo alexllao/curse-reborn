@@ -30,6 +30,8 @@ Se puede jugar dentro del monitor pequeño: sus clics llegan al juego y no cambi
 
 **Ctrl + rueda**, **Ctrl + −/+** ajustan el acercamiento en pasos del 20 % entre la habitación completa y el juego máximo; **Ctrl + 0** alcanza el máximo. **+ y − sin Ctrl** conservan su función de volumen. Los filtros se aplican al juego y a su mano original, conservando intacta la ilustración de la habitación.
 
+En la habitación, el monitor pequeño siempre muestra el juego **sin filtro**. F11 muestra un aviso para ampliar primero y conserva la selección anterior. Al ampliar, se recupera el filtro elegido; al volver al escritorio se suspende automáticamente, también para el cursor.
+
 **F11** recorre **original → suavizado → líneas de escaneo → CRT suave → xBRZ 2x → 2xSaI → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
 
 El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.

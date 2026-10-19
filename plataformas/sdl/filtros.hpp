@@ -21,17 +21,22 @@ public:
   }
   // El modo original conserva el cursor del sistema; los filtros componen la mano con la escena.
   bool aplicado() const {
-    return modo != 0;
+    return !suspendidos && modo != 0;
+  }
+  // Omite los filtros en la habitación sin perder la selección para la vista ampliada.
+  void suspender(bool pausa) {
+    suspendidos = pausa;
   }
   // Actualiza la textura original y, cuando corresponde, la imagen auxiliar de 640 por 400.
   bool actualizar(SDL_Texture *original, const unsigned char *rgba);
   // El modo cero conserva exactamente la textura original y su muestreo por vecino más próximo.
   SDL_Texture *textura_visible(SDL_Texture *original) const {
-    return modo < 2 ? original : textura;
+    return suspendidos || modo < 2 ? original : textura;
   }
 
 private:
   unsigned int modo = 0;
+  bool suspendidos = false;
   SDL_Texture *textura = nullptr;
   std::vector<unsigned char> pixeles;
 };

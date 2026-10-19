@@ -37,9 +37,11 @@ bool FiltrosPantalla::alternar(SDL_Renderer *dibujante, SDL_Texture *original,
 
 // Escaneo a doble resolución; el CRT añade mezcla horizontal, máscara RGB y viñeta suaves.
 bool FiltrosPantalla::actualizar(SDL_Texture *original, const unsigned char *rgba) {
-  if (!SDL_UpdateTexture(original, nullptr, rgba, 320 * 4))
+  if (!SDL_SetTextureScaleMode(original, !suspendidos && modo == 1 ? SDL_SCALEMODE_LINEAR
+                                                                   : SDL_SCALEMODE_NEAREST) ||
+      !SDL_UpdateTexture(original, nullptr, rgba, 320 * 4))
     return false;
-  if (modo < 2)
+  if (suspendidos || modo < 2)
     return true;
   if (modo >= 4) {
     if (modo == 4)
