@@ -27,3 +27,7 @@ Las listas se auditan junto a los tablones, después del cruce y de regreso al e
 Resultado: **11.453 casos/pasos y cinco composiciones coincidentes**.
 
 **Pendiente:** bandeja115, siguientes rutas y puzles del valle, ELECTRO39 e integraciónSDL. No cambia el catálogo de32 vistas. Se conservan sonido común, contador, marcos y monitor; decorados ampliados aparcados.
+
+## Integración SDL
+
+`pnpm comprobar:barco-valle` recorre la continuidad completa desde el comienzo, incluido el calcetín, la combinación con monedas y el guardia. Compara cinco imágenes originales del puente y el regreso63; guardar/restaurar funciona llevando el primer tablón conmodeloFE y después de colocar ambos.78 cambiosF5/F6 entre39 vistas correctos. Los comparadores nativos de guardia y puente se repiten con8202 y11453 casos/pasos. Las cinco imágenes previas del guardia permanecen como referencias nativas; enSDL se verifican sus acciones/consumos para alcanzarHOLD sin preparar inventarios.

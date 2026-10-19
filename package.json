@@ -83,6 +83,7 @@
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
+    "comprobar:barco-valle": "node herramientas/gestionar_proyecto.mjs comprobar:barco-valle",
     "comprobar:cueva-valle": "node herramientas/gestionar_proyecto.mjs comprobar:cueva-valle",
     "comprobar:nube-valle": "node herramientas/gestionar_proyecto.mjs comprobar:nube-valle",
     "comprobar:dinosaurio": "node herramientas/gestionar_proyecto.mjs comprobar:dinosaurio",

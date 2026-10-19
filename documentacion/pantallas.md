@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y ocho vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y nueve vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -44,6 +44,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 36    | 32         | El valle del dinosaurio         | DINO     |
 | 37    | 38         | La nube del valle               | CLOUD    |
 | 38    | 37         | La cueva del detergente         | GHETTO   |
+| 39    | 36         | El interior del barco           | HOLD     |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -68,3 +69,5 @@ DINO32 incorpora las entradas57 desdePOST,54/70 desdeCELESTE y los regresos58/53
 CLOUD38 conserva el movimiento del modeloLOST, el balanceo, la recogida121 y la salida inferior67. El acceso66 desdePOST exige el pase original. El acceso directoF5/F6 sigue siendo una sesión de desarrollo que no fabrica ese pase. Las pruebas de continuidad incluyen la grabación106 y el correo antes de solicitar la entrada66.
 
 GHETTO37 enlaza64/65 conDINO. La petición original de ayuda provoca el derrumbe y permite recoger120; se conserva la bolsa121 obtenida enCLOUD. El catálogo de desarrollo permite entrar sin resolver las visitas anteriores y mantiene todos sus requisitos originales.
+
+HOLD36 incorpora la entrada62 después de apartar al guardia, los dos tablones117/118, su colocación para construir el puente, el trapo119 y la salida63. Llevar un tablón utiliza el modeloFE del banco de la escena. El accesoF5/F6 no derrota al guardia de la partida anterior: abre una sesión independiente.

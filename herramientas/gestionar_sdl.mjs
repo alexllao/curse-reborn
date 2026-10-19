@@ -354,6 +354,22 @@ function configurarComprobacionValle(argumentos) {
       alcance:
         'entrada64, petición de ayuda, detergente120 y regreso65; cuatro imágenes y restauración',
     },
+    {
+      argumento: '--barco-valle',
+      nombre: 'barco_valle',
+      referencia: 'puente_barco',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:guardia-barco', 'comparar:puente-barco'],
+      hitos: [
+        'barco_primer_tablon',
+        'barco_tablon_horizontal',
+        'barco_puente_completo',
+        'barco_trapo_recogido',
+        'barco_regreso_celeste',
+      ],
+      alcance:
+        'calcetín, moneda, guardia, entrada62, ambos tablones, puente, trapo119 y regreso63; cinco imágenes y restauración',
+    },
   ];
   return recorridos.find((recorrido) => argumentos.includes(recorrido.argumento));
 }
@@ -377,6 +393,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--dinosaurio',
       '--nube-valle',
       '--cueva-valle',
+      '--barco-valle',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

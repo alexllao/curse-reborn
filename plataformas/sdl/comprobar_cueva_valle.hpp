@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_barco_valle.hpp"
 
 // 337D–34D6 y5E57: pide ayuda, descubre el detergente120 y regresa a DINO en la misma partida.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir,
@@ -24,5 +25,8 @@ bool comprobar_cueva_valle_sdl(Mazmorra &p, const std::string &opcion, Avanzar a
     return false;
   if (detener("cueva_detergente"))
     return true;
-  return ruta({{150, 199}}, 32) && detener("cueva_regreso_dino");
+  if (!ruta({{150, 199}}, 32))
+    return false;
+  return detener("cueva_regreso_dino") ||
+         comprobar_barco_valle_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }
