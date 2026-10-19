@@ -429,3 +429,13 @@ comparar:entrada-nieve parte de probador_solicitud74 y contrasta636 casos/pasos,
 ## SNOWAST4/43 en SDL, vista41
 
 Puzle134 reconstruido en motor/acciones/nieve.cpp: recogida5F56/615C, Atacar/Lanzar B432–B576,6323 y respuestas neutras del inventario conocido. comparar:ser-azul3049 casos/pasos, cinco composiciones, cuatro auditorías y variantes; comprobar:ser-azul cuatro imágenes64000 píxeles, restauración y82 cambiosF5/F6. Vista41 {43,25,74}; activado25/74, guardado admite74 y escena43 del catálogo. Salida80→42 todavía pendiente. El lanzamiento programa la transformación completa, sin inventar una segunda bola. La condiciónSUB/JLE debe comparar operandos firmados para conservarOF; límites aislados ya corregidos y contrastados. Próximo42 desde nieve_ser_liberado; también hay nieve_bola_recogida por si una rama exige llevar134. Documentación entrada_nieve.md. Decorados ampliados aparcados.
+
+## SNOWAST3/42 en SDL, vista42; núcleo del capítulo de nieve
+
+comparar:morsa19706 casos/pasos,21 composiciones,18 auditorías y2661 selecciones;1152 variantes CBD0/CC4B/CDA6,30 romper127,30 Llevar132 y180 entregas126/128 con postura/perfume/rodeos. Partida real43→80/42 (132 y Llevar, voz4/0 para saludo1),78→41,76→40 (125),75→41 (125 lanzado en274/150,128recogido, entrega a126 en850/175 y127),77→42 (Atacar127 en550/166,1024 pasos,131),78/76→40 y rescate. Ver comparar_morsa.py y documentacion/nieve.md. Se comparten sonido/azar/servicios, sin asignar inventario.
+
+Cierre de la cornisa: ruta_sin_salida165/114 queda180/94 por la pared. Secuencia de direcciones1 durante8,8 durante4,2 durante16 y0 durante128 llega164/68 medianteCBD0. Voz4/1 (ayuda0), hasta1024 pasos solicita81. NO confundir el orden de temas:4/0 es saludo1. Se guarda rescate_solicitud81.ds.bin/.semilla.json sin componer la imagen transitoria.
+
+La APIF6 acotada sigue en secuencias.cpp. comparar_corredor registra85DB; solo al solicitarF6 y confirmar cabecera fuera del archivo normaliza los cuatro bytes esperados de dimensiones a0/0. El original lee RAM ajena conES envolvente (STD76). Los demás65532 bytes, salida, azar, carga y composición siguen exactos. Cuatro casos en el recorrido. Documentado, no llamarlo igualdad de esa RAM indeterminada.
+
+comprobar:morsa seis imágenes64000 píxeles (entrada80, ante132, recogido, perfumado, ante morsa y saludo), restauración y84 cambiosF5/F6. Vista42 y enlaces43/80,42/79 activos;41/78 y40 aún fuera del catálogoSDL. El núcleo de40/41 ya está traducido y recorrido; próximo activar41 y40 y repetir enSDL tablón/pez/caña, hielo/cenizas y cornisa. Las referencias quedan en comparacion_morsa; no volver a implementar el puzle desde cero. Decorados ampliados aparcados; monitor, marcos, audio y contador intactos.

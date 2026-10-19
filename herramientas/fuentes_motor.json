@@ -54,5 +54,6 @@
   "motor/acciones/corredor.cpp",
   "motor/estado/partidas.cpp",
   "motor/acciones/asaltante.cpp",
-  "motor/acciones/nieve.cpp"
+  "motor/acciones/nieve.cpp",
+  "motor/entidades/nieve.cpp"
 ]

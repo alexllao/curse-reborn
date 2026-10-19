@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_morsa.hpp"
 
 // 74/CE35/5F56/B432: entra desde el vestido real y resuelve la bola sin preparar inventario.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir,
@@ -21,6 +22,9 @@ bool comprobar_nieve_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar
     return false;
   if (detener("nieve_bola_recogida"))
     return true;
-  return abrir() && elegir(2) && elegir(5) && objeto(134) && avanzar(512) &&
-         !p.conserva_objeto(134) && detener("nieve_ser_liberado");
+  if (!abrir() || !elegir(2) || !elegir(5) || !objeto(134) || !avanzar(512) ||
+      p.conserva_objeto(134))
+    return false;
+  return detener("nieve_ser_liberado") ||
+         comprobar_morsa_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }

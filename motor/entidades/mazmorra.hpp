@@ -11,7 +11,9 @@ bool actualizar_ramas_valle(unsigned char *datos);
 // C794–C8B0: encuentro del poste y partículas; conserva inventario y azar originales.
 bool actualizar_poste(unsigned char *datos, EstadoAleatorio &azar,
                       const RecursosEntidades &recursos);
-// BEFD–C092: añade el fondo del lago, sus burbujas y entidades, con el generador original.
+// CBD0–CF25: proximidad, reacciones y pasos especiales de las cuatro zonas nevadas.
+bool actualizar_nieve(unsigned char *datos);
+// BEFD–C092 y1791: despacha el lago y las rutinas de escena con servicios y azar originales.
 bool actualizar_rutina_escena(unsigned char *datos, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos);
 // 183F–1904: reacción particular de la escena cinco, después de actualizar las entidades.

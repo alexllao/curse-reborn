@@ -394,6 +394,22 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--morsa',
+      nombre: 'morsa',
+      referencia: 'morsa',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:morsa'],
+      hitos: [
+        'morsa_entrada',
+        'morsa_ante_desodorante',
+        'morsa_desodorante',
+        'morsa_perfumado',
+        'morsa_ante_saludo',
+        'morsa_saludada',
+      ],
+      alcance: 'entrada80, desodorante, uso y saludo a la morsa; seis imágenes y restauración',
+    },
+    {
       argumento: '--ser-azul',
       nombre: 'ser_azul',
       referencia: 'ser_azul',
@@ -447,6 +463,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--plataforma-valle',
       '--regreso-benn',
       '--ser-azul',
+      '--morsa',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

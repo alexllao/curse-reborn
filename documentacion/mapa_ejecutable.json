@@ -3,6 +3,26 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:CBD0",
+      "nombre": "Cornisa, perfume y proximidad en las cuatro zonas nevadas",
+      "comentario": "CBD0–CF25: rescate de40, desmayo y coordinación del pez de41, proximidad de42 y reacción de43.1152 variantes, recorrido real con mismo inventario y azar. Traslado motor/entidades/nieve.cpp; documentacion/nieve.md."
+    },
+    {
+      "direccion": "0000:B1F8",
+      "nombre": "Perfume, tablón, pez y fuego de la nieve",
+      "comentario": "B1F8–B42F: Llevar132, Lanzar125 solo41, entrega128 a126 con35C9/128 y cuadro17, Atacar127 solo42. Conserva rodeos firmados, descriptores persistentes, canales diferidos y puntos. motor/acciones/nieve.cpp; comparar:morsa."
+    },
+    {
+      "direccion": "0000:5EAB",
+      "nombre": "Recogidas de tablón, pez, caña, desodorante y cenizas",
+      "comentario": "5EAB–5F64/563A/615C:125 y sus dos actores,128 protegido mientras2C7D!=0,127/+15/-7,132,131 con6323 y134. Reutiliza capacidad, iconos, puntos y baja623D; nieve.cpp y recorrido persistente."
+    },
+    {
+      "direccion": "0000:34D9",
+      "nombre": "Ayuda en la cornisa nevada",
+      "comentario": "34D9–3542 exige40, Y firmado<=72 yXglobal firmado<=240; retira101/70,358D=0, destino165-cámara/114,2675/268D/269C y2CAF intervalo080B. El guion solicita81; nieve.cpp y comparar:morsa."
+    },
+    {
       "direccion": "0000:B432",
       "nombre": "Bola de nieve y ser azul de SNOWAST4",
       "comentario": "B432–B576 exige43, llama6323, retira134, limita358F, planifica rodeo firmado, transforma descriptor4946 y tres actores diferidos con canalesA795–A880; suma5. comparar:ser-azul3049 casos/pasos, cinco composiciones y cuatro auditorías; SDL cuatro imágenes y restauración. Traslado motor/acciones/nieve.cpp."

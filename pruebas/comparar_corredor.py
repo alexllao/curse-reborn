@@ -10,6 +10,9 @@ from comparar_objetos import ComparacionObjetos, guardar, palabra
 
 BANCOS_ESCENA = {
     43: 'SNOWAST4',
+    42: 'SNOWAST3',
+    41: 'SNOWAST2',
+    40: 'SNOWAST1',
     36: 'HOLD',
     37: 'GHETTO',
     38: 'CLOUD',
@@ -231,10 +234,15 @@ class ComparacionCorredor(ComparacionPuzle):
             m.reg_write(r.UC_X86_REG_SI, direccion)
             self.ejecutar_original(0x0BF8)
         salida = []
+        marcadores_f6 = []
         self.retorno_salida = 2
 
         # 0AE5 se alcanza tanto desde BOXDET como desde una petición F6 del guion.
         def detener(maquina, posicion, tamano, contexto):
+            if posicion == 0x85DB:
+                marcadores_f6.append(
+                    (maquina.reg_read(r.UC_X86_REG_SI), maquina.reg_read(r.UC_X86_REG_AX) & 255)
+                )
             if posicion == 0x0A6C:
                 self.retorno_salida = 16
             if posicion == 0x0AE5:
@@ -251,6 +259,25 @@ class ComparacionCorredor(ComparacionPuzle):
         finally:
             m.hook_del(gancho)
         esperado = bytes(m.mem_read(self.segmento, 65536))
+        # F6 no dibuja su imagen transitoria. Si su cabecera excede el archivo, DOS lee RAM
+        # ajena (incluso con envoltura de ES); la API acotada documenta ancho/alto cero.
+        # Solo se normalizan esos cuatro bytes al solicitar efectivamente el cambio de sala.
+        if salida and self.retorno_salida == 16:
+            esperado_acotado = bytearray(esperado)
+            for entidad, imagen in marcadores_f6:
+                ancho, alto = ctypes.c_ushort(), ctypes.c_ushort()
+                if not self.dimensiones_recurso(
+                    None,
+                    palabra(esperado, entidad + 31),
+                    imagen & 127,
+                    ctypes.pointer(ancho),
+                    ctypes.pointer(alto),
+                ):
+                    esperado_acotado[entidad + 6 : entidad + 10] = bytes(4)
+                    self.resumen['cabeceras_F6_acotadas'] = (
+                        self.resumen.get('cabeceras_F6_acotadas', 0) + 1
+                    )
+            esperado = bytes(esperado_acotado)
         azar = bytes(m.mem_read(0x78DE, 8))
         resultado = self.nativa.avanzar_jugabilidad(
             (ctypes.c_ubyte * 65536).from_buffer(datos),
@@ -360,7 +387,9 @@ class ComparacionCorredor(ComparacionPuzle):
             ][:8]
             raise ErrorAnalisis(f'Tabla de tiras distinta al entrar en la escena: {diferencias}.')
         escena = palabra(datos, 0x8082)
-        self.escena = (self.carpeta / (BANCOS_ESCENA[escena] + '.SPR')).read_bytes()
+        self.escena = (
+            self.carpeta / (('SNOWAST3' if escena == 40 else BANCOS_ESCENA[escena]) + '.SPR')
+        ).read_bytes()
         self.nombre_mapa = BANCOS_ESCENA[escena] + '.MAP'
         mapa = (self.carpeta / self.nombre_mapa).read_bytes()
         datos[0x0AEF : 0x0AEF + 576] = mapa[:576]
@@ -442,7 +471,9 @@ class ComparacionCorredor(ComparacionPuzle):
         self.maquina.ctl_flush_tb()
         escena = palabra(datos, 0x8082)
         nombre = BANCOS_ESCENA[escena]
-        self.escena = (self.carpeta / (nombre + '.SPR')).read_bytes()
+        self.escena = (
+            self.carpeta / (('SNOWAST3' if escena == 40 else nombre) + '.SPR')
+        ).read_bytes()
         self.nombre_mapa = nombre + '.MAP'
         modelo = datos[0x9974]
         if modelo < 0xFE:

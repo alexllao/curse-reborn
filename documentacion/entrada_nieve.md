@@ -16,4 +16,4 @@ Quedan pendientes las acciones y posiciones posteriores, los puzles y las salida
 
 La función común6323 conserva la oferta del amigo verde solo cuando se lleva131,490F es cero y4948 no es19. Las variantes muestran por qué una resta seguida de salto firmado debe respetar también el desbordamiento del procesador; no basta mirar el signo de la diferencia truncada. El lanzamiento está disponible mediante Atacar134 y Lanzar134, como el EXE.
 
-La salida80 hacia SNOWAST3/42 aún no está habilitada en SDL. Las opciones de objetos nuevos de otras salas conservan estado pendiente. El accesoF5/F6 abre una partida independiente, sin resolver las visitas anteriores. Se conservan sonido, contador, monitor y marcos; decorados ampliados siguen aparcados.
+La salida80 hacia SNOWAST3/42 y su regreso79 ya están habilitados enSDL; véase [la continuación de nieve](nieve.md). Las opciones de objetos nuevos de otras salas conservan estado pendiente. El accesoF5/F6 abre una partida independiente, sin resolver las visitas anteriores. Se conservan sonido, contador, monitor y marcos; decorados ampliados siguen aparcados.
