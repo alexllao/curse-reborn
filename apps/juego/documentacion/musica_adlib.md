@@ -51,10 +51,10 @@ La comprobación SDL genera ocho segundos del tema uno: **384.000 muestras** coi
 
 `pnpm comparar:musica` amplía a 8.192 IRQ por tema. La comparación amplia queda disponible para el propietario; sus resultados se registran aparte de la muestra.
 
-**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 400 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
 
 La comprobación nativa de música genera ocho segundos de **cada chip**, exige señal audible, salida distinta entre OPL2/OPL3 y coincidencia exacta de cada salida al fragmentar los bloques. Guarda el OPL3 en `apps/juego/trabajo/comparacion_musica/musica_adlib.wav` y el OPL2 en `musica_adlib.wav.opl2.wav`. También recorre F4 por las dos opciones FM antes de volver a MT-32.
 
-El volumen común admite de cero a **200 %**: cien conserva la ganancia normal y los valores superiores la amplifican, con posible saturación. M conserva el porcentaje elegido. La integración digital comprueba los límites cero/doscientos y su conservación al silenciar.
+El volumen común admite de cero a **400 %**: cien conserva la ganancia normal y los valores superiores la amplifican, con posible saturación. M conserva el porcentaje elegido. La integración digital comprueba los límites cero/cuatrocientos y su conservación al silenciar.
 
 `pnpm exportar:musica` utiliza estos mismos núcleos para guardar referencias WAV de ambos temas internos y de los cinco bancos MT-32. La duración se calcula desde los guiones: los RS incluyen su entrada y terminan en el primer salto de repetición; FM espera a que los nueve canales hayan repetido su estado de control o terminado. Esto cubre una pasada de cada voz, sin alargar el archivo hasta el mínimo común múltiplo de bucles independientes. `--segundos 1…600` permite forzar un corte de prueba; los bucles no se convierten en finales inventados. Se guardan en `apps/juego/trabajo/exportacion_musica/` junto con su inventario y huellas, sin efectos ni amplificación del volumen de la partida. Sirven como material para preparar un remaster separado del port fiel.

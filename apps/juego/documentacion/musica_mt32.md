@@ -41,7 +41,7 @@ El aviso de percusión no asignada procede del mapa rítmico del sintetizador: M
 - `pnpm comprobar:mt32 --muestra`: añade síntesis de 32 segundos de cada banco con las ROM locales, exige señal y guarda `apps/juego/trabajo/comparacion_musica_rs/mazmorra_mt32.wav`. Comprueba también la permanencia del banco en escenas 1 y 2.
 - La comprobación SDL de AdLib exige señal efectiva después de conectar la mazmorra y ejercita los perfiles, el silencio y la desconexión de escena; comprueba que el callback sigue produciendo muestras durante una espera de 150 ms del hilo principal. El dispositivo de pruebas es `dummy`: falta escuchar la continuidad en el equipo del propietario.
 
-**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 200 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
+**Volumen:** `+` y `−` ajustan el nivel general en pasos del 10 %, entre 0 y 400 %. También funcionan `=` y las teclas del teclado numérico. La consola muestra el porcentaje al arrancar y al cambiarlo. `M` silencia y recupera el ajuste elegido; cambiar de perfil no lo reinicia.
 
 La salida MT-32 conserva los dos canales de Munt a 48.000 Hz. Cada canal se amplifica por dos y se limita a ±28.000 para evitar desbordamientos; su nivel medio equivale a la mezcla mono previa, elevada 12 dB respecto a la primera integración. AdLib y PC Speaker conservan su ganancia. El dispositivo común es estéreo; SDL convierte los efectos mono y AdLib se duplica en ambos canales. La comprobación informa del pico y de las muestras limitadas de cada banco.
 

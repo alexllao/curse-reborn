@@ -6,7 +6,7 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 
 | Tecla  | Función                                                                                                         |
 | ------ | --------------------------------------------------------------------------------------------------------------- |
-| **+**  | Subir el volumen general un 10 %, hasta el 200 %. También sirve **=**.                                          |
+| **+**  | Subir el volumen general un 10 %, hasta el 400 %. También sirve **=**.                                          |
 | **−**  | Bajar el volumen general un 10 %.                                                                               |
 | **M**  | Silenciar o reactivar música y efectos, conservando el volumen elegido.                                         |
 | **F3** | Cambiar los efectos entre Sound Blaster digital y PC Speaker, conservando la música.                            |
@@ -14,9 +14,9 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 
 **M** muestra «Sonido silenciado» o «Sonido activado» con el mismo texto blanco y fundido de los otros avisos. Silencia música y efectos y recupera el porcentaje anterior al reactivarlo; también funciona durante BIOS o con el PC apagado. Las secuencias conservan su reloj mientras están silenciadas.
 
-El volumen va del 0 al 200 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Los efectos digitales Sound Blaster están activos al arrancar; F3 permite comparar con PC Speaker sin reiniciar la escena. Ambas opciones comparten el volumen y el silencio.
+El volumen va del 0 al 400 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Los efectos digitales Sound Blaster están activos al arrancar; F3 permite comparar con PC Speaker sin reiniciar la escena. Ambas opciones comparten el volumen y el silencio.
 
-El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificación adicional, que puede saturar en los pasajes fuertes. M conserva también los ajustes superiores al 100 %.
+El **100 %** es el nivel normal. Entre **110 % y 400 %** se aplica amplificación adicional, que puede saturar en los pasajes fuertes. M conserva también los ajustes superiores al 100 %.
 
 ## Aspecto de pantalla
 

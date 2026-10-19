@@ -36,7 +36,7 @@ public:
   bool silenciado() const {
     return silencio;
   }
-  // Ajusta el volumen general entre cero y doscientos sin alterar los relojes musicales.
+  // Ajusta el volumen general entre cero y cuatrocientos sin alterar los relojes musicales.
   bool ajustar_volumen(int cambio);
   // Permite consultar el ajuste guardado, incluso durante el silencio temporal de M.
   unsigned int nivel_volumen() const {

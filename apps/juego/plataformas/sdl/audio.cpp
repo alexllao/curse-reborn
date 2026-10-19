@@ -243,8 +243,8 @@ bool Audio::ajustar_volumen(int cambio) {
   int siguiente = static_cast<int>(volumen) + cambio;
   if (siguiente < 0)
     siguiente = 0;
-  if (siguiente > 200)
-    siguiente = 200;
+  if (siguiente > 400)
+    siguiente = 400;
   if (dispositivo && !SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : siguiente / 100.0f))
     return false;
   volumen = static_cast<unsigned int>(siguiente);
@@ -603,8 +603,8 @@ bool comprobar_efectos_digitales(const std::string &carpeta, const char *ruta) {
     audio.desconectar();
     correcto = correcto && datos[0x0ad4] == 0;
   }
-  correcto = correcto && audio.ajustar_volumen(999) && audio.nivel_volumen() == 200 &&
-             audio.alternar_silencio() && audio.nivel_volumen() == 200 &&
+  correcto = correcto && audio.ajustar_volumen(999) && audio.nivel_volumen() == 400 &&
+             audio.alternar_silencio() && audio.nivel_volumen() == 400 &&
              audio.alternar_silencio() && audio.ajustar_volumen(-999) &&
              audio.nivel_volumen() == 0 && audio.ajustar_volumen(100) &&
              audio.nivel_volumen() == 100;

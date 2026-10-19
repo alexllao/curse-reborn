@@ -63,13 +63,13 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
   };
   // Comprueba fundidos y variantes con reloj simulado, sin esperar ni abrir ventanas visibles.
   p.banner.iniciar(reloj);
-  if (!p.banner.activo(reloj) || p.banner.opacidad(reloj) != 0 ||
-      p.banner.opacidad(reloj + 800000000ull) != 255 ||
-      p.banner.opacidad(reloj + 3800000000ull) != 255 ||
-      p.banner.opacidad(reloj + 4400000000ull) < 126 ||
-      p.banner.opacidad(reloj + 4400000000ull) > 129 ||
+  if (BannerLanzador::duracion() != 7000000000ull || !p.banner.activo(reloj) ||
+      p.banner.opacidad(reloj) != 0 || p.banner.opacidad(reloj + 800000000ull) != 255 ||
+      p.banner.opacidad(reloj + 5800000000ull) != 255 ||
+      p.banner.opacidad(reloj + 6400000000ull) < 126 ||
+      p.banner.opacidad(reloj + 6400000000ull) > 129 ||
       p.banner.activo(reloj + BannerLanzador::duracion()))
-    return fallo_monitor("El banner no respeta los fundidos y sus cinco segundos");
+    return fallo_monitor("El banner no respeta los fundidos y sus siete segundos");
   for (const auto &tamano : {std::pair<int, int>{1280, 720},
                              {1280, 800},
                              {1920, 720},
