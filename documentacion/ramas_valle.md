@@ -23,3 +23,7 @@ Este bloque completa esos enlaces del núcleo; no incrementa aún las32 vistas S
 ## REMOTE en SDL
 
 `pnpm comprobar:remoto` utiliza las referencias comunes preparadas con `pnpm comprobar:poste` y repite el contraste nativo de ramas-valle. Reproduce desde el comienzo del juego los mismos clics hastaREMOTE y compara la entrada, la reacción y el rechazo del mando: tres capturas de64000 píxeles. Comprueba guardar/restaurar cada estado y68 cambios deF5/F6 entre34 vistas. La prueba SDL todavía no incluye el retorno56 ni la recogida108 después del estornudo; sus contratos nativos ya están documentados. POST yREMOTE son las primeras dos salas del valle activadas enSDL.
+
+## CELESTE en SDL
+
+`pnpm comprobar:celeste` prolonga la misma partida por56 y61 y recoge111 al volver aPOST. Compara tres imágenes originales y guardar/restaurar;70 cambios deF5/F6 entre35 vistas. CELESTE incorpora55/61 y los accesos56/71; se admite la alternativa52 haciaPOST. DINO yHOLD aún no están activos enSDL en esta revisión. Las dos decisiones aleatorias y los regresos completos siguen contrastados en el núcleo por enlaces-valle, sin presentarlos todavía como comprobados enSDL.

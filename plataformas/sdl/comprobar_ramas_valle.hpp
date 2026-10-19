@@ -32,5 +32,17 @@ bool comprobar_ramas_valle(Mazmorra &p, const std::string &opcion, Avanzar avanz
   if (!p.mover_a(110, 165) || !avanzar(128) || !abrir() || !elegir(1) || !objeto(108) ||
       !avanzar(128) || p.conserva_objeto(108))
     return false;
-  return detener("remote_rechazo");
+  if (detener("remote_rechazo"))
+    return true;
+  if (!ruta({{170, 122}}, 33))
+    return false;
+  if (detener("celeste_entrada"))
+    return true;
+  if (!ruta({{100, 198}}, 35))
+    return false;
+  if (detener("post_regreso_rama"))
+    return true;
+  if (!abrir() || !elegir(1) || !objeto(111) || !avanzar(128) || !p.conserva_objeto(111))
+    return false;
+  return detener("post_objeto_111");
 }
