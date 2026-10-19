@@ -152,3 +152,5 @@ F11 y +/− muestran un aviso de letras blancas en la esquina superior izquierda
 Vista54: La habitación del megáfono, entrada97/regreso98; 108 cambiosF5/F6 contrastados.
 
 Vista55: La habitación del cubito de hielo, entrada99/regreso100; 110 cambiosF5/F6 contrastados.
+
+Vista56: La habitación del carámbano, entrada101/regreso102; 112 cambiosF5/F6 contrastados.

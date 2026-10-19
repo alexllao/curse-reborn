@@ -8,20 +8,20 @@ La guía corresponde a Amiga; su autora indica que también sirve para DOS, salv
 
 El audio común ya está integrado. La prioridad actual es completar la jugabilidad pantalla por pantalla, contrastar cada tramo y subir los cambios comprobados a development. El recorrido actual llega a las primeras habitaciones laterales del palacio de hielo; mantener separados el recorrido contrastado, las variantes aisladas y las ramas pendientes.
 
-| Tramo de la referencia | Estado del port                                                                                                                                                  |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                                                                                      |
-| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                                                                                               |
-| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara                                                                      |
-| Caída                  | Animación y enlace automático con el lago comparados                                                                                                             |
-| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente                                                                                    |
-| Cuevas                 | Poza y ruta de doce piedras hasta la cuerda comparadas; pozo y otras acciones pendientes                                                                         |
-| Paso del dragón        | Campo y asaltante contrastados; trayecto de Frank, comida y mago integrado. Otras ramas pendientes                                                               |
-| Confín del mundo       | Puzles del borde, loro y regreso al mago contrastados; continuación112 pendiente                                                                                 |
-| Valle de lo perdido    | Ruta principal contrastada hasta obtener ventilador124 y regresar al campo; revisar límites de cada tramo                                                        |
-| Hielo y nieve          | Nieve, rescate, lago helado, entrada, dados y corredores contrastados; gato149 y lupa150 con sus regresos; otros cuatro laterales y final del palacio pendientes |
-| Muertos vivientes      | Pendiente                                                                                                                                                        |
-| Enfrentamiento final   | Pendiente                                                                                                                                                        |
+| Tramo de la referencia | Estado del port                                                                                                                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Presentación           | Core, título e introducción integrados; no equivale a validar todo el juego                                                                                                            |
+| Mazmorra               | Ruta comparada; corregidos los nombres de pared, clip y desbloqueo                                                                                                                     |
+| Corredor               | Ruta de la pecera a la salida izquierda comparada, con estatuas, guardias, regreso y cámara                                                                                            |
+| Caída                  | Animación y enlace automático con el lago comparados                                                                                                                                   |
+| Aventura submarina     | Ruta hasta almeja y tapón; revisión de otras combinaciones del menú pendiente                                                                                                          |
+| Cuevas                 | Poza y ruta de doce piedras hasta la cuerda comparadas; pozo y otras acciones pendientes                                                                                               |
+| Paso del dragón        | Campo y asaltante contrastados; trayecto de Frank, comida y mago integrado. Otras ramas pendientes                                                                                     |
+| Confín del mundo       | Puzles del borde, loro y regreso al mago contrastados; continuación112 pendiente                                                                                                       |
+| Valle de lo perdido    | Ruta principal contrastada hasta obtener ventilador124 y regresar al campo; revisar límites de cada tramo                                                                              |
+| Hielo y nieve          | Nieve, rescate, lago helado, entrada, dados y corredores contrastados; seis laterales, poleas, silbato y ventana resueltos y comparados; sala del láser y final del palacio pendientes |
+| Muertos vivientes      | Pendiente                                                                                                                                                                              |
+| Enfrentamiento final   | Pendiente                                                                                                                                                                              |
 
 ## Correcciones que deben conservarse
 

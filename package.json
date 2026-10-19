@@ -162,7 +162,9 @@
     "comparar:resolucion-palacio": "node herramientas/gestionar_proyecto.mjs comparar:resolucion-palacio",
     "comprobar:avisos": "node herramientas/gestionar_proyecto.mjs comprobar:avisos",
     "comprobar:megafono-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:megafono-palacio",
-    "comprobar:hielo-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:hielo-palacio"
+    "comprobar:hielo-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:hielo-palacio",
+    "comprobar:carambano-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:carambano-palacio",
+    "comprobar:resolucion-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:resolucion-palacio"
   },
   "repository": {
     "type": "git",

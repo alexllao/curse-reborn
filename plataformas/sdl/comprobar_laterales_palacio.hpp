@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_resolucion_palacio.hpp"
 
 // 95–102/BAA6: recoge los cuatro útiles restantes con escoba, tiradas y regresos originales.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -78,5 +79,7 @@ bool comprobar_laterales_palacio_sdl(Mazmorra &p, const std::string &opcion, Ava
     if (detener(nombre + "_dados"))
       return true;
   }
-  return detener("laterales_utiles");
+  if (detener("laterales_utiles"))
+    return true;
+  return comprobar_resolucion_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

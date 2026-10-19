@@ -40,17 +40,17 @@
     {
       "direccion": "0000:BA76",
       "nombre": "Salto por la ventana del corredor",
-      "comentario": "Exige2C4C=0; destino171/165 yABFC/AC0A/AC13,+5.12 variantes; la partida real conserva ventana cerrada y se compara el rechazo. palacio.cpp."
+      "comentario": "Exige2C4C=0;destino171/165,ABFC/AC0A/AC13,+5.12 variantes y salto real tras romper la ventana, contrastado hasta solicitar90. El destino56 aún pendiente de integrar; palacio.cpp."
     },
     {
       "direccion": "0000:BA1F",
       "nombre": "Apertura de ventana mediante148",
-      "comentario": "Solo2C4C=1, retira148, oculta4B9C, programa dos actores y canales parciales,+5.12 variantes; obtención real de148 pendiente del capítulo posterior. palacio.cpp."
+      "comentario": "Solo2C4C=1; retira148,oculta4B9C,programa dos actores parciales,+5.12 variantes y apertura real de la ventana con148 obtenido de147+152. CapturaSDL ventana_abierta; palacio.cpp."
     },
     {
       "direccion": "0000:B9F4",
       "nombre": "Combinación de silbato y globo",
-      "comentario": "147+152 en ambos órdenes; exige retirar147, retira152 e inserta148 sin otra condición; dos canales96DE/96E7 y+5. Variantes aisladas, sin fabricar estos objetos en la partida real. palacio.cpp."
+      "comentario": "147+152 en ambos órdenes; exige retirar147, retira152 e inserta148 sin otra condición;96DE/96E7 y+5. Contratos y combinación real de silbato ofrecido por6285 y megáfono de53, con selección de inventario0. palacio.cpp."
     },
     {
       "direccion": "0000:B9CE",
@@ -60,7 +60,7 @@
     {
       "direccion": "0000:B968",
       "nombre": "Inserción del arma en el mecanismo",
-      "comentario": "151+142 en ambos órdenes; retira151, cambia descriptores4B00/4B0C/4B11/4B1A y actores2C8E/2CAF, canales parciales, destino89/180 y+5. Contrato aislado: el arma aún se obtiene en habitaciones posteriores pendientes. palacio.cpp."
+      "comentario": "151+142 en ambos órdenes; retira151, cambia descriptores4B00/4B0C/4B11/4B1A y actores2C8E/2CAF, canales parciales,destino89/180 y+5. Contratos y partida real con arma de52, aceite144 y cristal145 recogidos. Diez hitosSDL de resolución; palacio.cpp."
     },
     {
       "direccion": "0000:B93D",
@@ -70,7 +70,7 @@
     {
       "direccion": "0000:6285",
       "nombre": "Oferta del silbato tras reunir los siete útiles",
-      "comentario": "6285–62C8 exige153,154,152,149,150,144,145; retira141 y pone4BAE=1. Se conserva3 mientras falten útiles.256 combinaciones de inventario en comparar:corredores-palacio; palacio.cpp."
+      "comentario": "6285–62C8 exige153,154,152,149,150,144,145; retira141 y pone4BAE1. Máscaras aisladas por recogida y reunión real de los siete útiles en el recorrido de los seis laterales y poleas; palacio.cpp."
     },
     {
       "direccion": "0000:CFA9",

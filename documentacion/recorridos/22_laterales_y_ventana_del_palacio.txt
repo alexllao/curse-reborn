@@ -1,0 +1,16 @@
+LATERALES Y VENTANA DEL PALACIO
+Recorrido propio contrastado desde la partida con el gato149 y la lupa150.
+
+1. Vuelve a los dados y repite recogida y lanzamiento hasta abrir la puerta izquierda del segundo corredor. Entra a la habitación del arma.
+2. Ataca con la escoba que recogiste junto a los dados. La animación baja el arma de la repisa. Acércate y recógela.
+3. Regresa a los dados. Abre la puerta derecha del segundo corredor con nuevas tiradas cuando sea necesario y recoge el megáfono de esa habitación.
+4. Repite para las puertas izquierda y derecha del tercer corredor. En la izquierda recoge el cubito de hielo. En la derecha usa otra vez la escoba para bajar el carámbano y recógelo.
+5. Con los útiles de las seis habitaciones vuelve al primer corredor, donde están las poleas. Acércate al soporte izquierdo e inserta el arma en la funda.
+6. Se bajan los objetos de la polea derecha. Acércate para recoger el aceite y el trozo de cristal; vuelve a aproximarte entre las dos recogidas si el personaje termina más atrás.
+7. Al reunir los siete útiles necesarios, la escoba desaparece del inventario y se habilita el silbato. Recorre los dos corredores siguientes y recógelo del suelo, junto a la derecha de la ventana.
+8. Usa Combinar con el silbato. Escoge la primera casilla para volver al inventario y selecciona el megáfono. Obtienes el conjunto de megáfono y silbato.
+9. Usa Atacar con ese conjunto: se rompe la ventana. Saltar sobre la ventana programa la salida90 hacia la sala del láser.
+
+Las tiradas no son una combinación fija. El recorrido de comparación precisó dos adicionales para el megáfono y otras dos para el carámbano; las otras puertas ya estaban disponibles.
+
+Alcance: los cuatro laterales y la apertura de la ventana están contrastados con las instrucciones originales. El salto solicita90 en el núcleo; la sala del láser56 y su continuación aún no están integradas enSDL. No se presenta este recorrido como el final completo del palacio o del juego.

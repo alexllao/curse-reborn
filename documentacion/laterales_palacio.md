@@ -8,7 +8,7 @@ En52 y55 el objeto empieza alto, enY89. Atacar con la escoba141 solo funciona co
 
 Las recogidas conservan su altura específica:151/152 usan y+alto−4,153 −5 y154 −2.151 no llama6285;152/153/154 comprueban los siete útiles que habilitan el silbato. Cada objeto incluye36 variantes de capacidad/modelo/icono/puntuación y128 máscaras de inventario. Las variantes se separan del recorrido real.
 
-La vista53 añade la habitación del arma. `pnpm comprobar:arma-palacio` compara ocho imágenes64000 píxeles: tirada, puerta, entrada, caída con escoba, proximidad, recogida, regreso y vuelta a los dados. Guardar/restaurar y106 cambiosF5/F6 contrastados. Las otras tres habitaciones ya tienen recorrido nativo; se habilitan enSDL por separado tras sus comprobaciones.
+La vista53 añade la habitación del arma. `pnpm comprobar:arma-palacio` compara ocho imágenes64000 píxeles: tirada, puerta, entrada, caída con escoba, proximidad, recogida, regreso y vuelta a los dados. Guardar/restaurar y106 cambiosF5/F6 contrastados. Las otras tres habitaciones se habilitan por separado, con los resultados que se detallan a continuación.
 
 Los útiles enlazan con las poleas y la ventana de los corredores. La resolución se comprueba desde la partida con todos los objetos; los resultados de variantes aisladas anteriores no sustituyen ese recorrido.
 
@@ -17,3 +17,9 @@ Los útiles enlazan con las poleas y la ventana de los corredores. La resolució
 Vista54: La habitación del megáfono. `pnpm comprobar:megafono-palacio` verifica7 imágenes, restauración y108 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
 
 Vista55: La habitación del cubito de hielo. `pnpm comprobar:hielo-palacio` verifica7 imágenes, restauración y110 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
+
+Vista56: La habitación del carámbano. `pnpm comprobar:carambano-palacio` verifica9 imágenes, restauración y112 cambiosF5/F6, reutilizando el recorrido nativo de29136 casos/pasos.
+
+La resolución también se comprueba con `pnpm comprobar:resolucion-palacio`: diez imágenesSDL, guardar/restaurar y112 cambiosF5/F6. Las poleas y la ventana se resuelven con los objetos obtenidos durante el recorrido completo. El [recorrido en texto](recorridos/22_laterales_y_ventana_del_palacio.txt) explica los pasos y los límites.
+
+El salto146 se contrasta en el núcleo hasta solicitar90. Su destino es la sala del láser56, todavía sin integrar;SDL se comprueba hasta la ventana abierta. Quedan dos salidas pendientes desde las56 vistas,112 del loro y90 de la ventana. Esto no equivale al número total de escenas o puzles que faltan del juego.

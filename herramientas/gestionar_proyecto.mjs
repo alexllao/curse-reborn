@@ -231,6 +231,12 @@ try {
     case 'comprobar:hielo-palacio':
       await gestionarSdl('comprobar:poblacion', ['--hielo-palacio']);
       break;
+    case 'comprobar:resolucion-palacio':
+      await gestionarSdl('comprobar:poblacion', ['--resolucion-palacio']);
+      break;
+    case 'comprobar:carambano-palacio':
+      await gestionarSdl('comprobar:poblacion', ['--carambano-palacio']);
+      break;
     case 'comprobar:arma-palacio':
       await gestionarSdl('comprobar:poblacion', ['--arma-palacio']);
       break;

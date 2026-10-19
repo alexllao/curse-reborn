@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las55 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las56 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -61,6 +61,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 53    | 52         | La habitación del arma            | ICEROOM  |
 | 54    | 53         | La habitación del megáfono        | ICEROOM  |
 | 55    | 54         | La habitación del cubito de hielo | ICEROOM  |
+| 56    | 55         | La habitación del carámbano       | ICEROOM  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 

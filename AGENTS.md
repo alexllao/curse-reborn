@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,55 vistasSDL
+## Estado vigente: 19 de octubre,56 vistasSDL
 
-CatálogoSDL0–54,55 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–55,56 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales y la resolución de las poleas y la ventana. Calidad177 C++/74 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: la sala del láser56 y el capítulo siguiente aún faltan;56 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -504,7 +504,7 @@ SDL{51,47,93},enlaces47/93,51/94,guardado94 yprincipal51. comprobar:lupa-palacio
 
 Continuación real trabajo/comparacion_utiles_palacio/utiles_dados.ds.bin/.semilla.json. Faltan habitaciones52/53/54/55: entradas95/97/99/101 desde48/48/49/49,vueltas96/98/100/102; todasCS17A3nulo,ICEROOM. Descriptores702Fid151,7041id152,7053id153,7065id154. Recoger1515FD8 no6285,entidad2C4C,+5/−4;1525FE9/1536076/154609E sí6285. Escoba141/BAA6 en52 o55 exige2C4C1 eY2C5059, aumenta posición persistente4C12/4C60en62 y programa caída; no tratar recogida del objeto alto como si ya estuviera a mano. Ver EXE yguía antes de traducir.147 permanece oculto hasta153/154/152/149/150/144/145; tras151+142 se bajan144/145. No resolver con banderas fabricadas. Decorados ampliados aparcados.
 
-Auditoría tras52 vistas: seis salidas pendientes desde el catálogo (31/112→64;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55). Calidad174 C++/74 Python correcta. Gato/lupa conservan los13 fotogramas completos,DS yazar contrastados; próximas salas requieren traducir caída de objetos altos antes de publicarlas.
+Auditoría tras52 vistas: seis salidas pendientes desde el catálogo (31/112→64;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55). Calidad177 C++/74 Python correcta. Gato/lupa conservan los13 fotogramas completos,DS yazar contrastados; próximas salas requieren traducir caída de objetos altos antes de publicarlas.
 
 ## Vista53 y núcleo de los cuatro laterales52–55
 
@@ -525,3 +525,15 @@ CatálogoSDLescena53,origen48,salida97/regreso98;guardado98yprincipal53. comprob
 ## Vista55: La habitación del cubito de hielo
 
 CatálogoSDLescena54,origen49,salida99/regreso100;guardado100yprincipal54. comprobar:hielo-palacio 7imágenes,restauración y110cambiosF5. Referencias compartidascomparacion_laterales_palacio,29136casos/pasos/31imágenes. No repetirnativo sin cambios. HUDblancoF11yvolumenpreservado,decoradosampliadosaparcados.
+
+## Vista56: La habitación del carámbano
+
+CatálogoSDLescena55,origen49,salida101/regreso102;guardado102yprincipal55. comprobar:carambano-palacio 9imágenes,restauración y112cambiosF5. Referencias compartidascomparacion_laterales_palacio,29136casos/pasos/31imágenes. No repetirnativo sin cambios. HUDblancoF11yvolumenpreservado,decoradosampliadosaparcados.
+
+## Cierre de los seis laterales y resolución de la ventana
+
+Catálogo56 vistas(escenas0–55). Los cuatro laterales nuevos están contrastados con29136 casos/pasos,31 composiciones,18auditorías/5002selecciones; SDLarma8+megafono7+hielo7+carambano9=31 imágenes,restauración y112 cambiosF5/F6. Resoluciónnativa9608casos/pasos,10imágenes,9auditorías/3200selecciones; comprobar:resolucion-palacio compara las10imágenesSDL,restauración y112cambios. Los nuevosobjetos provienen todos de sus salas yde6285, sinbanderas fabricadas.
+
+La solución ejecuta151+142,144/145,147+152concasilla0delinventario,Atacar148ySaltar146. Elsaltohasta90soloestácontrastadoennúcleo; SDLsecompruebahastaventana_abierta. No presentar elcapítulocompletamenteacabadoconestolímite. La saladel láser56 siguependiente:entrada90,destino56,ICEROOM,rutinaCFD2–D113,objetoscolocados BB8D–BC6E ygatohidráulicoBC71–BCDE. Reanudarentrabajo/comparacion_resolucion_palacio/ventana_solicitud90.ds.bin/.semilla.json,con inventario149/150/153/154/144/145. Original1791cargaBXconCFD2,AXprovienedelllamador:cuando2D750saltaD10Cyguardaregistros2D77/79; no inventar estosvalores sin estudiar elcontrato. Con2E1A1crea6entidades desdeB39FusandoB3C2 yserviciocomún8B6F. Faltaestrutina,lospuzlesdelláser ySDL;no confundircuatro lateralesresueltosconTODOelpalacio.
+
+Auditoría final78tablas:solo2salidaspendientes desde elcatálogo,31/112→64 y49/90→56. No confundirlo con2salasrestantesdeljuego. HUDmínimoblancopublicadoen9273992;mantenermarcos/monitor/audio/contador,ydecoradosampliadosaparcados.
