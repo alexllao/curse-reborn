@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_plataforma_valle.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -60,5 +61,8 @@ bool comprobar_barco_valle_sdl(Mazmorra &p, const std::string &opcion, Avanzar a
     return false;
   if (detener("barco_trapo_recogido"))
     return true;
-  return ruta({{170, 120}, {170, 175}, {280, 199}}, 33) && detener("barco_regreso_celeste");
+  if (!ruta({{170, 120}, {170, 175}, {280, 199}}, 33))
+    return false;
+  return detener("barco_regreso_celeste") ||
+         comprobar_plataforma_valle_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }

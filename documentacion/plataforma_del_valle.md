@@ -26,8 +26,14 @@ La salida69 usaF6 en el canal de un actor. 85D0–85F6 escribe también ese valo
 
 La API portable no lee RAM ajena al recurso: si falta esa cabecera exclusivamente para el marcadorF6, normaliza ancho/alto a cero y continúa los demás canales hasta cargar la nueva escena. Los fotogramas normales fuera del banco siguen siendo un error. Esto coincide con DS en la referencia comprobada, pero no pretende emular bytes arbitrarios de RAM de otra asignaciónDOS. Las comparaciones de secuencias y servicios comunes se repiten tras este ajuste.
 
-Resultado: **15.751 casos/pasos,1.026 selecciones, tres estados auditados y diez composiciones coincidentes**. Se añaden720 contratos deCAE1,180 de las cinco acciones iniciales,36 del desbloqueo y18 por cada recogida115/124.
+Resultado: **17.039 casos/pasos,1.026 selecciones, tres estados auditados y doce composiciones coincidentes**. Se añaden720 contratos deCAE1,180 de las cinco acciones iniciales,36 del desbloqueo y18 por cada recogida115/124.
 
 Prueba: `pnpm comparar:plataforma-valle --muestra`. Los recursos y estados reales están en las carpetas ignoradas de trabajo. El final vuelve aCOUNTRY2/16 con124 y el bit2 activo; los menús de esa fase posterior del campo todavía requieren su propia revisión.
 
-**Pendiente:** otros enlaces y estados del valle, comprobación/integraciónSDL y siguientes capítulos. No se aumenta el catálogo de32 vistas. Los decorados ampliados siguen aparcados; se conservan sonido común, contador, marcos y monitor.
+**Pendiente:** menús posteriores del campo, otros estados argumentales y siguientes capítulos. ELECTRO ya está integrado enSDL. Los decorados ampliados siguen aparcados; se conservan sonido común, contador, marcos y monitor.
+
+## Caídas persistentes e integración SDL
+
+Se añaden dos ramas sobre copias de estados reales, sin modificar sus posiciones ni inventarios. Con la barrera abierta, clic100/160,192 pasos y128 de espera provoca la caída izquierda. Después de cruzar, clic180/160 y los mismos tiempos provoca la derecha. Ambas pasan por modeloFALL6 y recuperanSTD255/control dentro deELECTRO, sin consumir objetos ni puntos. B2E4/0E26/0E36/0E46 no solicitan otra escena; no se inventa una recarga68. Las variantes de rutinaCAE1 se mantienen además del recorrido persistente de las caídas.
+
+`pnpm comprobar:plataforma-valle` prolonga enSDL toda la partida desde el inicio y contrasta doce imágenes de64000 píxeles: bandeja, puertaDINO, entradaELECTRO, detergente, botón, barrera, caída izquierda, canicas, cruce, caída derecha, ventilador y regreso al campo. Comprueba guardar/restaurar los doce hitos y80 cambiosF5/F6 entre40 vistas. El regreso conserva124, consume3/99 y activa la siguiente fase, sin declarar completos sus menús posteriores.

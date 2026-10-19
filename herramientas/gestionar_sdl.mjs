@@ -370,6 +370,29 @@ function configurarComprobacionValle(argumentos) {
       alcance:
         'calcetín, moneda, guardia, entrada62, ambos tablones, puente, trapo119 y regreso63; cinco imágenes y restauración',
     },
+    {
+      argumento: '--plataforma-valle',
+      nombre: 'plataforma_valle',
+      referencia: 'plataforma_valle',
+      prefijo: 'borde_valle_',
+      comparadores: ['comparar:plataforma-valle'],
+      hitos: [
+        'plataforma_bandeja_recogida',
+        'plataforma_puerta_dino',
+        'plataforma_entrada',
+        'plataforma_detergente',
+        'plataforma_boton_descubierto',
+        'plataforma_barrera_abierta',
+        'plataforma_caida_izquierda',
+        'plataforma_canicas',
+        'plataforma_cruzada',
+        'plataforma_caida_derecha',
+        'plataforma_ventilador',
+        'plataforma_regreso_campo',
+      ],
+      alcance:
+        'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
+    },
   ];
   return recorridos.find((recorrido) => argumentos.includes(recorrido.argumento));
 }
@@ -394,6 +417,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--nube-valle',
       '--cueva-valle',
       '--barco-valle',
+      '--plataforma-valle',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

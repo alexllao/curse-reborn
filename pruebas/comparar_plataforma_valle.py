@@ -97,6 +97,31 @@ class ComparacionPlataformaValle(ComparacionPuenteBarco):
         if (id in [palabra(d, 0x5225 + i * 2) for i in range(10)]) != presente:
             raise ErrorAnalisis(f'Inventario no conserva el contrato de{id}.')
 
+    # CAE1/B2E4: cae con clic real, usa FALL6 y recupera control sin recargar ni consumir objetos.
+    def rama_caida(self, base, x, nombre):
+        semilla = list(self.semilla_menu)
+        d = bytearray(base)
+        self.retomar_recursos(d)
+        self.clic(d, x, 160)
+        caida = False
+        for _ in range(192):
+            self.esperar(d, 1)
+            caida = caida or d[0x358C] == 6
+        self.esperar(d, 128)
+        if (
+            not caida
+            or d[0x358C] != 255
+            or not d[0x3594]
+            or palabra(d, 0x8082) != 39
+            or d[0x5225:0x5239] != base[0x5225:0x5239]
+            or palabra(d, 0x35C7) != palabra(base, 0x35C7)
+        ):
+            raise ErrorAnalisis('La caída no recupera a Brad sin cambiar inventario y puntos.')
+        self.hito_borde(d, nombre)
+        self.resumen['caidas_recuperadas'] = self.resumen.get('caidas_recuperadas', 0) + 1
+        self.semilla_menu[:] = semilla
+        self.retomar_recursos(base)
+
     # Continúa trapo→bandeja→puerta68→limpieza→botón→canicas/bandeja→ventilador→salida69.
     def ejecutar(self):
         origen = self.raiz / 'trabajo/comparacion_puente_barco/barco_regreso_celeste'
@@ -159,6 +184,7 @@ class ComparacionPlataformaValle(ComparacionPuenteBarco):
         self.elegir_objeto(d, (2, 2), 122)
         self.esperar(d, 512)
         self.hito_borde(d, 'plataforma_barrera_abierta')
+        self.rama_caida(d, 100, 'plataforma_caida_izquierda')
         self.elegir_objeto(d, (2, 5), 121)
         self.esperar(d, 256)
         self.exigir_objeto(d, 121, False)
@@ -169,6 +195,7 @@ class ComparacionPlataformaValle(ComparacionPuenteBarco):
         self.esperar(d, 1024)
         self.exigir_objeto(d, 115, False)
         self.hito_borde(d, 'plataforma_cruzada')
+        self.rama_caida(d, 180, 'plataforma_caida_derecha')
         for punto in ((245, 180), (264, 176)):
             self.ruta_sin_salida(d, *punto)
         self.auditar(d, 'ELECTRO junto al ventilador')
@@ -202,7 +229,7 @@ class ComparacionPlataformaValle(ComparacionPuenteBarco):
             'variantes_puerta': 36,
             'capturas': self.capturas,
             'estados_auditados': self.estados_auditados,
-            'alcance': 'Bandeja115, entrada68, seis acciones deELECTRO, ventilador124 y regreso69 al campo en la misma partida. Otros enlaces/estados del valle, menús posteriores del campo y SDL pendientes.',
+            'alcance': 'Bandeja115, entrada68, seis acciones deELECTRO, ventilador124 y regreso69 al campo en la misma partida. Incluye caídas reales a ambos lados y recuperación con FALL6 sin consumir inventario. Otros estados y menús posteriores del campo pendientes.',
             'limites': 'F6 con cabecera fuera del banco se normaliza a0x0 en C++ porque no se dibuja antes de cargar; coincide con la memoria cero de esta referencia DOS, no emula lecturas arbitrarias de RAM de otra asignación.',
         }
         (self.destino / 'resultado.json').write_text(

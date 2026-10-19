@@ -42,3 +42,9 @@ Las tandas nativas siguientes contrastan60/56/61, cargas alternativas55/71 y el 
 ## Activación SDL de POST
 
 La salida52 desdeGYPSY20 ya está conectada aPOST35. `comprobar:poste` recorre la partida hasta esa entrada, compara64000 píxeles y comprueba guardar/restaurar y66 cambios entre33 vistas F5/F6. El núcleo del resto del valle ya está reconstruido hastaELECTRO39 y regreso16; su activación SDL se realiza por sala y sus rutas siguen pendientes en la plataforma hasta comprobarlas. Las anotaciones anteriores sobre52 y las32 vistas corresponden a revisiones previas.
+
+## Estado vigente tras integrar el valle
+
+Las40 vistasSDL cubren las escenas0–39. La auditoría de las78 tablas deja dos enlaces pendientes desde ese catálogo: CHANGE25/salida74→43 y WISE31/salida112→64. Todas las rutasBOXDET del valle32–39 están catalogadas, incluida70; su alternativa52 y los retornos71 se contrastan por separado con enlaces-valle. Los destinos de guiones66/67/69 están ejercitados en los recorridosSDL. Esto describe enlaces y casos revisados, no todas las combinaciones de estados posteriores del juego.
+
+Las secciones anteriores conservan la historia de ampliaciones; sus recuentos de32 vistas o52 pendiente quedan superados por esta revisión. Las38 capturasSDL añadidas en las ocho salas del valle y80 cambiosF5/F6 están contrastados. Sigue pendiente el capítulo posterior al ventilador, empezando por el regreso aBenn y su probador.

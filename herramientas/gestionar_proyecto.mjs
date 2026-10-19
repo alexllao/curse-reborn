@@ -213,6 +213,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:plataforma-valle':
+      await gestionarSdl('comprobar:poblacion', ['--plataforma-valle']);
+      break;
     case 'comprobar:barco-valle':
       await gestionarSdl('comprobar:poblacion', ['--barco-valle']);
       break;
