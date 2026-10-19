@@ -144,3 +144,5 @@ El catálogo llega a50 vistas con el corredor de la ventana, entrada88 y regreso
 Vista51: habitación del gato mecánico.102 cambiosF5/F6 comprobados; en partida normal la puerta91 depende de los dados, no del atajo.
 
 Vista52: habitación de la lupa, con entrada93 y regreso94.104 cambiosF5/F6 contrastados; el recorrido normal conserva el gato149 y la lupa150 al volver a los dados.
+
+Vista53: habitación del arma, entrada95 y regreso96. La escoba baja la repisa en partida normal;106 cambiosF5/F6 contrastados.

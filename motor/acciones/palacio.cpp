@@ -18,7 +18,7 @@ ResultadoMenu comenzar(unsigned char *d) {
   unsigned short pasos = 0;
   return iniciar_accion(d, pasos) ? ResultadoMenu::accion : ResultadoMenu::error;
 }
-// 563A/5F67–6067: conserva capacidad, puntuación y altura propia de cada recogida del palacio.
+// 563A/5F67–60B1: conserva capacidad, puntuación y altura propia de cada recogida del palacio.
 ResultadoMenu recoger(unsigned char *d, Palabra id) {
   const auto icono = d[0x524e + id * 2];
   if (icono == 0x1f || icono == 0x22)
@@ -29,12 +29,12 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
   }
   const bool dados = id == 140;
   const bool sobre_mesa = dados || id == 144 || id == 145;
-  const bool baja = id == 147 || id == 149 || id == 150;
-  const Palabra entidad = dados || id == 149 || id == 150 ? 0x2c4c
-                          : id == 141                     ? 0x2cf1
-                          : id == 144                     ? 0x2caf
-                                                          : 0x2c8e;
-  if (id == 144 || id == 145 || id == 149 || id == 150)
+  const bool baja = id == 147 || (id >= 149 && id <= 154);
+  const Palabra entidad = dados || (id >= 149 && id <= 154) ? 0x2c4c
+                          : id == 141                       ? 0x2cf1
+                          : id == 144                       ? 0x2caf
+                                                            : 0x2c8e;
+  if (id == 144 || id == 145 || id == 149 || id == 150 || (id >= 152 && id <= 154))
     actualizar_oferta_silbato(d);
   if (dados) {
     guardar(d, 0x009c, 0x2d12);
@@ -48,6 +48,8 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
                                (dados       ? 25
                                 : id == 141 ? 3
                                 : id == 149 ? -16
+                                : id == 153 ? -5
+                                : id == 154 ? -2
                                 : baja      ? -4
                                             : 33)));
   const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + palabra(d, 0x8082) * 2));
@@ -75,14 +77,15 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 51)
+  if (escena < 46 || escena > 55)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
   if (manejador == 0x563a &&
       ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
-       (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150)))
+       (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150) ||
+       (escena >= 52 && escena <= 55 && id == escena + 99)))
     return recoger(d, id);
   if (manejador == 0x3b53 && palabra(d, 0xb638) == 0xffff && palabra(d, 0xb634) == 5 && id == 140) {
     if (!creacion.azar)
@@ -146,6 +149,30 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
     return comenzar(d);
   }
+  // BAA6–BB8C: la escoba baja el arma o carámbano solo con actividad1 eY89.
+  if (manejador == 0x2fca && id == 141 && (escena == 52 || escena == 55)) {
+    if (d[0x2c4c] != 1 || palabra(d, 0x2c50) != 89) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    const auto persistente = static_cast<Palabra>(escena == 52 ? 0x4c12 : 0x4c60);
+    guardar(d, persistente, static_cast<Palabra>(palabra(d, persistente) + 62));
+    guardar(d, 0x1a38, escena == 52 ? 141 : 157);
+    guardar(d, 0x1a3a, escena == 52 ? 151 : 159);
+    guardar(d, 0x0ad7, 0xac1c);
+    guardar(d, 0x0adc, 0xac2a);
+    guardar(d, 0x0ae1, 0xac31);
+    guardar(d, 0x009c, 0x2c6d);
+    guardar(d, 0x009e, 0x0203);
+    guardar(d, 0x00a0, 0xac38);
+    guardar(d, 0x00a4, 0xac3c);
+    guardar(d, 0x00a6, 0x2c4c);
+    guardar(d, 0x00a8, 0x0109);
+    guardar(d, 0x00aa, escena == 52 ? 0xac49 : 0xac41);
+    guardar(d, 0x00ae, 0xac50);
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   const auto previo = palabra(d, 0xb638), verbo = palabra(d, 0xb634);
   if (manejador == 0x3b53 && verbo == 1 &&
       ((id == 142 && previo == 151) || (id == 151 && previo == 142))) {
@@ -180,7 +207,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && (id < 140 || id > 150) && id != 151 && id != 152)
+  if (id != 76 && id != 124 && (id < 140 || id > 154))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

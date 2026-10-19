@@ -3,6 +3,31 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:609E",
+      "nombre": "Carámbano de la repisa",
+      "comentario": "154:6285 y2C4C,x+5/y+alto−2,615C. La escoba debe bajarlo desde89 a151 conBB18. Variantes y recorrido real101/regreso102; palacio.cpp."
+    },
+    {
+      "direccion": "0000:6076",
+      "nombre": "Cubito de hielo del palacio",
+      "comentario": "153:6285 y2C4C,x+5/y+alto−5,615C.36 variantes de recogida,128 condiciones y recorrido real desde99/regreso100; palacio.cpp."
+    },
+    {
+      "direccion": "0000:5FE9",
+      "nombre": "Megáfono del palacio",
+      "comentario": "152:6285 y2C4C,x+5/y+alto−4,615C.36 variantes de recogida,128 condiciones de oferta y recorrido real desde97/regreso98; palacio.cpp."
+    },
+    {
+      "direccion": "0000:5FD8",
+      "nombre": "Arma de la repisa",
+      "comentario": "151:entidad2C4C,x+5/y+alto−4 y615C, sin6285. Es necesario bajar la repisa con141 antes de recoger. Capacidad/iconos/modelos y partida real comparados; palacio.cpp."
+    },
+    {
+      "direccion": "0000:BAA6",
+      "nombre": "Escoba que baja el arma y el carámbano",
+      "comentario": "BAA6–BB8C:52/55,actividad2C4C1 eY2C5059; suma62 a4C12/4C60, canalesAC1C/AC2A/AC31 y dos actores parciales, +5.48 variantes y dos caídas completas; palacio.cpp, comparar:laterales-palacio."
+    },
+    {
       "direccion": "0000:5FC4",
       "nombre": "Recogida del gato mecánico del palacio",
       "comentario": "5FC4–5FD7:149,6285,entidad2C4C,x+5/y+alto−16,615C. Se conservan capacidad/iconos/modelo/puntuación y listas persistentes. Tiradas reales de B740 abren91; regreso92 conserva149. palacio.cpp y comparar:utiles-palacio."

@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_laterales_palacio.hpp"
 
 // 91–94/5FC4/6062: obtiene gato y lupa con tiradas reales y conserva los regresos e inventario.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -62,5 +63,7 @@ bool comprobar_utiles_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanza
     if (!ruta(160, 199, 46))
       return false;
   }
-  return detener("utiles_dados");
+  if (detener("utiles_dados"))
+    return true;
+  return comprobar_laterales_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

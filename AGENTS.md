@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,52 vistasSDL
+## Estado vigente: 19 de octubre,53 vistasSDL
 
-CatálogoSDL0–51,52 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad173 C++/72 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–52,53 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre el capítulo de nieve, lago helado, carámbanos, dados y los tres corredores del palacio. Calidad174 C++/74 Python. Cada vista41..50 se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: las puertas laterales del palacio y sus útiles aún faltan,50 vistas NO significa50 salas completas ni juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -504,4 +504,14 @@ SDL{51,47,93},enlaces47/93,51/94,guardado94 yprincipal51. comprobar:lupa-palacio
 
 Continuación real trabajo/comparacion_utiles_palacio/utiles_dados.ds.bin/.semilla.json. Faltan habitaciones52/53/54/55: entradas95/97/99/101 desde48/48/49/49,vueltas96/98/100/102; todasCS17A3nulo,ICEROOM. Descriptores702Fid151,7041id152,7053id153,7065id154. Recoger1515FD8 no6285,entidad2C4C,+5/−4;1525FE9/1536076/154609E sí6285. Escoba141/BAA6 en52 o55 exige2C4C1 eY2C5059, aumenta posición persistente4C12/4C60en62 y programa caída; no tratar recogida del objeto alto como si ya estuviera a mano. Ver EXE yguía antes de traducir.147 permanece oculto hasta153/154/152/149/150/144/145; tras151+142 se bajan144/145. No resolver con banderas fabricadas. Decorados ampliados aparcados.
 
-Auditoría tras52 vistas: seis salidas pendientes desde el catálogo (31/112→64;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55). Calidad173 C++/72 Python correcta. Gato/lupa conservan los13 fotogramas completos,DS yazar contrastados; próximas salas requieren traducir caída de objetos altos antes de publicarlas.
+Auditoría tras52 vistas: seis salidas pendientes desde el catálogo (31/112→64;48/95→52,48/97→53;49/90→56,49/99→54,49/101→55). Calidad174 C++/74 Python correcta. Gato/lupa conservan los13 fotogramas completos,DS yazar contrastados; próximas salas requieren traducir caída de objetos altos antes de publicarlas.
+
+## Vista53 y núcleo de los cuatro laterales52–55
+
+comparar:laterales-palacio29136 casos/pasos,31 imágenes,18 auditorías/5002 selecciones. Desde utiles_dados,2tiradas para53,2para55;52/54yaabiertas. Cada sala:84+128,86+128 y88+128si>=54; rodeo izquierdo80/182,49/182,70/190,50/190,40/182 para52/54;derecho220/175,242/172para53/55. Escoba(5,)141y512 en52/55, después ir a entidad2C4C x+5/y+alto−4(151/152),−5(153),−2(154);recoger192. Regresar280/165o41/165 ysubir89/87/85 hasta46. TodosCS17A3nulo.
+
+BroomBAA6/BB18 exigeactividad1eY89,suma62a4C12/4C60,conservaA2/AC,48variantes.36recogidas+128máscarasporobjeto,151NO6285. SDL53{52,48,95},enlaces48/95,52/96,guardado96; comprobar:arma-palacio ocho imágenes/restauración/106 cambios. Próximos SDL54{53,48,97},55{54,49,99},56{55,49,101}; checker ya contiene todos los hitos ylaterales_utiles. No repetir nativo si no cambia el núcleo.
+
+Resolución siguiente nativa preparada en comparar_resolucion_palacio.py desde laterales_utiles.151+142 porInsertar,bajar144/145,recogerlos con dos aproximaciones238/150 separadas por sus animaciones;en238/190 aún no se ofrece144.6285retira141 yhabilita147 al reunir7útiles. Ir49,recoger147,combinar147+152→148,Atacar148 ySaltar146→90. Contrastar de verdad y despuésSDL; sala56láser aúnpendiente. Àlex también solicita avisoHUD mínimo de filtro yvolumen: solo letras blancas en esquina,fade ydesaparece. Mantener esta nueva tarea además de los laterales/resolución; sinpaneles.
+
+Resolución nativa ya contrastada:9608 casos/pasos,10 composiciones,9auditorías/1564selecciones (consultarJSON si cambia).147 está2C8E x256/y187:aproximar261/188. Para combinar147+152,después de147 seleccionarcasilla0 de volver alinventario,después152. Llegada de salto90 guardadaenventana_solicitud90.ds.bin/.semilla.json sincomponer imagen transitoria. FaltaSDLdelasotras3salas yresolución.

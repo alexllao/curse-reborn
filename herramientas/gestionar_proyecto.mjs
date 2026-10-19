@@ -187,6 +187,8 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     dados_palacio: 'comparar_dados_palacio.py',
     corredores_palacio: 'comparar_corredores_palacio.py',
     utiles_palacio: 'comparar_utiles_palacio.py',
+    laterales_palacio: 'comparar_laterales_palacio.py',
+    resolucion_palacio: 'comparar_resolucion_palacio.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -223,6 +225,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:arma-palacio':
+      await gestionarSdl('comprobar:poblacion', ['--arma-palacio']);
+      break;
     case 'comprobar:lupa-palacio':
       await gestionarSdl('comprobar:poblacion', ['--lupa-palacio']);
       break;
@@ -440,6 +445,12 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:resolucion-palacio':
+      compararAcciones('resolucion_palacio', argumentos);
+      break;
+    case 'comparar:laterales-palacio':
+      compararAcciones('laterales_palacio', argumentos);
       break;
     case 'comparar:utiles-palacio':
       compararAcciones('utiles_palacio', argumentos);
