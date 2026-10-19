@@ -394,6 +394,31 @@ function configurarComprobacionValle(argumentos) {
         'bandeja, limpieza, botón, canicas, cruce, caídas recuperadas, ventilador y regreso69; doce imágenes y restauración',
     },
     {
+      argumento: '--rescate-nieve',
+      nombre: 'rescate_nieve',
+      referencia: 'morsa',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'rescate_entrada',
+        'rescate_ante_tablon',
+        'rescate_tablon',
+        'esquimal_con_tablon',
+        'esquimal_tablon_colocado',
+        'esquimal_pez',
+        'esquimal_entrega',
+        'esquimal_cana',
+        'morsa_con_cana',
+        'morsa_amigo_liberado',
+        'morsa_cenizas',
+        'rescate_amigos_listos',
+        'rescate_cornisa',
+        'rescate_ayuda',
+      ],
+      alcance:
+        'tablón, pez, entrega al esquimal, caña, hielo, cenizas y cornisa; catorce imágenes y restauración',
+    },
+    {
       argumento: '--esquimal',
       nombre: 'esquimal',
       referencia: 'morsa',
@@ -475,6 +500,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--ser-azul',
       '--morsa',
       '--esquimal',
+      '--rescate-nieve',
     ].includes(argumentos[0]);
   if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
     throw new Error('Solo ventana admite el argumento --sin-sonido.');

@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las43 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las44 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                           | Recurso  |
 | ----- | ---------- | -------------------------------- | -------- |
@@ -47,6 +47,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 39    | 36         | El interior del barco            | HOLD     |
 | 40    | 39         | La plataforma eléctrica          | ELECTRO  |
 | 41    | 43         | La llanura del ser azul          | SNOWAST4 |
+| 44    | 40         | La cornisa de los amigos         | SNOWAST1 |
 | 42    | 42         | La morsa y el amigo del hielo    | SNOWAST3 |
 | 43    | 41         | El agujero del pez y el esquimal | SNOWAST2 |
 
@@ -83,3 +84,5 @@ SNOWAST4/43, vista41: entrada74 desde el vestido real, bola134, lanzamiento y tr
 La vista42 incorpora SNOWAST3 y los enlaces80/79 con43. Seis capturasSDL verifican desodorante y saludo; el recorrido nativo continúa por las zonas41/40 hasta cenizas y rescate. Las conexiones78/77 hacia41 se activan con la siguiente vista.
 
 La vista43 activa78/77 entre42 y41. Su entrada perfumada coincide enSDL y restaura la partida; los puzles del tablón, pez y caña ya se contrastan en el núcleo y se comprueban enSDL al habilitar40, donde está el tablón.
+
+La vista44 habilita76/75 entre41 y40 y completa enSDL los puzles de las cuatro zonas nevadas hasta pedir81. catorce capturas de tablón, pez, entrega, caña, hielo, cenizas y cornisa coinciden; MAP1 ySPR3 se seleccionan por la tabla original784E. La llegada a44/ICELAKE sigue pendiente.

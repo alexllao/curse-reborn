@@ -87,6 +87,7 @@
     "comprobar:decorados": "node herramientas/gestionar_proyecto.mjs comprobar:decorados",
     "comprobar:cursor": "node herramientas/gestionar_proyecto.mjs comprobar:cursor",
     "auditar:rutas": "node herramientas/auditar_rutas.mjs",
+    "comprobar:rescate-nieve": "node herramientas/gestionar_proyecto.mjs comprobar:rescate-nieve",
     "comprobar:esquimal": "node herramientas/gestionar_proyecto.mjs comprobar:esquimal",
     "comprobar:morsa": "node herramientas/gestionar_proyecto.mjs comprobar:morsa",
     "comprobar:ser-azul": "node herramientas/gestionar_proyecto.mjs comprobar:ser-azul",

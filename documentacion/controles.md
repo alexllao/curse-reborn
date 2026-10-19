@@ -126,3 +126,5 @@ F5/F6 dispone41 vistas hasta SNOWAST4, la llanura del ser azul.82 cambios contra
 La vista42 añade la morsa y el amigo del hielo (SNOWAST3).84 cambiosF5/F6 contrastados y salidas80/79 persistentes.
 
 La vista43 añade el agujero del pez y el esquimal (SNOWAST2), con78/77 y86 cambiosF5/F6 contrastados.
+
+F5/F6 incluye44 vistas hasta la cornisa de los amigos (SNOWAST1);88 cambios comprobados. La navegación normal76/75 conserva tablón, perfume y liberaciones.

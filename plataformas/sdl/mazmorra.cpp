@@ -657,8 +657,21 @@ bool Mazmorra::cargar_habitacion_actual(unsigned short salida, bool actualizar_s
   for (const auto &vista : vistas_desarrollo)
     if (vista.escena == actual)
       nombre_banco = vista.banco;
-  if (!nombre_banco || !cargar_banco(std::string(nombre_banco) + ".SPR", escena) ||
-      !cargar_banco(std::string(nombre_banco) + ".MAP", mapa) || !cargar_fondo_visible())
+  // 784E: MAP y SPR tienen nombres independientes; SNOWAST1 usa SNOWAST3.SPR.
+  const auto nombre_recurso = [&](unsigned int indice) {
+    const auto referencia =
+        motor::palabra(datos, static_cast<unsigned short>(0x784e + actual * 8 + indice * 2));
+    std::string nombre;
+    for (unsigned int i = 0; i < 13; ++i) {
+      const auto caracter = datos[static_cast<unsigned short>(referencia + i)];
+      if (!caracter)
+        break;
+      nombre.push_back(static_cast<char>(caracter));
+    }
+    return nombre;
+  };
+  if (!nombre_banco || !cargar_banco(nombre_recurso(1), escena) ||
+      !cargar_banco(nombre_recurso(0), mapa) || !cargar_fondo_visible())
     return false;
   // 4EE5 conserva los 192 colores de fondo en DS para los siguientes fundidos.
   for (unsigned int i = 0; i < 576; ++i)
