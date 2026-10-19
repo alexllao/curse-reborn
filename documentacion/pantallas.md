@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las cuarenta vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las41 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -46,6 +46,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 38    | 37         | La cueva del detergente         | GHETTO   |
 | 39    | 36         | El interior del barco           | HOLD     |
 | 40    | 39         | La plataforma eléctrica         | ELECTRO  |
+| 41    | 43         | La llanura del ser azul         | SNOWAST4 |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -74,3 +75,5 @@ GHETTO37 enlaza64/65 conDINO. La petición original de ayuda provoca el derrumbe
 HOLD36 incorpora la entrada62 después de apartar al guardia, los dos tablones117/118, su colocación para construir el puente, el trapo119 y la salida63. Llevar un tablón utiliza el modeloFE del banco de la escena. El accesoF5/F6 no derrota al guardia de la partida anterior: abre una sesión independiente.
 
 ELECTRO39 conserva el acceso68 con los cuatro objetos reales, la limpieza, el botón, el cruce con canicas y bandeja, el ventilador124 y la salida69 al campo. Las caídas a ambos lados recuperan al personaje dentro de la misma escena. Las cuarenta vistas cubren0–39 del EXE, con orden de desarrollo propio; no acreditan todos los estados posteriores de las salas reutilizadas.
+
+SNOWAST4/43, vista41: entrada74 desde el vestido real, bola134, lanzamiento y transformación. Salida80 hacia42 pendiente hasta integrar su destino. comprobar:ser-azul compara cuatro imágenes y guardar/restaurar; el núcleo incluye variantes y auditorías de sus opciones.

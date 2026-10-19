@@ -3,6 +3,21 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:B432",
+      "nombre": "Bola de nieve y ser azul de SNOWAST4",
+      "comentario": "B432–B576 exige43, llama6323, retira134, limita358F, planifica rodeo firmado, transforma descriptor4946 y tres actores diferidos con canalesA795–A880; suma5. comparar:ser-azul3049 casos/pasos, cinco composiciones y cuatro auditorías; SDL cuatro imágenes y restauración. Traslado motor/acciones/nieve.cpp."
+    },
+    {
+      "direccion": "0000:5F56",
+      "nombre": "Recogida de la bola de nieve",
+      "comentario": "5F56–5F64/563A/615C:134, entidad2C6D, destino+5/-2, capacidad/iconos/puntos, baja persistente mediante623D y canal1A2E con pasos+6. Variantes modelo14/FF y recogida real; nieve.cpp."
+    },
+    {
+      "direccion": "0000:6323",
+      "nombre": "Oferta del amigo verde después de las liberaciones",
+      "comentario": "6323–633E comprueba inventario131,490F=0 y4948!=19 antes de484E=1. Se usa en el lanzamiento de134; variantes conservan las demás banderas. motor/acciones/nieve.cpp."
+    },
+    {
       "direccion": "0000:CE35",
       "nombre": "Reacción y proximidad del primer actor de SNOWAST4",
       "comentario": "CE35–CF25: bit0 de35CA, visibilidad local firmada con suma de16 bits, seis canales B36A/B377/B381 yB38B/B390/B393, proximidad solo para2C4C=1 y postura32. comparar:rutina-nieve contrasta3600 variantes y7200 llamadas con DS completo, incluidas repetición, bits ajenos, inactivos y desbordamientos. Carga, acciones ySDL de43 siguen pendientes. Entrada74, cinco entidades y256 pasos reales contrastados aparte:636 casos/pasos,118 selecciones y dos imágenes. Los puzles ySDL siguen pendientes."

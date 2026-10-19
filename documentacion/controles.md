@@ -120,3 +120,5 @@ F5/F6 añade el borde del mundo y la habitación del loro:32 vistas,64 cambios c
 Las flechas ya permiten mover a Brad cuando el guion lo autoriza, usando el movimiento y las colisiones originales. Al perder el foco o minimizar se liberan las direcciones retenidas; al volver hay que pulsarlas de nuevo.
 
 Àlex pide que las mejoras adicionales estén desactivadas por defecto y se agrupen en un futuro menú para activarlas individualmente. Esta unificación sigue pendiente: los valores iniciales actuales de todos los efectos y ayudas aún no se han revisado. Conservar los atajos de esta página hasta integrar el menú. Las correcciones de errores de entrada no requieren una opción para activarlas.
+
+F5/F6 dispone41 vistas hasta SNOWAST4, la llanura del ser azul.82 cambios contrastados;74 mantiene la partida desde el probador.

@@ -1,12 +1,13 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_nieve.hpp"
 
 // 44AB/5CAF/430F/1A74: regresa con el ventilador, paga a Benn y viste79 en el probador real.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir,
           typename Ruta>
 bool comprobar_regreso_benn_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar,
                                 Abrir abrir, Elegir elegir, Objeto objeto, Ir ir, Ruta ruta) {
-  // La última captura termina antes de la salida74, cuya sala43 todavía no está integrada.
+  // Cada hito detiene la misma partida; la continuación74 se comprueba en el bloque de nieve.
   const auto detener = [&](const char *nombre) {
     return opcion == std::string("--comprobar-final-poblacion-borde_valle_") + nombre;
   };
@@ -34,6 +35,9 @@ bool comprobar_regreso_benn_sdl(Mazmorra &p, const std::string &opcion, Avanzar 
     return false;
   if (detener("probador_regreso_valle"))
     return true;
-  return abrir() && elegir(2) && elegir(4) && objeto(79) && avanzar(512) &&
-         !p.conserva_objeto(79) && p.conserva_objeto(124) && detener("probador_vestido_real");
+  if (!abrir() || !elegir(2) || !elegir(4) || !objeto(79) || !avanzar(512) ||
+      p.conserva_objeto(79) || !p.conserva_objeto(124))
+    return false;
+  return detener("probador_vestido_real") ||
+         comprobar_nieve_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
 }
