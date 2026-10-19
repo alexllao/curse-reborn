@@ -20,14 +20,14 @@ La llamada encontrada al iniciador musical elige el tema uno antes de Core. El a
 
 ## Síntesis y reloj
 
-`motor/sonido/musica.cpp` reconstruye el reproductor y emite los mismos registros para las dos opciones FM:
+`apps/juego/motor/sonido/musica.cpp` reconstruye el reproductor y emite los mismos registros para las dos opciones FM:
 
 - **AdLib OPL2**: YM3812 de [ymfm](https://github.com/aaronsgiles/ymfm), de Aaron Giles, con su DAC de mantisa/exponente. Revisión y huellas en `herramientas/dependencias_opl2.json`; licencia BSD de tres cláusulas conservada y copiada como `LICENCIA_YMFM.txt`.
 - **Sound Blaster 16 OPL3**: [Nuked OPL3](https://github.com/nukeykt/Nuked-OPL3), fijado en `herramientas/dependencias_audio.json`, reproduce las escrituras originales compatibles con OPL2 en un YMF262. El juego no habilita voces adicionales ni una mezcla estéreo OPL3.
 
-No son dos etiquetas para el mismo PCM. El adaptador `plataformas/sdl/opl2.cpp` conserva el reloj 3.579.545/72 Hz y convierte a 48 kHz; las escrituras del YM3812 se espacian dos muestras nativas para que un apagado y un encendido consecutivos no se fusionen; ambos chips reciben la misma partitura y continúan avanzando al cambiar F4. Los temporizadores de detección del chip y las esperas del bus ISA no se ejecutan: el reloj musical procede del PIT reconstruido. Ninguna de estas comprobaciones acredita equivalencia acústica exacta con todas las revisiones de tarjetas físicas.
+No son dos etiquetas para el mismo PCM. El adaptador `apps/juego/plataformas/sdl/opl2.cpp` conserva el reloj 3.579.545/72 Hz y convierte a 48 kHz; las escrituras del YM3812 se espacian dos muestras nativas para que un apagado y un encendido consecutivos no se fusionen; ambos chips reciben la misma partitura y continúan avanzando al cambiar F4. Los temporizadores de detección del chip y las esperas del bus ISA no se ejecutan: el reloj musical procede del PIT reconstruido. Ninguna de estas comprobaciones acredita equivalencia acústica exacta con todas las revisiones de tarjetas físicas.
 
-La fuente externa se conserva sin cambios en `terceros/nuked_opl3`, con su licencia LGPL 2.1 o posterior. El resto del proyecto mantiene su situación de licencia. La compilación copia el aviso junto al ejecutable. La procedencia, huellas y reconstrucción están documentadas en esa carpeta.
+La fuente externa se conserva sin cambios en `apps/juego/terceros/nuked_opl3`, con su licencia LGPL 2.1 o posterior. El resto del proyecto mantiene su situación de licencia. La compilación copia el aviso junto al ejecutable. La procedencia, huellas y reconstrucción están documentadas en esa carpeta.
 
 Se genera PCM mono a 48.000 Hz, con el reloj nominal del PIT de 14.318.180/12 Hz y divisor 4250h. Las órdenes se aplican al terminar la muestra que cruza la IRQ, con una precisión de una muestra. La calibración DOS de esperas de puerto no se emula: el chip recibe las órdenes por su cola temporal. El volumen musical deja margen para mezclar efectos digitales o PC Speaker y la suma se limita al rango de 16 bits.
 

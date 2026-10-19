@@ -12,7 +12,7 @@ No cuenta Core, título ni introducción, los paneles de guardar/cargar/borrar e
 
 ## Cómo se conserva
 
-`plataformas/sdl/tiempo_juego.*` usa nanosegundos monotónicos de SDL, sin depender de los FPS o del reloj emulado. El archivo `tiempo_juego.json` vive en el mismo perfil SDL que las partidas, bajo `AlexLlao/CurseReborn`, y contiene la versión del formato y `milisegundos_jugados`. La variable `CURSE_REBORN_TIEMPO` permite elegir un archivo aislado para pruebas.
+`apps/juego/plataformas/sdl/tiempo_juego.*` usa nanosegundos monotónicos de SDL, sin depender de los FPS o del reloj emulado. El archivo `tiempo_juego.json` vive en el mismo perfil SDL que las partidas, bajo `AlexLlao/CurseReborn`, y contiene la versión del formato y `milisegundos_jugados`. La variable `CURSE_REBORN_TIEMPO` permite elegir un archivo aislado para pruebas.
 
 Se escribe cada treinta segundos, al pausar el contador y al cerrar, mediante un temporal en la misma carpeta y sustitución del archivo. Un cierre forzado puede perder lo acumulado desde la última escritura. Los errores de escritura se registran por consola y el tiempo sigue disponible en memoria; los archivos corruptos o de formato desconocido se conservan sin sobrescribirlos.
 

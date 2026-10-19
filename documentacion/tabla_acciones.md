@@ -4,7 +4,7 @@
 
 La llamada indirecta de `0000:DE2B` utiliza una tabla de diez palabras en `DS:B60C`. El valor inicial de esa zona en el archivo es cero, pero no representa sus destinos durante el juego: el bloque `0000:DF15`–`0000:DF4D` la reconstruye a partir del estado actual.
 
-Se ha trasladado ese bloque a [motor/acciones/construir_tabla.cpp](../motor/acciones/construir_tabla.cpp). Es la primera pieza C++ reconstruida desde instrucciones del ejecutable. Su contrato consiste en reproducir las escrituras en memoria de ese bloque, no todos los registros e indicadores de la CPU ni la rutina completa de presentación que lo contiene.
+Se ha trasladado ese bloque a [apps/juego/motor/acciones/construir_tabla.cpp](../apps/juego/motor/acciones/construir_tabla.cpp). Es la primera pieza C++ reconstruida desde instrucciones del ejecutable. Su contrato consiste en reproducir las escrituras en memoria de ese bloque, no todos los registros e indicadores de la CPU ni la rutina completa de presentación que lo contiene.
 
 ## Datos que utiliza
 

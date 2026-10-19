@@ -17,7 +17,7 @@ La partida continúa desde el cordel del picapedrero por el cuarto corredor (esc
 | A3B8–A405            | Lanzar 70 en escena 13, recuperar alambre 63 si sigue en el agujero y sumar cinco puntos una sola vez                            |
 | 38D3–3933            | Examinar agujero 62: acercamiento, indicio y marca visual si aún conserva alambre                                                |
 
-El traslado está en motor/acciones/catapulta.cpp y el despacho en motor/acciones/menu.cpp. Se conservan las operaciones de 16 bits, los bloqueos originales y los cambios de profundidad del tablón. El dibujo se contrasta con EBBD: en la fase preparada Brad puede quedar detrás del tablón como en el original.
+El traslado está en apps/juego/motor/acciones/catapulta.cpp y el despacho en apps/juego/motor/acciones/menu.cpp. Se conservan las operaciones de 16 bits, los bloqueos originales y los cambios de profundidad del tablón. El dibujo se contrasta con EBBD: en la fase preparada Brad puede quedar detrás del tablón como en el original.
 
 ## Recorrido por el menú
 

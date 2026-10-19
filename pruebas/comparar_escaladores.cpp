@@ -1,4 +1,4 @@
-#include "../plataformas/sdl/escaladores_pixel.hpp"
+#include "../apps/juego/plataformas/sdl/escaladores_pixel.hpp"
 #include <array>
 #include <chrono>
 #include <cstdio>

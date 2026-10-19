@@ -4,13 +4,13 @@ El traslado a C++ cubre `0000:10EC`–`0000:1790`, la creación dinámica de `8B
 
 ## Relación con el original
 
-| Tramo original | Archivo en `motor/entidades/` | Alcance                                                                                               |
-| -------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `10EC`–`1118`  | `actualizar.cpp`              | Limpia dos bytes y cuatro palabras de límites; prepara el recorrido.                                  |
-| `1119`–`1785`  | `actualizar.cpp`              | Actualiza un registro activo según su tipo de comportamiento.                                         |
-| `1786`–`1790`  | `actualizar.cpp`              | Avanza 33 bytes y repite hasta recorrer 68 registros.                                                 |
-| `8B6F`–`8C25`  | `crear.cpp`                   | Busca un hueco, copia un descriptor y su definición, consulta dimensiones y prepara fases aleatorias. |
-| `C4DC`–`C5DF`  | `actualizar.cpp`              | Cambia secuencias y posiciones del personaje y de dos registros auxiliares.                           |
+| Tramo original | Archivo en `apps/juego/motor/entidades/` | Alcance                                                                                               |
+| -------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `10EC`–`1118`  | `actualizar.cpp`                         | Limpia dos bytes y cuatro palabras de límites; prepara el recorrido.                                  |
+| `1119`–`1785`  | `actualizar.cpp`                         | Actualiza un registro activo según su tipo de comportamiento.                                         |
+| `1786`–`1790`  | `actualizar.cpp`                         | Avanza 33 bytes y repite hasta recorrer 68 registros.                                                 |
+| `8B6F`–`8C25`  | `crear.cpp`                              | Busca un hueco, copia un descriptor y su definición, consulta dimensiones y prepara fases aleatorias. |
+| `C4DC`–`C5DF`  | `actualizar.cpp`                         | Cambia secuencias y posiciones del personaje y de dos registros auxiliares.                           |
 
 La siguiente instrucción, `1791`, despacha una rutina particular por escena y queda fuera de este traslado. La creación puede llamar al generador original y la actualización puede llamar a creación, reinicio de acción, planificación y transición; la comparación ejecuta todas esas llamadas originales sin sustituirlas por simulaciones.
 

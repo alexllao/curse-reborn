@@ -15,7 +15,7 @@ La ruta continúa la partida real desde la mazmorra y el corredor. No crea objet
 | 040B, 104A, 1111           | Transporte y descenso originales: canales de Brad y tortuga, cámara y recuperación del control                                                        |
 | 2FD3–300A, 040C            | Usar la picana: rechaza sin tiburón activo; secuencia 1AB2 y comprobación de modelo y fotograma para activar 11C6 y retirar su descriptor persistente |
 
-Fuentes: `motor/acciones/lago.cpp`, despacho compartido en `motor/acciones/menu.cpp`. Los canales y recursos conservan las etiquetas y los bytes del original; SDL sustituye únicamente los servicios de plataforma.
+Fuentes: `apps/juego/motor/acciones/lago.cpp`, despacho compartido en `apps/juego/motor/acciones/menu.cpp`. Los canales y recursos conservan las etiquetas y los bytes del original; SDL sustituye únicamente los servicios de plataforma.
 
 El recorrido se prolonga desde el tiburón hasta la almeja y el tapón. `314C–3193` exige que la almeja muestre el modelo cerrado 12 y programa el salto desde la casilla de combate. `3D72–3D89` acepta insertar picana y tapón en ambos órdenes; `9BB8–9C72` consume los identificadores 23 y uno, sincroniza cinco canales con el acercamiento y suma cinco puntos. El guion solicita después la salida cuatro; se carga `EMERGE.BRD` y la escena ocho de `POOL`, sin resolver acciones de las cuevas.
 

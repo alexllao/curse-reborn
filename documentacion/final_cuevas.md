@@ -24,7 +24,7 @@ La opción Atacar del original sirve también para bajar de la cornisa y entrar 
 - `59A4–59B4`: moneda del cuarto corredor. `9E21–9F10`: lanzamiento al pozo. `9F11–9F38`: creación de fragmentos con sus tablas de posición, profundidad y tipo. `59CC–5B5F`: los tres premios y recogida del casco del suelo.
 - `9CBE–9DE3`: casco y paso de desprendimientos. `320B–324B`: cubo. `A1D4–A382`: seis recetas y uso de la máscara. `4AF0` y entrada 24: COUNTRY1 con el modelo LOOKHOLE y sus dimensiones originales.
 
-El núcleo de acciones está repartido en `motor/acciones/cuevas.cpp`, `catapulta.cpp`, `agujeros.cpp`, `pozo.cpp` y `mascara.cpp`. El menú solicita la creación de fragmentos mediante un servicio de la plataforma; la implementación común sigue siendo `crear_entidad`, con las dimensiones del recurso original. No se escriben banderas para dar por resuelto el puzle en los recorridos de prueba.
+El núcleo de acciones está repartido en `apps/juego/motor/acciones/cuevas.cpp`, `catapulta.cpp`, `agujeros.cpp`, `pozo.cpp` y `mascara.cpp`. El menú solicita la creación de fragmentos mediante un servicio de la plataforma; la implementación común sigue siendo `crear_entidad`, con las dimensiones del recurso original. No se escriben banderas para dar por resuelto el puzle en los recorridos de prueba.
 
 ## Evidencia y alcance
 

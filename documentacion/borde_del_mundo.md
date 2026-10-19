@@ -17,7 +17,7 @@ Esta tanda traslada **C093–C4DB** al núcleo C++, con carga de entidades de ED
 
 El banco EDGE.SPR rebasa el espacio que los comparadores anteriores reservaban antes de SMALL.BRD. Esta comparación aislada dispone solo el banco de escena real y comprueba que cabe en su reserva: C093 no lee el modelo ni dibuja. No se oculta el solapamiento para afirmar que el bucle o la imagen ya están contrastados. Antes de comparar el recorrido y su composición habrá que disponer ambos recursos en regiones independientes y conservar las referencias originales de las entidades.
 
-Los resultados locales quedan en trabajo/comparacion_borde/resultado.json. El código está en motor/entidades/borde.cpp y las anotaciones del EXE se conservan en mapa_ejecutable.json.
+Los resultados locales quedan en trabajo/comparacion_borde/resultado.json. El código está en apps/juego/motor/entidades/borde.cpp y las anotaciones del EXE se conservan en mapa_ejecutable.json.
 
 ## Pendiente antes de activar la escena
 
@@ -43,7 +43,7 @@ El recorrido completo amplía ahora su prueba a **1.142 casos/pasos y seis compo
 
 Las variantes separadas incluyen108 recogidas (guantes86, caramelo87 y cuerda95),88 usos/llevadas de guantes,44 llevadas de caramelo,2.048 pulsaciones de botón y12 casos para cada verbo de la roca. Se revisan capacidad, iconos, modelo pequeño/normal, puntuación envolvente, distancias y todos los bits de35C9. Cada botón invierte su bit; la condición del puente usa el patrón B. Esto no sustituye todavía el recorrido real hasta los botones.
 
-El código de acciones está en motor/acciones/borde.cpp. Conserva los mismos servicios de sonido y planificación que las demás escenas. No se entrega ningún objeto en la partida por haber pasado una variante aislada.
+El código de acciones está en apps/juego/motor/acciones/borde.cpp. Conserva los mismos servicios de sonido y planificación que las demás escenas. No se entrega ningún objeto en la partida por haber pasado una variante aislada.
 
 Quedan pendientes la continuación real por los obstáculos temporizados, las recogidas del recorrido y la resolución persistente del puente y del resto del acantilado. La cuerda, lanzamiento de piedra, salto del abismo e inscripción devuelven pendiente explícitamente cuando no están trasladados. EDGE sigue detenida en SDL; estos contratos no se presentan como una pantalla completa.
 
@@ -81,7 +81,7 @@ comparar:regreso-loro parte de la instantánea real de regreso aDERELICT27, sale
 
 El contraste suma11.117 casos/pasos,506 selecciones, cinco estados auditados y seis composiciones. Incluye un contrato AISLADO de cargar72 desdeMAGE22, además de su otro origenEDGE30; no acredita las condiciones argumentales de la visita posterior. Ese origen ya está permitido en el núcleo y la lista SDL para que una solicitud original no quede sin adaptador.
 
-La rutinaC794–C8B0 dePOST35 está en motor/entidades/poste.cpp. Si2C4C=0 y hay111/112, conserva los límites unsigned320/600 y consume ambos; programa posición, descriptor461F y canales. Su creación ambiental conserva cuatro consumos explícitos de azar y8B6F. Se comparan288 variantes con activo0/1/3, inventarios vacío/111/112/ambos, seis posiciones, dos cámaras, agotamiento y alturas envolventes. No se entregan111/112 en la partida persistente por haber pasado estas variantes.
+La rutinaC794–C8B0 dePOST35 está en apps/juego/motor/entidades/poste.cpp. Si2C4C=0 y hay111/112, conserva los límites unsigned320/600 y consume ambos; programa posición, descriptor461F y canales. Su creación ambiental conserva cuatro consumos explícitos de azar y8B6F. Se comparan288 variantes con activo0/1/3, inventarios vacío/111/112/ambos, seis posiciones, dos cámaras, agotamiento y alturas envolventes. No se entregan111/112 en la partida persistente por haber pasado estas variantes.
 
 POST ya tiene entrada nativa52,128 pasos y composición contrastados; los menús del inventario inicial3/70/76 y saludo conservan sus respuestas comunes. Otros objetos continúan pendientes expresamente. **POST no se activa todavía en SDL ni F5/F6**: faltan sus cuatro enlaces y puzles. BOXDET35 contiene60→REMOTE34,57→DINO32,66→CLOUD38 y71→CELESTE33. No presentar esta carga como otra pantalla terminada.
 

@@ -1,6 +1,6 @@
 # Reproductor del altavoz del PC
 
-El código de [altavoz.cpp](../motor/sonido/altavoz.cpp) traslada tres rutinas del reproductor seleccionado por la modalidad uno. Su escritura de `B6h` en `43h`, los dos bytes del divisor en `42h` y el control de `61h` identifican la ruta del temporizador y el altavoz del PC.
+El código de [altavoz.cpp](../apps/juego/motor/sonido/altavoz.cpp) traslada tres rutinas del reproductor seleccionado por la modalidad uno. Su escritura de `B6h` en `43h`, los dos bytes del divisor en `42h` y el control de `61h` identifican la ruta del temporizador y el altavoz del PC.
 
 Se han compilado los bloques con avisos tratados como errores. Una muestra de **310 casos** coincide con el original en memoria y en cada operación de puerto. El propietario ha confirmado también la coincidencia de los **3.312 casos** de la comparación amplia.
 
@@ -62,11 +62,11 @@ Los informes separados se guardan en `trabajo/comparacion_altavoz/muestra.json` 
 
 ## Salida audible común
 
-`motor/sonido/pcm.cpp` convierte las escrituras de las rutinas originales a PCM mono de 16 bits a 48.000 Hz. El modelo digital usa un reloj nominal de 14.318.180/12 Hz, el contador de modo tres, byte bajo/alto, compuerta 61h y divisor cero equivalente a 65.536. Integra la onda lógica por muestra y conserva su fase entre bloques. No pretende reproducir la respuesta acústica de una caja o un altavoz físico; los contadores extremos se contrastan contra este modelo digital, no contra una medición de hardware.
+`apps/juego/motor/sonido/pcm.cpp` convierte las escrituras de las rutinas originales a PCM mono de 16 bits a 48.000 Hz. El modelo digital usa un reloj nominal de 14.318.180/12 Hz, el contador de modo tres, byte bajo/alto, compuerta 61h y divisor cero equivalente a 65.536. Integra la onda lógica por muestra y conserva su fase entre bloques. No pretende reproducir la respuesta acústica de una caja o un altavoz físico; los contadores extremos se contrastan contra este modelo digital, no contra una medición de hardware.
 
 La inicialización original 01A8–01B9 programa 4250h en el canal cero y la IRQ 0240–0247 llama a 7AC6 cuando 0AD4 es uno. El generador reproduce esa división sin redondear a 70 llamadas por segundo. La lógica y los fundidos de plataforma todavía utilizan su referencia nominal de 70 Hz; no se afirma sincronización global exacta de toda la partida.
 
-La plataforma `plataformas/sdl/audio.cpp` mantiene una salida compartida y procesa las secuencias en el hilo principal. SDL recibe únicamente muestras; su hilo de dispositivo nunca escribe DS. Cambiar de habitación conserva dispositivo y prioridad; abrir otra vista de desarrollo limpia los efectos de la sesión anterior. El menú pausa la lógica, pero no la IRQ de sonido. La tecla M silencia las muestras sin cambiar el modo del juego. Tras una suspensión superior a cinco segundos se descarta el efecto interrumpido; los cuadros lentos descartan audio atrasado para limitar la latencia.
+La plataforma `apps/juego/plataformas/sdl/audio.cpp` mantiene una salida compartida y procesa las secuencias en el hilo principal. SDL recibe únicamente muestras; su hilo de dispositivo nunca escribe DS. Cambiar de habitación conserva dispositivo y prioridad; abrir otra vista de desarrollo limpia los efectos de la sesión anterior. El menú pausa la lógica, pero no la IRQ de sonido. La tecla M silencia las muestras sin cambiar el modo del juego. Tras una suspensión superior a cinco segundos se descarta el efecto interrumpido; los cuadros lentos descartan audio atrasado para limitar la latencia.
 
 Los servicios FB, las respuestas de menú de 3545/37FF y el burbujeo BF3C–BF41 del lago utilizan el mismo selector 5288. No se añaden pitidos de prueba a las acciones del juego. La música tiene su propia modalidad 0AD3: [AdLib](musica_adlib.md) conserva la presentación y [MT-32](musica_mt32.md) reproduce los bancos por zona. Los [efectos digitales Sound Blaster](efectos_digitales.md) están activos por defecto; F3 permite volver a PC Speaker conservando la música.
 

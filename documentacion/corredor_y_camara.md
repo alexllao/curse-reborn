@@ -17,7 +17,7 @@ La salida cero de la celda enlaza con el índice de escena uno mediante DS:7482.
 | 3858–389E                      | Mecanismo de identificador ocho: aproximación y dos entidades programadas               |
 | BEA8–BEFC                      | Rutina específica del corredor, según ventana y estado                                  |
 
-Fuentes principales: `motor/video/camara.cpp`, `motor/estado/inicializar.cpp`, `motor/acciones/menu.cpp`, `motor/acciones/corredor.cpp` y `plataformas/sdl/mazmorra.cpp`.
+Fuentes principales: `apps/juego/motor/video/camara.cpp`, `apps/juego/motor/estado/inicializar.cpp`, `apps/juego/motor/acciones/menu.cpp`, `apps/juego/motor/acciones/corredor.cpp` y `apps/juego/plataformas/sdl/mazmorra.cpp`.
 
 Los recursos del corredor son `CORRIDOR.MAP`, `CORRIDOR.SPR`, STD y los modelos que soliciten los guiones. El adaptador conserva las referencias como etiquetas de bancos separados. Los fundidos y desplazamientos detienen los pasos lógicos mientras la plataforma presenta sus retrazos nominales a 70 Hz.
 

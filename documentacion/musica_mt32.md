@@ -1,6 +1,6 @@
 # Música MT-32 por zona
 
-El port interpreta los cinco recursos originales `CURSE.RS1`–`CURSE.RS5` mediante el alimentador reconstruido en `motor/sonido/musica_rs.cpp`. Munt sustituye al sintetizador físico. El juego no ejecuta instrucciones DOS para reproducirlos.
+El port interpreta los cinco recursos originales `CURSE.RS1`–`CURSE.RS5` mediante el alimentador reconstruido en `apps/juego/motor/sonido/musica_rs.cpp`. Munt sustituye al sintetizador físico. El juego no ejecuta instrucciones DOS para reproducirlos.
 
 ## Selección y paquetes originales
 

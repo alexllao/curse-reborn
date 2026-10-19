@@ -17,7 +17,7 @@ F5/F6 añade **El camino del asaltante** después de **La salida al campo**: die
 
 El encuentro se gobierna con los descriptores y secuencias originales de COUNTRY2.SPR. El motor no sustituye el tropiezo ni el ataque por una animación inventada. **La espada se usa con Usar**, no con el verbo Atacar: se mantiene la selección original.
 
-El núcleo está en `motor/acciones/asaltante.*`. El servicio de creación comparte el generador del juego: el ataque conserva los 120 consumos explícitos de azar, además de los que pudiera necesitar el creador. El agotamiento normal de registros no se interpreta como un error de recursos; sigue el resultado de 8B6F, sin crear una entidad ficticia. Los paneles, música y efectos existentes siguen siendo comunes.
+El núcleo está en `apps/juego/motor/acciones/asaltante.*`. El servicio de creación comparte el generador del juego: el ataque conserva los 120 consumos explícitos de azar, además de los que pudiera necesitar el creador. El agotamiento normal de registros no se interpreta como un error de recursos; sigue el resultado de 8B6F, sin crear una entidad ficticia. Los paneles, música y efectos existentes siguen siendo comunes.
 
 ## Comprobación
 

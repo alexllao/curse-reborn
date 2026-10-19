@@ -24,7 +24,7 @@ Las comparaciones anteriores de 183F demostraban su traducción aislada; no demo
 | `0BA6`–`0BC0` | Historial de diez posiciones horizontales consumido por entidades.                                                                                                                       |
 | `1791`–`17A2` | Despacho de la rutina particular de la escena.                                                                                                                                           |
 
-El paso común está en [motor/estado/paso_escena.cpp](../motor/estado/paso_escena.cpp), independiente de SDL. Conserva posición anterior, entrada, nodos, guiones, colisiones, historial, comportamientos y despacho, en ese orden. Los lectores y detectores están en [motor/movimiento/geometria.cpp](../motor/movimiento/geometria.cpp).
+El paso común está en [apps/juego/motor/estado/paso_escena.cpp](../apps/juego/motor/estado/paso_escena.cpp), independiente de SDL. Conserva posición anterior, entrada, nodos, guiones, colisiones, historial, comportamientos y despacho, en ese orden. Los lectores y detectores están en [apps/juego/motor/movimiento/geometria.cpp](../apps/juego/motor/movimiento/geometria.cpp).
 
 El punto de destino no teletransporta al personaje. Las colisiones corrigen cada paso como en el bucle original. Los campos de coordenadas conservan palabras de dieciséis bits y comparaciones con signo. Las API limitan las lecturas al recurso y reservan hasta nueve puntos intermedios para no invadir otras estructuras DS; no aceptan rutas malformadas que el original pudiera recorrer fuera del bloque.
 

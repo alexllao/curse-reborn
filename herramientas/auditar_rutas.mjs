@@ -1,3 +1,4 @@
+import { rutaJuego } from './rutas_proyecto.mjs';
 /** Cruza todas las salidas BOXDET con los enlaces habilitados sin confundirlos con puzles completos. */
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -13,7 +14,7 @@ if (
   throw new Error('El EXE no corresponde a la versión auditada.');
 const d = exe.subarray(0xf510);
 const geometria = readFileSync(join(raiz, 'datos_originales/CURSE/DATA/BOXDET.DAT'));
-const fuente = readFileSync(join(raiz, 'plataformas/sdl/vistas.hpp'), 'utf8');
+const fuente = readFileSync(rutaJuego(raiz, 'plataformas/sdl/vistas.hpp'), 'utf8');
 const enlaces = [
   ...fuente
     .split('salidas_integradas[] = {')[1]

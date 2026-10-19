@@ -29,7 +29,7 @@ El bloque `0000:DE2D`–`0000:DE59` decide la continuación utilizando el acarre
 | Acarreo activo, AX distinto de `8000h` | `DE5B`                   | Finalizar pasando por la llamada de restauración gráfica `D99F`. |
 | Acarreo activo, AX igual a `8000h`     | `DE5E`                   | Finalizar saltándose esa llamada previa.                         |
 
-`DE5E` es también la convergencia después de la llamada de `DE5B`; las dos rutas comparten código posterior. El traslado [retorno_accion.cpp](../motor/acciones/retorno_accion.cpp) devuelve una decisión tipada. **No ejecuta** todavía la restauración ni la presentación.
+`DE5E` es también la convergencia después de la llamada de `DE5B`; las dos rutas comparten código posterior. El traslado [retorno_accion.cpp](../apps/juego/motor/acciones/retorno_accion.cpp) devuelve una decisión tipada. **No ejecuta** todavía la restauración ni la presentación.
 
 Se han comparado 140 casos con las instrucciones originales: 70 valores de AX, incluidos `7FFFh`, `8000h` y `8001h`, con los dos estados de acarreo. Unicorn ejecuta los saltos originales y se detiene antes de los tres destinos anteriores. La prueba compara el destino realmente alcanzado con la decisión de C++; no sustituye esa ejecución por otra fórmula escrita en Python.
 
@@ -45,7 +45,7 @@ El bloque trasladado empieza en `B7D1`, con DL, DH y AL como primer, segundo y t
 
 Las seis palabras de `CS:B7F7` terminan donde empieza el primer destino, `B803`. Los destinos son `B803`, `B815`, `B822`, `B829`, `B83A` y `B84B`. El índice está acotado por el generador y por las copias entre resultados; el mapa incorpora esta tabla al recorrido.
 
-El traslado [seleccionar_coincidencias.cpp](../motor/acciones/seleccionar_coincidencias.cpp) conserva las escrituras originales en DS. No limpia las marcas anteriores: esa limpieza ocurre antes del bloque, en `B746`–`B787`. Tampoco genera los números ni reproduce la animación posterior. La API C++ rechaza sin escribir valores fuera de 0–5; ese rechazo es una comprobación de su contrato, no un comportamiento atribuido al original para entradas inválidas.
+El traslado [seleccionar_coincidencias.cpp](../apps/juego/motor/acciones/seleccionar_coincidencias.cpp) conserva las escrituras originales en DS. No limpia las marcas anteriores: esa limpieza ocurre antes del bloque, en `B746`–`B787`. Tampoco genera los números ni reproduce la animación posterior. La API C++ rechaza sin escribir valores fuera de 0–5; ese rechazo es una comprobación de su contrato, no un comportamiento atribuido al original para entradas inválidas.
 
 ### Comprobación de todas las combinaciones válidas
 

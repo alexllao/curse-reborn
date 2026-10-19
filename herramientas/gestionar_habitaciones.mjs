@@ -1,10 +1,11 @@
+import { rutaAssets } from './rutas_proyecto.mjs';
 /** Prepara las habitaciones propias desde sus metadatos, sin incorporar recursos DOS. */
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 // Comprueba cada imagen y cada zona antes de generar el catálogo usado por SDL.
 export function prepararHabitaciones(raiz, destino) {
-  const origen = join(raiz, 'assets/original/habitaciones');
+  const origen = rutaAssets(raiz, 'original/habitaciones');
   const carpeta = join(destino, 'assets/original/habitaciones');
   const catalogo = JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8'));
   const variantes = [],

@@ -6,5 +6,8 @@ compilacion/
 build/
 cmake-build-*/
 licencias/
-terceros/
+apps/juego/terceros/
 pnpm-lock.yaml
+
+**/dist/
+**/build/

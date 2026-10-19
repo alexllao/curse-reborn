@@ -1,6 +1,6 @@
 # Copias de vídeo, paleta y referencia visual del título
 
-El código de [planos.cpp](../motor/video/planos.cpp) traslada cuatro rutinas gráficas originales. La muestra de **83 casos** coincide con el ejecutable en RAM, los cuatro planos y las operaciones de puerto. El propietario ha confirmado también los **1.183 casos** de la comparación amplia.
+El código de [planos.cpp](../apps/juego/motor/video/planos.cpp) traslada cuatro rutinas gráficas originales. La muestra de **83 casos** coincide con el ejecutable en RAM, los cuatro planos y las operaciones de puerto. El propietario ha confirmado también los **1.183 casos** de la comparación amplia.
 
 También se ha recuperado y comprobado visualmente la pantalla de título como imagen de diagnóstico. **Este PNG de referencia no es una partida.** La [presentación SDL posterior](ventana_sdl.md) ya muestra el título directamente desde el núcleo. Esta referencia inicial utiliza la rutina original de `CURSE.EXE` en Unicorn. El [traslado posterior de RNC](descompresion_rnc.md) ya permite generar la misma imagen con C++ mediante `pnpm titulo`, sin ejecutar esa rutina original.
 

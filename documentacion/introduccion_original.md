@@ -4,7 +4,7 @@ La ventana incorpora **Core → título → introducción → mazmorra**. El blo
 
 ## Traslado
 
-[motor/video/introduccion.cpp](../motor/video/introduccion.cpp) enumera los eventos originales: controles de entrada, fundidos, cargas, selección de página, paletas, esperas y limpieza. [plataformas/sdl/introduccion.cpp](../plataformas/sdl/introduccion.cpp) sustituye los archivos, el retrazo y el CRTC por servicios de plataforma. No ejecuta instrucciones DOS ni incorpora las imágenes al repositorio.
+[apps/juego/motor/video/introduccion.cpp](../apps/juego/motor/video/introduccion.cpp) enumera los eventos originales: controles de entrada, fundidos, cargas, selección de página, paletas, esperas y limpieza. [apps/juego/plataformas/sdl/introduccion.cpp](../apps/juego/plataformas/sdl/introduccion.cpp) sustituye los archivos, el retrazo y el CRTC por servicios de plataforma. No ejecuta instrucciones DOS ni incorpora las imágenes al repositorio.
 
 Los nombres están en `DS:1938`–`DS:1A2C`:
 

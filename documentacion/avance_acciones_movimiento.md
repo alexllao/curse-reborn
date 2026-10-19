@@ -19,7 +19,7 @@ Se ha compilado y enlazado la biblioteca. La muestra de **421 casos** coincide c
 | `886B`–`889F`               | Mismo archivo                        | Reinicia, planifica si hay una acción pendiente, prepara estado del cursor y retorna. |
 | `B740` hasta su `RET` común | Mismo archivo                        | Une preparación, generador, coincidencias e inicio común de la acción.                |
 
-Las rutas de C++ de la tabla son relativas a `motor/`. Las funciones trabajan con el estado y un segmento de datos explícitos; no realizan llamadas DOS ni acceden al hardware.
+Las rutas de C++ de la tabla son relativas a `apps/juego/motor/`. Las funciones trabajan con el estado y un segmento de datos explícitos; no realizan llamadas DOS ni acceden al hardware.
 
 ## Detalles que conserva el traslado
 

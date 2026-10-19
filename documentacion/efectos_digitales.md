@@ -12,13 +12,13 @@ El port sigue las órdenes originales de `CURSE.EXE`. No añade efectos nuevos, 
 | 7FB3–806D        | Detiene DMA anterior, fija constante temporal DSP, programa dirección/página/cuenta e inicia reproducción PCM.                        |
 | 82C6–8350        | Continúa el bloque al cruzar una frontera de 64 KiB; la última interrupción libera CS:8351.                                           |
 
-`motor/sonido/seleccionar.cpp` conserva la selección ya contrastada. Cada entrada digital tiene cinco bytes: prioridad, constante temporal, palabra que se resta de la longitud y número de muestra. El número selecciona una palabra de desplazamiento en el banco; allí hay una palabra de longitud seguida de PCM mono de ocho bits **sin signo**. El ajuste de longitud no adelanta el inicio del audio.
+`apps/juego/motor/sonido/seleccionar.cpp` conserva la selección ya contrastada. Cada entrada digital tiene cinco bytes: prioridad, constante temporal, palabra que se resta de la longitud y número de muestra. El número selecciona una palabra de desplazamiento en el banco; allí hay una palabra de longitud seguida de PCM mono de ocho bits **sin signo**. El ajuste de longitud no adelanta el inicio del audio.
 
 La orden DSP `40h` fija la frecuencia mediante `1000000/(256-constante)`; `14h` inicia DMA de ocho bits. Es el modo Sound Blaster que usa el juego, compatible con SB16; no requiere emular todas las funciones de una SB16. La [guía de programación de Creative](https://flint.cs.yale.edu/cs422/readings/hardware/SoundBlaster.pdf) documenta estos comandos y la constante temporal.
 
 ## Traslado e integración
 
-`motor/sonido/digital.cpp` sustituye el DSP y DMA por un lector PCM portable de 48 kHz. Conserva el reloj racional, la duración y la fase entre bloques. Copia la muestra en curso para mantener su propiedad; no cambia la prioridad, excepto al terminar o detenerla. Una orden de prioridad igual o inferior se omite mientras hay una muestra activa; una superior la interrumpe. No se inventa una cola ni reproducción simultánea de varios efectos.
+`apps/juego/motor/sonido/digital.cpp` sustituye el DSP y DMA por un lector PCM portable de 48 kHz. Conserva el reloj racional, la duración y la fase entre bloques. Copia la muestra en curso para mantener su propiedad; no cambia la prioridad, excepto al terminar o detenerla. Una orden de prioridad igual o inferior se omite mientras hay una muestra activa; una superior la interrumpe. No se inventa una cola ni reproducción simultánea de varios efectos.
 
 `preparar_dma` conserva dirección, página, cuenta menos uno y bytes restantes del primer bloque original, incluso los casos límite comprobados. SDL reproduce los bytes contiguos sin necesitar páginas DMA ni interrupciones ISA. La conversión de muestra es `(byte-128)*256`, retenida hasta el siguiente instante del reloj DSP. No reproduce la respuesta analógica ni los filtros de una tarjeta física.
 

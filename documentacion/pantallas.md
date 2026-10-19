@@ -69,7 +69,7 @@ Las doce vistas de la población cubren el trayecto de comida y transporte del m
 
 EDGE ya tiene recorrido contrastado hasta abrir la puerta y entrar en WISE31. El saludo inicial del loro y el regreso73 a DERELICT27 están reconstruidos. Ambas escenas se ofrecen en F5/F6; estos atajos no conservan el inventario ni representan todos los capítulos posteriores. Véase [el alcance de EDGE y WISE](borde_del_mundo.md).
 
-El catálogo está en `plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
+El catálogo está en `apps/juego/plataformas/sdl/vistas.hpp`. Al añadir una escena se incorpora allí su nombre y se actualiza esta tabla; los nombres no se utilizan como claves de partidas. El futuro sistema de pistas podrá referirse al índice de escena sin depender del texto visible.
 
 Cuando exista el HUD propio, mostrará brevemente el nombre de la pantalla cada vez que se acceda a ella, también al regresar a una ya visitada. Reutilizará este catálogo. La duración y el aspecto quedan pendientes de decidir; este aviso todavía no está implementado.
 

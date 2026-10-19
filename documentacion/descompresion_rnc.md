@@ -1,6 +1,6 @@
 # Descompresión RNC de método uno en C++
 
-[rnc.cpp](../motor/recursos/rnc.cpp) reconstruye el método uno estudiado en `0000:64E0`–`0000:67AC`. No incorpora una biblioteca de descompresión ajena. La muestra de **38 casos** coincide con las instrucciones originales. El propietario ha confirmado también los **142 casos** de RNC y los **1.183 casos gráficos** anteriores, **1.325 casos** en conjunto.
+[rnc.cpp](../apps/juego/motor/recursos/rnc.cpp) reconstruye el método uno estudiado en `0000:64E0`–`0000:67AC`. No incorpora una biblioteca de descompresión ajena. La muestra de **38 casos** coincide con las instrucciones originales. El propietario ha confirmado también los **142 casos** de RNC y los **1.183 casos gráficos** anteriores, **1.325 casos** en conjunto.
 
 El comando `pnpm titulo` ya genera el título con descompresión, subida a cuatro planos, recuperación y paleta en C++. **No carga `CURSE.EXE` ni ejecuta Unicorn.** Ese comando produce una imagen fija PNG. La [presentación SDL](ventana_sdl.md) ya permite mostrarla directamente desde los recursos originales mediante `pnpm ventana`; todavía no hay una partida.
 
@@ -68,7 +68,7 @@ La creación del PNG aplica la misma expansión de componentes de paleta que la 
 
 ## Método dos y fondos de escena
 
-`motor/recursos/rnc2.cpp` traslada `67BC`–`69BD`. Su lector consume dos bits iniciales y después bits de mayor a menor peso, intercalados con literales. Conserva las longitudes cortas, literales agrupados, dieciséis prefijos de distancia, referencias solapadas y terminadores de bloque con continuación. A diferencia de DOS, la API requiere entrada y salida separadas. Comprueba tamaños y referencias; no verifica CRC.
+`apps/juego/motor/recursos/rnc2.cpp` traslada `67BC`–`69BD`. Su lector consume dos bits iniciales y después bits de mayor a menor peso, intercalados con literales. Conserva las longitudes cortas, literales agrupados, dieciséis prefijos de distancia, referencias solapadas y terminadores de bloque con continuación. A diferencia de DOS, la API requiere entrada y salida separadas. Comprueba tamaños y referencias; no verifica CRC.
 
 `pnpm comparar:rnc2` compara los dieciséis DAT de método dos y las diez tiras de la mazmorra con el original, además de programas sintéticos. La muestra comprobada de **67 casos** cubre dos DAT, tres tiras, códigos cortos/largos, continuación y límites de cabecera. La comparación amplia está preparada y pendiente de ejecutar por el propietario. Los informes quedan en `trabajo/comparacion_rnc2/`.
 

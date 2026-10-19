@@ -1,3 +1,4 @@
+import { rutaJuego, rutaAssets } from './rutas_proyecto.mjs';
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 import { prepararMt32 } from './gestionar_mt32.mjs';
 import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
@@ -142,7 +143,7 @@ async function compilar() {
   for (const [archivo, huella] of Object.entries(opl2.sha256))
     if (
       createHash('sha256')
-        .update(readFileSync(join(raiz, 'terceros', 'ymfm', archivo)))
+        .update(readFileSync(rutaJuego(raiz, 'terceros', 'ymfm', archivo)))
         .digest('hex') !== huella
     )
       throw new Error(`La fuente OPL2 no coincide con la revisión documentada: ${archivo}.`);
@@ -178,23 +179,23 @@ async function compilar() {
       join(mt32, 'include'),
       '-I',
       aplicacion,
-      join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'habitacion.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'partidas.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'tiempo_juego.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'audio.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'musica_adlib.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'musica_mt32.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'opl.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'opl2.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'ymfm_opl.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'ymfm_adpcm.cpp'),
-      join(raiz, 'plataformas', 'sdl', 'ymfm_pcm.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'principal.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'habitacion.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'partidas.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'tiempo_juego.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'audio.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'musica_adlib.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'musica_mt32.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'opl.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'opl2.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'ymfm_opl.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'ymfm_adpcm.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'ymfm_pcm.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
       '-o',
@@ -211,11 +212,14 @@ async function compilar() {
     join(mt32, 'share', 'doc', 'munt', 'libmt32emu', 'COPYING.LESSER.txt'),
     join(aplicacion, 'LICENCIA_MT32EMU.txt'),
   );
-  copyFileSync(join(raiz, 'terceros', 'ymfm', 'LICENSE'), join(aplicacion, 'LICENCIA_YMFM.txt'));
+  copyFileSync(
+    rutaJuego(raiz, 'terceros', 'ymfm', 'LICENSE'),
+    join(aplicacion, 'LICENCIA_YMFM.txt'),
+  );
   copyFileSync(join(sdl, 'lib', 'x64', 'SDL3.dll'), join(aplicacion, 'SDL3.dll'));
   copyFileSync(join(sdl, 'LICENSE.txt'), join(aplicacion, 'LICENCIA_SDL3.txt'));
   copyFileSync(
-    join(raiz, 'terceros', 'nuked_opl3', 'LICENSE'),
+    rutaJuego(raiz, 'terceros', 'nuked_opl3', 'LICENSE'),
     join(aplicacion, 'LICENCIA_NUKED_OPL3.txt'),
   );
   return join(aplicacion, 'curse-reborn.exe');
@@ -1346,7 +1350,7 @@ export async function gestionarSdl(accion, argumentos) {
       const solapeX = Math.min(2 * escala, x0 * 0.15),
         solapeY = Math.min(2 * escala, y0 * 0.15);
       const catalogo = JSON.parse(
-        readFileSync(join(raiz, 'assets', 'original', 'marcos', 'catalogo.json'), 'utf8'),
+        readFileSync(rutaAssets(raiz, 'original', 'marcos', 'catalogo.json'), 'utf8'),
       );
       const contexto =
         opcion === 'marcos-mazmorra'
@@ -1358,7 +1362,7 @@ export async function gestionarSdl(accion, argumentos) {
               : 'titulo';
       const nombre = catalogo.pantallas[contexto] ?? catalogo.predeterminado;
       const marco = JSON.parse(
-        readFileSync(join(raiz, 'assets', 'original', 'marcos', `${nombre}.png.json`), 'utf8'),
+        readFileSync(rutaAssets(raiz, 'original', 'marcos', `${nombre}.png.json`), 'utf8'),
       );
       const margenIzquierdo =
         x0 > 0
@@ -1489,7 +1493,7 @@ export async function gestionarSdl(accion, argumentos) {
     const poste = Boolean(pruebaValle) || argumentos.includes('--poste');
     const regresoLoro = poste || argumentos.includes('--regreso-loro');
     const cantidadVistas = [
-      ...readFileSync(join(raiz, 'plataformas/sdl/vistas.hpp'), 'utf8').matchAll(
+      ...readFileSync(rutaJuego(raiz, 'plataformas/sdl/vistas.hpp'), 'utf8').matchAll(
         /\{\d+, \d+, (?:\d+|0xffff), "/g,
       ),
     ].length;

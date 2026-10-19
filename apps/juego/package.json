@@ -1,0 +1,19 @@
+{
+  "name": "@curse-reborn/juego",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "author": {
+    "name": "Àlex Llaó",
+    "email": "alexllao@me.com"
+  },
+  "description": "Motor C++ del port y plataformas nativa y futura WebAssembly.",
+  "scripts": {
+    "dev": "node ../../herramientas/gestionar_proyecto.mjs ventana",
+    "compilar": "node ../../herramientas/gestionar_proyecto.mjs sdl:compilar",
+    "comprobar": "node ../../herramientas/gestionar_proyecto.mjs comprobar:habitaciones"
+  },
+  "dependencies": {
+    "@curse-reborn/assets": "workspace:*"
+  }
+}

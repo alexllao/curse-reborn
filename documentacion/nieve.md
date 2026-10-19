@@ -2,7 +2,7 @@
 
 La continuación se obtiene con el vestido real de Benn, salida74 y SNOWAST4/43. El puzle de134 ya está disponible en SDL. El recorrido de SNOWAST3/42, SNOWAST2/41 y SNOWAST1/40 se contrasta en una única partida: desodorante132 y Llevar, saludo a la morsa, tablón125, agujero y pez128, entrega a126, caña127, amigo del hielo, cenizas131 y regreso a la cornisa. Los nombres de desarrollo son propios del port.
 
-Las rutinas CBD0–CF25 pasan a motor/entidades/nieve.cpp. Conservan sus comparaciones firmadas y sin signo, los límites con envoltura y los campos que no escriben. Los manejadores B1F8–B576 y5EAB–5F64 viven en motor/acciones/nieve.cpp y utilizan los servicios comunes de sonido, inventario y planificación. No se añaden diálogos escritos ni condiciones de la guía que no estén en el EXE.
+Las rutinas CBD0–CF25 pasan a apps/juego/motor/entidades/nieve.cpp. Conservan sus comparaciones firmadas y sin signo, los límites con envoltura y los campos que no escriben. Los manejadores B1F8–B576 y5EAB–5F64 viven en apps/juego/motor/acciones/nieve.cpp y utilizan los servicios comunes de sonido, inventario y planificación. No se añaden diálogos escritos ni condiciones de la guía que no estén en el EXE.
 
 El desodorante conserva OR128 en35C9. La entrega exige esa bandera y la postura17 del esquimal; prepara distintos rodeos según la posición del personaje. El tablón y los personajes conservan las mutaciones de sus descriptores para los regresos. La caña se consume al romperse, aparece131 y6323 vuelve a ofrecer el rescate solo después de las liberaciones necesarias. El saludo correcto a la morsa es el tema1, casilla0 del submenú de voz; la ayuda es el tema0, casilla1. Se comprueban sus efectos persistentes además de las coincidencias de memoria.
 

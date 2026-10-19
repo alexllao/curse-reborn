@@ -1,6 +1,6 @@
 # Avance de secuencias de animación
 
-El C++ de [secuencias.cpp](../motor/entidades/secuencias.cpp) traslada el recorrido de `0000:83DE`–`0000:8821` dentro del dominio descrito aquí. Avanza tres canales por registro, consulta dimensiones y retira entidades fuera de los límites. La muestra de **462 casos** coincide con las instrucciones originales. El propietario ha confirmado también la coincidencia de los **8.924 casos** de la comparación amplia.
+El C++ de [secuencias.cpp](../apps/juego/motor/entidades/secuencias.cpp) traslada el recorrido de `0000:83DE`–`0000:8821` dentro del dominio descrito aquí. Avanza tres canales por registro, consulta dimensiones y retira entidades fuera de los límites. La muestra de **462 casos** coincide con las instrucciones originales. El propietario ha confirmado también la coincidencia de los **8.924 casos** de la comparación amplia.
 
 ## Recorrido original
 

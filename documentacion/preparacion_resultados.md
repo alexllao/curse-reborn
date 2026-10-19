@@ -1,6 +1,6 @@
 # Preparación integrada de resultados en C++
 
-El bloque [preparar_resultados.cpp](../motor/acciones/preparar_resultados.cpp) integra el generador y la selección de coincidencias. Corresponde a `0000:B740`–`0000:B939`, con la auxiliar `0000:88F3`–`0000:891D`. **El propietario confirmó la coincidencia en las 2.048 operaciones integradas**, incluido DS completo y el estado del generador. La ejecución no se ha repetido íntegramente en el entorno del asistente.
+El bloque [preparar_resultados.cpp](../apps/juego/motor/acciones/preparar_resultados.cpp) integra el generador y la selección de coincidencias. Corresponde a `0000:B740`–`0000:B939`, con la auxiliar `0000:88F3`–`0000:891D`. **El propietario confirmó la coincidencia en las 2.048 operaciones integradas**, incluido DS completo y el estado del generador. La ejecución no se ha repetido íntegramente en el entorno del asistente.
 
 ## Recorrido trasladado
 

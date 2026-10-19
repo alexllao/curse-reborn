@@ -4,7 +4,7 @@ Este traslado añade la selección de sonido de `0000:5288`–`0000:53B2` y perm
 
 ## Selección de sonido
 
-[seleccionar.cpp](../motor/sonido/seleccionar.cpp) devuelve una `OrdenSonido` con la rutina destinataria, referencia del recurso, posición, longitud y canal cuando correspondan. La selección se detiene en la entrada al dispositivo: no produce sonido todavía.
+[seleccionar.cpp](../apps/juego/motor/sonido/seleccionar.cpp) devuelve una `OrdenSonido` con la rutina destinataria, referencia del recurso, posición, longitud y canal cuando correspondan. La selección se detiene en la entrada al dispositivo: no produce sonido todavía.
 
 La entrada original recibe SI como registro de entidad y AL como identificador. Primero descarta entidades cuyo X es mayor que 319, cuya suma X más ancho es menor o igual a cero, cuyo Y es mayor que 199 o cuya suma Y más alto es menor o igual a cero. Las sumas seguidas inmediatamente de `JLE` se interpretan usando el resultado y el desbordamiento con signo, sin confundirlos con una simple comprobación del bit alto del resultado envuelto.
 
@@ -25,7 +25,7 @@ En la modalidad tres, el registro aporta prioridad, canal, cantidad que restar y
 
 ## Servicios de las secuencias
 
-[RecursosSecuencias](../motor/entidades/secuencias.hpp) incorpora dos funciones opcionales, con el mismo contexto que el lector de dimensiones:
+[RecursosSecuencias](../apps/juego/motor/entidades/secuencias.hpp) incorpora dos funciones opcionales, con el mismo contexto que el lector de dimensiones:
 
 | Servicio        | Entrada y contrato                                                                                                                                                                |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

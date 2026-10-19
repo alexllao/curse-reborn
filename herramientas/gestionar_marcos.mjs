@@ -1,3 +1,4 @@
+import { rutaAssets } from './rutas_proyecto.mjs';
 /** Valida los marcos propios y prepara el catálogo C++ y sus imágenes junto a la aplicación. */
 import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { createHash } from 'node:crypto';
@@ -26,10 +27,10 @@ function validarPanel(panel, ancho, alto, margen) {
 
 // Conserva el PNG aportado y convierte únicamente sus parámetros de presentación a constantes.
 export function prepararMarcos(raiz, destino) {
-  const origen = join(raiz, 'assets', 'original', 'marcos');
+  const origen = rutaAssets(raiz, 'original', 'marcos');
   const carpeta = join(destino, 'assets', 'original', 'marcos');
   mkdirSync(carpeta, { recursive: true });
-  const origenDecorados = join(raiz, 'assets', 'original', 'decorados');
+  const origenDecorados = rutaAssets(raiz, 'original', 'decorados');
   const destinoDecorados = join(destino, 'assets', 'original', 'decorados');
   mkdirSync(destinoDecorados, { recursive: true });
   const decorados = JSON.parse(
@@ -77,7 +78,7 @@ export function prepararMarcos(raiz, destino) {
   }
   writeFileSync(
     join(destino, 'catalogo_decorados.hpp'),
-    `// Generado desde assets/original/decorados; no editar.\n#pragma once\n#include <array>\ninline constexpr std::array<DefinicionDecorado, ${definiciones.length}> catalogo_decorados = {{${definiciones.join(',\n')}}};\n`,
+    `// Generado desde packages/assets/original/decorados; no editar.\n#pragma once\n#include <array>\ninline constexpr std::array<DefinicionDecorado, ${definiciones.length}> catalogo_decorados = {{${definiciones.join(',\n')}}};\n`,
   );
   copyFileSync(join(origenDecorados, 'catalogo.json'), join(destinoDecorados, 'catalogo.json'));
   const catalogo = JSON.parse(readFileSync(join(origen, 'catalogo.json'), 'utf8'));
@@ -141,7 +142,7 @@ export function prepararMarcos(raiz, destino) {
   }
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
-  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  const cabecera = `// Generado desde packages/assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

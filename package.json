@@ -165,7 +165,10 @@
     "comprobar:megafono-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:megafono-palacio",
     "comprobar:hielo-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:hielo-palacio",
     "comprobar:carambano-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:carambano-palacio",
-    "comprobar:resolucion-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:resolucion-palacio"
+    "comprobar:resolucion-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:resolucion-palacio",
+    "monorepo:comprobar": "node herramientas/comprobar_monorepo.mjs",
+    "juego:compilar": "pnpm --filter @curse-reborn/juego compilar",
+    "juego:dev": "pnpm --filter @curse-reborn/juego dev"
   },
   "repository": {
     "type": "git",

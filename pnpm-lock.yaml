@@ -24,6 +24,20 @@ importers:
         specifier: 3.9.10
         version: 3.9.10
 
+  apps/juego:
+    dependencies:
+      '@curse-reborn/assets':
+        specifier: workspace:*
+        version: link:../../packages/assets
+
+  apps/web:
+    dependencies:
+      '@curse-reborn/assets':
+        specifier: workspace:*
+        version: link:../../packages/assets
+
+  packages/assets: {}
+
 packages:
 
   '@cacheable/memory@2.2.0':

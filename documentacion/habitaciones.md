@@ -6,7 +6,7 @@ El arranque normal siempre muestra Buhardilla con el ordenador apagado, también
 
 ## Añadir otro diseño
 
-1. Crear una carpeta en `assets/original/habitaciones/` con las imágenes PNG, manteniendo sus dimensiones originales.
+1. Crear una carpeta en `packages/assets/original/habitaciones/` con las imágenes PNG, manteniendo sus dimensiones originales.
 2. Añadir una entrada a `habitaciones.json`: `id`, `nombre`, `carpeta` y `variantes`. `inicial` elige el identificador al abrir.
 3. Cada variante declara `archivo`, `resolucion: [ancho, alto]` y cinco rectángulos `[x, y, ancho, alto]`: `pantalla`, `botonPC`, `botonMonitor`, `pilotoPC`, `pilotoMonitor`. Todas las coordenadas están en píxeles del PNG, nunca de la ventana. `pantalla` es el interior útil del cristal, sin bisel. El juego cabe dentro sin estirarse ni recortarse.
 4. Volver a compilar con `pnpm sdl:compilar` o iniciar con `pnpm ventana`. Node valida tamaños, rutas relativas seguras, proporciones únicas y zonas dentro de la imagen, genera el catálogo y copia únicamente las imágenes registradas. No hay que modificar C++ para añadir una habitación. **En esta versión el catálogo se incorpora durante la compilación; editar el JSON junto a un ejecutable ya construido no lo recarga.**

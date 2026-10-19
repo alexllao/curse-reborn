@@ -90,7 +90,7 @@
     {
       "direccion": "0000:CF26",
       "nombre": "Límite de cámara al llegar la criatura del lago",
-      "comentario": "CF26–CF33:2CD1=34 escribe358F=0, sin comprobar actividad.15 variantes, llegada81 y transporte real hasta82. motor/entidades/mazmorra.cpp."
+      "comentario": "CF26–CF33:2CD1=34 escribe358F=0, sin comprobar actividad.15 variantes, llegada81 y transporte real hasta82. apps/juego/motor/entidades/mazmorra.cpp."
     },
     {
       "direccion": "0000:B579",
@@ -105,12 +105,12 @@
     {
       "direccion": "0000:CBD0",
       "nombre": "Cornisa, perfume y proximidad en las cuatro zonas nevadas",
-      "comentario": "CBD0–CF25: rescate de40, desmayo y coordinación del pez de41, proximidad de42 y reacción de43.1152 variantes, recorrido real con mismo inventario y azar. Traslado motor/entidades/nieve.cpp; documentacion/nieve.md."
+      "comentario": "CBD0–CF25: rescate de40, desmayo y coordinación del pez de41, proximidad de42 y reacción de43.1152 variantes, recorrido real con mismo inventario y azar. Traslado apps/juego/motor/entidades/nieve.cpp; documentacion/nieve.md."
     },
     {
       "direccion": "0000:B1F8",
       "nombre": "Perfume, tablón, pez y fuego de la nieve",
-      "comentario": "B1F8–B42F: Llevar132, Lanzar125 solo41, entrega128 a126 con35C9/128 y cuadro17, Atacar127 solo42. Conserva rodeos firmados, descriptores persistentes, canales diferidos y puntos. motor/acciones/nieve.cpp; comparar:morsa."
+      "comentario": "B1F8–B42F: Llevar132, Lanzar125 solo41, entrega128 a126 con35C9/128 y cuadro17, Atacar127 solo42. Conserva rodeos firmados, descriptores persistentes, canales diferidos y puntos. apps/juego/motor/acciones/nieve.cpp; comparar:morsa."
     },
     {
       "direccion": "0000:5EAB",
@@ -125,7 +125,7 @@
     {
       "direccion": "0000:B432",
       "nombre": "Bola de nieve y ser azul de SNOWAST4",
-      "comentario": "B432–B576 exige43, llama6323, retira134, limita358F, planifica rodeo firmado, transforma descriptor4946 y tres actores diferidos con canalesA795–A880; suma5. comparar:ser-azul3049 casos/pasos, cinco composiciones y cuatro auditorías; SDL cuatro imágenes y restauración. Traslado motor/acciones/nieve.cpp."
+      "comentario": "B432–B576 exige43, llama6323, retira134, limita358F, planifica rodeo firmado, transforma descriptor4946 y tres actores diferidos con canalesA795–A880; suma5. comparar:ser-azul3049 casos/pasos, cinco composiciones y cuatro auditorías; SDL cuatro imágenes y restauración. Traslado apps/juego/motor/acciones/nieve.cpp."
     },
     {
       "direccion": "0000:5F56",
@@ -135,7 +135,7 @@
     {
       "direccion": "0000:6323",
       "nombre": "Oferta del amigo verde después de las liberaciones",
-      "comentario": "6323–633E comprueba inventario131,490F=0 y4948!=19 antes de484E=1. Se usa en el lanzamiento de134; variantes conservan las demás banderas. motor/acciones/nieve.cpp."
+      "comentario": "6323–633E comprueba inventario131,490F=0 y4948!=19 antes de484E=1. Se usa en el lanzamiento de134; variantes conservan las demás banderas. apps/juego/motor/acciones/nieve.cpp."
     },
     {
       "direccion": "0000:CE35",
@@ -300,7 +300,7 @@
     {
       "direccion": "0000:C714",
       "nombre": "Umbrales de CELESTE",
-      "comentario": "C714–C736 conserva18F5/18F9/18FB desde actor2C4C y cámara, salvo fotograma19. Traslado en motor/entidades/poste.cpp; comparar:ramas-valle contrasta variantes aisladas y entrada real56."
+      "comentario": "C714–C736 conserva18F5/18F9/18FB desde actor2C4C y cámara, salvo fotograma19. Traslado en apps/juego/motor/entidades/poste.cpp; comparar:ramas-valle contrasta variantes aisladas y entrada real56."
     },
     {
       "direccion": "0000:C737",
@@ -330,7 +330,7 @@
     {
       "direccion": "0000:A599",
       "nombre": "Piedra y fragmentos del acantilado",
-      "comentario": "A599–A7BB conserva distancia firmada, retirada94, cinco creaciones8B6F y demoras en orden de pila, incluso agotadas en3510. Canales de piedra, roca grande y fragmentos, destino y puntuación+5. Contraste de variantes y recorrido real en comparar:acciones-borde; motor/acciones/borde.cpp."
+      "comentario": "A599–A7BB conserva distancia firmada, retirada94, cinco creaciones8B6F y demoras en orden de pila, incluso agotadas en3510. Canales de piedra, roca grande y fragmentos, destino y puntuación+5. Contraste de variantes y recorrido real en comparar:acciones-borde; apps/juego/motor/acciones/borde.cpp."
     },
     {
       "direccion": "0000:A7BC",
@@ -380,7 +380,7 @@
     {
       "direccion": "0000:C093",
       "nombre": "Rutina aislada del borde del mundo",
-      "comentario": "C093–C4DB traducida a motor/entidades/borde.cpp. Modelo20/frame90, rescateC4DC, pájaro y tablaB036, obstáculos, ADCE/DEF, sonido6, creacionesAF37/B125 y objeto94. comparar:borde:1244 casos, DS completo, azar y20 llamadas a5288. EDGE SDL permanece detenida; no implica puzles ni composición integrados."
+      "comentario": "C093–C4DB traducida a apps/juego/motor/entidades/borde.cpp. Modelo20/frame90, rescateC4DC, pájaro y tablaB036, obstáculos, ADCE/DEF, sonido6, creacionesAF37/B125 y objeto94. comparar:borde:1244 casos, DS completo, azar y20 llamadas a5288. EDGE SDL permanece detenida; no implica puzles ni composición integrados."
     },
     {
       "direccion": "0000:C27A",
@@ -535,7 +535,7 @@
     {
       "direccion": "0000:E160",
       "nombre": "Cuatro fichas de puntuación y créditos",
-      "comentario": "E160–E19E: formatea DS:35C7 en B772 y su porcentaje entero /478 en B78C; recorre B74E con páginas B758, B804, B8BA, B90B y fin FFFF. motor/video/menu.cpp y panel SDL; textos originales locales."
+      "comentario": "E160–E19E: formatea DS:35C7 en B772 y su porcentaje entero /478 en B78C; recorre B74E con páginas B758, B804, B8BA, B90B y fin FFFF. apps/juego/motor/video/menu.cpp y panel SDL; textos originales locales."
     },
     {
       "direccion": "0000:D623",
@@ -635,12 +635,12 @@
     {
       "direccion": "0000:5849",
       "nombre": "Recogida persistente de las piedras de los corredores",
-      "comentario": "5849–59A3 y 615C: identificadores 27–35 y 38–46, agrupados por escena cuatro a siete. Incorpora al inventario salvo iconos de puntuación, retira el descriptor de la lista DS:53B5, dispone 1A2E y los canales de Brad 96C0/96C9 o 96F6/96FF y demora AL+6. Traslado motor/acciones/cuevas.cpp; variantes de capacidad y puntuación y recorrido de doce piedras hasta la cuerda."
+      "comentario": "5849–59A3 y 615C: identificadores 27–35 y 38–46, agrupados por escena cuatro a siete. Incorpora al inventario salvo iconos de puntuación, retira el descriptor de la lista DS:53B5, dispone 1A2E y los canales de Brad 96C0/96C9 o 96F6/96FF y demora AL+6. Traslado apps/juego/motor/acciones/cuevas.cpp; variantes de capacidad y puntuación y recorrido de doce piedras hasta la cuerda."
     },
     {
       "direccion": "0000:9F39",
       "nombre": "Entrega de piedras al picapedrero por tamaño",
-      "comentario": "9F39, 9F85 y 9FCD: clasificación por 3E89–3F25, retirada del identificador y DEC de DS:35CB–35CD. JGE incluye OF: contador 80h que pasa a 7Fh no descuenta el cartel. Los contadores iniciales son cuatro por tamaño en este EXE. Retira puntos de las listas 3D8E/3DB2/3DD6 y sus entidades; conserva la partida al regresar. Traslado motor/acciones/cuevas.cpp y comparación de contadores límite."
+      "comentario": "9F39, 9F85 y 9FCD: clasificación por 3E89–3F25, retirada del identificador y DEC de DS:35CB–35CD. JGE incluye OF: contador 80h que pasa a 7Fh no descuenta el cartel. Los contadores iniciales son cuatro por tamaño en este EXE. Retira puntos de las listas 3D8E/3DB2/3DD6 y sus entidades; conserva la partida al regresar. Traslado apps/juego/motor/acciones/cuevas.cpp y comparación de contadores límite."
     },
     {
       "direccion": "0000:A00A",
@@ -650,62 +650,62 @@
     {
       "direccion": "0000:1905",
       "nombre": "Rutina ambiental del tercer corredor de las cuevas",
-      "comentario": "1905–1962: escena seis. X global de Brad entre 832 y 896 inclusive controla 0DEF. Azar módulo tres decide la creación; después módulo cuatro más dos, módulo dos para bit siete y módulo 63 más 832 menos cámara preparan el descriptor 1208 antes de 8B6F. Traslado motor/entidades/mazmorra.cpp; se conservan número y orden de las llamadas al generador durante el recorrido persistente."
+      "comentario": "1905–1962: escena seis. X global de Brad entre 832 y 896 inclusive controla 0DEF. Azar módulo tres decide la creación; después módulo cuatro más dos, módulo dos para bit siete y módulo 63 más 832 menos cámara preparan el descriptor 1208 antes de 8B6F. Traslado apps/juego/motor/entidades/mazmorra.cpp; se conservan número y orden de las llamadas al generador durante el recorrido persistente."
     },
     {
       "direccion": "0000:59B5",
       "nombre": "Recogida de las algas y habilitación del botón de la poza",
-      "comentario": "59B5–59C9: identificador 31h, escribe 30h como identificador de la entidad 2C6D y recoge 2C8E con ajuste +5/-9 mediante 61A7. 623D retira su descriptor persistente. Conserva 96CF/96D8 o 9705/970E para Brad pequeño y demora AL+6. Traslado motor/acciones/poza.cpp; prueba de inventario lleno y recorrido desde el lago. Examinar la zona 32h retorna por 3B4F sin otra mutación."
+      "comentario": "59B5–59C9: identificador 31h, escribe 30h como identificador de la entidad 2C6D y recoge 2C8E con ajuste +5/-9 mediante 61A7. 623D retira su descriptor persistente. Conserva 96CF/96D8 o 9705/970E para Brad pequeño y demora AL+6. Traslado apps/juego/motor/acciones/poza.cpp; prueba de inventario lleno y recorrido desde el lago. Examinar la zona 32h retorna por 3B4F sin otra mutación."
     },
     {
       "direccion": "0000:9DE4",
       "nombre": "Botón y puerta secreta de la poza",
-      "comentario": "3BA3–3BA8: empujar 30h entra en 9DE4. Exige modelo seis de la puerta (2C4D), prepara secuencia 9DC0, destino del botón -15/+33 y canales 9D91/9DB2; demora AL+12 y cinco puntos. El guion abre la puerta; la geometría solicita salida 17 hacia escena cuatro CAVECOR. Traslado motor/acciones/poza.cpp, entrada compartida y plataforma SDL."
+      "comentario": "3BA3–3BA8: empujar 30h entra en 9DE4. Exige modelo seis de la puerta (2C4D), prepara secuencia 9DC0, destino del botón -15/+33 y canales 9D91/9DB2; demora AL+12 y cinco puntos. El guion abre la puerta; la geometría solicita salida 17 hacia escena cuatro CAVECOR. Traslado apps/juego/motor/acciones/poza.cpp, entrada compartida y plataforma SDL."
     },
     {
       "direccion": "0000:1963",
       "nombre": "Partículas de la poza de entrada a las cuevas",
-      "comentario": "1963–1992: escena ocho, recurso POOL. Si 0DEF es cero retorna sin consumir azar. En otro caso genera módulo dos; si sale cero prepara descriptor 12FE con x aleatoria módulo 200 más 50 e y módulo diez menos 20 y llama a 8B6F. La salida cuatro del lago selecciona esta escena mediante DS:7482, no la escena cuatro CAVECOR. Traslado motor/entidades/mazmorra.cpp."
+      "comentario": "1963–1992: escena ocho, recurso POOL. Si 0DEF es cero retorna sin consumir azar. En otro caso genera módulo dos; si sale cero prepara descriptor 12FE con x aleatoria módulo 200 más 50 e y módulo diez menos 20 y llama a 8B6F. La salida cuatro del lago selecciona esta escena mediante DS:7482, no la escena cuatro CAVECOR. Traslado apps/juego/motor/entidades/mazmorra.cpp."
     },
     {
       "direccion": "0000:314C",
       "nombre": "Salto de la almeja cerrada",
-      "comentario": "314C–3193: identificador 18h, modelo 12 en 2E3C; rechaza si no está cerrado. Fija tres demoras a 20, destino relativo +61/+21, canales 225B/226C/2276 y cinco puntos antes de 886B. Despacho por 3143 desde la casilla de combate; traslado motor/acciones/lago.cpp."
+      "comentario": "314C–3193: identificador 18h, modelo 12 en 2E3C; rechaza si no está cerrado. Fija tres demoras a 20, destino relativo +61/+21, canales 225B/226C/2276 y cinco puntos antes de 886B. Despacho por 3143 desde la casilla de combate; traslado apps/juego/motor/acciones/lago.cpp."
     },
     {
       "direccion": "0000:9BB8",
       "nombre": "Inserción de la picana y apertura del tapón",
-      "comentario": "3D72–3D89 admite identificadores 17h/19h en ambos órdenes con acción insertar. 9BB8–9C72 retira 17h y uno, configura cinco canales del tapón y la picana, inicia el acercamiento y fija sus demoras a AL de 359A más 14; suma cinco puntos. Los guiones solicitan salida cuatro hacia POOL, con modelo EMERGE.BRD. Traslado motor/acciones/lago.cpp e inicializar.cpp."
+      "comentario": "3D72–3D89 admite identificadores 17h/19h en ambos órdenes con acción insertar. 9BB8–9C72 retira 17h y uno, configura cinco canales del tapón y la picana, inicia el acercamiento y fija sus demoras a AL de 359A más 14; suma cinco puntos. Los guiones solicitan salida cuatro hacia POOL, con modelo EMERGE.BRD. Traslado apps/juego/motor/acciones/lago.cpp e inicializar.cpp."
     },
     {
       "direccion": "0000:3558",
       "nombre": "Reacción de Mr. Fish al hablar cerca de su tienda",
-      "comentario": "3558–3587: escena tres y tema uno; resta las posiciones horizontales de Brad y Mr. Fish con aritmética de 16 bits y exige distancia absoluta menor que 64. Configura 2DC7=1A2F, fase cero, contador uno e intervalo 40. 37FF emite el sonido uno mediante 5288. Traslado motor/acciones/lago.cpp y prueba de límites y conversación desde una partida real."
+      "comentario": "3558–3587: escena tres y tema uno; resta las posiciones horizontales de Brad y Mr. Fish con aritmética de 16 bits y exige distancia absoluta menor que 64. Configura 2DC7=1A2F, fase cero, contador uno e intervalo 40. 37FF emite el sonido uno mediante 5288. Traslado apps/juego/motor/acciones/lago.cpp y prueba de límites y conversación desde una partida real."
     },
     {
       "direccion": "0000:9B86",
       "nombre": "Entrega de la concha y transporte de la tortuga",
-      "comentario": "9B86–9BB7: retira el identificador 12h, escribe reserva 160, cambia 2D96 a tipo 040B y prepara la aproximación y secuencia 99C8; suma cinco puntos. Traslado motor/acciones/lago.cpp. Ruta comparada hasta cruzar las anguilas y recuperar el control."
+      "comentario": "9B86–9BB7: retira el identificador 12h, escribe reserva 160, cambia 2D96 a tipo 040B y prepara la aproximación y secuencia 99C8; suma cinco puntos. Traslado apps/juego/motor/acciones/lago.cpp. Ruta comparada hasta cruzar las anguilas y recuperar el control."
     },
     {
       "direccion": "0000:2FD3",
       "nombre": "Uso de la picana frente al tiburón",
-      "comentario": "2FD3–300A: el identificador 17h exige estado uno en 2DF9; configura 1AB2/1AC3, inicia la acción y habilita 3596. El comportamiento 040C conserva el intervalo de modelo y fotograma que produce 11C6. Traslado motor/acciones/lago.cpp; comparación de rechazos y descarga efectiva."
+      "comentario": "2FD3–300A: el identificador 17h exige estado uno en 2DF9; configura 1AB2/1AC3, inicia la acción y habilita 3596. El comportamiento 040C conserva el intervalo de modelo y fotograma que produce 11C6. Traslado apps/juego/motor/acciones/lago.cpp; comparación de rechazos y descarga efectiva."
     },
     {
       "direccion": "0000:9994",
       "nombre": "Colocación de la pecera en el lago",
-      "comentario": "9994–9A47: exige escena tres, retira los identificadores seis y siete, dispone seis canales auxiliares y dos de Brad y suma cinco puntos. Traslado: motor/acciones/lago.cpp. Comparación desde la partida persistente de mazmorra y corredor."
+      "comentario": "9994–9A47: exige escena tres, retira los identificadores seis y siete, dispone seis canales auxiliares y dos de Brad y suma cinco puntos. Traslado: apps/juego/motor/acciones/lago.cpp. Comparación desde la partida persistente de mazmorra y corredor."
     },
     {
       "direccion": "0000:9A48",
       "nombre": "Liberación del pez azul tras los barrotes",
-      "comentario": "9A48–9AA7: rechaza si la entidad 2C6D está desactivada; aproxima a Brad y programa los canales originales de retirada. Traslado: motor/acciones/lago.cpp; no confundir con la búsqueda del gusano."
+      "comentario": "9A48–9AA7: rechaza si la entidad 2C6D está desactivada; aproxima a Brad y programa los canales originales de retirada. Traslado: apps/juego/motor/acciones/lago.cpp; no confundir con la búsqueda del gusano."
     },
     {
       "direccion": "0000:38A4",
       "nombre": "Búsqueda del gusano en la arena",
-      "comentario": "38A4–38D2: identificador 10h del menú de examinar. Prepara Brad y el canal 1BFA de la entidad 2CAF. Reconstruido y comparado en motor/acciones/lago.cpp."
+      "comentario": "38A4–38D2: identificador 10h del menú de examinar. Prepara Brad y el canal 1BFA de la entidad 2CAF. Reconstruido y comparado en apps/juego/motor/acciones/lago.cpp."
     },
     {
       "direccion": "0000:9AA8",
@@ -756,7 +756,7 @@
       "direccion": "0000:096D",
       "nombre": "Avance del movimiento con acarreo",
       "comentario": "Suma las componentes de dieciséis bits a la posición y reduce el contador. El propietario confirmó la coincidencia del conjunto de avance en 10.930 casos.",
-      "traslado": "motor/movimiento/avanzar.cpp"
+      "traslado": "apps/juego/motor/movimiento/avanzar.cpp"
     },
     {
       "direccion": "0000:0AE5",
@@ -777,145 +777,145 @@
       "direccion": "0000:0BF8",
       "nombre": "Selección de modalidad de movimiento",
       "comentario": "La condición DS:8082=24h y DS:358C=FEh selecciona una de dos tablas de dieciséis combinaciones. El C++ conserva sus retornos anticipados.",
-      "traslado": "motor/movimiento/direccion.cpp"
+      "traslado": "apps/juego/motor/movimiento/direccion.cpp"
     },
     {
       "direccion": "0000:0F5F",
       "nombre": "Planificación de movimiento hacia un nodo",
       "comentario": "Calcula deltas y contador; llama a la selección de dirección y divide la componente secundaria. AX devuelve el contador, con mínimo uno.",
-      "traslado": "motor/movimiento/planificar.cpp"
+      "traslado": "apps/juego/motor/movimiento/planificar.cpp"
     },
     {
       "direccion": "0000:102A",
       "nombre": "Extensión de signo de la división vertical",
       "comentario": "El opcode 99h sin prefijo, en este código de dieciséis bits, es CWD. DX recibe el signo de AX antes de sustituir DL por AH.",
-      "traslado": "motor/movimiento/planificar.cpp"
+      "traslado": "apps/juego/motor/movimiento/planificar.cpp"
     },
     {
       "direccion": "0000:10B0",
       "nombre": "Extensión de signo de la división horizontal",
       "comentario": "CWD, seguido de MOV DL,AH y SHL AX,8, separa las componentes que se guardan como palabras de incremento.",
-      "traslado": "motor/movimiento/planificar.cpp"
+      "traslado": "apps/juego/motor/movimiento/planificar.cpp"
     },
     {
       "direccion": "0000:10EC",
       "nombre": "Preparación del recorrido de entidades",
       "comentario": "Limpia límites y recorre 68 registros de 33 bytes desde DS:2C4C. El traslado se detiene antes del despacho por escena de 1791.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:1119",
       "nombre": "Actualización de un registro activo",
       "comentario": "Procesa el estado uno y despacha catorce comportamientos. Comparación corta coincidente; comparación amplia preparada.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:112C",
       "nombre": "Comportamiento 0400: posición relativa",
       "comentario": "Ajusta X respecto al registro anterior y a la distancia del personaje.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:115E",
       "nombre": "Comportamiento 0401: desplazamientos por imagen",
       "comentario": "Consulta tablas X/Y según modelo e imagen. CBW extiende con signo los bytes leídos.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:11C0",
       "nombre": "Comportamiento 0406: límite vertical",
       "comentario": "Desactiva con Y mayor o igual a 200. En escena ocho puede cambiar secuencias mediante azar.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:121F",
       "nombre": "Comportamiento 0407: proximidad y creación",
       "comentario": "La primera fase puede crear desde DS:0FED; otra fase modifica el personaje.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:12C8",
       "nombre": "Comportamiento 0408: límites y salida",
       "comentario": "Actualiza límites y desactiva al abandonar el margen izquierdo.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:12F6",
       "nombre": "Comportamiento 0409: aproximación",
       "comentario": "Actualiza límites y comprueba distancia horizontal y fase.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:135D",
       "nombre": "Comportamiento 040A: solapamiento horizontal",
       "comentario": "El lado de entrada decide las secuencias asignadas al personaje.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:13E6",
       "nombre": "Comportamiento 040B: fases y diferencia vertical",
       "comentario": "Cambia secuencias del registro y del personaje según altura y fase.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:14C2",
       "nombre": "Comportamiento 040C: avance y reacción",
       "comentario": "Combina desplazamiento horizontal, ajuste vertical y reacción según modelo e imagen.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:15BD",
       "nombre": "Comportamiento 040D: cinco creaciones aleatorias",
       "comentario": "Cada iteración elige imagen y posición antes de llamar a 8B6F con DS:132E.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:15FE",
       "nombre": "Comportamiento 040F: límites o planificación",
       "comentario": "Puede preparar el nodo DS:1A36 y llamar a la planificación trasladada de 0F5F.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:1673",
       "nombre": "Comportamiento 0411: transición por proximidad",
       "comentario": "Comprueba altura y solapamiento horizontal antes de llamar a C4DC.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:16A3",
       "nombre": "Comportamiento 0410: seguimiento del personaje",
       "comentario": "Ajusta imagen y posición relativa según intervalos de la imagen del personaje.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:16EE",
       "nombre": "Comportamiento 0412: tres creaciones",
       "comentario": "Comprueba imagen 3Ch, distancias y control; crea desde DS:135E y cambia secuencias.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:1786",
       "nombre": "Siguiente registro de entidad",
       "comentario": "Suma 21h a SI y repite con LOOP; restaura ES antes del despacho por escena.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:8B6F",
       "nombre": "Creación dinámica de entidad",
       "comentario": "Busca hueco entre las 70 posiciones descontando las reservadas, copia definición y consulta dimensiones mediante el recurso. Traslado con lector explícito de dimensiones.",
-      "traslado": "motor/entidades/crear.cpp"
+      "traslado": "apps/juego/motor/entidades/crear.cpp"
     },
     {
       "direccion": "0000:8C13",
       "nombre": "Contador aleatorio con AH conservado",
       "comentario": "MOV AL no limpia AH: el divisor depende también del valor anterior de AX. El C++ conserva este detalle.",
-      "traslado": "motor/entidades/crear.cpp"
+      "traslado": "apps/juego/motor/entidades/crear.cpp"
     },
     {
       "direccion": "0000:C4DC",
       "nombre": "Transición de entidades y personaje",
       "comentario": "Si hay control activo, configura secuencias y posiciones del personaje y dos registros auxiliares.",
-      "traslado": "motor/entidades/actualizar.cpp"
+      "traslado": "apps/juego/motor/entidades/actualizar.cpp"
     },
     {
       "direccion": "0000:1791",
@@ -931,73 +931,73 @@
       "direccion": "0000:4C43",
       "nombre": "Preparación del personaje al cambiar de escena",
       "comentario": "Fragmentos reconstruidos para las salidas cero a tres; STD y PLUNGE con intervalos y dimensiones de banco. Comparados DS completo y modelos, conectados con carga y fundidos SDL.",
-      "traslado": "motor/estado/inicializar.cpp"
+      "traslado": "apps/juego/motor/estado/inicializar.cpp"
     },
     {
       "direccion": "0000:8AA6",
       "nombre": "Carga de entidades y superposiciones de escena",
       "comentario": "Limpia 68 estados, reserva cursor y personaje y recorre descriptores de nueve bytes desde DS:53B5 por escena. Cero crea una superposición de doce bytes; FF termina. Los demás reutilizan el bloque común 8BA0.",
-      "traslado": "motor/entidades/cargar.cpp"
+      "traslado": "apps/juego/motor/entidades/cargar.cpp"
     },
     {
       "direccion": "0000:183F",
       "nombre": "Rutina particular de la escena cinco",
       "comentario": "183F–1904 corresponde al índice 5 de CS:17A3, no a la mazmorra inicial. Se conserva como actualizar_escena_cinco; el índice 0 tiene destino cero.",
-      "traslado": "motor/entidades/mazmorra.cpp"
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
     },
     {
       "direccion": "0000:F29A",
       "nombre": "Ordenación de las entidades para dibujar",
       "comentario": "Actualiza 69 claves de palabra como Y más alto más profundidad y ordena pares clave/referencia. Conserva comparaciones con signo, envoltura e intercambios; el salto decrece por tres cuartos y nueve/diez se sustituyen por once.",
-      "traslado": "motor/video/orden.cpp"
+      "traslado": "apps/juego/motor/video/orden.cpp"
     },
     {
       "direccion": "0000:EBBD",
       "nombre": "Composición de entidades y superposiciones",
       "comentario": "Ordena y dibuja estados no nulos salvo invisibles e imagen FF. Después superpone los recortes de fondo que solapan entidades con estado exactamente uno. Se compara la imagen completa y la tabla resultante con el original.",
-      "traslado": "motor/video/entidades.cpp"
+      "traslado": "apps/juego/motor/video/entidades.cpp"
     },
     {
       "direccion": "0000:891E",
       "nombre": "Selección de objetos próximos compatibles con una acción",
       "comentario": "Construye una franja alrededor de los pies y recorre 68 entidades, atendiendo estado, tipo y máscara DL en DS:524D. Devuelve identificadores de objeto más 1A y rellena con FFFF. DS:3593 permite omitir proximidad; la API añade capacidad explícita.",
-      "traslado": "motor/acciones/objetos_cercanos.cpp"
+      "traslado": "apps/juego/motor/acciones/objetos_cercanos.cpp"
     },
     {
       "direccion": "0000:4EE5",
       "nombre": "Cabecera MAP y reserva del banco de tiras",
       "comentario": "Lee 576 componentes de paleta en DS:0AEF, dos bytes de párrafos y después el banco completo. Los últimos 64 colores se conservan.",
-      "traslado": "motor/recursos/escena.cpp"
+      "traslado": "apps/juego/motor/recursos/escena.cpp"
     },
     {
       "direccion": "0000:50D2",
       "nombre": "Montaje del fondo visible por tiras",
       "comentario": "Recorre diez columnas desde la nueve: FF produce una tira negra; el resto indexa desplazamientos en párrafos y llama a 67BC. Cada tira de 32 por 200 se sube con paso de 80 bytes por plano.",
-      "traslado": "motor/recursos/escena.cpp"
+      "traslado": "apps/juego/motor/recursos/escena.cpp"
     },
     {
       "direccion": "0000:67BC",
       "nombre": "Descompresión RNC de método dos",
       "comentario": "Firma RNC02; el original reubica entradas solapadas. El traslado usa búferes separados, longitudes explícitas y rechaza referencias fuera de la salida previa.",
-      "traslado": "motor/recursos/rnc2.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc2.cpp"
     },
     {
       "direccion": "0000:6862",
       "nombre": "Bits y literales intercalados de método dos",
       "comentario": "AL contiene bits de mayor a menor peso y un centinela. Descarta dos bits iniciales; comparte el puntero SI con literales y códigos de distancia. El traslado representa el centinela con un contador.",
-      "traslado": "motor/recursos/rnc2.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc2.cpp"
     },
     {
       "direccion": "0000:6D8C",
       "nombre": "Dibujo de un fotograma con transparencia y espejo",
       "comentario": "Cabecera de diez bytes: ancho, alto y tres desplazamientos. Los cuatro flujos se consumen en orden base, campo ocho, seis y cuatro. Carreras positivas copian colores, negativas dejan huecos y cero termina la fila. Traslado a píxeles lineales sin listas de daños VGA.",
-      "traslado": "motor/video/sprites.cpp"
+      "traslado": "apps/juego/motor/video/sprites.cpp"
     },
     {
       "direccion": "0000:77E4",
       "nombre": "Fundido de paleta a negro",
       "comentario": "Cada componente inicial se multiplica por 256. Su decremento es el cociente entero entre el acumulador y AX pasos; se resta antes de enviar AH al DAC tras cada retrazo. Los arranques estudiados usan 32 pasos.",
-      "traslado": "motor/video/fundido.cpp"
+      "traslado": "apps/juego/motor/video/fundido.cpp"
     },
     {
       "direccion": "0000:4D2B",
@@ -1018,79 +1018,79 @@
       "direccion": "0000:5288",
       "nombre": "Selección de sonido con entidad",
       "comentario": "Descarta geometrías fuera de pantalla antes de consultar la modalidad. Traslado hasta retorno o entrada al dispositivo.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:5295",
       "nombre": "Visibilidad con indicadores de suma",
       "comentario": "El JLE sigue directamente a ADD: conserva el desbordamiento con signo, además del resultado cero.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:52A4",
       "nombre": "Despacho de cinco modalidades de sonido",
       "comentario": "DS:0AD4 elige entre retorno sin orden y tres selectores. Los nombres definitivos de los dispositivos se estudian después.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:52BF",
       "nombre": "Selector de secuencias de sonido",
       "comentario": "Registros de tres bytes. FFh omite la orden; otros identificadores seleccionan prioridad y referencia.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:52E7",
       "nombre": "Lectura de prioridad y referencia sonora",
       "comentario": "Lee un byte de prioridad y una referencia de dos bytes; una referencia cero no reproduce.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:52FC",
       "nombre": "Prioridad de secuencia explícita",
       "comentario": "Guarda prioridad en CS:5306 y llama a 7A46. El C++ conserva prioridad en EstadoSonido y devuelve la orden sin ejecutar el dispositivo.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:5307",
       "nombre": "Selector de muestras de sonido",
       "comentario": "Usa recursos general o de escena y registros de cinco bytes, con filtrado por actividad y prioridad.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:5343",
       "nombre": "Prioridad de muestra",
       "comentario": "La actividad de CS:8351 condiciona la comparación con CS:5375. Ambos valores son estado explícito en C++.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:5358",
       "nombre": "Parámetros de reproducción de muestra",
       "comentario": "Selecciona canal, resta una cantidad a la longitud y lee una referencia mediante el recurso. Frontera de comparación en 7FB3.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:5376",
       "nombre": "Selector de órdenes de bytes",
       "comentario": "FFh selecciona DS:8C90; los demás identificadores consultan un byte y pueden omitir la orden si ese byte es FFh.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:53A7",
       "nombre": "Parámetro de la orden de bytes",
       "comentario": "Escribe DS:92EC y entrega DS:92E9 a 7D6A. El C++ devuelve esa orden y no ejecuta el dispositivo.",
-      "traslado": "motor/sonido/seleccionar.cpp"
+      "traslado": "apps/juego/motor/sonido/seleccionar.cpp"
     },
     {
       "direccion": "0000:859E",
       "nombre": "Recurso de modelo después de la carga",
       "comentario": "Asigna la referencia de CS:0010 y continúa la secuencia. Se alcanza tras un acierto de caché o un servicio de carga completado.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:0584",
       "nombre": "Carga de la pantalla de título",
       "comentario": "Lee TITLE.PAL y TITLE.DAT. El núcleo C++ compone descompresión y copias por planos; la plataforma SDL carga archivos y presenta el título. No es todavía el arranque completo del juego.",
-      "traslado": "motor/recursos/titulo.cpp"
+      "traslado": "apps/juego/motor/recursos/titulo.cpp"
     },
     {
       "direccion": "0000:05BD",
@@ -1101,121 +1101,121 @@
       "direccion": "0000:05D5",
       "nombre": "Subida del título a memoria por planos",
       "comentario": "AX=320, BX=200 y CX=448. Los planos usan 112 bytes por fila; llamada a 7636 comparada con C++.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:060F",
       "nombre": "Envío de la paleta del título",
       "comentario": "Entrega 256 colores desde DS:0AEF a 787E. La comparación conserva los 768 bytes de componentes.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:64E0",
       "nombre": "Descompresor con cabecera RNC de método uno",
       "comentario": "Reconoce RNC de método uno. Traslado C++ con búferes separados, tablas explícitas y comparación con tres archivos reales y programas sintéticos.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:7636",
       "nombre": "Subida de imagen lineal a cuatro planos",
       "comentario": "Divide ancho y paso entre cuatro y distribuye los índices mediante máscaras de escritura. Traslado comparado con memoria VGA explícita.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:7657",
       "nombre": "Grupo de cuatro píxeles de subida",
       "comentario": "Selecciona máscaras uno, dos, cuatro y ocho para cuatro bytes consecutivos y una posición de cada plano.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:7679",
       "nombre": "Recuperación de imagen desde cuatro planos",
       "comentario": "Selecciona el mapa de lectura y produce índices lineales. Traslado comparado también con el título real.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:769C",
       "nombre": "Selección del plano de lectura",
       "comentario": "La lectura por planos cero, uno, dos y tres conserva la misma posición hasta completar el grupo.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:76BC",
       "nombre": "Copia con cerrojos VGA",
       "comentario": "Activa máscara 0Fh y modo de escritura uno, copia por filas y restaura los bits de modo a cero.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:76EE",
       "nombre": "Copia de una fila por planos",
       "comentario": "REP MOVSB carga los cuatro cerrojos de origen y los escribe juntos. El orden hacia delante determina los solapamientos.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:787E",
       "nombre": "Envío de paleta RGB",
       "comentario": "Escribe índice inicial en 3C8h y tres componentes por color en 3C9h; no transforma los bytes.",
-      "traslado": "motor/video/planos.cpp"
+      "traslado": "apps/juego/motor/video/planos.cpp"
     },
     {
       "direccion": "0000:6581",
       "nombre": "Inicialización de bits RNC",
       "comentario": "Prepara la posición 18, la palabra baja, el contador de bloques y el consumo de dos bits iniciales.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:65A7",
       "nombre": "Tablas de literales, distancias y cantidades",
       "comentario": "Construye tres tablas por bloque. El recuento cero conserva la tabla correspondiente del bloque anterior.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:65C4",
       "nombre": "Repetición RNC hacia delante",
       "comentario": "Incrementa la distancia en uno y la cantidad en dos. La copia permite reutilizar bytes que acaba de escribir.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:65EA",
       "nombre": "Literales RNC",
       "comentario": "Obtiene una cantidad mediante la tabla y copia bytes sin comprimir del flujo compartido.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:65F4",
       "nombre": "Reconstrucción de la ventana tras literales",
       "comentario": "Conserva los bits pendientes y los combina con dos palabras del nuevo origen; no equivale a alinear al siguiente byte.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:6625",
       "nombre": "Normalización de segmentos entre bloques",
       "comentario": "El original ajusta ES/DI y DS/SI conservando la posición física. El C++ mantiene posiciones lineales explícitas.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:6692",
       "nombre": "Valor a partir de un código Huffman",
       "comentario": "Busca máscara y código; consume su longitud y añade bits extra para símbolos iguales o superiores a dos.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:66CE",
       "nombre": "Consumo de bits de la ventana RNC",
       "comentario": "Dos palabras y un contador de bits disponibles; recarga una palabra al atravesar el límite.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:672E",
       "nombre": "Construcción de tabla RNC",
       "comentario": "Recorre longitudes de uno a dieciséis, invierte códigos canónicos y guarda símbolo y longitud.",
-      "traslado": "motor/recursos/rnc.cpp"
+      "traslado": "apps/juego/motor/recursos/rnc.cpp"
     },
     {
       "direccion": "0000:788E",
       "nombre": "Generador de valor acotado",
       "comentario": "Actualiza cuatro palabras y devuelve en AX el resto de dividir por el AX de entrada; conserva BX, CX y DX. El propietario confirmó la coincidencia en 18.816 llamadas.",
-      "traslado": "motor/aleatorio/generador.cpp"
+      "traslado": "apps/juego/motor/aleatorio/generador.cpp"
     },
     {
       "direccion": "0000:78A5",
@@ -1236,223 +1236,223 @@
       "direccion": "0000:7A46",
       "nombre": "Arranque de secuencia del altavoz",
       "comentario": "Guarda referencia, contador uno y actividad uno. El C++ conserva la secuencia sin escribir puertos todavía.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7A61",
       "nombre": "Parada explícita del altavoz",
       "comentario": "Limpia solo la referencia y apaga los dos bits bajos de 61h. Conserva contador e indicador de actividad.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AC6",
       "nombre": "Avance del temporizador del altavoz",
       "comentario": "Con referencia no nula reduce el contador; solo procesa la secuencia si llega a cero.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AD7",
       "nombre": "Contador de duración de dieciséis bits",
       "comentario": "DEC desde cero produce FFFFh; no se ha sustituido por un contador saturado.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7ADD",
       "nombre": "Lectura de duración de nota",
       "comentario": "Una duración cero termina y apaga; las demás recargan el contador y continúan con el divisor.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AE2",
       "nombre": "Final de secuencia del altavoz",
       "comentario": "Limpia actividad y referencia, y apaga la salida preservando los otros bits leídos de 61h.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AF2",
       "nombre": "Nueva duración del altavoz",
       "comentario": "Guarda la duración antes de programar el temporizador.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AF5",
       "nombre": "Programación del temporizador",
       "comentario": "Escribe B6h en 43h y los dos bytes del divisor en 42h. El C++ conserva la traza mediante servicios de puerto.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7AFF",
       "nombre": "Referencia de la nota siguiente",
       "comentario": "Guarda SI después de leer duración y divisor, cuatro bytes por nota.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:7B03",
       "nombre": "Activación de la salida del altavoz",
       "comentario": "Lee 61h y activa los dos bits bajos, conservando los restantes.",
-      "traslado": "motor/sonido/altavoz.cpp"
+      "traslado": "apps/juego/motor/sonido/altavoz.cpp"
     },
     {
       "direccion": "0000:83DE",
       "nombre": "Recorrido de secuencias de animación",
       "comentario": "Selecciona los datos del juego y recorre 70 registros. El traslado distingue órdenes ejecutadas y operaciones externas pendientes.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:83EA",
       "nombre": "Secuencias de un registro no nulo",
       "comentario": "Procesa imagen, X e Y. Los estados distintos de cero participan, incluidos los que tienen el bit 02h activo.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:83FC",
       "nombre": "Contador de imagen de un byte",
       "comentario": "OR BX,BX ha despejado CF. DEC desde cero produce FFh; no se interpreta hasta llegar a cero.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:840A",
       "nombre": "Lectura de la secuencia de imagen",
       "comentario": "Usa el índice anterior al incremento y envuelve el índice a ocho bits.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:841F",
       "nombre": "Referencia encadenada de secuencia",
       "comentario": "Suma el índice a BX, lee una palabra de referencia y reinicia el índice.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8434",
       "nombre": "Desactivación desde una secuencia",
       "comentario": "Limpia el estado y las tres referencias antes de saltar al siguiente registro.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:846D",
       "nombre": "Cambio de intervalo de imagen",
       "comentario": "Consume un byte, lo guarda en intervalo y contador, y continúa leyendo órdenes.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:848A",
       "nombre": "Espera aleatoria compartida",
       "comentario": "Calcula una espera y la copia a los tres contadores; omite el resto del registro.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:84E9",
       "nombre": "Operación de sonido pendiente",
       "comentario": "Consume un argumento y llama a 5288. Sin servicio, el C++ señala sonido pendiente antes de consumir el argumento. Un servicio que termine permite continuar. Los casos de frontera sin servicio paran aquí.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8515",
       "nombre": "Selección de modelo desde secuencia",
       "comentario": "FFh y FEh seleccionan recursos residentes. Otros valores consultan la caché DS:9974.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8574",
       "nombre": "Frontera de carga DOS pendiente",
       "comentario": "Con el nuevo modelo ya escrito en DS:9974, prepara apertura, lectura y cierre DOS. Sin servicio, el C++ se detiene antes de esa carga; con servicio solicita 64.000 bytes y continúa al terminar.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:85AC",
       "nombre": "Imagen aleatoria distinta de la actual",
       "comentario": "Repite la elección si el byte coincide con la imagen actual; conserva el retroceso del índice durante los intentos.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:85DE",
       "nombre": "Imagen y dimensiones",
       "comentario": "Escribe imagen, utiliza sus siete bits bajos y consulta ancho y alto del recurso. El C++ usa un lector explícito.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8600",
       "nombre": "Canal de desplazamiento horizontal",
       "comentario": "Temporizador de byte y órdenes comunes; los desplazamientos ordinarios se extienden con signo.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8629",
       "nombre": "Ampliación de magnitud horizontal",
       "comentario": "El byte 80h suma cien a DS:9972 y continúa; la magnitud se aplica con el signo del desplazamiento.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:86DC",
       "nombre": "Canal de desplazamiento vertical",
       "comentario": "Tercer canal; una espera aleatoria solo modifica su propio contador y termina el registro.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:87B7",
       "nombre": "Condición vertical peculiar",
       "comentario": "Solo si Y es mayor o igual a 300 comprueba si Y más alto, envuelto a dieciséis bits, es menor o igual a menos cien. No se ha normalizado esta condición.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:87D1",
       "nombre": "Inicio de retirada de registros",
       "comentario": "Omite la cantidad reservada DS:3588 y recorre las posiciones restantes.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:87E4",
       "nombre": "Retirada fuera de límites",
       "comentario": "Comprueba X, X más ancho, Y e Y más alto; al retirar limpia las tres referencias.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8820",
       "nombre": "Retorno del avance de secuencias",
       "comentario": "Restaura DS y retorna después de las dos pasadas.",
-      "traslado": "motor/entidades/secuencias.cpp"
+      "traslado": "apps/juego/motor/entidades/secuencias.cpp"
     },
     {
       "direccion": "0000:8822",
       "nombre": "Reinicio del estado de acción",
       "comentario": "Desactiva campos y reinicia fases de tres secuencias; conserva los identificadores de secuencia.",
-      "traslado": "motor/acciones/iniciar_accion.cpp"
+      "traslado": "apps/juego/motor/acciones/iniciar_accion.cpp"
     },
     {
       "direccion": "0000:886B",
       "nombre": "Entrada común de una acción",
       "comentario": "Reinicia estado, planifica si DS:0AD7 no es cero, prepara el cursor y retorna con acarreo activo. El traslado incluye sus dependencias numéricas.",
-      "traslado": "motor/acciones/iniciar_accion.cpp"
+      "traslado": "apps/juego/motor/acciones/iniciar_accion.cpp"
     },
     {
       "direccion": "0000:88A0",
       "nombre": "Retorno de acción rechazada",
       "comentario": "Prepara el estado de cursor dos y retorna con acarreo activo; AX no se modifica.",
-      "traslado": "motor/acciones/iniciar_accion.cpp"
+      "traslado": "apps/juego/motor/acciones/iniciar_accion.cpp"
     },
     {
       "direccion": "0000:88BC",
       "nombre": "Consulta de identificador",
       "comentario": "Busca en las diez palabras, incluidas las situadas después de FFFFh. El C++ devuelve true cuando el original limpia el acarreo.",
-      "traslado": "motor/acciones/lista_identificadores.cpp"
+      "traslado": "apps/juego/motor/acciones/lista_identificadores.cpp"
     },
     {
       "direccion": "0000:88D9",
       "nombre": "Inserción en la primera casilla libre",
       "comentario": "Escribe AX en la primera palabra FFFFh y no elimina duplicados.",
-      "traslado": "motor/acciones/lista_identificadores.cpp"
+      "traslado": "apps/juego/motor/acciones/lista_identificadores.cpp"
     },
     {
       "direccion": "0000:88F3",
       "nombre": "Retirada de la primera coincidencia de una lista",
       "comentario": "Busca AX en diez palabras desde DS:5225, desplaza las siguientes y rellena el final con FFFFh.",
-      "traslado": "motor/acciones/lista_identificadores.cpp"
+      "traslado": "apps/juego/motor/acciones/lista_identificadores.cpp"
     },
     {
       "direccion": "0000:B740",
       "nombre": "Preparación y ejecución de la acción de resultados",
       "comentario": "B740–B939 y886B ya reconstruidos en preparar_resultados/iniciar_accion. Integrados ahora en el menú de140 con ServicioCreacion.azar, sin otro generador. comparar:dados-palacio5607 casos/pasos,24 semillas del selector, dos tiradas reales y nueve imágenesSDL/restauración. No confundir con todas las habitaciones que abren las marcas.",
-      "traslado": "motor/acciones/iniciar_accion.cpp"
+      "traslado": "apps/juego/motor/acciones/iniciar_accion.cpp"
     },
     {
       "direccion": "0000:B78C",
@@ -1463,7 +1463,7 @@
       "direccion": "0000:B7D1",
       "nombre": "Selección de coincidencias entre tres resultados",
       "comentario": "Entrada: DL primero, DH segundo, AL tercero, todos entre cero y cinco. Empieza el segundo bloque de escrituras trasladado.",
-      "traslado": "motor/acciones/seleccionar_coincidencias.cpp"
+      "traslado": "apps/juego/motor/acciones/seleccionar_coincidencias.cpp"
     },
     {
       "direccion": "0000:B7F2",
@@ -1484,13 +1484,13 @@
       "direccion": "0000:B8A3",
       "nombre": "Fin del bloque aislado de coincidencias",
       "comentario": "La comparación aislada termina aquí. El nuevo traslado integrado continúa preparando estado hasta B93A; su comparación queda pendiente.",
-      "traslado": "motor/acciones/preparar_resultados.cpp"
+      "traslado": "apps/juego/motor/acciones/preparar_resultados.cpp"
     },
     {
       "direccion": "0000:B93A",
       "nombre": "Límite del nuevo traslado integrado",
       "comentario": "El bloque C++ prepara el estado hasta antes de este salto a 886B. La ejecución del destino común y su animación sigue pendiente.",
-      "traslado": "motor/acciones/preparar_resultados.cpp"
+      "traslado": "apps/juego/motor/acciones/preparar_resultados.cpp"
     },
     {
       "direccion": "0000:DE10",
@@ -1506,7 +1506,7 @@
       "direccion": "0000:DE2D",
       "nombre": "Interpretación del retorno de una acción",
       "comentario": "Sin acarreo continúa. Con acarreo finaliza; AX=8000h evita la llamada previa de restauración.",
-      "traslado": "motor/acciones/retorno_accion.cpp"
+      "traslado": "apps/juego/motor/acciones/retorno_accion.cpp"
     },
     {
       "direccion": "0000:DE5B",
@@ -1527,7 +1527,7 @@
       "direccion": "0000:DF15",
       "nombre": "Construcción de los diez destinos de acción",
       "comentario": "Entrada: segmento de datos del juego en CS:0000, DF=0. Lee DS:B620 y escribe DS:B60C.",
-      "traslado": "motor/acciones/construir_tabla.cpp"
+      "traslado": "apps/juego/motor/acciones/construir_tabla.cpp"
     },
     {
       "direccion": "0000:DF28",
@@ -1557,7 +1557,7 @@
     {
       "direccion": "0000:28B2",
       "nombre": "Introducción de la bruja y el béisbol",
-      "comentario": "28B2–2F4F: recorrido trasladado a motor/video/introduccion.cpp. Cargas RNC2, páginas CRTC, tres paletas, cuatro fundidos y controles de omisión. SDL sustituye E/S y retrazo; no hay audio."
+      "comentario": "28B2–2F4F: recorrido trasladado a apps/juego/motor/video/introduccion.cpp. Cargas RNC2, páginas CRTC, tres paletas, cuatro fundidos y controles de omisión. SDL sustituye E/S y retrazo; no hay audio."
     },
     {
       "direccion": "0000:2951",
@@ -1582,12 +1582,12 @@
     {
       "direccion": "0000:DAE2",
       "nombre": "Menú de acciones original",
-      "comentario": "Inicio del menú. motor/acciones/menu.cpp prepara listas y entradas; SDL conecta selección y panel. La apertura deslizante y el resto de manejadores específicos siguen pendientes."
+      "comentario": "Inicio del menú. apps/juego/motor/acciones/menu.cpp prepara listas y entradas; SDL conecta selección y panel. La apertura deslizante y el resto de manejadores específicos siguen pendientes."
     },
     {
       "direccion": "0000:DEFB",
       "nombre": "Composición del panel y los iconos",
-      "comentario": "320x32 desde MENU.DAT; DF15 construye manejadores; DF4E recorre iconos de ICONS.SPR o de DS:524E. Traslado motor/video/menu.cpp con referencias en párrafos y máscaras originales."
+      "comentario": "320x32 desde MENU.DAT; DF15 construye manejadores; DF4E recorre iconos de ICONS.SPR o de DS:524E. Traslado apps/juego/motor/video/menu.cpp con referencias en párrafos y máscaras originales."
     },
     {
       "direccion": "0000:E05B",
@@ -1607,7 +1607,7 @@
     {
       "direccion": "0000:099A",
       "nombre": "Activación de acciones tras alcanzar un nodo",
-      "comentario": "099A–0A58 consume nodos enlazados. Al terminar, coloca el personaje, copia los quince bytes de canales pendientes y consume hasta setenta registros de programación. Traslado en motor/acciones/menu.cpp."
+      "comentario": "099A–0A58 consume nodos enlazados. Al terminar, coloca el personaje, copia los quince bytes de canales pendientes y consume hasta setenta registros de programación. Traslado en apps/juego/motor/acciones/menu.cpp."
     },
     {
       "direccion": "0000:254A",
@@ -1638,127 +1638,127 @@
       "direccion": "0000:563A",
       "nombre": "Recogida y tratamiento de puntuación",
       "comentario": "Las ramas 1/3/5 están reconstruidas para la mazmorra. El icono 1F suma un punto y 22 suma dos sin insertar inventario; los demás intentan insertar y rechazan si está lleno.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:615C",
       "nombre": "Recogida común con desplazamiento",
       "comentario": "615C–61A6 conserva el contador bajo de pasos más seis, el modelo especial 14 y la baja persistente mediante 623D. Integrada para el objeto cinco de la mazmorra.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:623D",
       "nombre": "Baja persistente de un objeto recogido",
       "comentario": "Convierte el registro de entidad en un índice de lista de nueve bytes y pone su segundo byte a cero.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:9900",
       "nombre": "Empujar la pared de la mazmorra",
       "comentario": "Solo acepta el fotograma tres. Programa los canales de la entidad y de Brad, activa el clip (objeto tres) y suma cinco puntos. Contraste de aceptación y rechazo más recorrido persistente.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:9954",
       "nombre": "Desbloqueo de la puerta con el clip",
       "comentario": "El desbloqueo acepta los identificadores tres y cuatro en ambos órdenes y programa la puerta mediante la cola de canales 009C y suma cinco puntos. La comparación persistente verifica el fotograma final 10 hexadecimal.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:BEA8",
       "nombre": "Rutina específica del corredor",
       "comentario": "Ventanas 24/cero, retirada de la llave uno y planificación. Integrada con la carga de recursos y el regreso persistente en SDL.",
-      "traslado": "motor/entidades/mazmorra.cpp"
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
     },
     {
       "direccion": "0000:4E98",
       "nombre": "Tabla de tiras de la escena",
       "comentario": "Dispone longitud y referencia de tiras; acota la ventana. Reconstruido para escenas cero a tres.",
-      "traslado": "motor/video/camara.cpp"
+      "traslado": "apps/juego/motor/video/camara.cpp"
     },
     {
       "direccion": "0000:EAFE",
       "nombre": "Decisión de desplazamiento de cámara",
       "comentario": "Compara el centro de Brad con umbrales de palabra con signo. El extremo de la ventana también limita el desplazamiento. Comparadas 24 decisiones.",
-      "traslado": "motor/video/camara.cpp"
+      "traslado": "apps/juego/motor/video/camara.cpp"
     },
     {
       "direccion": "0000:EC8A",
       "nombre": "Desplazamiento de cámara hacia la derecha",
       "comentario": "Avanza una tira y presenta ocho retrazos de cuatro píxeles. Nueve posiciones gráficas comparadas con las páginas y origen CRTC originales.",
-      "traslado": "motor/video/camara.cpp"
+      "traslado": "apps/juego/motor/video/camara.cpp"
     },
     {
       "direccion": "0000:EF7F",
       "nombre": "Desplazamiento de cámara hacia la izquierda",
       "comentario": "Retrocede una tira, conserva la franja exterior y presenta ocho retrazos. Estado de entidades, destinos e imagen comparados con el original.",
-      "traslado": "motor/video/camara.cpp"
+      "traslado": "apps/juego/motor/video/camara.cpp"
     },
     {
       "direccion": "0000:3858",
       "nombre": "Mecanismo inicial del corredor",
       "comentario": "Identificador ocho en 384A. Prepara aproximación, modelo DIG y canales diferidos para las entidades 2C8E y 2CAF. Comparado en el recorrido persistente del corredor.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:BEFD",
       "nombre": "Rutina específica del fondo del lago",
       "comentario": "BEFD–C092. Límites, contador, burbujas y entidades; utiliza el generador y el creador originales reconstruidos. Comparada durante la inmersión de PLUNGE. BF3C–BF41 emite el identificador 11h para Brad mediante el servicio de sonido común; no cambia los consumos de azar.",
-      "traslado": "motor/entidades/mazmorra.cpp"
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
     },
     {
       "direccion": "0000:3545",
       "nombre": "Respuesta sonora de conversación sin animación",
       "comentario": "3545–354A emite cero desde Brad al repetir la llamada; 37FF–3804 emite uno para el otro tema en la mazmorra. Servicio 5288 compartido con secuencias y lago, contrastado en modalidades cero y uno, con visibilidad.",
-      "traslado": "motor/acciones/menu.cpp"
+      "traslado": "apps/juego/motor/acciones/menu.cpp"
     },
     {
       "direccion": "0000:8DB0",
       "nombre": "Inicio de tema AdLib",
       "comentario": "8DB0–8DFD reconstruido: nueve registros CS de 17 bytes desde 8CE2. Tablas 8DAC, temas cero y uno. Conserva byte 10h y reloj global. 0487–048A selecciona tema uno antes de Core.",
-      "traslado": "motor/sonido/musica.cpp"
+      "traslado": "apps/juego/motor/sonido/musica.cpp"
     },
     {
       "direccion": "0000:8DFE",
       "nombre": "Temporizador musical AdLib",
       "comentario": "8DFE–8E5A reconstruido: decremento de CS:8E5B, recarga desde 8E5D y nueve canales en orden. Modalidad musical dos, llamada por IRQ 024A–0251.",
-      "traslado": "motor/sonido/musica.cpp"
+      "traslado": "apps/juego/motor/sonido/musica.cpp"
     },
     {
       "direccion": "0000:8E5F",
       "nombre": "Intérprete de canal musical",
       "comentario": "8E5F–8F4E reconstruido: duración, notas/silencios, FE instrumento, FD transposición, FF repetición y lista con FFFE/FFFD/FFFF. Estado CS y escrituras OPL comparados con las instrucciones originales.",
-      "traslado": "motor/sonido/musica.cpp"
+      "traslado": "apps/juego/motor/sonido/musica.cpp"
     },
     {
       "direccion": "0000:8FFC",
       "nombre": "Lista inicial de registros AdLib",
       "comentario": "8FFC–900B recorre parejas desde 9749 y termina en FFFF. Trasladada sin calibración de velocidad DOS.",
-      "traslado": "motor/sonido/musica.cpp"
+      "traslado": "apps/juego/motor/sonido/musica.cpp"
     },
     {
       "direccion": "0000:902E",
       "nombre": "Instrumentos y encendido de nota AdLib",
       "comentario": "902E–90BA escribe diez registros de operadores, realimentación y dos de frecuencia. 90C4 apaga la nota anterior. Conserva el orden original de escrituras.",
-      "traslado": "motor/sonido/musica.cpp"
+      "traslado": "apps/juego/motor/sonido/musica.cpp"
     },
     {
       "direccion": "0000:4DD5",
       "nombre": "Selección del banco musical de escena",
       "comentario": "En modalidad cuatro consulta DS:80CD y los cinco descriptores DS:80B9. Conserva el banco si coincide; si cambia solicita parada antes de cargar tempo y recurso. En modalidad AdLib dos, 4DD5–4DDC salta a 4E98 sin cambiar la música: 78 escenas comprobadas sin cambios de CS, DS ni puertos.",
-      "traslado": "motor/sonido/musica_rs.cpp"
+      "traslado": "apps/juego/motor/sonido/musica_rs.cpp"
     },
     {
       "direccion": "0000:7D5D",
       "nombre": "Petición de parada musical",
       "comentario": "Activa DS:9955. La siguiente petición de pista envía 00 FC; al recibir FC se ejecuta la parada MPU 05 desde DS:995B. No contiene rampa de volumen.",
-      "traslado": "plataformas/sdl/musica_mt32.cpp"
+      "traslado": "apps/juego/plataformas/sdl/musica_mt32.cpp"
     },
     {
       "direccion": "0000:7E3B",
       "nombre": "Alimentación de paquetes musicales RS",
       "comentario": "Lee desde DS:9928/9926, resuelve FF como salto absoluto y conserva el estado MIDI implícito en CS:7EED. Comparado con los bytes enviados a puerto y DS completo.",
-      "traslado": "motor/sonido/musica_rs.cpp"
+      "traslado": "apps/juego/motor/sonido/musica_rs.cpp"
     },
     {
       "direccion": "0000:038E",
@@ -1768,12 +1768,12 @@
     {
       "direccion": "0000:4FD1",
       "nombre": "Carga del banco digital de escena",
-      "comentario": "El tercer campo del registro de ocho bytes DS:784E contiene el nombre SFX o cero. Traslado: motor/sonido/digital.cpp y plataformas/sdl/audio.cpp."
+      "comentario": "El tercer campo del registro de ocho bytes DS:784E contiene el nombre SFX o cero. Traslado: apps/juego/motor/sonido/digital.cpp y apps/juego/plataformas/sdl/audio.cpp."
     },
     {
       "direccion": "0000:7FB3",
       "nombre": "Reproducción digital Sound Blaster",
-      "comentario": "AX/DX longitud, DS:SI muestra, BL constante temporal DSP. 40 fija frecuencia y 14 reproduce PCM mono de ocho bits sin signo; DMA canal uno se divide por fronteras de 64 KiB. Traslado: motor/sonido/digital.cpp; comparar:digital contrasta órdenes, DMA y PCM."
+      "comentario": "AX/DX longitud, DS:SI muestra, BL constante temporal DSP. 40 fija frecuencia y 14 reproduce PCM mono de ocho bits sin signo; DMA canal uno se divide por fronteras de 64 KiB. Traslado: apps/juego/motor/sonido/digital.cpp; comparar:digital contrasta órdenes, DMA y PCM."
     },
     {
       "direccion": "0000:82C6",

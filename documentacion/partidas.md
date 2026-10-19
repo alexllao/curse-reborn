@@ -24,7 +24,7 @@ La importación se conserva como integración de escritorio mediante arrastrar u
 
 Se admiten archivos DOS que no contienen las ranuras finales, siempre que todos los registros activos estén completos. La versión anterior del port admitía siete ranuras; sus archivos continúan siendo válidos y se amplían al escribir. E997 recorre ocho descripciones y E89D permite ocho filas, lo que corrige el límite anterior. El formato original no guarda la semilla de azar de CS:78DE: no se inventa ese campo en el archivo compatible. Los nombres antiguos se conservan byte a byte. Para los perfiles creados por el panel SDL anterior, las minúsculas se muestran como mayúsculas y los índices inexistentes en FONT.SPR como interrogaciones; no se modifica el archivo por dibujarlo. El teclado DOS original solo produce las letras mayúsculas de su matriz.
 
-El formato puro está en `motor/estado/partidas.*`, sin acceso al disco. Se reconstruyen E718–E745 (escritura), E253–E27A (lectura) y E824–E84D (borrado). Borrar conserva los datos del registro. Se mantiene la peculiaridad de E831: aplica XOR7F a la máscara; en la octava ranura no borra su bit. Esta diferencia también está comparada contra el EXE y no se corrige silenciosamente en el modo fiel.
+El formato puro está en `apps/juego/motor/estado/partidas.*`, sin acceso al disco. Se reconstruyen E718–E745 (escritura), E253–E27A (lectura) y E824–E84D (borrado). Borrar conserva los datos del registro. Se mantiene la peculiaridad de E831: aplica XOR7F a la máscara; en la octava ranura no borra su bit. Esta diferencia también está comparada contra el EXE y no se corrige silenciosamente en el modo fiel.
 
 ## Restauración
 

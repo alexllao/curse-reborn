@@ -4,14 +4,14 @@ La ruta persistente continúa desde POOL, después de recoger las algas y abrir 
 
 ## Rutinas trasladadas
 
-| Rutina DOS                     | Comportamiento                                                                      | Traslado                                       |
-| ------------------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `5849–59A3`, ayudante `615C`   | Recogida por identificador y lista persistente, capacidad, animación y demora       | `motor/acciones/cuevas.cpp`                    |
-| `3E89–3F25`                    | Clasificación de piedras pequeñas, medianas y grandes                               | `motor/acciones/cuevas.cpp`                    |
-| `9F39`, `9F85`, `9FCD`         | Entrega por tamaño, contador, desaparición de puntos del cartel y consumo de piedra | `motor/acciones/cuevas.cpp`                    |
-| `A00A–A07B`                    | Recompensa de cuerda, acercamiento, guiones del picapedrero y puntuación            | `motor/acciones/cuevas.cpp`                    |
-| `1905–1962`                    | Rutina ambiental de la escena seis y sus llamadas al generador aleatorio            | `motor/entidades/mazmorra.cpp`                 |
-| `4B05`, `4C43`, `4D2B`, `5145` | Entradas según las tablas originales, incluida la conservación de listas            | `motor/estado/inicializar.cpp` y adaptador SDL |
+| Rutina DOS                     | Comportamiento                                                                      | Traslado                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `5849–59A3`, ayudante `615C`   | Recogida por identificador y lista persistente, capacidad, animación y demora       | `apps/juego/motor/acciones/cuevas.cpp`                    |
+| `3E89–3F25`                    | Clasificación de piedras pequeñas, medianas y grandes                               | `apps/juego/motor/acciones/cuevas.cpp`                    |
+| `9F39`, `9F85`, `9FCD`         | Entrega por tamaño, contador, desaparición de puntos del cartel y consumo de piedra | `apps/juego/motor/acciones/cuevas.cpp`                    |
+| `A00A–A07B`                    | Recompensa de cuerda, acercamiento, guiones del picapedrero y puntuación            | `apps/juego/motor/acciones/cuevas.cpp`                    |
+| `1905–1962`                    | Rutina ambiental de la escena seis y sus llamadas al generador aleatorio            | `apps/juego/motor/entidades/mazmorra.cpp`                 |
+| `4B05`, `4C43`, `4D2B`, `5145` | Entradas según las tablas originales, incluida la conservación de listas            | `apps/juego/motor/estado/inicializar.cpp` y adaptador SDL |
 
 En este ejecutable el cartel empieza con **cuatro piedras de cada tamaño**, doce en total. Los contadores son bytes con signo en `DS:35CB–35CD`. La traducción conserva el comportamiento de `DEC/JGE`, incluido el desbordamiento de `80h` a `7Fh`; no convierte ese caso en un descuento válido. Cada entrega suma cinco puntos con aritmética de 16 bits. La última entrega válida proporciona el identificador 55, cuerda, mediante la lista original de inventario.
 

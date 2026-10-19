@@ -13,6 +13,9 @@ export default [
       'build/**',
       'cmake-build-*/**',
       'licencias/**',
+      'apps/juego/terceros/**',
+      '**/dist/**',
+      '**/build/**',
     ],
   },
   {

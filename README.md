@@ -21,7 +21,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
-Los **decorados ampliados están aparcados** por decisión de Àlex: Frank y el pozo conservan sus gráficos originales. Los PNG se guardan como referencia para una revisión futura; el catálogo activo está vacío. Mayús+F1 informa de esta situación y no añade ilustraciones. Los marcos exteriores F1 y el monitor continúan disponibles. Detalles en [Recursos propios](assets/README.md); `pnpm comprobar:decorados` verifica que las escenas permanezcan originales.
+Los **decorados ampliados están aparcados** por decisión de Àlex: Frank y el pozo conservan sus gráficos originales. Los PNG se guardan como referencia para una revisión futura; el catálogo activo está vacío. Mayús+F1 informa de esta situación y no añade ilustraciones. Los marcos exteriores F1 y el monitor continúan disponibles. Detalles en [Recursos propios](packages/assets/README.md); `pnpm comprobar:decorados` verifica que las escenas permanezcan originales.
 
 **Recorrido reconstruido en C++ y SDL desde la mazmorra, lago y cuevas hasta el asaltante, la compra de comida y el transporte del mago de Paso del Dragón. Hay veintiséis vistas de desarrollo; se han conectado las dos calles de la fuente, la tienda abandonada y la posada. Otras ramas y el resto del juego siguen pendientes. Véase la [auditoría de rutas y pendientes](documentacion/auditoria_pantallas.md). Música y efectos comparten el sistema de audio común.**
 
@@ -41,7 +41,7 @@ El [montaje de fondos y sprites](documentacion/arranque_escena.md), incluido RNC
 
 La mazmorra lee las tablas y guiones del EXE como datos, con huella verificada, y ejecuta la lógica traducida a C++. No ejecuta instrucciones DOS. Los originales siguen siendo archivos locales excluidos de Git.
 
-El lago permite ponerse la pecera, liberar al pez, recoger la moneda, entregar el gusano a Mr. Fish, recoger la concha, cruzar las anguilas sobre la tortuga y recoger y usar la picana contra el tiburón. Hablar cerca de Mr. Fish activa su reacción original. La ruta continúa con la almeja, el tapón y la puerta secreta de la poza hacia las cuevas. La auditoría de opciones incluye las listas disponibles en sus estados de referencia. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. F11 permite probar filtros visuales opcionales. F1 utiliza los [marcos propios de estilo pixel art](assets/README.md), separados de los futuros recursos del remaster.
+El lago permite ponerse la pecera, liberar al pez, recoger la moneda, entregar el gusano a Mr. Fish, recoger la concha, cruzar las anguilas sobre la tortuga y recoger y usar la picana contra el tiburón. Hablar cerca de Mr. Fish activa su reacción original. La ruta continúa con la almeja, el tapón y la puerta secreta de la poza hacia las cuevas. La auditoría de opciones incluye las listas disponibles en sus estados de referencia. La música MT-32 y los efectos digitales Sound Blaster o PC Speaker comparten dispositivo. AdLib conserva el tema continuo del ejecutable; los [efectos digitales Sound Blaster](documentacion/efectos_digitales.md) ya están integrados. F11 permite probar filtros visuales opcionales. F1 utiliza los [marcos propios de estilo pixel art](packages/assets/README.md), separados de los futuros recursos del remaster.
 
 Las [piedras y el picapedrero](documentacion/cuevas_y_piedras.md) ya permiten obtener la cuerda desde la partida inicial: doce recogidas, dos entregas y regresos persistentes. La muestra compara **16.204 casos y pasos** con el EXE; cuatro capturas SDL coinciden hasta la cuerda. Se conservan las cuatro piedras de cada tamaño que pide este ejecutable. El pozo y el resto de este tramo continúan en el bloque final de las cuevas. El [recorrido en castellano](documentacion/recorridos/05_piedras_y_cuerda.txt) explica la ruta.
 
@@ -129,18 +129,23 @@ Desensamblar el ejecutable no devuelve el código fuente original. Será necesar
 
 ## Organización del repositorio
 
-El proyecto se organiza como un **monorepositorio**: el motor, las herramientas de investigación, la documentación y las pruebas comparten este repositorio y su historial. Los bloques aislados e integrados conservan contratos, referencias al ejecutable y comparaciones propias. Las carpetas vacías conservan un archivo `.gitkeep`. Todavía no hay una compilación del juego completo; los comandos de comparación compilan únicamente los bloques trasladados.
+El workspace de pnpm separa el port nativo, la futura web y los recursos propios compartidos. Conserva un único motor C++ para SDL y la futura versión WebAssembly. La web y WebAssembly todavía no están implementados. Los comandos habituales se siguen ejecutando desde la raíz.
 
 ```text
 curse-reborn/
-├── motor/              # Núcleo C++ reconstruido, independiente de SDL
-├── plataformas/        # Presentación y acceso a recursos mediante SDL
-├── herramientas/       # Análisis del ejecutable y apoyo a su reconstrucción
-├── documentacion/      # Mapa de código, formatos y decisiones del proyecto
-├── pruebas/            # Comprobaciones del motor y las herramientas
-├── licencias/          # Avisos de las dependencias, sin asignar licencia al código propio
-└── datos_originales/   # Copia local del juego; solo se versiona .gitkeep
+├── apps/
+│   ├── juego/          # Motor C++, plataformas, terceros y manifiesto de fuentes
+│   └── web/            # Espacio reservado para la web de presentación
+├── packages/assets/    # Habitaciones, marcos y otros recursos propios compartidos
+├── herramientas/       # Compilación, análisis y calidad comunes
+├── pruebas/            # Comparadores con el EXE y comprobaciones del analizador
+├── documentacion/      # Contratos, recorridos y mapa de ensamblador
+├── licencias/          # Avisos de dependencias
+├── datos_originales/   # Juego y ROM locales, sin versionar
+└── trabajo/            # Entorno, compilaciones e informes locales, sin versionar
 ```
+
+Consulta [la organización y sus comandos](documentacion/monorepo.md). `pnpm monorepo:comprobar` revisa las rutas; `pnpm --filter @curse-reborn/juego compilar` compila el paquete. `pnpm ventana`, `pnpm sdl:compilar` y los demás comandos anteriores se mantienen.
 
 | Archivo                          | Contenido                                                    |
 | -------------------------------- | ------------------------------------------------------------ |
@@ -331,7 +336,7 @@ La [ruta de Paso del Dragón](documentacion/puzles_poblacion.md) incluye guardia
 
 Los [paneles de partidas](documentacion/partidas.md) conservan ahora el diseño original: placa negra, FONT.SPR, ocho ranuras y teclado de nombres. Se han retirado los botones Aceptar/Cancelar/Importar y las confirmaciones añadidas. `pnpm comprobar:partidas` incluye303 casos del formato,23 composiciones originales y4 casos de nombres anteriores comparados por píxeles y el flujo SDL. La compatibilidad con perfiles anteriores de siete ranuras se conserva.
 
-El port comienza siempre en una **habitación interactiva**, con el PC apagado. El botón de la torre reproduce BIOS/DOS y carga el juego dentro del monitor; el botón físico del monitor acerca el juego al máximo disponible. **Ctrl+R** vuelve a la habitación, **Ctrl+H** cambia de diseño y **Escape** queda reservado al juego. Las cinco habitaciones y sus variantes se configuran en `assets/original/habitaciones/habitaciones.json`; son independientes de los marcos decorativos de F1. Véanse [Habitaciones](documentacion/habitaciones.md) y `pnpm comprobar:habitaciones`.
+El port comienza siempre en una **habitación interactiva**, con el PC apagado. El botón de la torre reproduce BIOS/DOS y carga el juego dentro del monitor; el botón físico del monitor acerca el juego al máximo disponible. **Ctrl+R** vuelve a la habitación, **Ctrl+H** cambia de diseño y **Escape** queda reservado al juego. Las cinco habitaciones y sus variantes se configuran en `packages/assets/original/habitaciones/habitaciones.json`; son independientes de los marcos decorativos de F1. Véanse [Habitaciones](documentacion/habitaciones.md) y `pnpm comprobar:habitaciones`.
 
 El botón del monitor apaga el ordenador y lo deja apagado hasta otra pulsación. Al encender reproduce un arranque visual de BIOS 386 y DOS de siete segundos, sin saltarlo, antes de Core. Conserva los ajustes de pantalla y sonido y no modifica las partidas guardadas. Comprobación específica: `pnpm comprobar:reinicio`.
 
