@@ -14,7 +14,8 @@ class Audio {
 public:
   // Abre una salida estéreo con efectos mono; SDL convierte al formato y frecuencia del dispositivo
   // real.
-  bool abrir(const std::string &carpeta, bool conservar_seleccion = false);
+  bool abrir(const std::string &carpeta, bool conservar_seleccion = false,
+             bool iniciar_pausado = false);
   // Detiene la salida durante el apagado visual sin alterar volumen, silencio ni perfiles.
   bool pausar_reinicio();
   // Arranca la música desde el principio conservando las opciones elegidas por el usuario.
@@ -31,6 +32,10 @@ public:
   bool reproducir(unsigned char *segmento, unsigned short entidad, unsigned char identificador);
   // Silencia la salida audible; las secuencias y prioridades originales siguen avanzando.
   bool alternar_silencio();
+  // Consulta el silencio general para mostrar el estado real de música y efectos en el HUD.
+  bool silenciado() const {
+    return silencio;
+  }
   // Ajusta el volumen general entre cero y doscientos sin alterar los relojes musicales.
   bool ajustar_volumen(int cambio);
   // Permite consultar el ajuste guardado, incluso durante el silencio temporal de M.

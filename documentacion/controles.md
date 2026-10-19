@@ -12,19 +12,23 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 | **F3** | Cambiar los efectos entre Sound Blaster digital y PC Speaker, conservando la música.                            |
 | **F4** | Cambiar la música entre ninguna, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32. La consola indica la opción activa. |
 
+**M** muestra «Sonido silenciado» o «Sonido activado» con el mismo texto blanco y fundido de los otros avisos. Silencia música y efectos y recupera el porcentaje anterior al reactivarlo; también funciona durante BIOS o con el PC apagado. Las secuencias conservan su reloj mientras están silenciadas.
+
 El volumen va del 0 al 200 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Los efectos digitales Sound Blaster están activos al arrancar; F3 permite comparar con PC Speaker sin reiniciar la escena. Ambas opciones comparten el volumen y el silencio.
 
 El **100 %** es el nivel normal. Entre **110 % y 200 %** se aplica amplificación adicional, que puede saturar en los pasajes fuertes. M conserva también los ajustes superiores al 100 %.
 
 ## Aspecto de pantalla
 
-**Mayús + F1** queda reservado a los **decorados ampliados**, actualmente aparcados. La consola informa de ello y la imagen permanece original. No hay decorados asignados a ninguna escena; se conservan los PNG como referencia. F1 sigue controlando los marcos exteriores y el monitor, y F2 el límite de FPS.
+**Mayús + F1** queda reservado a los **decorados ampliados**, actualmente aparcados. La consola informa de ello y la imagen permanece original. No hay decorados asignados a ninguna escena; se conservan los PNG como referencia. F1 sigue controlando los marcos exteriores, y F2 el límite de FPS.
 
-**F1** recorre **predeterminado → monitor de PC 286 → sin marco**. Arranca sin marco y cada cambio aparece en consola. El predeterminado conserva el PNG de Àlex, su relieve y la entrada/salida con zoom y fundido de 250 ms; en ventanas altas gira sus paneles laterales para ocupar las bandas superior e inferior.
+**F1** alterna el marco predeterminado y las bandas sin marco. Conserva su zoom y fundido de 250 ms. En ventanas altas gira los paneles laterales hacia arriba y abajo. Esta opción se ve cuando el juego está ampliado; no cambia la habitación.
 
-El monitor añade una carcasa beige con una habitación de finales de los 80 y principios de los 90 detrás. **No reduce automáticamente el juego**: conserva el tamaño máximo salvo que se elija un zoom menor. La carcasa rodea esa imagen y puede quedar parcialmente fuera de la ventana cuando no cabe; no gira, estira ni tapa la escena. La habitación rellena el espacio exterior que quede libre, especialmente en pantallas 32:9. Ratón, paneles y depuración conservan las coordenadas de siempre. Los filtros F11 afectan al juego y no al monitor o la habitación. **Mayús + F1** sigue controlando por separado los decorados ampliados. Véase [Recursos propios](../assets/README.md).
+El port arranca siempre en una **habitación interactiva**, inicialmente **Buhardilla**, con el PC apagado. Pulsa el botón de la torre para encenderlo. BIOS y DOS duran siete segundos completos y no se saltan con Intro. Después carga Core, título e introducción dentro del monitor. El sonido y la lógica permanecen detenidos mientras está apagado o arrancando.
 
-Con el monitor seleccionado, **Ctrl + rueda hacia abajo** aleja y **Ctrl + rueda hacia arriba** acerca. También sirven **Ctrl + −** y **Ctrl + +**; **Ctrl + 0** vuelve al tamaño máximo. El zoom va del **50 % al 100 %**, en pasos del 10 %, y se muestra en consola. El ajuste es manual: arranca al 100 % y conserva la preferencia durante la sesión, incluso al recorrer F1. En los otros dos modos el juego mantiene su tamaño máximo. **+ y − sin Ctrl** siguen controlando el volumen. El ratón, el cursor y los paneles se ajustan a la nueva escala.
+Una vez cargado, pulsa **la pantalla o el botón del monitor** para acercar el juego al máximo disponible, conservando su proporción y la sesión. **Ctrl + R** vuelve a la habitación sin reiniciar. **Escape** conserva exclusivamente su función en el juego y sus menús. **Ctrl + H** recorre las cinco habitaciones y muestra su nombre en consola. Cada una elige la imagen más próxima a la proporción de la ventana. La ventana vertical muestra la habitación completa sin deformarla.
+
+**Ctrl + rueda**, **Ctrl + −/+** ajustan el acercamiento en pasos del 20 % entre la habitación completa y el juego máximo; **Ctrl + 0** alcanza el máximo. **+ y − sin Ctrl** conservan su función de volumen. Los filtros se aplican al juego y a su mano original, conservando intacta la ilustración de la habitación.
 
 **F11** recorre **original → suavizado → líneas de escaneo → CRT suave → xBRZ 2x → 2xSaI → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
 
@@ -103,13 +107,11 @@ Frank y el pozo se muestran sin decorados ampliados. Su posible revisión visual
 
 La mano original del ratón aparece únicamente dentro de la imagen jugable. Sobre el marco, la habitación o las bandas, y al salir de la ventana, se recupera la flecha normal. Volver al juego restaura la mano a su escala actual, también con zoom. Los paneles DOS ocultan el cursor nativo solo mientras el puntero permanece dentro del juego, para evitar duplicar su mano incorporada.
 
-## Botón del monitor
+## Alimentación de la habitación
 
-Con el marco de PC seleccionado, el primer clic izquierdo en su botón apaga el ordenador: piloto rojo, cierre CRT y pantalla negra. Permanece apagado hasta volver a pulsar. El segundo clic enciende el piloto verde y reproduce siete segundos de arranque: BIOS inspirada en los 386 de AMI, contador de memoria, comprobación de unidades y presentación de DOS cargando CURSE. **El arranque se muestra completo y no se puede saltar.** Después comienza Core, seguido del título y la introducción. Es una recreación visual propia, sin firmware ni ejecución real de DOS.
+El botón de la torre apaga el PC con cierre CRT y piloto rojo; otra pulsación reproduce de nuevo BIOS/DOS y carga Core. Apagar durante BIOS no muestra un fotograma del juego. Los paneles se cierran al comenzar otra sesión; se conservan volumen, silencio, perfil musical, efectos, filtro y pantalla completa. No escribe ni borra partidas. El botón del monitor sirve para acercar la vista; no apaga el PC.
 
-Si el botón queda fuera de la ventana, aleja el monitor con Ctrl+rueda o Ctrl+−, también mientras está apagado. Durante el apagado y el arranque se pausan la partida y el sonido, se ocultan los FPS y se mantiene la flecha normal. Pulsar el botón durante el arranque vuelve a apagarlo; los rebotes durante el cierre CRT se ignoran.
-
-Al terminar el arranque se cierran los paneles y comienza de nuevo la música, conservando volumen, silencio, perfil de música y efectos, filtros, marco, zoom y pantalla completa. No escribe ni borra partidas guardadas. El clic derecho y los clics fuera del botón no activan la alimentación. La consola registra apagado, encendido y carga del juego. Se puede cerrar la aplicación mediante su ventana en cualquier momento.
+El cursor es la flecha del sistema fuera del juego. Los clics sobre muebles y bandas no llegan a los puzles. Alt+Intro está disponible también con el PC apagado. El contador de tiempo efectivo excluye apagado y arranque. Véase [Habitaciones y catálogo](habitaciones.md).
 
 El catálogo incluye Benn, la tienda de la adivina, la segunda casa abandonada y el probador. Las puertas35/38/39 y sus regresos46/48/49 conservan la partida; el atajo sigue abriendo una sesión independiente.
 

@@ -149,6 +149,7 @@
     "comprobar:poblacion": "node herramientas/gestionar_proyecto.mjs comprobar:poblacion",
     "comparar:asaltante": "node herramientas/gestionar_proyecto.mjs comparar:asaltante",
     "comprobar:asaltante": "node herramientas/gestionar_proyecto.mjs comprobar:asaltante",
+    "comprobar:habitaciones": "node herramientas/gestionar_proyecto.mjs comprobar:habitaciones",
     "comprobar:monitor": "node herramientas/gestionar_proyecto.mjs comprobar:monitor",
     "comprobar:reinicio": "node herramientas/gestionar_proyecto.mjs comprobar:reinicio",
     "comprobar:poleas-palacio": "node herramientas/gestionar_proyecto.mjs comprobar:poleas-palacio",

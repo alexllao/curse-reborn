@@ -131,10 +131,10 @@ public:
   bool depurar(SDL_Renderer *dibujante, bool objetos, bool interacciones, bool limites) const;
 
   // Abre la salida común antes de cargar una partida; un fallo de dispositivo no altera los datos.
-  bool abrir_audio(const std::string &carpeta) {
-    return audio.abrir(carpeta);
+  bool abrir_audio(const std::string &carpeta, bool iniciar_pausado = false) {
+    return audio.abrir(carpeta, false, iniciar_pausado);
   }
-  // Pausa el sonido durante el apagado opcional del marco de monitor.
+  // Pausa el sonido mientras el PC de la habitación está apagado o arrancando.
   bool pausar_audio_reinicio() {
     return audio.pausar_reinicio();
   }
@@ -165,6 +165,10 @@ public:
   // Permite contrastar los efectos digitales y el altavoz sin reiniciar ni cambiar la música.
   bool alternar_efectos_audio() {
     return audio.alternar_efectos();
+  }
+  // Expone el silencio efectivo sin duplicar una preferencia de audio en la interfaz.
+  bool silenciado() const {
+    return audio.silenciado();
   }
   // Alterna el silencio de plataforma con la tecla M.
   bool alternar_silencio() {

@@ -1,4 +1,5 @@
 /** Valida los marcos propios y prepara el catálogo C++ y sus imágenes junto a la aplicación. */
+import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { createHash } from 'node:crypto';
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -140,53 +141,7 @@ export function prepararMarcos(raiz, destino) {
   }
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
-  const monitor = JSON.parse(readFileSync(join(origen, 'monitor.json'), 'utf8'));
-  const imagenMonitor = readFileSync(join(origen, monitor.archivo));
-  if (
-    imagenMonitor.readUInt32BE(16) !== monitor.resolucion[0] ||
-    imagenMonitor.readUInt32BE(20) !== monitor.resolucion[1]
-  )
-    throw new Error('Resolución inesperada del monitor.');
-  const [mx, my, mw, mh] = monitor.pantalla;
-  if (
-    ![mx, my, mw, mh].every(Number.isInteger) ||
-    mx < 0 ||
-    my < 0 ||
-    mw <= 0 ||
-    mh <= 0 ||
-    mx + mw > monitor.resolucion[0] ||
-    my + mh > monitor.resolucion[1]
-  )
-    throw new Error('Abertura del monitor inválida.');
-  copyFileSync(join(origen, monitor.archivo), join(carpeta, monitor.archivo));
-  copyFileSync(join(origen, 'monitor.json'), join(carpeta, 'monitor.json'));
-  const fondoMonitor = monitor.fondo;
-  if (!/^[a-z0-9_-]+\.png$/.test(fondoMonitor.archivo))
-    throw new Error('Nombre de fondo del monitor inválido.');
-  const imagenFondo = readFileSync(join(origen, fondoMonitor.archivo));
-  if (
-    imagenFondo.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
-    imagenFondo.readUInt32BE(16) !== fondoMonitor.resolucion[0] ||
-    imagenFondo.readUInt32BE(20) !== fondoMonitor.resolucion[1]
-  )
-    throw new Error('Resolución o formato inesperados en la habitación.');
-  copyFileSync(join(origen, fondoMonitor.archivo), join(carpeta, fondoMonitor.archivo));
-  for (const nombre of ['boton', 'piloto']) {
-    const r = monitor[nombre];
-    if (
-      !Array.isArray(r) ||
-      r.length !== 4 ||
-      !r.every(Number.isInteger) ||
-      r[0] < 0 ||
-      r[1] < 0 ||
-      r[2] <= 0 ||
-      r[3] <= 0 ||
-      r[0] + r[2] > monitor.resolucion[0] ||
-      r[1] + r[3] > monitor.resolucion[1]
-    )
-      throw new Error('Control del monitor inválido: ' + nombre);
-  }
-  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr DefinicionMonitor monitor_pc = {"assets/original/marcos/monitor.png",${monitor.resolucion.join(',')},{${monitor.pantalla.join(',')}},${JSON.stringify(`assets/original/marcos/${fondoMonitor.archivo}`)},${fondoMonitor.resolucion.join(',')},{${monitor.boton.join(',')}},{${monitor.piloto.join(',')}}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  const cabecera = `// Generado desde assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }
@@ -196,4 +151,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (!process.argv[2])
     throw new Error('Indica la carpeta de compilación para preparar los marcos.');
   prepararMarcos(raiz, resolve(process.argv[2]));
+  prepararHabitaciones(raiz, resolve(process.argv[2]));
 }

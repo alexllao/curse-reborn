@@ -1,5 +1,6 @@
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 import { prepararMt32 } from './gestionar_mt32.mjs';
+import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { prepararMarcos } from './gestionar_marcos.mjs';
 /** Compilación y comprobación de Curse Reborn con SDL, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
@@ -25,12 +26,13 @@ function ejecutar(programa, argumentos, variables = process.env, capturar = fals
     encoding: 'utf8',
     windowsHide: ocultar,
     shell: false,
-    // El encendido exporta más fases PNG en tres formatos que las pruebas de una sola vista.
-    timeout: argumentos.includes('--comprobar-reinicio')
-      ? 30000
-      : argumentos.some((argumento) => argumento.startsWith('--comprobar'))
-        ? 15000
-        : undefined,
+    // Las habitaciones exportan sus variantes y fases en ventanas ocultas.
+    timeout:
+      argumentos.includes('--comprobar-reinicio') || argumentos.includes('--comprobar-monitor')
+        ? 30000
+        : argumentos.some((argumento) => argumento.startsWith('--comprobar'))
+          ? 15000
+          : undefined,
     windowsVerbatimArguments:
       process.platform === 'win32' && programa.toLowerCase().endsWith('cmd.exe'),
   });
@@ -152,6 +154,7 @@ async function compilar() {
   }
   const sdl = await preparar();
   prepararMarcos(raiz, aplicacion);
+  prepararHabitaciones(raiz, aplicacion);
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
   console.log('Compilando Curse Reborn con SDL…');
@@ -178,6 +181,7 @@ async function compilar() {
       join(raiz, 'plataformas', 'sdl', 'principal.cpp'),
       join(raiz, 'plataformas', 'sdl', 'filtros.cpp'),
       join(raiz, 'plataformas', 'sdl', 'marcos.cpp'),
+      join(raiz, 'plataformas', 'sdl', 'habitacion.cpp'),
       join(raiz, 'plataformas', 'sdl', 'partidas.cpp'),
       join(raiz, 'plataformas', 'sdl', 'contador_fps.cpp'),
       join(raiz, 'plataformas', 'sdl', 'tiempo_juego.cpp'),
@@ -1096,7 +1100,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Core, título, introducción, mazmorra y caída: F5/F6 recorren las vistas de desarrollo; en la mazmorra Escape o botón derecho abre/cierra el menú; F7–F10 controlan la depuración; F11 cambia el filtro de pantalla y F12 muestra/oculta los FPS. Tras la liberación se camina con clic o flechas; la puerta abierta permite ir al corredor y regresar. F6 desde la mazmorra abre una sesión nueva del corredor; faltan los demás puzles.',
+      'Habitación inicial: pulsa el botón del PC para encender. Una vez cargado el juego, pulsa la pantalla o el botón del monitor para acercarlo. Ctrl+R vuelve a la habitación y Ctrl+H cambia de diseño. F5/F6 recorren las vistas de desarrollo; M silencia/reactiva el sonido. Consulta documentacion/controles.md para las demás opciones.',
     );
     ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
     return;
@@ -1165,12 +1169,20 @@ export async function gestionarSdl(accion, argumentos) {
     });
     return;
   }
-  if (accion === 'comprobar:monitor') {
+  if (accion === 'comprobar:monitor' || accion === 'comprobar:habitaciones') {
     const carpeta = join(raiz, 'trabajo', 'comprobacion_monitor');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-monitor', join(carpeta, 'monitor')], {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
+      SDL_AUDIODRIVER: 'dummy',
+    });
+    ejecutar(programa, [datos, '--comprobar-arranque', join(carpeta, 'arranque_real.bmp')], {
+      ...process.env,
+      SDL_RENDER_DRIVER: 'software',
+      SDL_AUDIODRIVER: 'dummy',
+      CURSE_REBORN_TIEMPO: join(carpeta, 'tiempo_prueba.json'),
+      CURSE_REBORN_PARTIDAS: join(carpeta, 'perfil_prueba.sav'),
     });
     return;
   }
@@ -1325,7 +1337,7 @@ export async function gestionarSdl(accion, argumentos) {
         ...process.env,
         SDL_RENDER_DRIVER: 'software',
       });
-      const capturas = [0, 1, 3].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
+      const capturas = [0, 1, 2].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
       if (!capturas[0].equals(capturas[2]))
         throw new Error(`F1 no recupera las bandas originales: ${opcion}.`);
       const escala = Math.min(ancho / 320, alto / 200);

@@ -347,6 +347,7 @@ try {
     case 'comprobar:filtros':
     case 'comprobar:reinicio':
     case 'comprobar:monitor':
+    case 'comprobar:habitaciones':
     case 'comprobar:marcos':
     case 'comprobar:decorados':
     case 'comprobar:cursor':

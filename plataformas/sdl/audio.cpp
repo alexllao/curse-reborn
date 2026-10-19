@@ -7,7 +7,7 @@
 #include "../../motor/estado/segmento.hpp"
 
 // Abre dos flujos del mismo dispositivo: música autónoma y efectos atendidos por el juego.
-bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion) {
+bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool iniciar_pausado) {
   if (flujo)
     return true;
   if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
@@ -17,6 +17,10 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion) {
   dispositivo = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato);
   if (!dispositivo)
     return false;
+  if (iniciar_pausado && !SDL_PauseAudioDevice(dispositivo)) {
+    cerrar();
+    return false;
+  }
   flujo = SDL_CreateAudioStream(&formato_efectos, &formato);
   if (!flujo || !SDL_BindAudioStream(dispositivo, flujo)) {
     cerrar();
@@ -58,7 +62,7 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion) {
   muestras_producidas.store(0);
   muestras_con_senal.store(0);
   if (!SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : volumen / 100.0f) ||
-      !SDL_ResumeAudioDevice(dispositivo)) {
+      (!iniciar_pausado && !SDL_ResumeAudioDevice(dispositivo))) {
     cerrar();
     return false;
   }

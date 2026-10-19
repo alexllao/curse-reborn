@@ -1,0 +1,267 @@
+{
+  "version": 1,
+  "inicial": "02-buhardilla",
+  "habitaciones": [
+    {
+      "id": "01-misterio",
+      "nombre": "Misterio",
+      "carpeta": "01-misterio",
+      "variantes": [
+        {
+          "archivo": "01-misterio-16x10-1920x1200.png",
+          "resolucion": [1920, 1200],
+          "pantalla": [756, 450, 400, 292],
+          "botonPC": [1418, 662, 33, 33],
+          "botonMonitor": [1135, 771, 38, 33],
+          "pilotoPC": [1427, 733, 8, 8],
+          "pilotoMonitor": [1150, 780, 8, 8]
+        },
+        {
+          "archivo": "01-misterio-16x9-1920x1080.png",
+          "resolucion": [1920, 1080],
+          "pantalla": [776, 405, 360, 262],
+          "botonPC": [1372, 596, 30, 30],
+          "botonMonitor": [1118, 694, 34, 30],
+          "pilotoPC": [1380, 660, 8, 8],
+          "pilotoMonitor": [1131, 702, 8, 8]
+        },
+        {
+          "archivo": "01-misterio-24x9-3840x1440.png",
+          "resolucion": [3840, 1440],
+          "pantalla": [1675, 540, 480, 350],
+          "botonPC": [2470, 795, 40, 40],
+          "botonMonitor": [2130, 925, 45, 40],
+          "pilotoPC": [2480, 880, 10, 10],
+          "pilotoMonitor": [2148, 936, 10, 10]
+        },
+        {
+          "archivo": "01-misterio-32x9-5120x1440.png",
+          "resolucion": [5120, 1440],
+          "pantalla": [2315, 540, 480, 350],
+          "botonPC": [3110, 795, 40, 40],
+          "botonMonitor": [2770, 925, 45, 40],
+          "pilotoPC": [3120, 880, 10, 10],
+          "pilotoMonitor": [2788, 936, 10, 10]
+        },
+        {
+          "archivo": "01-misterio-4x3-1920x1440.png",
+          "resolucion": [1920, 1440],
+          "pantalla": [715, 540, 480, 350],
+          "botonPC": [1510, 795, 40, 40],
+          "botonMonitor": [1170, 925, 45, 40],
+          "pilotoPC": [1520, 880, 10, 10],
+          "pilotoMonitor": [1188, 936, 10, 10]
+        }
+      ]
+    },
+    {
+      "id": "02-buhardilla",
+      "nombre": "Buhardilla",
+      "carpeta": "02-buhardilla",
+      "variantes": [
+        {
+          "archivo": "02-buhardilla-16x10-1920x1200.png",
+          "resolucion": [1920, 1200],
+          "pantalla": [618, 375, 679, 454],
+          "botonPC": [1648, 754, 50, 42],
+          "botonMonitor": [1210, 888, 38, 33],
+          "pilotoPC": [1641, 778, 11, 11],
+          "pilotoMonitor": [1293, 897, 23, 23]
+        },
+        {
+          "archivo": "02-buhardilla-16x9-1920x1080.png",
+          "resolucion": [1920, 1080],
+          "pantalla": [652, 338, 611, 409],
+          "botonPC": [1579, 679, 45, 38],
+          "botonMonitor": [1185, 799, 34, 30],
+          "pilotoPC": [1573, 700, 10, 10],
+          "pilotoMonitor": [1260, 807, 21, 21]
+        },
+        {
+          "archivo": "02-buhardilla-24x9-3840x1440.png",
+          "resolucion": [3840, 1440],
+          "pantalla": [1510, 450, 815, 545],
+          "botonPC": [2745, 905, 60, 50],
+          "botonMonitor": [2220, 1065, 45, 40],
+          "pilotoPC": [2737, 933, 13, 13],
+          "pilotoMonitor": [2320, 1076, 28, 28]
+        },
+        {
+          "archivo": "02-buhardilla-32x9-5120x1440.png",
+          "resolucion": [5120, 1440],
+          "pantalla": [2150, 450, 815, 545],
+          "botonPC": [3385, 905, 60, 50],
+          "botonMonitor": [2860, 1065, 45, 40],
+          "pilotoPC": [3377, 933, 13, 13],
+          "pilotoMonitor": [2960, 1076, 28, 28]
+        },
+        {
+          "archivo": "02-buhardilla-4x3-1920x1440.png",
+          "resolucion": [1920, 1440],
+          "pantalla": [550, 450, 815, 545],
+          "botonPC": [1785, 905, 60, 50],
+          "botonMonitor": [1260, 1065, 45, 40],
+          "pilotoPC": [1777, 933, 13, 13],
+          "pilotoMonitor": [1360, 1076, 28, 28]
+        }
+      ]
+    },
+    {
+      "id": "03-lucasarts",
+      "nombre": "LucasArts",
+      "carpeta": "03-lucasarts",
+      "variantes": [
+        {
+          "archivo": "03-lucasarts-16x10-1920x1200.png",
+          "resolucion": [1920, 1200],
+          "pantalla": [627, 372, 667, 458],
+          "botonPC": [1785, 600, 33, 33],
+          "botonMonitor": [1260, 883, 46, 38],
+          "pilotoPC": [1798, 643, 8, 8],
+          "pilotoMonitor": [1277, 898, 8, 8]
+        },
+        {
+          "archivo": "03-lucasarts-16x9-1920x1080.png",
+          "resolucion": [1920, 1080],
+          "pantalla": [660, 335, 600, 412],
+          "botonPC": [1702, 540, 30, 30],
+          "botonMonitor": [1230, 795, 41, 34],
+          "pilotoPC": [1714, 579, 8, 8],
+          "pilotoMonitor": [1245, 808, 8, 8]
+        },
+        {
+          "archivo": "03-lucasarts-24x9-3840x1440.png",
+          "resolucion": [3840, 1440],
+          "pantalla": [1520, 447, 800, 550],
+          "botonPC": [2910, 720, 40, 40],
+          "botonMonitor": [2280, 1060, 55, 45],
+          "pilotoPC": [2925, 772, 10, 10],
+          "pilotoMonitor": [2300, 1077, 10, 10]
+        },
+        {
+          "archivo": "03-lucasarts-32x9-5120x1440.png",
+          "resolucion": [5120, 1440],
+          "pantalla": [2160, 447, 800, 550],
+          "botonPC": [3550, 720, 40, 40],
+          "botonMonitor": [2920, 1060, 55, 45],
+          "pilotoPC": [3565, 772, 10, 10],
+          "pilotoMonitor": [2940, 1077, 10, 10]
+        },
+        {
+          "archivo": "03-lucasarts-4x3-1920x1440.png",
+          "resolucion": [1920, 1440],
+          "pantalla": [560, 447, 800, 550],
+          "botonPC": [1850, 720, 40, 40],
+          "botonMonitor": [1320, 1060, 55, 45],
+          "pilotoPC": [1870, 775, 10, 10],
+          "pilotoMonitor": [1340, 1077, 10, 10],
+          "botonPCAuxiliar": true
+        }
+      ]
+    },
+    {
+      "id": "04-sierra",
+      "nombre": "Sierra",
+      "carpeta": "04-sierra",
+      "variantes": [
+        {
+          "archivo": "04-sierra-16x10-1920x1200.png",
+          "resolucion": [1920, 1200],
+          "pantalla": [681, 408, 562, 379],
+          "botonPC": [1510, 708, 38, 38],
+          "botonMonitor": [1181, 829, 38, 38],
+          "pilotoPC": [1522, 727, 8, 8],
+          "pilotoMonitor": [1193, 842, 8, 8]
+        },
+        {
+          "archivo": "04-sierra-16x9-1920x1080.png",
+          "resolucion": [1920, 1080],
+          "pantalla": [709, 368, 506, 341],
+          "botonPC": [1455, 638, 34, 34],
+          "botonMonitor": [1159, 746, 34, 34],
+          "pilotoPC": [1466, 654, 8, 8],
+          "pilotoMonitor": [1170, 758, 8, 8]
+        },
+        {
+          "archivo": "04-sierra-24x9-3840x1440.png",
+          "resolucion": [3840, 1440],
+          "pantalla": [1585, 490, 675, 455],
+          "botonPC": [2580, 850, 45, 45],
+          "botonMonitor": [2185, 995, 45, 45],
+          "pilotoPC": [2595, 872, 10, 10],
+          "pilotoMonitor": [2200, 1010, 10, 10]
+        },
+        {
+          "archivo": "04-sierra-32x9-5120x1440.png",
+          "resolucion": [5120, 1440],
+          "pantalla": [2225, 490, 675, 455],
+          "botonPC": [3220, 850, 45, 45],
+          "botonMonitor": [2825, 995, 45, 45],
+          "pilotoPC": [3235, 872, 10, 10],
+          "pilotoMonitor": [2840, 1010, 10, 10]
+        },
+        {
+          "archivo": "04-sierra-4x3-1920x1440.png",
+          "resolucion": [1920, 1440],
+          "pantalla": [625, 490, 675, 455],
+          "botonPC": [1620, 850, 45, 45],
+          "botonMonitor": [1225, 995, 45, 45],
+          "pilotoPC": [1635, 872, 10, 10],
+          "pilotoMonitor": [1240, 1010, 10, 10]
+        }
+      ]
+    },
+    {
+      "id": "05-ciencia-ficcion",
+      "nombre": "Ciencia ficción",
+      "carpeta": "05-ciencia-ficcion",
+      "variantes": [
+        {
+          "archivo": "05-ciencia-ficcion-16x10-1920x1200.png",
+          "resolucion": [1920, 1200],
+          "pantalla": [614, 392, 688, 421],
+          "botonPC": [1706, 650, 50, 50],
+          "botonMonitor": [1218, 875, 46, 38],
+          "pilotoPC": [1710, 721, 8, 8],
+          "pilotoMonitor": [1224, 885, 8, 8]
+        },
+        {
+          "archivo": "05-ciencia-ficcion-16x9-1920x1080.png",
+          "resolucion": [1920, 1080],
+          "pantalla": [649, 352, 619, 379],
+          "botonPC": [1631, 585, 45, 45],
+          "botonMonitor": [1192, 788, 41, 34],
+          "pilotoPC": [1635, 649, 8, 8],
+          "pilotoMonitor": [1198, 796, 8, 8]
+        },
+        {
+          "archivo": "05-ciencia-ficcion-24x9-3840x1440.png",
+          "resolucion": [3840, 1440],
+          "pantalla": [1505, 470, 825, 505],
+          "botonPC": [2815, 780, 60, 60],
+          "botonMonitor": [2230, 1050, 55, 45],
+          "pilotoPC": [2820, 865, 10, 10],
+          "pilotoMonitor": [2237, 1062, 10, 10]
+        },
+        {
+          "archivo": "05-ciencia-ficcion-32x9-5120x1440.png",
+          "resolucion": [5120, 1440],
+          "pantalla": [2145, 470, 825, 505],
+          "botonPC": [3455, 780, 60, 60],
+          "botonMonitor": [2870, 1050, 55, 45],
+          "pilotoPC": [3460, 865, 10, 10],
+          "pilotoMonitor": [2877, 1062, 10, 10]
+        },
+        {
+          "archivo": "05-ciencia-ficcion-4x3-1920x1440.png",
+          "resolucion": [1920, 1440],
+          "pantalla": [545, 470, 825, 505],
+          "botonPC": [1855, 780, 60, 60],
+          "botonMonitor": [1270, 1050, 55, 45],
+          "pilotoPC": [1860, 865, 10, 10],
+          "pilotoMonitor": [1277, 1062, 10, 10]
+        }
+      ]
+    }
+  ]
+}

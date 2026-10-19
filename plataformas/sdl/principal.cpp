@@ -36,6 +36,7 @@
 #include "partidas.hpp"
 #include "comprobar_partidas.hpp"
 #include "marcos.hpp"
+#include "habitacion.hpp"
 #include "decorados.hpp"
 #include "cursor.hpp"
 
@@ -73,6 +74,7 @@ struct Presentacion {
   SDL_Texture *textura = nullptr;
   FiltrosPantalla filtros;
   MarcosPantalla marcos;
+  Habitacion habitacion;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
   bool actualizacion_diferida = false;
@@ -81,6 +83,7 @@ struct Presentacion {
     mazmorra.cerrar_audio();
     filtros.cerrar();
     marcos.cerrar();
+    habitacion.cerrar();
     decorados.cerrar();
     cursor.cerrar();
     if (textura)
@@ -278,19 +281,13 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
     return false;
   for (int modo = 0; modo < 2; ++modo) {
     if (modo == 1) {
-      presentacion.marcos.alternar(1000000000ull);
-      presentacion.marcos.alternar(1300000000ull);
-      SDL_Event zoom{};
-      zoom.type = SDL_EVENT_KEY_DOWN;
-      zoom.key.mod = SDL_KMOD_CTRL;
-      zoom.key.key = SDLK_MINUS;
-      for (int paso = 0; paso < 3; ++paso)
-        presentacion.marcos.evento_zoom(zoom);
+      presentacion.habitacion.iniciar();
     }
     for (const auto &tamano : {std::pair<int, int>{640, 400}, {1280, 720}, {720, 1280}}) {
       if (!SDL_SetWindowSize(presentacion.ventana, tamano.first, tamano.second) ||
           !SDL_SyncWindow(presentacion.ventana) ||
-          !presentacion.marcos.preparar_encuadre(presentacion.dibujante, 1600000000ull))
+          (!presentacion.marcos.preparar_encuadre(presentacion.dibujante, 1600000000ull) ||
+           !presentacion.habitacion.preparar_encuadre(presentacion.dibujante, 1600000000ull)))
         return false;
       SDL_FPoint centro;
       if (!SDL_RenderCoordinatesToWindow(presentacion.dibujante, 160, 100, &centro.x, &centro.y) ||
@@ -442,7 +439,7 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
     if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, base.data()))
       return false;
   }
-  registrar_accion("Cursor: tres formatos con y sin zoom; cuatro bordes, salida de ventana, "
+  registrar_accion("Cursor: tres formatos con y sin habitación; cuatro bordes, salida de ventana, "
                    "regreso de la mano, seis filtros y panel sin duplicación comprobados");
   return true;
 }
@@ -475,331 +472,7 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
   return rgba;
 }
 
-// Contrasta clics visibles, piloto, apagado, reinicio único y conservación del encuadre.
-bool comprobar_reinicio(const std::string &carpeta, const std::string &prefijo) {
-  Presentacion p;
-  if (!SDL_Init(SDL_INIT_VIDEO) ||
-      !SDL_CreateWindowAndRenderer("Reinicio del monitor", 1280, 720,
-                                   SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE, &p.ventana,
-                                   &p.dibujante))
-    return fallo_monitor("No se ha podido crear la prueba de reinicio");
-  p.textura =
-      SDL_CreateTexture(p.dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
-  if (!p.textura)
-    return false;
-  p.marcos.alternar(1000000000ull);
-  p.marcos.alternar(1300000000ull);
-  PartidasSDL partidas;
-  unsigned int caso = 0;
-  for (const auto &tamano : {std::pair<int, int>{1280, 720}, {3840, 1080}, {720, 1280}}) {
-    const Uint64 inicio = 2000000000ull + caso++ * 2000000000ull;
-    SDL_Event zoom{};
-    zoom.type = SDL_EVENT_KEY_DOWN;
-    zoom.key.mod = SDL_KMOD_CTRL;
-    zoom.key.key = SDLK_0;
-    p.marcos.evento_zoom(zoom);
-    zoom.key.key = SDLK_MINUS;
-    for (int paso = 0; paso < (tamano.first == 720 ? 5 : 3); ++paso)
-      p.marcos.evento_zoom(zoom);
-    if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) || !SDL_SyncWindow(p.ventana) ||
-        !p.marcos.preparar_encuadre(p.dibujante, inicio) || !cambiar_pantalla(carpeta, 3, p))
-      return fallo_monitor("No se ha podido preparar la partida de reinicio");
-    SDL_FRect boton, piloto, antes;
-    int ancho = 0, alto = 0, ventana_ancho = 0, ventana_alto = 0;
-    if (!p.marcos.localizar_controles(p.dibujante, boton, piloto) ||
-        !MarcosPantalla::area_juego(p.dibujante, antes) ||
-        !SDL_GetRenderOutputSize(p.dibujante, &ancho, &alto) ||
-        !SDL_GetWindowSize(p.ventana, &ventana_ancho, &ventana_alto))
-      return false;
-    // La captura comparte el dibujo del juego y de la carcasa, sin tocar los recursos originales.
-    const auto capturar = [&](Uint64 reloj, const char *fase, bool rojo, bool apagado,
-                              bool destello) {
-      const auto destino = p.marcos.destino_juego(reloj);
-      if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
-          (destino.h > 0 && !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino)) ||
-          !p.marcos.dibujar(p.dibujante, "escena_0", reloj))
-        return false;
-      SDL_Surface *imagen_fase = capturar_monitor(p.dibujante);
-      if (!imagen_fase)
-        return false;
-      Uint8 r = 0, g = 0, b = 0, alpha = 0;
-      bool correcto = SDL_ReadSurfacePixel(imagen_fase, int(piloto.x + piloto.w / 2),
-                                           int(piloto.y + piloto.h / 2), &r, &g, &b, &alpha) &&
-                      (rojo ? r > g : g > r);
-      if (apagado || destello) {
-        correcto = correcto && SDL_ReadSurfacePixel(imagen_fase, int(antes.x + antes.w / 2),
-                                                    int(antes.y + antes.h / 2), &r, &g, &b, &alpha);
-        correcto =
-            correcto && (apagado ? r == 0 && g == 0 && b == 0 : r > 150 && g > 150 && b > 150);
-      }
-      const auto ruta = prefijo + "." + std::to_string(tamano.first) + "x" +
-                        std::to_string(tamano.second) + "." + fase + ".png";
-      correcto = correcto && SDL_SavePNG(imagen_fase, ruta.c_str());
-      SDL_DestroySurface(imagen_fase);
-      return correcto;
-    };
-    SDL_Event clic{};
-    clic.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
-    clic.button.windowID = SDL_GetWindowID(p.ventana);
-    clic.button.button = SDL_BUTTON_LEFT;
-    clic.button.x = (antes.x + antes.w / 2) * ventana_ancho / ancho;
-    clic.button.y = (antes.y + antes.h / 2) * ventana_alto / alto;
-    if (p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio) ||
-        !capturar(inicio, "verde", false, false, false))
-      return fallo_monitor("El botón responde fuera de su zona o el piloto inicial no es verde");
-    clic.button.x = (boton.x + boton.w / 2) * ventana_ancho / ancho;
-    clic.button.y = (boton.y + boton.h / 2) * ventana_alto / alto;
-    clic.button.button = SDL_BUTTON_RIGHT;
-    if (p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio))
-      return fallo_monitor("El botón responde al clic derecho");
-    clic.button.button = SDL_BUTTON_LEFT;
-    partidas.abrir(4, p.ventana);
-    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio) || !p.marcos.reiniciando() ||
-        !p.marcos.evento_boton(p.ventana, p.dibujante, clic, inicio + 100000000ull) ||
-        !capturar(inicio + 50000000ull, "cierre", true, false, false) ||
-        !capturar(inicio + 180000000ull, "linea", true, false, true) ||
-        !capturar(inicio + 400000000ull, "negro", true, true, false) ||
-        p.marcos.tomar_reinicio(inicio + 699000000ull) ||
-        p.marcos.tomar_reinicio(inicio + 700000000ull) ||
-        p.marcos.tomar_reinicio(inicio + 5000000000ull) || !p.marcos.reiniciando() ||
-        !capturar(inicio + 5000000000ull, "apagado_persistente", true, true, false))
-      return fallo_monitor("No coinciden las fases del apagado o se enciende sin pulsar");
-    const auto primero = inicio + 6000000000ull;
-    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, primero) ||
-        !p.marcos.evento_boton(p.ventana, p.dibujante, clic, primero + 1500000000ull) ||
-        p.marcos.destino_juego(primero + 1510000000ull).h != 0 ||
-        p.marcos.tomar_reinicio(primero + 2300000000ull) ||
-        !capturar(primero + 2300000000ull, "arranque_interrumpido", true, true, false))
-      return fallo_monitor("Apagar durante BIOS deja ver la partida o vuelve a encenderse");
-    const auto encendido = primero + 3000000000ull;
-    if (!p.marcos.evento_boton(p.ventana, p.dibujante, clic, encendido) ||
-        !capturar(encendido + 1200000000ull, "bios_memoria", false, false, false) ||
-        !capturar(encendido + 2800000000ull, "bios_disco", false, false, false) ||
-        !capturar(encendido + 4600000000ull, "dos", false, false, false) ||
-        !capturar(encendido + 6200000000ull, "carga", false, false, false) ||
-        p.marcos.tomar_reinicio(encendido + 6999000000ull) ||
-        !p.marcos.tomar_reinicio(encendido + 7000000000ull) ||
-        p.marcos.tomar_reinicio(encendido + 8000000000ull) || p.marcos.reiniciando())
-      return fallo_monitor("El arranque no respeta BIOS, DOS y carga completos o se repite");
-    if (!reiniciar_presentacion(carpeta, p, partidas) || partidas.abierta() ||
-        std::string(SDL_GetWindowTitle(p.ventana)).find("Core") == std::string::npos ||
-        !capturar(encendido + 7000000000ull, "reiniciado", false, false, false))
-      return fallo_monitor("El reinicio no vuelve a Core y cierra el panel");
-    SDL_FRect despues;
-    if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != antes.x ||
-        despues.y != antes.y || despues.w != antes.w || despues.h != antes.h)
-      return fallo_monitor("El reinicio modifica el zoom elegido");
-  }
-  Audio prueba_audio;
-  bool sonido = prueba_audio.abrir(carpeta) && prueba_audio.ajustar_volumen(-40) &&
-                prueba_audio.alternar_dispositivo() && prueba_audio.alternar_silencio() &&
-                prueba_audio.alternar_efectos();
-  const auto perfil = prueba_audio.perfil_musical();
-  sonido = sonido && prueba_audio.pausar_reinicio() && prueba_audio.reiniciar() &&
-           prueba_audio.nivel_volumen() == 60 && prueba_audio.perfil_musical() == perfil;
-  prueba_audio.cerrar();
-  if (!sonido)
-    return fallo_monitor("El reinicio no conserva la selección de audio o el volumen");
-  registrar_accion(
-      "Reinicio del monitor: tres formatos, clic izquierdo, piloto rojo/verde, línea CRT, pausa "
-      "negra, una solicitud, vuelta a Core, cierre de panel y preferencias de audio comprobados");
-  return true;
-}
-
-// Revisa los cuatro lados del bisel para detectar rendijas de habitación o restos de color.
-bool comprobar_bisel_monitor(const SDL_Surface *captura, const SDL_FRect &juego) {
-  const auto *rgba = static_cast<const unsigned char *>(captura->pixels);
-  const auto negro = [&](int x, int y) {
-    if (x < 0 || y < 0 || x >= captura->w || y >= captura->h)
-      return true;
-    const auto *p = rgba + y * captura->pitch + x * 4;
-    return p[0] == 0 && p[1] == 0 && p[2] == 0;
-  };
-  const int izquierda = int(std::floor(juego.x)) - 1, derecha = int(std::ceil(juego.x + juego.w));
-  const int arriba = int(std::floor(juego.y)) - 1, abajo = int(std::ceil(juego.y + juego.h));
-  for (int y = arriba; y <= abajo; ++y)
-    if (!negro(izquierda, y) || !negro(derecha, y))
-      return false;
-  for (int x = izquierda; x <= derecha; ++x)
-    if (!negro(x, arriba) || !negro(x, abajo))
-      return false;
-  return true;
-}
-
-// Verifica tamaño máximo y píxeles del juego sin cambios, incluido 32:9 y ventana vertical.
-bool comprobar_monitor(const std::string &carpeta, const std::string &prefijo) {
-  Presentacion p;
-  if (!SDL_Init(SDL_INIT_VIDEO) ||
-      !SDL_CreateWindowAndRenderer("Monitor de PC 286", 1280, 720,
-                                   SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE, &p.ventana,
-                                   &p.dibujante))
-    return fallo_monitor("No se ha podido comprobar el monitor");
-  p.textura =
-      SDL_CreateTexture(p.dibujante, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, 320, 200);
-  if (!p.textura || !SDL_SetTextureScaleMode(p.textura, SDL_SCALEMODE_NEAREST) ||
-      !cargar_imagen(carpeta, "TITLE"))
-    return fallo_monitor("No se ha podido comprobar el monitor");
-  for (unsigned int i = 0; i < 768; ++i)
-    paleta_visible[i] = imagen.paleta[i];
-  if (!actualizar_textura(p))
-    return fallo_monitor("No se ha podido comprobar el monitor");
-  constexpr Uint64 inicio = 1000000000ull;
-  p.marcos.alternar(inicio);
-  p.marcos.alternar(inicio + 300000000ull);
-  const Uint64 ahora = inicio + 600000000ull;
-  for (const auto &tamano : {std::pair<int, int>{1280, 720},
-                             {720, 1280},
-                             {960, 600},
-                             {3440, 1440},
-                             {3840, 1080},
-                             {1279, 721}}) {
-    for (const int zoom : {100, 70, 50}) {
-      SDL_Event ajuste{};
-      ajuste.type = SDL_EVENT_KEY_DOWN;
-      ajuste.key.mod = SDL_KMOD_CTRL;
-      ajuste.key.key = SDLK_0;
-      if (!p.marcos.evento_zoom(ajuste))
-        return fallo_monitor("No se reconoce Ctrl+0");
-      ajuste.key.key = SDLK_MINUS;
-      for (int paso = 100; paso > zoom; paso -= 10)
-        if (!p.marcos.evento_zoom(ajuste))
-          return fallo_monitor("No se reconoce Ctrl+menos");
-      SDL_FRect encuadre_sin_marco;
-      if (!SDL_SetWindowSize(p.ventana, tamano.first, tamano.second) ||
-          !SDL_SyncWindow(p.ventana) ||
-          !SDL_SetRenderLogicalPresentation(p.dibujante, 320, 200,
-                                            SDL_LOGICAL_PRESENTATION_LETTERBOX) ||
-          !SDL_GetRenderLogicalPresentationRect(p.dibujante, &encuadre_sin_marco) ||
-          !p.marcos.preparar_encuadre(p.dibujante, ahora))
-        return fallo_monitor("No se ha podido comprobar el monitor");
-      SDL_FRect juego;
-      if (!MarcosPantalla::area_juego(p.dibujante, juego))
-        return false;
-      if (std::abs(juego.w - encuadre_sin_marco.w * zoom / 100) > 1 ||
-          std::abs(juego.h - encuadre_sin_marco.h * zoom / 100) > 1)
-        return fallo_monitor("El monitor reduce la superficie jugable");
-      if (juego.x < 0 || juego.y < 0 || juego.x + juego.w > tamano.first ||
-          juego.y + juego.h > tamano.second || std::abs(juego.w / juego.h - 1.6f) > 0.01f)
-        return fallo_monitor("El monitor recorta o deforma el juego");
-      for (const auto &punto : {std::pair<float, float>{0, 0}, {160, 100}, {319, 199}}) {
-        float wx = 0, wy = 0;
-        if (!SDL_RenderCoordinatesToWindow(p.dibujante, punto.first, punto.second, &wx, &wy))
-          return fallo_monitor("No se ha podido comprobar el monitor");
-        SDL_Event evento{};
-        evento.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
-        evento.button.windowID = SDL_GetWindowID(p.ventana);
-        evento.button.x = wx;
-        evento.button.y = wy;
-        const bool convertido = SDL_ConvertEventToRenderCoordinates(p.dibujante, &evento);
-        if (!convertido || std::abs(evento.button.x - punto.first) > 0.001f ||
-            std::abs(evento.button.y - punto.second) > 0.001f)
-          return fallo_monitor("El ratón no coincide con la pantalla del monitor");
-      }
-      ContadorFps contador;
-      if (!contador.dibujar(p.dibujante))
-        return fallo_monitor("No se ha podido dibujar el contador sobre el monitor");
-      SDL_FRect despues;
-      if (!MarcosPantalla::area_juego(p.dibujante, despues) || despues.x != juego.x ||
-          despues.y != juego.y || despues.w != juego.w || despues.h != juego.h)
-        return fallo_monitor("El contador ha cambiado el encuadre del monitor");
-      const SDL_FRect destino{0, 0, 320, 200};
-      if (!SDL_SetRenderDrawColor(p.dibujante, 0, 0, 0, 255) || !SDL_RenderClear(p.dibujante) ||
-          !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino))
-        return fallo_monitor("No se ha podido dibujar la referencia sin marco");
-      SDL_Surface *original = capturar_monitor(p.dibujante);
-      if (!original)
-        return fallo_monitor("No se ha podido capturar la referencia sin marco");
-      if (!p.marcos.dibujar(p.dibujante, "titulo", ahora)) {
-        SDL_DestroySurface(original);
-        return fallo_monitor("No se ha podido dibujar el monitor con habitación");
-      }
-      SDL_Surface *captura = capturar_monitor(p.dibujante);
-      if (!captura) {
-        SDL_DestroySurface(original);
-        return fallo_monitor("No se ha podido comprobar el monitor");
-      }
-      bool coinciden = captura->w == original->w && captura->h == original->h;
-      const auto *antes = static_cast<const unsigned char *>(original->pixels);
-      const auto *despues_marco = static_cast<const unsigned char *>(captura->pixels);
-      const int x0 = int(std::ceil(juego.x)), x1 = int(std::floor(juego.x + juego.w));
-      const int y0 = int(std::ceil(juego.y)), y1 = int(std::floor(juego.y + juego.h));
-      for (int y = y0; coinciden && y < y1; ++y)
-        coinciden =
-            std::equal(antes + y * original->pitch + x0 * 4, antes + y * original->pitch + x1 * 4,
-                       despues_marco + y * captura->pitch + x0 * 4);
-      SDL_DestroySurface(original);
-      if (!coinciden) {
-        SDL_DestroySurface(captura);
-        return fallo_monitor("La habitación o el monitor altera píxeles del juego");
-      }
-      if (!comprobar_bisel_monitor(captura, juego)) {
-        SDL_DestroySurface(captura);
-        return fallo_monitor("Hay una rendija o un resto de color junto al bisel");
-      }
-      // La transparencia central debe permitir ver el título, sin incorporar gráficos DOS al PNG.
-      Uint8 r = 0, g = 0, b = 0, a = 0;
-      const bool centro = SDL_ReadSurfacePixel(captura, int(juego.x + juego.w / 2),
-                                               int(juego.y + juego.h / 2), &r, &g, &b, &a);
-      const std::string ruta = prefijo + "." + std::to_string(tamano.first) + "x" +
-                               std::to_string(tamano.second) +
-                               (zoom == 100 ? "" : ".zoom" + std::to_string(zoom)) + ".png";
-      const bool guardada = SDL_SavePNG(captura, ruta.c_str());
-      SDL_DestroySurface(captura);
-      if (!centro || (!r && !g && !b) || !guardada || !SDL_RenderPresent(p.dibujante))
-        return fallo_monitor("El centro del monitor tapa el juego o no se puede capturar");
-    }
-  }
-  SDL_FRect al_cincuenta;
-  if (!MarcosPantalla::area_juego(p.dibujante, al_cincuenta))
-    return false;
-  const auto modificadores = SDL_GetModState();
-  SDL_SetModState(SDL_KMOD_CTRL);
-  SDL_Event rueda{};
-  rueda.type = SDL_EVENT_MOUSE_WHEEL;
-  rueda.wheel.y = 1;
-  const bool rueda_aceptada =
-      p.marcos.evento_zoom(rueda) && p.marcos.preparar_encuadre(p.dibujante, ahora);
-  SDL_FRect al_sesenta;
-  const bool rueda_acerca = rueda_aceptada && MarcosPantalla::area_juego(p.dibujante, al_sesenta) &&
-                            al_sesenta.w > al_cincuenta.w;
-  rueda.wheel.direction = SDL_MOUSEWHEEL_FLIPPED;
-  const bool rueda_inversa = p.marcos.evento_zoom(rueda);
-  SDL_SetModState(modificadores);
-  if (!rueda_acerca || !rueda_inversa)
-    return fallo_monitor("No funciona Ctrl con rueda normal o invertida");
-  SDL_Event ajuste{};
-  ajuste.type = SDL_EVENT_KEY_DOWN;
-  ajuste.key.mod = SDL_KMOD_CTRL;
-  ajuste.key.key = SDLK_EQUALS;
-  if (!p.marcos.evento_zoom(ajuste))
-    return fallo_monitor("No se reconoce Ctrl+mas");
-  ajuste.key.key = SDLK_MINUS;
-  p.marcos.evento_zoom(ajuste);
-  p.marcos.evento_zoom(ajuste);
-  SDL_FRect limite;
-  if (!p.marcos.preparar_encuadre(p.dibujante, ahora) ||
-      !MarcosPantalla::area_juego(p.dibujante, limite) || limite.w != al_cincuenta.w)
-    return fallo_monitor("El zoom no conserva su límite del 50 por ciento");
-  p.marcos.alternar(ahora);
-  if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 300000000ull) ||
-      SDL_RenderViewportSet(p.dibujante))
-    return fallo_monitor("F1 no restaura la presentación sin marco");
-  p.marcos.alternar(ahora + 400000000ull);
-  p.marcos.alternar(ahora + 700000000ull);
-  if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 1000000000ull) ||
-      !MarcosPantalla::area_juego(p.dibujante, limite) || limite.w != al_cincuenta.w)
-    return fallo_monitor("Cambiar con F1 pierde el zoom elegido");
-  ajuste.key.key = SDLK_0;
-  p.marcos.evento_zoom(ajuste);
-  ajuste.key.key = SDLK_PLUS;
-  p.marcos.evento_zoom(ajuste);
-  if (!p.marcos.preparar_encuadre(p.dibujante, ahora + 1000000000ull) ||
-      SDL_RenderViewportSet(p.dibujante))
-    return fallo_monitor("Ctrl+0 no restaura el máximo o Ctrl+mas supera el límite");
-  registrar_accion("Monitor: seis proporciones a 100, 70 y 50%%; píxeles del juego intactos, bisel "
-                   "sin rendijas, ratón, Ctrl+zoom y F1 comprobados");
-  return true;
-}
+#include "comprobar_habitacion.hpp"
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
@@ -824,11 +497,12 @@ int main(int argc, char *argv[]) {
                ? 0
                : fallo("No coincide el contador de tiempo");
   }
-  if (opcion == "--comprobar-reinicio" && argc == 4)
-    return comprobar_reinicio(argv[1], argv[3]) ? 0
-                                                : fallo("No se ha podido comprobar el reinicio");
+  if ((opcion == "--comprobar-reinicio" || opcion == "--comprobar-habitaciones") && argc == 4)
+    return comprobar_habitacion(argv[1], argv[3]) ? 0
+                                                  : fallo("No se ha podido comprobar el reinicio");
   if (opcion == "--comprobar-monitor" && argc == 4)
-    return comprobar_monitor(argv[1], argv[3]) ? 0 : fallo("No se ha podido comprobar el monitor");
+    return comprobar_habitacion(argv[1], argv[3]) ? 0
+                                                  : fallo("No se ha podido comprobar el monitor");
   if (opcion == "--comprobar-cursor" && argc == 4)
     return comprobar_cursor(argv[1], argv[3]) ? 0 : fallo("No coincide el cursor original");
   if (opcion == "--comprobar-decorados" && argc == 4)
@@ -880,6 +554,7 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido comprobar la salida de audio");
     return 0;
   }
+  const bool comprobar_arranque = opcion == "--comprobar-arranque";
   const bool comprobar_introduccion =
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
       opcion == "--comprobar-beisbol" || opcion == "--comprobar-fin-intro" ||
@@ -940,7 +615,7 @@ int main(int argc, char *argv[]) {
       argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
                     comprobar_transicion || comprobar_introduccion || comprobar_filtros ||
                     comprobar_fps || comprobar_marcos);
-  if (argc == 4 && !comprobar) {
+  if (argc == 4 && !comprobar && !comprobar_arranque) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
   }
@@ -953,9 +628,10 @@ int main(int argc, char *argv[]) {
     return fallo("No se ha podido iniciar el vídeo");
   if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
     return fallo("No se ha podido abrir el audio para el recorrido del corredor");
-  if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta))
+  if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta, true))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
-  const SDL_WindowFlags opciones = SDL_WINDOW_RESIZABLE | (comprobar ? SDL_WINDOW_HIDDEN : 0);
+  const SDL_WindowFlags opciones =
+      SDL_WINDOW_RESIZABLE | ((comprobar || comprobar_arranque) ? SDL_WINDOW_HIDDEN : 0);
   if (!SDL_CreateWindowAndRenderer(
           "Curse Reborn — Pantalla de título",
           comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 720
@@ -1000,6 +676,12 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido comprobar el avance con F6");
     if (comprobar_caida && (!SDL_PushEvent(&avance) || !SDL_PushEvent(&avance)))
       return fallo("No se ha podido disponer la vista de caída con F6");
+  }
+  if (!comprobar) {
+    presentacion.habitacion.iniciar();
+    if (!mazmorra.pausar_audio_reinicio())
+      return fallo("No se ha podido preparar el PC apagado");
+    SDL_SetWindowTitle(presentacion.ventana, "Curse Reborn — Habitación");
   }
   bool salir = false, capturada = false, fundiendo = false;
   bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false,
@@ -1049,6 +731,8 @@ int main(int argc, char *argv[]) {
     if (!presentacion.marcos.preparar_encuadre(
             presentacion.dibujante, comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido preparar el encuadre del juego");
+    if (!presentacion.habitacion.preparar_encuadre(presentacion.dibujante))
+      return fallo("No se ha podido encuadrar la habitación");
     if (!mazmorra.actualizar_audio())
       return fallo("No se ha podido actualizar el audio del juego");
     SDL_Event evento;
@@ -1057,22 +741,43 @@ int main(int argc, char *argv[]) {
       if (evento.type == SDL_EVENT_WINDOW_FOCUS_LOST || evento.type == SDL_EVENT_WINDOW_MINIMIZED)
         for (const auto bit : {1, 2, 4, 8})
           mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
+      if (!comprobar &&
+          presentacion.habitacion.evento(presentacion.ventana, presentacion.dibujante, evento)) {
+        if (presentacion.habitacion.reiniciando() && !mazmorra.pausar_audio_reinicio())
+          return fallo("No se ha podido pausar el audio del PC");
+        if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante) ||
+            !presentacion.habitacion.preparar_encuadre(presentacion.dibujante))
+          return fallo("No se ha podido adaptar la habitación");
+        continue;
+      }
       if (evento.type == SDL_EVENT_QUIT ||
           (evento.type == SDL_EVENT_KEY_DOWN && evento.key.key == SDLK_ESCAPE &&
            (pantalla < 3 || comprobar)))
         salir = true;
-      if (!salir &&
-          presentacion.marcos.evento_boton(presentacion.ventana, presentacion.dibujante, evento)) {
-        if (!mazmorra.pausar_audio_reinicio())
-          return fallo("No se ha podido pausar el sonido durante el apagado");
+      if (evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat) {
+        if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
+            (evento.key.mod & SDL_KMOD_ALT)) {
+          const bool siguiente = !pantalla_completa;
+          if (!SDL_SetWindowFullscreen(presentacion.ventana, siguiente))
+            return fallo("No se ha podido alternar la pantalla completa");
+          if (comprobar_filtros && (!SDL_SyncWindow(presentacion.ventana) ||
+                                    bool(SDL_GetWindowFlags(presentacion.ventana) &
+                                         SDL_WINDOW_FULLSCREEN) != siguiente ||
+                                    SDL_GetWindowFullscreenMode(presentacion.ventana) != nullptr))
+            return fallo("No coincide el cambio de pantalla completa sin bordes");
+          pantalla_completa = siguiente;
+          registrar_accion("Pantalla: %s", pantalla_completa ? "completa sin bordes" : "ventana");
+          continue;
+        }
+      }
+      if (!salir && presentacion.habitacion.reiniciando() && evento.type == SDL_EVENT_KEY_DOWN &&
+          !evento.key.repeat && evento.key.key == SDLK_M) {
+        if (!mazmorra.alternar_silencio())
+          return fallo("No se ha podido alternar el silencio");
+        avisos.mostrar(mazmorra.silenciado() ? "Sonido silenciado" : "Sonido activado");
         continue;
       }
-      if (!salir && presentacion.marcos.evento_zoom(evento)) {
-        if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante))
-          return fallo("No se ha podido ajustar el zoom del monitor");
-        continue;
-      }
-      if (!salir && presentacion.marcos.reiniciando())
+      if (!salir && presentacion.habitacion.reiniciando())
         continue;
       const auto solicitud = mazmorra.tomar_solicitud_partidas();
       if (solicitud)
@@ -1112,24 +817,11 @@ int main(int argc, char *argv[]) {
             presentacion.decorados.alternar();
           else
             presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
-          if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante,
-                                                     comprobar_marcos ? reloj_marcos_prueba
-                                                                      : SDL_GetTicksNS()))
+          if ((!presentacion.marcos.preparar_encuadre(presentacion.dibujante,
+                                                      comprobar_marcos ? reloj_marcos_prueba
+                                                                       : SDL_GetTicksNS()) ||
+               !presentacion.habitacion.preparar_encuadre(presentacion.dibujante)))
             return fallo("No se ha podido cambiar el encuadre del juego");
-          continue;
-        }
-        if ((evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
-            (evento.key.mod & SDL_KMOD_ALT)) {
-          const bool siguiente = !pantalla_completa;
-          if (!SDL_SetWindowFullscreen(presentacion.ventana, siguiente))
-            return fallo("No se ha podido alternar la pantalla completa");
-          if (comprobar_filtros && (!SDL_SyncWindow(presentacion.ventana) ||
-                                    bool(SDL_GetWindowFlags(presentacion.ventana) &
-                                         SDL_WINDOW_FULLSCREEN) != siguiente ||
-                                    SDL_GetWindowFullscreenMode(presentacion.ventana) != nullptr))
-            return fallo("No coincide el cambio de pantalla completa sin bordes");
-          pantalla_completa = siguiente;
-          registrar_accion("Pantalla: %s", pantalla_completa ? "completa sin bordes" : "ventana");
           continue;
         }
         if (evento.key.key == SDLK_PLUS || evento.key.key == SDLK_EQUALS ||
@@ -1171,6 +863,7 @@ int main(int argc, char *argv[]) {
         if (evento.key.key == SDLK_M) {
           if (!mazmorra.alternar_silencio())
             return fallo("No se ha podido alternar el silencio");
+          avisos.mostrar(mazmorra.silenciado() ? "Sonido silenciado" : "Sonido activado");
           continue;
         }
         if (pantalla >= 3) {
@@ -1287,7 +980,7 @@ int main(int argc, char *argv[]) {
     }
     if (salir)
       break;
-    if (presentacion.marcos.tomar_reinicio()) {
+    if (presentacion.habitacion.tomar_reinicio()) {
       if (!reiniciar_presentacion(carpeta, presentacion, partidas))
         return fallo("No se ha podido reiniciar la presentación desde Core");
       pantalla = 0;
@@ -1860,16 +1553,16 @@ int main(int argc, char *argv[]) {
     if (!comprobar)
       tiempo_juego.actualizar(
           TiempoJuego::debe_contar(pantalla >= 3, SDL_GetWindowFlags(presentacion.ventana),
-                                   partidas.abierta(), presentacion.marcos.reiniciando()),
+                                   partidas.abierta(), presentacion.habitacion.reiniciando()),
           ahora);
     // 0516 carga 2100 esperas de retrazo. La plataforma usa una referencia nominal de 70 Hz.
-    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 0 && !fundiendo &&
+    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla == 0 && !fundiendo &&
         (ahora - inicio_pantalla) * 70u / 1000000000u >= 2100u) {
       fundiendo = true;
       paso_fundido = 0;
       inicio_fundido = ahora;
     }
-    if (fundiendo && !presentacion.marcos.reiniciando()) {
+    if (fundiendo && !presentacion.habitacion.reiniciando()) {
       const auto paso = (ahora - inicio_fundido) * 70u / 1000000000u;
       if (paso > 32u) {
         ++pantalla;
@@ -1885,7 +1578,7 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido avanzar el fundido original");
       }
     }
-    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla == 2) {
+    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla == 2) {
       if (!introduccion.avanzar((ahora - inicio_pantalla) * 70u / 1000000000u, entrada_introduccion,
                                 imagen))
         return fallo("No se ha podido avanzar la introducción original");
@@ -1900,7 +1593,7 @@ int main(int argc, char *argv[]) {
       } else if (!actualizar_textura(presentacion))
         return fallo("No se ha podido dibujar la introducción");
     }
-    if (!comprobar && !presentacion.marcos.reiniciando() && pantalla >= 3 &&
+    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla >= 3 &&
         mazmorra.en_presentacion()) {
       if (!mazmorra.avanzar_presentacion(ahora * 70u / 1000000000u) || !mazmorra.dibujar(imagen))
         return fallo("No se ha podido avanzar el cambio de habitación o la cámara");
@@ -1914,8 +1607,8 @@ int main(int argc, char *argv[]) {
     // plataforma.
     if (partidas.abierta())
       ultimo_paso_escena = ahora;
-    if (!comprobar && !presentacion.marcos.reiniciando() && !partidas.abierta() && pantalla >= 3 &&
-        ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
+    if (!comprobar && !presentacion.habitacion.reiniciando() && !partidas.abierta() &&
+        pantalla >= 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() ||
           !mazmorra.dibujar(imagen, static_cast<unsigned int>(SDL_GetTicks() / 57u))) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");
@@ -1946,17 +1639,19 @@ int main(int argc, char *argv[]) {
     if (!presentacion.marcos.preparar_encuadre(
             presentacion.dibujante, comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido actualizar el encuadre del juego");
+    if (!presentacion.habitacion.preparar_encuadre(presentacion.dibujante))
+      return fallo("No se ha podido actualizar la habitación");
     const bool cursor_filtrado = presentacion.filtros.aplicado();
     if (!comprobar &&
         (!presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                         pantalla >= 3 && !presentacion.marcos.reiniciando(),
+                                         pantalla >= 3 && !presentacion.habitacion.reiniciando(),
                                          partidas.incorpora_cursor(), cursor_filtrado) ||
          !actualizar_textura(presentacion, pantalla >= 3) ||
          (cursor_filtrado && (!partidas.componer_rgba(mazmorra, pixeles) ||
                               !presentacion.cursor.componer_rgba(mazmorra, pixeles))) ||
          !presentacion.filtros.actualizar(presentacion.textura, pixeles)))
       return fallo("No se ha podido componer el cursor con el filtro");
-    const auto area_imagen = presentacion.marcos.destino_juego();
+    const auto area_imagen = presentacion.habitacion.destino_juego();
     if (!SDL_SetRenderDrawColor(presentacion.dibujante, 0, 0, 0, 255) ||
         !SDL_RenderClear(presentacion.dibujante) ||
         (area_imagen.h > 0 &&
@@ -1973,30 +1668,36 @@ int main(int argc, char *argv[]) {
                                        : pantalla == 2
                                            ? "introduccion"
                                            : "escena_" + std::to_string(mazmorra.escena_actual());
-    if (!presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
+    if (presentacion.habitacion.ampliada() &&
+        !presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
                                      comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido dibujar el marco de pantalla");
-    if (!presentacion.marcos.reiniciando() && pantalla >= 3 && depuracion &&
+    if (!presentacion.habitacion.dibujar(presentacion.dibujante))
+      return fallo("No se ha podido dibujar la habitación");
+    if (!presentacion.habitacion.reiniciando() && pantalla >= 3 && depuracion &&
         !mazmorra.en_presentacion() &&
         !mazmorra.depurar(presentacion.dibujante, cajas_objetos, cajas_interaccion, cajas_limites))
       return fallo("No se han podido dibujar las cajas de depuración");
-    if (!presentacion.marcos.reiniciando() && !contador_fps.dibujar(presentacion.dibujante))
+    if (!presentacion.habitacion.reiniciando() && !contador_fps.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el contador FPS");
-    if (!presentacion.marcos.reiniciando() && (comprobar || !cursor_filtrado) &&
+    if (!presentacion.habitacion.reiniciando() && (comprobar || !cursor_filtrado) &&
         !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
-    if (!presentacion.marcos.reiniciando() && !avisos.dibujar(presentacion.dibujante))
+    if (!avisos.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el aviso temporal");
-    if (comprobar && !capturada && (!comprobar_transicion || pantalla == 1)) {
+    if ((comprobar || comprobar_arranque) && !capturada &&
+        (!comprobar_transicion || pantalla == 1)) {
+      if (comprobar_arranque && !presentacion.habitacion.reiniciando())
+        return fallo("El arranque normal no empieza con el PC apagado");
       // La prueba del HUD incluye las bandas físicas donde se coloca el contador al maximizar.
-      if ((comprobar_fps || comprobar_marcos) &&
+      if ((comprobar_fps || comprobar_marcos || comprobar_arranque) &&
           (!SDL_SetRenderViewport(presentacion.dibujante, nullptr) ||
            !SDL_SetRenderScale(presentacion.dibujante, 1, 1) ||
            !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 0, 0,
                                              SDL_LOGICAL_PRESENTATION_DISABLED)))
         return fallo("No se ha podido preparar la captura completa del contador");
       SDL_Surface *captura = SDL_RenderReadPixels(presentacion.dibujante, nullptr);
-      if ((comprobar_fps || comprobar_marcos) &&
+      if ((comprobar_fps || comprobar_marcos || comprobar_arranque) &&
           !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
                                             SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
         SDL_DestroySurface(captura);
@@ -2021,7 +1722,7 @@ int main(int argc, char *argv[]) {
       if ((comprobar_filtros && paso_aspecto < 6) ||
           (comprobar_animacion_marcos && paso_aspecto < 4) ||
           ((comprobar_fps && paso_aspecto < 2) ||
-           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 3))) {
+           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 2))) {
         const bool pulsar = !comprobar_animacion_marcos || paso_aspecto == 0 || paso_aspecto == 2;
         ++paso_aspecto;
         SDL_Event filtro{};
@@ -2029,9 +1730,6 @@ int main(int argc, char *argv[]) {
         filtro.key.key = comprobar_marcos ? SDLK_F1 : comprobar_fps ? SDLK_F12 : SDLK_F11;
         if (pulsar && !SDL_PushEvent(&filtro))
           return fallo("No se ha podido comprobar el atajo de presentación");
-        // Dos pulsaciones rápidas saltan el monitor y verifican la salida animada del clásico.
-        if (comprobar_animacion_marcos && paso_aspecto == 3 && !SDL_PushEvent(&filtro))
-          return fallo("No se ha podido completar el ciclo animado de F1");
       } else {
         capturada = true;
         // La comprobación termina por el mismo tratamiento de Escape que la ventana normal.
