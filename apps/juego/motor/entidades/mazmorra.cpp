@@ -129,6 +129,76 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  // D114–D36B: proyectiles de la reina, retroceso al recibir un golpe y acceso al trono.
+  if (palabra(d, 0x8082) == 57) {
+    d[0x3593] = 1;
+    if (con_signo(palabra(d, 0x2c2f)) < 125)
+      return true;
+    if (con_signo(palabra(d, 0x2c2d)) >= 197) {
+      if (!d[0x3594])
+        return true;
+      d[0x3594] = d[0x3595] = d[0x3596] = 0;
+      guardar(d, 0x1a38, 212);
+      guardar(d, 0x1a3a, 144);
+      d[0x2c3d] = d[0x2c42] = d[0x2c47] = 0;
+      guardar(d, 0x0ad7, 0xb479);
+      guardar(d, 0x0adc, 0xb487);
+      guardar(d, 0x0ae1, 0xb490);
+      guardar(d, 0x009c, 0x2cd0);
+      guardar(d, 0x009e, 0x0211);
+      guardar(d, 0x00a0, 0xb499);
+      guardar(d, 0x00a2, 0xb4ab);
+      guardar(d, 0x00a4, 0xb4bc);
+      guardar(d, 0x00a6, 0x2c4c);
+      guardar(d, 0x00a8, 0x0201);
+      guardar(d, 0x00aa, 0xb3ea);
+      guardar(d, 0x0dfa, 0x1a36);
+      unsigned short pasos = 0;
+      return planificar_movimiento(d, 0x1a36, pasos);
+    }
+    if (d[0x358c] == 24 && d[0x2c2c] == 47) {
+      if (con_signo(palabra(d, 0x2c2d)) <= 40) {
+        configurar_secuencia(d, 0x2c3b, 0xb3e0, 1, 2);
+        configurar_secuencia(d, 0x2c45, 0xb3e5, 1, 2);
+      } else {
+        Palabra paso = static_cast<Palabra>(palabra(d, 0x2c2d) - 37);
+        paso = static_cast<Palabra>(paso >> 2);
+        if (con_signo(paso) > 10)
+          paso = 10;
+        guardar(d, 0x2c2d, static_cast<Palabra>(palabra(d, 0x2c2d) - paso));
+      }
+    } else if (con_signo(palabra(d, 0x2c2d)) > 40 && palabra(d, 0x2cbf) == 0) {
+      configurar_secuencia(d, 0x2c5c, 0xb3e7, 7, 2);
+      configurar_secuencia(d, 0x2c7d, 0xb3ec, 1, 2);
+      configurar_secuencia(d, 0x2c82, 0xb3fb, 1, 2);
+      configurar_secuencia(d, 0x2c87, 0xb40a, 1, 2);
+      configurar_secuencia(d, 0x2cbf, 0xb429, 9, 1);
+      configurar_secuencia(d, 0x2cc4, 0xb445, 9, 1);
+      configurar_secuencia(d, 0x2cc9, 0xb460, 9, 1);
+      configurar_secuencia(d, 0x2c9e, 0xb419, 11, 2);
+      configurar_secuencia(d, 0x2ca3, 0xb41f, 11, 2);
+      configurar_secuencia(d, 0x2ca8, 0xb424, 11, 2);
+    }
+    if (con_signo(palabra(d, 0x2c2d)) <= 40 || d[0x2caf] != 1)
+      return true;
+    if (d[0x358c] == 9 && (d[0x2c2c] == 0x82 || d[0x2c2c] == 0x83))
+      return true;
+    const auto diferencia =
+        static_cast<Palabra>(palabra(d, 0x2c2d) + palabra(d, 0x2c31) - palabra(d, 0x2cb1));
+    if (con_signo(diferencia) <= 0 ||
+        con_signo(static_cast<Palabra>(diferencia - palabra(d, 0x2c31) - palabra(d, 0x2cb5))) >=
+            0 ||
+        d[0x2c2c] == 47)
+      return true;
+    d[0x3594] = d[0x3595] = d[0x3596] = 0;
+    guardar(d, 0x359a, 0);
+    guardar(d, 0x0dfa, 0);
+    guardar(d, 0x2c2f, 130);
+    configurar_secuencia(d, 0x2c3b, 0xb3da, 1, 2);
+    guardar(d, 0x2c40, 0);
+    guardar(d, 0x2c45, 0);
+    return true;
+  }
   // CFD2–D113: recorre los cuatro reflectores y destruye el emisor al cerrar el circuito.
   if (palabra(d, 0x8082) == 56) {
     // 10EC/1119–1129/1791: esta sala no usa manejadores de entidad >=0400.

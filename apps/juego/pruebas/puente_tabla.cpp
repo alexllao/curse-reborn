@@ -1090,3 +1090,9 @@ extern "C" EXPORTAR int procesar_laser(unsigned char *datos, unsigned short *pal
   palabras[3] = azar.cuarta;
   return valido ? 1 : 0;
 }
+
+// D114–D36B: contrasta directamente los umbrales de la reina y el planificador del trono.
+extern "C" EXPORTAR int procesar_rutina_reina(unsigned char *datos) {
+  motor::EstadoAleatorio azar{};
+  return motor::actualizar_rutina_escena(datos, azar, {}) ? 1 : 0;
+}

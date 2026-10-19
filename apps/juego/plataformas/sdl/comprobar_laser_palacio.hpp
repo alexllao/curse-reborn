@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_reina_hielo.hpp"
 
 // BB8D–BCDC/CFD2: prolonga la partida real desde la ventana hasta la apertura automática de la
 // reja.
@@ -51,5 +52,7 @@ bool comprobar_laser_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanzar
   if (!ir(275, 153) || !abrir() || !elegir(2) || !elegir(1) || !objeto(149) || !objeto(159) ||
       !avanzar(32) || p.conserva_objeto(149))
     return false;
-  return detener("laser_reja_32");
+  if (detener("laser_reja_32"))
+    return true;
+  return comprobar_reina_hielo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

@@ -1814,6 +1814,18 @@
       "nombre": "Circuito de reflectores",
       "comentario": "CFD2–D113: circuito, partículas y registro de extremo; contraste DS completo y azar desde10EC.",
       "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:D114",
+      "nombre": "Proyectiles y trono de la reina del hielo",
+      "comentario": "D114–D36B: ataque, salto9/cuadros82–83, impacto24, retroceso40 y trono197.540 variantes, recorrido persistente y salida104 contrastados.",
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:BCDF",
+      "nombre": "Salto ante la reina160",
+      "comentario": "BCDF–BCFD cancela camino y programa ACC2/ACD8/ACE7 mediante886B.36 variantes y dos saltos correctos contrastados.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
     }
   ],
   "tablas": [

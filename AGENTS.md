@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,57 vistasSDL
+## Estado vigente: 19 de octubre,58 vistasSDL
 
-CatálogoSDL0–56,57 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales y la resolución de las poleas y la ventana. Calidad180 C++/74 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: la sala del láser56 y el capítulo siguiente aún faltan;56 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–57,58 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina hasta solicitar104. Calidad184 C++/77 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino58 de104 y capítulo siguiente aún faltan;58 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -613,3 +613,7 @@ La vista57 integra escena56, ICEROOM según784E e ICEPAL.SFX, entrada90 desde49.
 Por petición de Àlex, habitaciones, sonidos_pc y presentacion viven en packages/assets/lanzador/, fuera de original. Conservar los maestros y separar marcos del juego. Arranque normal: banner silencioso9,2 segundos (3 entrada/5 visible/1,2 salida), variante por proporción sin deformación, negro final, habitación apagada y encendido automático a los dos segundos. El botón cancela el plazo inicial y sigue permitiendo apagar/encender manualmente. BIOS/DOS mantienen sus siete segundos completos y sus sonidos. No reactivar el plazo al regresar a la habitación ni contar tiempo efectivo durante el arranque. Metadatos presentacion.json incorporados al compilar, igual que habitaciones.json. Las comparaciones del motor excluyen esta presentación externa.
 
 Àlex amplía el volumen general a0–400%, en pasos del10%; M conserva también400% y los sonidos del lanzador comparten esa ganancia. Presentación: cinco segundos visibles más4,2 de fundidos,9,2 en total. Mantener los dos segundos de habitación y BIOS/DOS íntegros después.
+
+## Reina del hielo
+
+Vista58, escena57 ICEQUEEN/ICEPAL.SFX, entrada103 desde56. D114–D36B: tres canales de proyectiles, inmunidad únicamente en los cuadros82/83 del salto9 y según umbral vertical original, impacto que transforma a24 y retrocede hasta40, recuperación y acceso al trono desde197. BCDF–BCFD Saltar160 cancela camino y prepara ACC2/ACD8/ACE7 mediante886B. No inventar salto automático. comparar:reina-hielo contrasta1237casos/pasos,540variantesD114 y36selecciones de salto, once imágenes y tres estados auditados. SDL: once capturas, restauración y116 cambiosF5/F6. Salida104 solicitada por las secuencias, destino58 pendiente; no confundirlo con escena57 ya comprobada. Documentación reina_hielo.md. Logo de presentación conservado; Àlex descarta por ahora ponerlo como pegatina en el monitor y lo reconsiderará con un futuro menú ingame. No modificar el enfoque de la ventana: Àlex ha cancelado esa tarea.

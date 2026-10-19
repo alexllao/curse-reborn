@@ -85,11 +85,20 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 56)
+  if (escena < 46 || escena > 57)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
+  // BCDF–BCFD: saltar ante la reina cancela el camino y programa los tres canales originales.
+  if (escena == 57 && manejador == 0x3143 && id == 160) {
+    guardar(d, 0x359a, 0);
+    guardar(d, 0x0dfa, 0);
+    guardar(d, 0x2c3b, 0xacc2);
+    guardar(d, 0x2c40, 0xacd8);
+    guardar(d, 0x2c45, 0xace7);
+    return comenzar(d);
+  }
   if (manejador == 0x563a &&
       ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
        (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150) ||
@@ -270,7 +279,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && (id < 140 || id > 159))
+  if (id != 76 && id != 124 && (id < 140 || id > 160))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

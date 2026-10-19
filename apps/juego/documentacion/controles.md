@@ -162,3 +162,5 @@ Vista56: La habitación del carámbano, entrada101/regreso102; 112 cambiosF5/F6 
 Con los filtros F11, la mano original se compone antes de filtrar el fotograma, también en los paneles de partidas e información. Fuera de la imagen jugable se recupera la flecha del escritorio; al volver al modo original se conserva el cursor nativo. La mano filtrada se recorta al área del juego y no deja rastros.
 
 La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro reflectores recuperables y gato bajo la reja. Nueve imágenesSDL y114 cambiosF5/F6 comprobados. La salida103 y su habitación de destino siguen pendientes. Véase [la documentación](laser_palacio.md).
+
+La vista58 añade [El trono de la reina del hielo](reina_hielo.md): Saltar sobre la reina160 esquiva sus proyectiles; los golpes y la recuperación siguen el original. `pnpm comprobar:reina-hielo` verifica once imágenes, restauración y116 cambiosF5/F6. Salida104 contrastada en el núcleo; destino58 pendiente.

@@ -442,6 +442,28 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--reina-hielo',
+      nombre: 'reina_hielo',
+      referencia: 'reina_hielo',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'reina_entrada',
+        'reina_control',
+        'reina_salto_temprano',
+        'reina_golpe',
+        'reina_recuperada',
+        'reina_preparada',
+        'reina_salto_primero',
+        'reina_entre_saltos',
+        'reina_salto_segundo',
+        'reina_trono',
+        'reina_expulsion',
+      ],
+      alcance:
+        'entrada103, salto temprano, golpe y recuperación, dos proyectiles esquivados y trono; once imágenes y restauración; destino104 pendiente',
+    },
+    {
       argumento: '--laser-palacio',
       nombre: 'laser_palacio',
       referencia: 'laser_palacio',
@@ -771,6 +793,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--carambano-palacio',
       '--resolucion-palacio',
       '--laser-palacio',
+      '--reina-hielo',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);
