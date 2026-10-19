@@ -62,7 +62,7 @@ Se ha preparado `pnpm comparar:acciones`, que, para este bloque:
 
 Se han superado **548 casos**: las diez posiciones de la marca de fin, cada identificador de la tabla base, el umbral de comparación, valores con el bit de signo activo, manejadores alternativos y 512 casos generados con semilla fija. Los 65.536 bytes coinciden en todos los casos. Esta comprobación usa las instrucciones reales del ejecutable como referencia, sin escribir otra versión de la fórmula esperada en las pruebas.
 
-El informe local `trabajo/comparacion_acciones/resultado.json` guarda la huella del ejecutable, la de la biblioteca comparada, la versión del emulador y el resultado. No se publican el binario del juego ni el listado completo de instrucciones.
+El informe local `apps/juego/trabajo/comparacion_acciones/resultado.json` guarda la huella del ejecutable, la de la biblioteca comparada, la versión del emulador y el resultado. No se publican el binario del juego ni el listado completo de instrucciones.
 
 ### Requisitos y comando
 

@@ -44,6 +44,6 @@ La muestra ya comprobada con `--muestra` tiene **166 casos/pasos**: 67 de RNC2, 
 
 `pnpm comprobar:escena` utiliza ahora la muestra de [objetos y composición](objetos_mazmorra.md) y compara los estados inicial y tras 32 pasos. Introduce F6 en la cola de eventos y termina mediante Escape. El control visible, F5, la maximización y la cadencia deben comprobarse manualmente. `pnpm comprobar:ventana` conserva la comprobación de los 64.000 píxeles del título y el paso desde Core.
 
-Los resultados y la vista PNG quedan en `trabajo/comparacion_rnc2/`, `trabajo/comparacion_escena/`, `trabajo/comparacion_fundidos/` y `trabajo/comprobacion_escena_sdl/`. Nada de esos recursos se incorpora al historial.
+Los resultados y la vista PNG quedan en `apps/juego/trabajo/comparacion_rnc2/`, `apps/juego/trabajo/comparacion_escena/`, `apps/juego/trabajo/comparacion_fundidos/` y `apps/juego/trabajo/comprobacion_escena_sdl/`. Nada de esos recursos se incorpora al historial.
 
 El bloque `28B2` está trasladado y documentado en [introduccion_original.md](introduccion_original.md): bruja, balcón y béisbol, con sus páginas, paletas y fundidos.

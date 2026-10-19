@@ -62,7 +62,7 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
   "$<TARGET_FILE_DIR:curse-reborn>/LICENCIA_NUKED_OPL3.txt")
 
 find_path(MT32EMU_INCLUDE_DIR mt32emu/mt32emu.h
-  HINTS "${RAIZ_REPOSITORIO}/trabajo/dependencias/mt32emu/include" REQUIRED)
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/include" REQUIRED)
 target_include_directories(curse-reborn PRIVATE "${MT32EMU_INCLUDE_DIR}")
 
 # La carga es dinámica; conservar un nombre estable y permitir reemplazar la biblioteca.
@@ -77,13 +77,13 @@ else()
   set(CANDIDATOS_MT32EMU libmt32emu.so)
 endif()
 find_file(MT32EMU_BIBLIOTECA NAMES ${CANDIDATOS_MT32EMU}
-  HINTS "${RAIZ_REPOSITORIO}/trabajo/dependencias/mt32emu/bin"
-        "${RAIZ_REPOSITORIO}/trabajo/dependencias/mt32emu/lib")
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/bin"
+        "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/lib")
 if(MT32EMU_BIBLIOTECA)
   add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${MT32EMU_BIBLIOTECA}" "$<TARGET_FILE_DIR:curse-reborn>/${NOMBRE_MT32EMU}")
 endif()
-set(CARPETA_LICENCIA_MT32EMU "${RAIZ_REPOSITORIO}/trabajo/dependencias/mt32emu/share/doc/munt/libmt32emu")
+set(CARPETA_LICENCIA_MT32EMU "${CMAKE_CURRENT_SOURCE_DIR}/trabajo/dependencias/mt32emu/share/doc/munt/libmt32emu")
 foreach(LICENCIA COPYING.LESSER.txt COPYING.txt)
   if(EXISTS "${CARPETA_LICENCIA_MT32EMU}/${LICENCIA}")
     add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different

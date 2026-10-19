@@ -59,9 +59,9 @@ pnpm comprobar:menu
 
 La muestra comprobada contiene **91 casos/pasos**: 38 selecciones, cinco paneles, dos fondos, dos composiciones de interacción, 32 pasos persistentes, cuatro combinaciones y ocho activaciones de canales. La referencia ejecuta los manejadores originales y compara DS completo. El dibujo ejecuta `DEFB`/`DE96` con el modelo VGA contrastado; los pasos persistentes incluyen los cambios de banco solicitados por F8 y consumen los mismos archivos originales.
 
-La comparación amplia de **307 casos/pasos**, con 192 pasos de interacción y 64 activaciones, también se ha ejecutado y coincide. Los resultados están en `trabajo/comparacion_menu/`.
+La comparación amplia de **307 casos/pasos**, con 192 pasos de interacción y 64 activaciones, también se ha ejecutado y coincide. Los resultados están en `apps/juego/trabajo/comparacion_menu/`.
 
-La comprobación SDL contrasta 64.000 píxeles del panel sobre la escena y otros 64.000 tras ejecutar la primera orden y avanzar 32 pasos. Una tercera captura verifica que las cinco categorías de color de depuración se dibujan. Los resultados quedan en `trabajo/comprobacion_menu_sdl/`. El ratón en una ventana visible maximizada, las teclas de depuración y las transiciones se comprueban manualmente.
+La comprobación SDL contrasta 64.000 píxeles del panel sobre la escena y otros 64.000 tras ejecutar la primera orden y avanzar 32 pasos. Una tercera captura verifica que las cinco categorías de color de depuración se dibujan. Los resultados quedan en `apps/juego/trabajo/comprobacion_menu_sdl/`. El ratón en una ventana visible maximizada, las teclas de depuración y las transiciones se comprueban manualmente.
 
 ### Corrección de los bancos de referencia
 

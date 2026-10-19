@@ -108,7 +108,7 @@ try {
   );
   if (createHash('sha256').update(exe).digest('hex') !== mapa.sha256)
     throw new Error('El ejecutable no corresponde a la versión reconstruida.');
-  const carpeta = join(raiz, 'trabajo', 'referencias_musicales');
+  const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'referencias_musicales');
   mkdirSync(carpeta, { recursive: true });
   const pistas = [];
   for (let indice = 0; indice < 5; indice++) {

@@ -7,7 +7,7 @@ export async function prepararMt32(raiz, ejecutar, variables) {
   const ajustes = JSON.parse(
     readFileSync(join(raiz, 'herramientas', 'dependencias_mt32.json'), 'utf8'),
   );
-  const dependencias = join(raiz, 'trabajo', 'dependencias');
+  const dependencias = join(raiz, 'apps', 'juego', 'trabajo', 'dependencias');
   const destino = join(dependencias, 'mt32emu');
   const biblioteca = join(destino, 'bin', 'mt32emu-2.dll');
   if (existsSync(biblioteca) && existsSync(join(destino, 'include', 'mt32emu', 'mt32emu.h')))
@@ -34,8 +34,18 @@ export async function prepararMt32(raiz, ejecutar, variables) {
       ],
       { ...variables, CURSE_ARCHIVO_MT32: archivo, CURSE_CARPETA_MT32: dependencias },
     );
-  const herramientas = join(raiz, 'trabajo', 'entorno', 'Scripts');
-  const cmake = join(herramientas, 'cmake.exe');
+  const herramientas = join(raiz, 'apps', 'juego', 'trabajo', 'entorno', 'Scripts');
+  // El binario real sigue funcionando al trasladar trabajo; el lanzador de pip contiene rutas absolutas.
+  const cmake = join(
+    herramientas,
+    '..',
+    'Lib',
+    'site-packages',
+    'cmake',
+    'data',
+    'bin',
+    'cmake.exe',
+  );
   const ninja = join(herramientas, 'ninja.exe');
   if (!existsSync(cmake) || !existsSync(ninja))
     ejecutar(

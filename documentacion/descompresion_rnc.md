@@ -50,7 +50,7 @@ Unicorn ejecuta la rutina original con origen/destino separados y también con e
 
 Los programas sintéticos son generados por un escritor propio: incluyen valores de literales hasta 32.767, repeticiones de un byte hacia delante y hasta tres bloques que reutilizan tablas. Las cabeceras inválidas se comprueban solo contra el contrato seguro del C++; no se ejecutan como si el original garantizase su rechazo. Los informes guardan las huellas de cada recurso y de su salida.
 
-La muestra se ejecuta añadiendo `--muestra`. Los informes locales se guardan por separado en `trabajo/comparacion_rnc/muestra.json` y `resultado.json`.
+La muestra se ejecuta añadiendo `--muestra`. Los informes locales se guardan por separado en `apps/juego/trabajo/comparacion_rnc/muestra.json` y `resultado.json`.
 
 Para agrupar esta comparación con los 1.183 casos gráficos, usa `pnpm comparar:graficos`: compila una vez y ejecuta los dos conjuntos, **1.325 casos** en total, conservando sus informes separados. Con `--muestra` ejecuta 121 casos.
 
@@ -60,7 +60,7 @@ Para agrupar esta comparación con los 1.183 casos gráficos, usa `pnpm comparar
 pnpm titulo
 ```
 
-El comando compila el núcleo y utiliza únicamente `datos_originales/CURSE/DATA/TITLE.DAT` y `TITLE.PAL`. Genera `trabajo/vista_titulo/titulo_cpp.png` y un JSON de procedencia. Node gestiona la compilación; Python llama a las funciones C++ y escribe el PNG. No interpreta lógica del juego ni efectúa la descompresión en Python.
+El comando compila el núcleo y utiliza únicamente `datos_originales/CURSE/DATA/TITLE.DAT` y `TITLE.PAL`. Genera `apps/juego/trabajo/vista_titulo/titulo_cpp.png` y un JSON de procedencia. Node gestiona la compilación; Python llama a las funciones C++ y escribe el PNG. No interpreta lógica del juego ni efectúa la descompresión en Python.
 
 La imagen C++ generada se ha contrastado con la referencia obtenida anteriormente mediante el ejecutable. **Ambos PNG tienen el mismo SHA-256**, y los índices descomprimidos del título tienen la huella `e9bd143ea644c93e43330b763b007913cf604e5865c39437ae432e7d908ea714`.
 
@@ -70,6 +70,6 @@ La creación del PNG aplica la misma expansión de componentes de paleta que la 
 
 `apps/juego/motor/recursos/rnc2.cpp` traslada `67BC`–`69BD`. Su lector consume dos bits iniciales y después bits de mayor a menor peso, intercalados con literales. Conserva las longitudes cortas, literales agrupados, dieciséis prefijos de distancia, referencias solapadas y terminadores de bloque con continuación. A diferencia de DOS, la API requiere entrada y salida separadas. Comprueba tamaños y referencias; no verifica CRC.
 
-`pnpm comparar:rnc2` compara los dieciséis DAT de método dos y las diez tiras de la mazmorra con el original, además de programas sintéticos. La muestra comprobada de **67 casos** cubre dos DAT, tres tiras, códigos cortos/largos, continuación y límites de cabecera. La comparación amplia está preparada y pendiente de ejecutar por el propietario. Los informes quedan en `trabajo/comparacion_rnc2/`.
+`pnpm comparar:rnc2` compara los dieciséis DAT de método dos y las diez tiras de la mazmorra con el original, además de programas sintéticos. La muestra comprobada de **67 casos** cubre dos DAT, tres tiras, códigos cortos/largos, continuación y límites de cabecera. La comparación amplia está preparada y pendiente de ejecutar por el propietario. Los informes quedan en `apps/juego/trabajo/comparacion_rnc2/`.
 
 `pnpm comparar:presentacion` agrupa esta comparación con fondos, sprites y fundidos originales. El [recorrido de arranque y escena](arranque_escena.md) documenta su alcance y sus límites.

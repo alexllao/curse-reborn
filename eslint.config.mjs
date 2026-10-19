@@ -7,7 +7,7 @@ export default [
     ignores: [
       'datos_originales/**',
       'recursos_extraidos/**',
-      'trabajo/**',
+      '**/trabajo/**',
       'node_modules/**',
       'compilacion/**',
       'build/**',

@@ -3,11 +3,13 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { migrarTrabajoLocal } from './rutas_proyecto.mjs';
 import { gestionarSdl } from './gestionar_sdl.mjs';
 import { obtenerFuentesMotor } from './fuentes_motor.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const entorno = join(raiz, 'trabajo', 'entorno');
+migrarTrabajoLocal(raiz);
+const entorno = join(raiz, 'apps', 'juego', 'trabajo', 'entorno');
 const pythonLocal =
   process.platform === 'win32'
     ? join(entorno, 'Scripts', 'python.exe')
@@ -81,7 +83,7 @@ function comprobarEntorno(requiereEmulador = false) {
 function preparar() {
   if (!existsSync(pythonLocal)) {
     const [programa, argumentos] = buscarPython();
-    console.log('Creando el entorno local de Python en trabajo/entorno…');
+    console.log('Creando el entorno local de Python en apps/juego/trabajo/entorno…');
     ejecutar(programa, [...argumentos, '-m', 'venv', entorno]);
   }
   console.log('Instalando las dependencias del desensamblador…');
@@ -105,7 +107,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
       'La compilación de esta comparación en Windows requiere Node y Python de 64 bits.',
     );
   }
-  const carpeta = join(raiz, 'trabajo', 'comparacion_acciones');
+  const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_acciones');
   mkdirSync(carpeta, { recursive: true });
   const biblioteca = join(
     carpeta,
@@ -135,7 +137,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   ejecutar(compilador, [
     ...opciones,
     ...obtenerFuentesMotor(raiz),
-    join(raiz, 'pruebas', 'puente_tabla.cpp'),
+    join(raiz, 'apps/juego/pruebas', 'puente_tabla.cpp'),
     '-o',
     biblioteca,
   ]);
@@ -214,7 +216,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   }[tipo];
   for (const comparador of Array.isArray(comparadores) ? comparadores : [comparadores]) {
     ejecutar(pythonLocal, [
-      join(raiz, tipo === 'titulo' ? 'herramientas' : 'pruebas', comparador),
+      join(raiz, tipo === 'titulo' ? 'herramientas' : 'apps/juego/pruebas', comparador),
       '--biblioteca',
       biblioteca,
       ...opcionesComparacion,
@@ -369,7 +371,10 @@ try {
       break;
     case 'comprobar':
       comprobarEntorno();
-      ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comprobar_analisis.py'), ...argumentos]);
+      ejecutar(pythonLocal, [
+        join(raiz, 'apps/juego/pruebas', 'comprobar_analisis.py'),
+        ...argumentos,
+      ]);
       break;
     case 'comparar:acciones':
       compararAcciones();
@@ -398,7 +403,7 @@ try {
     case 'comprobar:mt32':
       compararAcciones('musica_rs', argumentos);
       await gestionarSdl('comprobar:mt32', []);
-      ejecutar(pythonLocal, [join(raiz, 'pruebas', 'comparar_sintesis_mt32.py')]);
+      ejecutar(pythonLocal, [join(raiz, 'apps/juego/pruebas', 'comparar_sintesis_mt32.py')]);
       break;
     case 'exportar:musica':
       await gestionarSdl('exportar:musica', argumentos);

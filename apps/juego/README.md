@@ -10,6 +10,6 @@ Desde la raíz:
 
 Los comandos anteriores `pnpm ventana`, `pnpm sdl:compilar` y `pnpm comprobar:*` se conservan en la raíz. El manifiesto `fuentes_motor.json` es relativo a este paquete y lo comparten CMake y los compiladores de comparación/SDL.
 
-Los recursos propios están en `../../packages/assets/`. Los originales y las ROM siguen en `../../datos_originales/`; las dependencias descargadas, compilaciones e informes siguen en `../../trabajo/`, sin versionar.
+Los recursos propios están en `../../packages/assets/`. Los originales y las ROM siguen en `../../datos_originales/`. Este paquete contiene sus comparadores en `pruebas/` y sus dependencias descargadas, compilaciones e informes en `trabajo/`, sin versionar.
 
 Más detalles: [organización del monorepositorio](../../documentacion/monorepo.md).

@@ -56,7 +56,7 @@ pnpm comparar:avance
 | Acción completa, con semillas persistentes |            1.024 |
 | **Total**                                  |       **10.930** |
 
-La muestra ejecutada con `pnpm comparar:avance --muestra` contiene 421 casos. Su informe se escribe en `trabajo/comparacion_avance/muestra.json`; el informe de la comparación completa se guarda por separado en `resultado.json`, para evitar presentar una muestra como validación amplia.
+La muestra ejecutada con `pnpm comparar:avance --muestra` contiene 421 casos. Su informe se escribe en `apps/juego/trabajo/comparacion_avance/muestra.json`; el informe de la comparación completa se guarda por separado en `resultado.json`, para evitar presentar una muestra como validación amplia.
 
 Unicorn recorre el código original y sus llamadas reales. No se sustituyen los manejadores de movimiento ni las auxiliares por implementaciones de prueba. El conjunto incluye modalidades de dirección, imágenes límite, lecturas de nodo que cruzan el final del segmento, listas con duplicados y operaciones sucesivas con el mismo estado.
 

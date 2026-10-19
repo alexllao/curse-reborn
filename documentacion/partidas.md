@@ -34,7 +34,7 @@ Se reconocen las zonas integradas, incluido el trayecto de comida y mago de Paso
 
 ## Comprobaciones
 
-`pnpm comparar:partidas` contrasta **303 casos** frente a las instrucciones originales: ocho ranuras, nombres, máscaras, conservación de otros registros, lecturas completas y límites con centinelas. Con una instantánea real del recorrido genera además `trabajo/comparacion_partidas/original_dos.sav` usando las escrituras del EXE para probar la importación.
+`pnpm comparar:partidas` contrasta **303 casos** frente a las instrucciones originales: ocho ranuras, nombres, máscaras, conservación de otros registros, lecturas completas y límites con centinelas. Con una instantánea real del recorrido genera además `apps/juego/trabajo/comparacion_partidas/original_dos.sav` usando las escrituras del EXE para probar la importación.
 
 `pnpm comprobar:partidas` compila SDL y prueba guardar, volver a una sesión inicial, restaurar inventario y escena, rechazar una zona pendiente sin cambiar la partida, cargar desde el panel, borrado directo e importar la referencia DOS en otra ranura sin sobrescribir la existente. Tras importar se verifica también que Brad conserva el control. El teclado se prueba con clics reales en letras, espacio, borrado y aceptación. El panel final se captura en un BMP local.
 
@@ -48,6 +48,6 @@ Un clic izquierdo pasa a la página siguiente; el cuarto vuelve al juego. Intro,
 
 E160–E19E recorre la tabla DS:B74E: B758, B804, B8BA y B90B. Se conservan los créditos originales, distinguiéndolos de la autoría de Curse Reborn. La puntuación procede de DS:35C7 y el porcentaje se calcula mediante división entera por 478. El formato decimal de tres posiciones sigue 7970–79B7. La composición reconstruye D623 hasta D6A5: placa negra centrada y texto a ocho píxeles por carácter y diez por línea, mediante D87A y la tabla DS:B6B4. No se versionan los textos extraídos ni FONT.SPR.
 
-`pnpm comparar:informacion` compara cuarenta casos con diez puntuaciones entre 0 y 478: números, posiciones y los 64.000 píxeles de cada ficha con las instrucciones originales. `pnpm comprobar:informacion` añade la apertura desde la décima casilla real, navegación, cierres, conservación del estado guardable, ausencia de escritura en el perfil y cuatro capturas SDL en `trabajo/comprobacion_informacion_sdl/`. La adaptación de teclado está descrita arriba; no se afirma identidad de todas las entradas con DOS.
+`pnpm comparar:informacion` compara cuarenta casos con diez puntuaciones entre 0 y 478: números, posiciones y los 64.000 píxeles de cada ficha con las instrucciones originales. `pnpm comprobar:informacion` añade la apertura desde la décima casilla real, navegación, cierres, conservación del estado guardable, ausencia de escritura en el perfil y cuatro capturas SDL en `apps/juego/trabajo/comprobacion_informacion_sdl/`. La adaptación de teclado está descrita arriba; no se afirma identidad de todas las entradas con DOS.
 
 El [tiempo efectivo de juego](tiempo_juego.md) se conserva por separado en el perfil. No añade bytes a CURSE.SAV, no cambia sus menús ni se rebobina al cargar una ranura. Su asociación a futuros estados de guardado propios sigue pendiente.

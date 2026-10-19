@@ -1,6 +1,6 @@
 # Formato y revisión del código
 
-Las herramientas se ejecutan desde la raíz y solo revisan código y documentación propios. Los datos originales, `trabajo/`, los binarios y los avisos de licencia de terceros quedan excluidos.
+Las herramientas se ejecutan desde la raíz y solo revisan código y documentación propios. Los datos originales, `apps/juego/trabajo/`, los binarios y los avisos de licencia de terceros quedan excluidos.
 
 ## Preparación
 

@@ -81,9 +81,9 @@ pnpm comprobar
 
 `pnpm preparar` crea el entorno Python local e instala las dependencias fijadas. `pnpm analizar` aplica `documentacion/mapa_ejecutable.json`, con las raíces `0000:0238`, `0000:6A8C` y `0000:8C51` y las tablas anotadas. Se comprueba el SHA-256 antes de aplicarlo. El punto de entrada siempre se obtiene de la cabecera MZ. Para añadir otras entradas confirmadas, usa `pnpm analizar --raiz segmento:desplazamiento`.
 
-Para reproducir la pasada inicial sin el mapa, en Windows se puede invocar directamente `trabajo/entorno/Scripts/python.exe herramientas/analizar_ejecutable.py --raiz 0000:0238 --raiz 0000:6A8C --raiz 0000:8C51`. En otros sistemas, el ejecutable del entorno está en `trabajo/entorno/bin/python`.
+Para reproducir la pasada inicial sin el mapa, en Windows se puede invocar directamente `apps/juego/trabajo/entorno/Scripts/python.exe herramientas/analizar_ejecutable.py --raiz 0000:0238 --raiz 0000:6A8C --raiz 0000:8C51`. En otros sistemas, el ejecutable del entorno está en `apps/juego/trabajo/entorno/bin/python`.
 
-La herramienta escribe `analisis.json` y `desensamblado.asm` en `trabajo/analisis_ejecutable/`, que está excluida de Git. El JSON conserva la cabecera, las reubicaciones, las instrucciones candidatas, sus enlaces y las incidencias. El listado incluye posiciones de archivo y direcciones relativas. El ejecutable original se lee sin modificarlo.
+La herramienta escribe `analisis.json` y `desensamblado.asm` en `apps/juego/trabajo/analisis_ejecutable/`, que está excluida de Git. El JSON conserva la cabecera, las reubicaciones, las instrucciones candidatas, sus enlaces y las incidencias. El listado incluye posiciones de archivo y direcciones relativas. El ejecutable original se lee sin modificarlo.
 
 La dependencia usada es Capstone 5.0.7, mediante su [interfaz oficial para Python](https://www.capstone-engine.org/lang_python). No se incorpora su código al repositorio. Las pruebas usan imágenes MZ e instrucciones sintéticas: comprueban cabeceras, reubicaciones, archivos truncados, saltos de 16 bits, bucles, destinos indirectos, solapamientos y terminación del recorrido.
 

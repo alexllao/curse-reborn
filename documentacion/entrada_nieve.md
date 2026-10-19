@@ -8,7 +8,7 @@ La rutina activa una reacción una sola vez, mediante el bit0 de35CA, cuando el 
 
 `pnpm comparar:entrada-nieve` verifica636 casos/pasos: la transición74, cámara inicial, cinco entidades,256 pasos de animación, dos composiciones y118 selecciones en la posición de entrada. La auditoría detectó y permitió completar las respuestas neutras de ataque de70/76/101/124, las combinaciones del inventario real y los sonidos0/1 de ayuda/saludo. El ventilador conserva su rechazo fuera de72. No se añaden respuestas genéricas para los objetos nuevos aún sin investigar.
 
-Quedan pendientes las acciones y posiciones posteriores, los puzles y las salidas de esta zona. Este resultado no suma una vista jugable ni acredita un puzle completo. El último punto real sigue en `trabajo/comparacion_regreso_benn/probador_solicitud74`.
+Quedan pendientes las acciones y posiciones posteriores, los puzles y las salidas de esta zona. Este resultado no suma una vista jugable ni acredita un puzle completo. El último punto real sigue en `apps/juego/trabajo/comparacion_regreso_benn/probador_solicitud74`.
 
 ## SNOWAST4 en SDL, vista41
 

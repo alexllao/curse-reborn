@@ -16,8 +16,8 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const configuracion = JSON.parse(
   readFileSync(join(raiz, 'herramientas', 'dependencias_sdl.json'), 'utf8'),
 );
-const dependencias = join(raiz, 'trabajo', 'dependencias');
-const aplicacion = join(raiz, 'trabajo', 'aplicacion');
+const dependencias = join(raiz, 'apps', 'juego', 'trabajo', 'dependencias');
+const aplicacion = join(raiz, 'apps', 'juego', 'trabajo', 'aplicacion');
 const datos = join(raiz, 'datos_originales', 'CURSE', 'DATA');
 
 function ejecutar(programa, argumentos, variables = process.env, capturar = false, ocultar = true) {
@@ -234,11 +234,13 @@ function leerReferencia(escena = false, animada = false, ruta = null) {
       (escena
         ? join(
             raiz,
+            'apps',
+            'juego',
             'trabajo',
             'comparacion_objetos',
             animada ? 'mazmorra_animada_cpp.png' : 'mazmorra_objetos_cpp.png',
           )
-        : join(raiz, 'trabajo', 'vista_titulo', 'titulo_cpp.png')),
+        : join(raiz, 'apps', 'juego', 'trabajo', 'vista_titulo', 'titulo_cpp.png')),
   );
   let posicion = 8,
     paleta,
@@ -757,7 +759,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'comprobar:vistas') {
     const programa = await compilar();
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_vistas');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_vistas');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-vistas', join(carpeta, 'ultimo_fotograma.bmp')], {
       ...process.env,
@@ -780,7 +782,7 @@ export async function gestionarSdl(accion, argumentos) {
     )
       throw new Error('Uso: pnpm exportar:musica [--segundos 1…600].');
     const programa = await compilar();
-    const carpeta = join(raiz, 'trabajo', 'exportacion_musica');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'exportacion_musica');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--exportar-musica', carpeta, String(segundos)]);
     const pistas = [];
@@ -827,7 +829,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'comprobar:mt32') {
     const programa = await compilar();
-    const carpeta = join(raiz, 'trabajo', 'comparacion_musica_rs');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_musica_rs');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-mt32', join(carpeta, 'mazmorra_mt32.wav')], {
       ...process.env,
@@ -837,7 +839,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'comprobar:musica') {
     const programa = await compilar();
-    const carpeta = join(raiz, 'trabajo', 'comparacion_musica');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_musica');
     mkdirSync(carpeta, { recursive: true });
     const wav = join(carpeta, 'musica_adlib.wav');
     ejecutar(programa, [datos, '--comprobar-musica', wav], {
@@ -854,7 +856,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         datos,
         '--comprobar-digital',
-        join(raiz, 'trabajo', 'comparacion_digital', 'efectos_digitales.wav'),
+        join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_digital', 'efectos_digitales.wav'),
       ],
       {
         ...process.env,
@@ -870,7 +872,7 @@ export async function gestionarSdl(accion, argumentos) {
       [
         datos,
         '--comprobar-audio',
-        join(raiz, 'trabajo', 'comparacion_audio', 'efecto_original.wav'),
+        join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_audio', 'efecto_original.wav'),
       ],
       { ...process.env, SDL_AUDIO_DRIVER: 'dummy' },
     );
@@ -1117,7 +1119,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:caida',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_caida_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_caida_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['caida-16', 'caida_16'],
@@ -1134,7 +1136,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_caida', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_caida', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -1150,7 +1152,7 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'comprobar:avisos') {
     const programa = await compilar();
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_avisos');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_avisos');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-avisos', join(carpeta, 'aviso')], {
       ...process.env,
@@ -1160,13 +1162,13 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:tiempo') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_tiempo');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_tiempo');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-tiempo', carpeta]);
     return;
   }
   if (accion === 'comprobar:reinicio') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_reinicio');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_reinicio');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-reinicio', join(carpeta, 'monitor')], {
       ...process.env,
@@ -1176,7 +1178,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:monitor' || accion === 'comprobar:habitaciones') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_monitor');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_monitor');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-monitor', join(carpeta, 'monitor')], {
       ...process.env,
@@ -1193,7 +1195,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:cursor') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_cursor');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_cursor');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-cursor', join(carpeta, 'mano_original.png')], {
       ...process.env,
@@ -1203,7 +1205,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:decorados') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_decorados');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_decorados');
     mkdirSync(carpeta, { recursive: true });
     ejecutar(programa, [datos, '--comprobar-decorados', join(carpeta, 'frank')], {
       ...process.env,
@@ -1212,7 +1214,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:fps') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_fps');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_fps');
     mkdirSync(carpeta, { recursive: true });
     const prefijo = join(carpeta, 'fps');
     ejecutar(programa, [datos, '--comprobar-fps', prefijo], {
@@ -1269,7 +1271,7 @@ export async function gestionarSdl(accion, argumentos) {
         '-Wall',
         '-Wextra',
         '-Werror',
-        join(raiz, 'pruebas', 'comparar_escaladores.cpp'),
+        join(raiz, 'apps/juego/pruebas', 'comparar_escaladores.cpp'),
         '-o',
         prueba,
       ],
@@ -1277,7 +1279,7 @@ export async function gestionarSdl(accion, argumentos) {
     );
     ejecutar(prueba, []);
     ejecutar(process.execPath, [join(raiz, 'herramientas', 'gestionar_proyecto.mjs'), 'titulo']);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_filtros');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_filtros');
     mkdirSync(carpeta, { recursive: true });
     const prefijo = join(carpeta, 'filtro');
     ejecutar(programa, [datos, '--comprobar-filtros', prefijo], {
@@ -1326,7 +1328,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:marcos') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_marcos');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_marcos');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, ancho, alto] of [
       ['marcos', 1280, 720],
@@ -1521,10 +1523,14 @@ export async function gestionarSdl(accion, argumentos) {
                   : calles
                     ? 'calles'
                     : 'poblacion';
-    const carpeta = join(raiz, 'trabajo', `comprobacion_${grupo}_sdl`);
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', `comprobacion_${grupo}_sdl`);
     mkdirSync(carpeta, { recursive: true });
     if (pruebaValle) {
-      if (!existsSync(join(raiz, 'trabajo/comparacion_regreso_loro/valle_post_entrada.ds.bin')))
+      if (
+        !existsSync(
+          join(raiz, 'apps/juego/trabajo/comparacion_regreso_loro/valle_post_entrada.ds.bin'),
+        )
+      )
         throw new Error('Prepara primero las referencias comunes con pnpm comprobar:poste.');
       for (const comparador of pruebaValle.comparadores)
         ejecutar(process.execPath, [
@@ -1669,6 +1675,8 @@ export async function gestionarSdl(accion, argumentos) {
             false,
             join(
               raiz,
+              'apps',
+              'juego',
               'trabajo',
               pruebaValle
                 ? 'comparacion_' + pruebaValle.referencia
@@ -1746,7 +1754,7 @@ export async function gestionarSdl(accion, argumentos) {
     return;
   }
   if (accion === 'comprobar:asaltante') {
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_asaltante_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_asaltante_sdl');
     mkdirSync(carpeta, { recursive: true });
     const entrada = join(carpeta, 'orden_entrada.bmp');
     ejecutar(
@@ -1788,7 +1796,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_asaltante', nombre + '_cpp.png'),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_asaltante', nombre + '_cpp.png'),
           ),
         )
       )
@@ -1823,7 +1831,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:campo',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_campo_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_campo_sdl');
     mkdirSync(carpeta, { recursive: true });
     const capturas = [
       ['0', 'campo_0'],
@@ -1850,7 +1858,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_campo', nombre + '_cpp.png'),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_campo', nombre + '_cpp.png'),
           ),
         )
       )
@@ -1884,7 +1892,7 @@ export async function gestionarSdl(accion, argumentos) {
       join(raiz, 'herramientas', 'gestionar_proyecto.mjs'),
       'comparar:informacion',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_informacion_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_informacion_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (let pagina = 0; pagina < 4; ++pagina) {
       const registro = ejecutar(
@@ -1913,18 +1921,25 @@ export async function gestionarSdl(accion, argumentos) {
     ]);
     ejecutar(
       process.platform === 'win32'
-        ? join(raiz, 'trabajo', 'entorno', 'Scripts', 'python.exe')
-        : join(raiz, 'trabajo', 'entorno', 'bin', 'python'),
+        ? join(raiz, 'apps', 'juego', 'trabajo', 'entorno', 'Scripts', 'python.exe')
+        : join(raiz, 'apps', 'juego', 'trabajo', 'entorno', 'bin', 'python'),
       [
-        join(raiz, 'pruebas', 'comparar_panel_partidas.py'),
+        join(raiz, 'apps/juego/pruebas', 'comparar_panel_partidas.py'),
         '--biblioteca',
-        join(raiz, 'trabajo', 'comparacion_acciones', 'tabla_acciones.dll'),
+        join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_acciones', 'tabla_acciones.dll'),
       ],
     );
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_partidas_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_partidas_sdl');
     mkdirSync(carpeta, { recursive: true });
     const perfil = join(carpeta, `perfil_${Date.now()}.sav`);
-    const original = join(raiz, 'trabajo', 'comparacion_partidas', 'original_dos.sav');
+    const original = join(
+      raiz,
+      'apps',
+      'juego',
+      'trabajo',
+      'comparacion_partidas',
+      'original_dos.sav',
+    );
     if (!existsSync(original))
       throw new Error(
         'Falta la partida de referencia DOS: ejecuta pnpm comparar:final-cuevas --muestra y repite.',
@@ -1970,7 +1985,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:final-cuevas',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_final_cuevas_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_final_cuevas_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['--comprobar-final-moneda', 'final_moneda'],
@@ -2000,7 +2015,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_final_cuevas', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_final_cuevas', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2034,7 +2049,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:catapulta',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_catapulta_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_catapulta_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['--comprobar-catapulta-corredor', 'catapulta_corredor'],
@@ -2054,7 +2069,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_catapulta', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_catapulta', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2088,7 +2103,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:cuevas',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_cuevas_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_cuevas_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['--comprobar-cuevas-piedras-uno', 'cuevas_piedras_uno'],
@@ -2106,7 +2121,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_cuevas', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_cuevas', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2140,7 +2155,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:poza',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_poza_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_poza_sdl');
     mkdirSync(carpeta, { recursive: true });
     const capturas = [
       ['--comprobar-poza-algas', 'poza_algas'],
@@ -2159,7 +2174,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_poza', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_poza', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2190,7 +2205,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:lago',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_lago_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_lago_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['--comprobar-lago-pecera', 'lago_pecera_128'],
@@ -2216,7 +2231,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_lago', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_lago', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2247,7 +2262,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:corredor',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_corredor_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_corredor_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['entrada', 'corredor_entrada'],
@@ -2270,7 +2285,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_corredor', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_corredor', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2292,7 +2307,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:puzle',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_puzle_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_puzle_sdl');
     mkdirSync(carpeta, { recursive: true });
     const captura = join(carpeta, 'puerta_abierta.bmp');
     ejecutar(programa, [datos, '--comprobar-puzle', captura], {
@@ -2304,7 +2319,7 @@ export async function gestionarSdl(accion, argumentos) {
         leerReferencia(
           false,
           false,
-          join(raiz, 'trabajo', 'comparacion_puzle', 'interaccion_32_cpp.png'),
+          join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_puzle', 'interaccion_32_cpp.png'),
         ),
       )
     )
@@ -2325,7 +2340,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:jugabilidad',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_jugabilidad_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_jugabilidad_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const nombre of ['liberacion', 'movimiento']) {
       const captura = join(carpeta, `${nombre}.bmp`);
@@ -2338,7 +2353,7 @@ export async function gestionarSdl(accion, argumentos) {
           leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_jugabilidad', `${nombre}_cpp.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_jugabilidad', `${nombre}_cpp.png`),
           ),
         )
       )
@@ -2363,7 +2378,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:menu',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_menu_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_menu_sdl');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, nombre] of [
       ['menu', 'menu_escena_cpp'],
@@ -2382,7 +2397,7 @@ export async function gestionarSdl(accion, argumentos) {
             leerReferencia(
               false,
               false,
-              join(raiz, 'trabajo', 'comparacion_menu', `${nombre}.png`),
+              join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_menu', `${nombre}.png`),
             ),
           )
         )
@@ -2438,7 +2453,7 @@ export async function gestionarSdl(accion, argumentos) {
       'comparar:objetos',
       '--muestra',
     ]);
-    const carpeta = join(raiz, 'trabajo', 'comprobacion_introduccion_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_introduccion_sdl');
     mkdirSync(carpeta, { recursive: true });
     const capturas = [
       ['caldero', 'cauldrn2'],
@@ -2457,7 +2472,7 @@ export async function gestionarSdl(accion, argumentos) {
         ? leerReferencia(
             false,
             false,
-            join(raiz, 'trabajo', 'comparacion_introduccion', `${nombre}.png`),
+            join(raiz, 'apps', 'juego', 'trabajo', 'comparacion_introduccion', `${nombre}.png`),
           )
         : leerReferencia(true);
       if (!leerCaptura(ruta).equals(referencia))
@@ -2488,6 +2503,8 @@ export async function gestionarSdl(accion, argumentos) {
   ]);
   const carpeta = join(
     raiz,
+    'apps',
+    'juego',
     'trabajo',
     escena ? 'comprobacion_escena_sdl' : 'comprobacion_ventana',
   );

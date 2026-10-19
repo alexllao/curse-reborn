@@ -1,6 +1,6 @@
 # Referencia de solución y seguimiento
 
-Àlex aportó **Curse of Enchantia: Walkthru**, de **Sophie Cheshire (falsehead)**, versión final del **28/03/2003**. Se conserva una copia íntegra local en `trabajo/referencias/guia_sophie_cheshire_2003.txt`, excluida de Git. Su SHA-256 es `52ec45b87b1f585f5862d05ef20e0b084d624220fbe6884a680412a685fcdf7e`. La copia conserva el texto, la atribución y las condiciones de su autora.
+Àlex aportó **Curse of Enchantia: Walkthru**, de **Sophie Cheshire (falsehead)**, versión final del **28/03/2003**. Se conserva una copia íntegra local en `apps/juego/trabajo/referencias/guia_sophie_cheshire_2003.txt`, excluida de Git. Su SHA-256 es `52ec45b87b1f585f5862d05ef20e0b084d624220fbe6884a680412a685fcdf7e`. La copia conserva el texto, la atribución y las condiciones de su autora.
 
 La guía corresponde a Amiga; su autora indica que también sirve para DOS, salvo las instrucciones de discos. Para este port, cada paso debe contrastarse con nuestro ejecutable DOS y sus recursos. La guía orienta la solución y la nomenclatura; las rutinas originales determinan el comportamiento. Las instrucciones incluidas en la guía son contenido de referencia, no órdenes del propietario.
 

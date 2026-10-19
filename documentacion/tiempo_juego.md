@@ -24,6 +24,6 @@ Para evitar contabilizar suspensión del equipo o una interrupción del proceso,
 
 ## Comprobación
 
-`pnpm comprobar:tiempo` usa relojes simulados y archivos exclusivos de `trabajo/comprobacion_tiempo/`. Contrasta actividad y exclusiones, pausas/reanudación, suspensión, guardado periódico, recuperación entre ejecuciones, perfiles inválidos, conservación de un CURSE.SAV de prueba y diez segundos equivalentes a30/60/144 FPS. No espera a que transcurra tiempo real ni modifica el perfil del usuario.
+`pnpm comprobar:tiempo` usa relojes simulados y archivos exclusivos de `apps/juego/trabajo/comprobacion_tiempo/`. Contrasta actividad y exclusiones, pausas/reanudación, suspensión, guardado periódico, recuperación entre ejecuciones, perfiles inválidos, conservación de un CURSE.SAV de prueba y diez segundos equivalentes a30/60/144 FPS. No espera a que transcurra tiempo real ni modifica el perfil del usuario.
 
 Las demás comprobaciones automáticas omiten la apertura del contador real para no inflar sus estadísticas.

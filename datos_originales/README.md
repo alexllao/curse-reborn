@@ -31,4 +31,4 @@ pnpm preparar
 pnpm ventana
 ```
 
-El comando de preparación obtiene las dependencias de desarrollo; no descarga el juego ni las ROM. Los ejecutables y resultados generados se guardan en `trabajo/`.
+El comando de preparación obtiene las dependencias de desarrollo; no descarga el juego ni las ROM. Los ejecutables y resultados generados se guardan en `apps/juego/trabajo/`.

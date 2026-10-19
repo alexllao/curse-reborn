@@ -135,14 +135,14 @@ El workspace de pnpm separa el port nativo, la futura web y los recursos propios
 curse-reborn/
 ├── apps/
 │   ├── juego/          # Motor C++, plataformas, terceros y manifiesto de fuentes
+│   │   ├── pruebas/   # Comparadores con el EXE y comprobaciones del analizador
+│   │   └── trabajo/   # Entorno, compilaciones e informes locales; sin versionar
 │   └── web/            # Espacio reservado para la web de presentación
 ├── packages/assets/    # Habitaciones, marcos y otros recursos propios compartidos
 ├── herramientas/       # Compilación, análisis y calidad comunes
-├── pruebas/            # Comparadores con el EXE y comprobaciones del analizador
 ├── documentacion/      # Contratos, recorridos y mapa de ensamblador
 ├── licencias/          # Avisos de dependencias
-├── datos_originales/   # Juego y ROM locales, sin versionar
-└── trabajo/            # Entorno, compilaciones e informes locales, sin versionar
+└── datos_originales/   # Juego y ROM locales, sin versionar
 ```
 
 Consulta [la organización y sus comandos](documentacion/monorepo.md). `pnpm monorepo:comprobar` revisa las rutas; `pnpm --filter @curse-reborn/juego compilar` compila el paquete. `pnpm ventana`, `pnpm sdl:compilar` y los demás comandos anteriores se mantienen.
@@ -171,29 +171,29 @@ pnpm analizar
 pnpm comprobar
 ```
 
-| Comando                     | Qué hace                                                                                                                                                                    |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm preparar`             | Crea un entorno Python en `trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez.                                       |
-| `pnpm estado`               | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error.                     |
-| `pnpm analizar`             | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `trabajo/analisis_ejecutable/`. Requiere la copia original.                                            |
-| `pnpm ensamblador`          | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa.                                                                          |
-| `pnpm comprobar`            | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego.                                                                                  |
-| `pnpm comparar:acciones`    | Compila la biblioteca C++ y compara tres bloques de acciones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits.      |
-| `pnpm comparar:aleatorio`   | Compara 18.816 llamadas al generador; el propietario ya ha confirmado su coincidencia.                                                                                      |
-| `pnpm comparar:resultados`  | Compara las 2.048 operaciones del tramo integrado de preparación; el propietario ha confirmado su coincidencia.                                                             |
-| `pnpm comparar:avance`      | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos.                                    |
-| `pnpm comparar:entidades`   | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos.                             |
-| `pnpm comparar:secuencias`  | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos.                                                  |
-| `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos.                          |
-| `pnpm comparar:altavoz`     | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos.                                            |
-| `pnpm comparar:video`       | Compara 1.303 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `trabajo/vista_titulo/titulo.png`. |
-| `pnpm comparar:rnc`         | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos.                                                          |
-| `pnpm titulo`               | Genera `trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida.     |
-| `pnpm comparar:graficos`    | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos.                                                 |
-| `pnpm ventana`              | Prepara SDL en Windows si falta, compila y abre el título calculado por C++. Escape o cerrar terminan la aplicación.                                                        |
-| `pnpm sdl:preparar`         | Descarga y verifica el paquete oficial SDL3 fijado para Windows de 64 bits.                                                                                                 |
-| `pnpm sdl:compilar`         | Compila la presentación sin abrir una ventana.                                                                                                                              |
-| `pnpm comprobar:ventana`    | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape.                                                                |
+| Comando                     | Qué hace                                                                                                                                                                               |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm preparar`             | Crea un entorno Python en `apps/juego/trabajo/entorno/` e instala la versión fijada del desensamblador. Necesita acceso a la red la primera vez.                                       |
+| `pnpm estado`               | Muestra la disponibilidad del ejecutable, el entorno local y las dependencias. Si falta preparar el entorno, termina con un aviso y un código de error.                                |
+| `pnpm analizar`             | Analiza `datos_originales/CURSE/CURSE.EXE`; guarda los resultados en `apps/juego/trabajo/analisis_ejecutable/`. Requiere la copia original.                                            |
+| `pnpm ensamblador`          | Regenera el mismo análisis y su listado `desensamblado.asm`, conservando los comentarios del mapa.                                                                                     |
+| `pnpm comprobar`            | Ejecuta las comprobaciones con programas sintéticos, sin necesitar los archivos del juego.                                                                                             |
+| `pnpm comparar:acciones`    | Compila la biblioteca C++ y compara tres bloques de acciones con las instrucciones originales en 1.120 casos. Requiere el juego y Clang con LLD en Windows de 64 bits.                 |
+| `pnpm comparar:aleatorio`   | Compara 18.816 llamadas al generador; el propietario ya ha confirmado su coincidencia.                                                                                                 |
+| `pnpm comparar:resultados`  | Compara las 2.048 operaciones del tramo integrado de preparación; el propietario ha confirmado su coincidencia.                                                                        |
+| `pnpm comparar:avance`      | Compara 10.930 casos de acciones completas y movimiento; el propietario ha confirmado su coincidencia. Admite `--muestra` con 421 casos.                                               |
+| `pnpm comparar:entidades`   | Compara 3.028 casos de creación y comportamientos de entidades; el propietario ha confirmado su coincidencia. Admite `--muestra` con 374 casos.                                        |
+| `pnpm comparar:secuencias`  | Compara 8.924 casos de canales y retirada; el propietario ha confirmado su coincidencia. Admite `--muestra` con 462 casos.                                                             |
+| `pnpm comparar:operaciones` | Compara 1.285 casos de selección de sonido y servicios de modelos; el propietario ha confirmado su coincidencia. Admite `--muestra` con 245 casos.                                     |
+| `pnpm comparar:altavoz`     | Compara 3.312 casos del reproductor del altavoz; el propietario ha confirmado su coincidencia. Admite `--muestra` con 310 casos.                                                       |
+| `pnpm comparar:video`       | Compara 1.303 casos de copias por planos y paleta, confirmados por el propietario. Admite `--muestra` con 83 casos. Genera la referencia `apps/juego/trabajo/vista_titulo/titulo.png`. |
+| `pnpm comparar:rnc`         | Compara 142 casos del descompresor de método uno, confirmados por el propietario. Admite `--muestra` con 38 casos.                                                                     |
+| `pnpm titulo`               | Genera `apps/juego/trabajo/vista_titulo/titulo_cpp.png` con descompresión, copias y paleta en C++, sin ejecutar `CURSE.EXE` ni Unicorn. No abre una ventana ni inicia una partida.     |
+| `pnpm comparar:graficos`    | Compila una vez y agrupa los 1.325 casos de vídeo y RNC, confirmados por el propietario. Con `--muestra` ejecuta 121 casos.                                                            |
+| `pnpm ventana`              | Prepara SDL en Windows si falta, compila y abre el título calculado por C++. Escape o cerrar terminan la aplicación.                                                                   |
+| `pnpm sdl:preparar`         | Descarga y verifica el paquete oficial SDL3 fijado para Windows de 64 bits.                                                                                                            |
+| `pnpm sdl:compilar`         | Compila la presentación sin abrir una ventana.                                                                                                                                         |
+| `pnpm comprobar:ventana`    | Captura el título dibujado por SDL en software, compara los 64.000 píxeles y comprueba el cierre por Escape.                                                                           |
 
 La gestión general del proyecto se hace con Node y pnpm; Python queda integrado para el análisis con Capstone. No hace falta activar manualmente el entorno Python. La preparación es explícita: instalar con pnpm no descarga dependencias de Python ni ejecuta el juego.
 
@@ -286,9 +286,9 @@ La solución de referencia y el seguimiento por tramos están en [referencia de 
 
 ## Exportar música para preparar el remaster
 
-`pnpm exportar:midi` reúne las cinco pistas originales `CURSE.RS1`–`CURSE.RS5` y sus versiones MIDI estándar en `trabajo/referencias_musicales/`. Conserva mensajes, tempos y marcadores `LOOPSTART`/`LOOPEND`; `pistas.json` documenta los tiempos y las huellas, y `LEEME.txt` explica su uso. Los programas son de Roland MT-32: un sintetizador General MIDI puede reproducir instrumentos distintos. No necesita las ROM para esta conversión. Estos archivos son referencias locales para reorquestar y no se publican en Git.
+`pnpm exportar:midi` reúne las cinco pistas originales `CURSE.RS1`–`CURSE.RS5` y sus versiones MIDI estándar en `apps/juego/trabajo/referencias_musicales/`. Conserva mensajes, tempos y marcadores `LOOPSTART`/`LOOPEND`; `pistas.json` documenta los tiempos y las huellas, y `LEEME.txt` explica su uso. Los programas son de Roland MT-32: un sintetizador General MIDI puede reproducir instrumentos distintos. No necesita las ROM para esta conversión. Estos archivos son referencias locales para reorquestar y no se publican en Git.
 
-`pnpm exportar:musica` genera nueve WAV locales con **duración tomada de los guiones originales**: cinco bancos MT-32 y dos temas internos FM con OPL2 y OPL3. En MT-32 incluye la entrada y termina en el primer salto de repetición; en FM espera a que todos los canales hayan completado su primer recorrido, porque sus bucles son independientes. Se guardan en `trabajo/exportacion_musica/`, con `pistas.json` que identifica archivos, duración, canales y huellas. Requiere los recursos originales y las ROM locales para MT-32.
+`pnpm exportar:musica` genera nueve WAV locales con **duración tomada de los guiones originales**: cinco bancos MT-32 y dos temas internos FM con OPL2 y OPL3. En MT-32 incluye la entrada y termina en el primer salto de repetición; en FM espera a que todos los canales hayan completado su primer recorrido, porque sus bucles son independientes. Se guardan en `apps/juego/trabajo/exportacion_musica/`, con `pistas.json` que identifica archivos, duración, canales y huellas. Requiere los recursos originales y las ROM locales para MT-32.
 
 Para forzar un corte de prueba: `pnpm exportar:musica --segundos 180` (entre 1 y 600). Si no puede identificar el recorrido, la herramienta informa del error; no lo sustituye por un corte arbitrario.
 
@@ -300,7 +300,7 @@ La herramienta reproduce las pistas con los sintetizadores del port, sin efectos
 
 `pnpm ventana` activa los efectos digitales originales de Sound Blaster. **F3** alterna con PC Speaker sin cambiar la música. **M** alterna el silencio; los guiones y el temporizador siguen avanzando. Los sonidos usan las secuencias del EXE, también con el menú abierto o durante un fundido. Si no hay dispositivo, la ventana continúa sin audio. Para desactivarlo desde el arranque: `pnpm ventana --sin-sonido`.
 
-`pnpm comprobar:audio --muestra` agrupa la comparación original del altavoz, la nueva señal PCM y la apertura/alimentación de SDL con un dispositivo de prueba. `pnpm comparar:audio` amplía la comparación. El WAV de prueba se guarda localmente en `trabajo/comparacion_audio/efecto_original.wav`. Esta prueba no escucha ni valida los altavoces físicos. Véanse [detalles y límites](documentacion/altavoz_pc.md).
+`pnpm comprobar:audio --muestra` agrupa la comparación original del altavoz, la nueva señal PCM y la apertura/alimentación de SDL con un dispositivo de prueba. `pnpm comparar:audio` amplía la comparación. El WAV de prueba se guarda localmente en `apps/juego/trabajo/comparacion_audio/efecto_original.wav`. Esta prueba no escucha ni valida los altavoces físicos. Véanse [detalles y límites](documentacion/altavoz_pc.md).
 
 El siguiente bloque incorpora cuarto corredor, SEESAW y cueva del monitor: [catapulta, imán y alambre](documentacion/catapulta_y_alambre.md). Hay veintiséis vistas de desarrollo y el recorrido continúa por la salida al campo. `pnpm comparar:catapulta --muestra` contrasta el recorrido persistente y `pnpm comprobar:catapulta` añade seis capturas SDL.
 
@@ -314,7 +314,7 @@ Guardar, cargar y borrar están disponibles desde el octavo icono del menú orig
 
 `pnpm comprobar:fps` prueba mostrar, ocultar y volver a mostrar los FPS a 1000 × 700. Comprueba que el juego y las bandas negras se conservan fuera de la placa. El HUD de mensajes de acciones está previsto para una fase posterior; el registro actual sigue en consola.
 
-`pnpm comprobar:filtros` comprueba los escaladores C++ con colores planos, bordes y contornos conocidos. Simula seis pulsaciones de F11 y captura los seis modos y la vuelta al original a 960 × 600. Comprueba que los modos difieren, que el ciclo es reversible y que los 64.000 píxeles originales se conservan. Resultados locales en `trabajo/comprobacion_filtros/`. Véanse los [detalles de los filtros](documentacion/filtros_pixeles.md).
+`pnpm comprobar:filtros` comprueba los escaladores C++ con colores planos, bordes y contornos conocidos. Simula seis pulsaciones de F11 y captura los seis modos y la vuelta al original a 960 × 600. Comprueba que los modos difieren, que el ciclo es reversible y que los 64.000 píxeles originales se conservan. Resultados locales en `apps/juego/trabajo/comprobacion_filtros/`. Véanse los [detalles de los filtros](documentacion/filtros_pixeles.md).
 
 `pnpm comprobar:vistas` introduce cuarenta y cuatro cambios F5/F6 y verifica las veintidós vistas desde la mazmorra hasta el cuarto corredor, SEESAW, las cuevas del monitor y de los cuatro agujeros, el cubo y la salida al campo, incluido el regreso. Estos atajos reinician la sesión; para conservar el inventario hay que atravesar las salidas normales del juego.
 

@@ -1,11 +1,15 @@
 /** Formato de C++ y comprobaciones Python sobre el código propio. */
 import { spawnSync } from 'node:child_process';
+import { migrarTrabajoLocal } from './rutas_proyecto.mjs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+migrarTrabajoLocal(raiz);
 const python = join(
   raiz,
+  'apps',
+  'juego',
   'trabajo',
   'entorno',
   process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python',
@@ -32,7 +36,7 @@ try {
   const [accion] = process.argv.slice(2);
   if (accion === 'revisar') {
     console.log('Revisando las herramientas y comparadores Python con Ruff…');
-    ejecutar(python, ['-m', 'ruff', 'check', 'herramientas', 'pruebas']);
+    ejecutar(python, ['-m', 'ruff', 'check', 'herramientas', 'apps/juego/pruebas']);
   } else if (accion === 'formatear' || accion === 'comprobar') {
     const escribir = accion === 'formatear';
     const formateador = process.env.CLANG_FORMAT || 'clang-format';
@@ -53,7 +57,7 @@ try {
         '--',
         'apps/juego/motor',
         'apps/juego/plataformas',
-        'pruebas',
+        'apps/juego/pruebas',
       ],
       true,
     )
@@ -70,7 +74,7 @@ try {
       'format',
       ...(escribir ? [] : ['--check']),
       'herramientas',
-      'pruebas',
+      'apps/juego/pruebas',
     ]);
   } else {
     throw new Error(

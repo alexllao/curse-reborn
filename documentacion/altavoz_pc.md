@@ -58,7 +58,7 @@ pnpm comparar:altavoz
 
 Unicorn ejecuta las instrucciones originales. Sus entradas y salidas de puerto se registran y reciben el mismo valor inicial de control que las funciones nativas. Se compara la traza completa en orden, el control final, DS completo, la prioridad guardada en CS, la pila y SI donde se declara conservado. No se compara una grabación de audio ni la temporización del hardware.
 
-Los informes separados se guardan en `trabajo/comparacion_altavoz/muestra.json` y `resultado.json`, con huellas de ejecutable y biblioteca y direcciones visitadas. La muestra se ejecuta añadiendo `--muestra` al comando. La comparación amplia fue ejecutada y confirmada por el propietario.
+Los informes separados se guardan en `apps/juego/trabajo/comparacion_altavoz/muestra.json` y `resultado.json`, con huellas de ejecutable y biblioteca y direcciones visitadas. La muestra se ejecuta añadiendo `--muestra` al comando. La comparación amplia fue ejecutada y confirmada por el propietario.
 
 ## Salida audible común
 
@@ -74,4 +74,4 @@ Los servicios FB, las respuestas de menú de 3545/37FF y el burbujeo BF3C–BF41
 
 `pnpm comprobar:audio --muestra` ejecuta los 310 casos del reproductor original y contrasta 16 selecciones de efecto en las cuatro escenas integradas, 24 límites de contador/compuerta y 8 respuestas de menú. Los casos del menú comprueban las modalidades cero/uno y la visibilidad. Se comparan DS completo y PCM con las escrituras DOS ejecutadas por Unicorn en los instantes de IRQ; la referencia integra tramos analíticamente, de forma distinta al generador C++. También se exige que dividir las muestras en bloques produzca exactamente la misma señal y estado.
 
-Después, SDL carga el WAV generado, acepta las muestras y arranca un dispositivo de prueba `dummy`. Esto comprueba formato y alimentación de la salida, no que un altavoz real se oiga. El resultado y el WAV quedan en `trabajo/comparacion_audio/`. La comparación amplia se solicita con `pnpm comparar:audio`; se registra por separado de la muestra.
+Después, SDL carga el WAV generado, acepta las muestras y arranca un dispositivo de prueba `dummy`. Esto comprueba formato y alimentación de la salida, no que un altavoz real se oiga. El resultado y el WAV quedan en `apps/juego/trabajo/comparacion_audio/`. La comparación amplia se solicita con `pnpm comparar:audio`; se registra por separado de la muestra.

@@ -41,8 +41,8 @@ La prueba ejecuta `64E0` con `TITLE.DAT` como origen y un destino separado, comp
 
 Se guardan localmente:
 
-- `trabajo/vista_titulo/titulo.png`: referencia visual de 320 × 200.
-- `trabajo/vista_titulo/procedencia.json`: huellas del ejecutable, archivo comprimido e imagen indexada, y separación entre descompresión original y copias trasladadas.
+- `apps/juego/trabajo/vista_titulo/titulo.png`: referencia visual de 320 × 200.
+- `apps/juego/trabajo/vista_titulo/procedencia.json`: huellas del ejecutable, archivo comprimido e imagen indexada, y separación entre descompresión original y copias trasladadas.
 
 La paleta del título contiene 768 bytes con componentes entre cero y 63. Para el PNG se convierten mediante `componente × 255 / 63`, con división entera. La imagen se ha inspeccionado: aparecen el título y el castillo completos. No se han inventado gráficos ni sustituido los recursos originales. Los archivos derivados permanecen fuera de Git.
 
@@ -63,4 +63,4 @@ pnpm comparar:video
 | Título original: subida, recuperación y paleta |                             3 |                  3 |
 | **Total**                                      |                     **1.183** |             **83** |
 
-Se comprueban también el retorno y el equilibrio de pila. La muestra se ejecuta añadiendo `--muestra`. Los informes separados se guardan en `trabajo/comparacion_video/muestra.json` y `resultado.json`. Este comando requiere también los archivos locales `DATA/TITLE.DAT` y `DATA/TITLE.PAL`.
+Se comprueban también el retorno y el equilibrio de pila. La muestra se ejecuta añadiendo `--muestra`. Los informes separados se guardan en `apps/juego/trabajo/comparacion_video/muestra.json` y `resultado.json`. Este comando requiere también los archivos locales `DATA/TITLE.DAT` y `DATA/TITLE.PAL`.

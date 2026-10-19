@@ -20,4 +20,4 @@ La comprobación ejecutada contrasta **7.261 casos y pasos**, incluidas **681 se
 
 El probador25 (36/regreso27) ya está integrado y documentado en [su alcance específico](probador_benn.md). La continuación35 (52), otro transporte del mago31 (72) y la jugabilidad de EDGE30 siguen pendientes. La oferta de vestido tiene contraste aislado; no se presenta como resuelto todo el capítulo del disfraz. La auditoría de menús de estos hitos tampoco acredita todas las posiciones, inventarios o regresos de capítulos posteriores.
 
-Resultados locales: `trabajo/comparacion_tiendas/` y `trabajo/comprobacion_tiendas_sdl/`. La guía de prueba propia está en [11_tiendas_laterales.txt](recorridos/11_tiendas_laterales.txt).
+Resultados locales: `apps/juego/trabajo/comparacion_tiendas/` y `apps/juego/trabajo/comprobacion_tiendas_sdl/`. La guía de prueba propia está en [11_tiendas_laterales.txt](recorridos/11_tiendas_laterales.txt).

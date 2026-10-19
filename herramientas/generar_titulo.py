@@ -113,7 +113,7 @@ if __name__ == '__main__':
         generar(
             raiz,
             opciones.biblioteca,
-            opciones.salida or raiz / 'trabajo/vista_titulo/titulo_cpp.png',
+            opciones.salida or raiz / 'apps/juego/trabajo/vista_titulo/titulo_cpp.png',
         )
     except (OSError, ValueError) as error:
         argumentos.exit(1, f'Error: {error}\n')

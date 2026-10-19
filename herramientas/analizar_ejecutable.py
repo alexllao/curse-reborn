@@ -368,7 +368,9 @@ def principal():
     argumentos.add_argument(
         '--ejecutable', type=Path, default=raiz / 'datos_originales' / 'CURSE' / 'CURSE.EXE'
     )
-    argumentos.add_argument('--salida', type=Path, default=raiz / 'trabajo' / 'analisis_ejecutable')
+    argumentos.add_argument(
+        '--salida', type=Path, default=raiz / 'apps' / 'juego' / 'trabajo' / 'analisis_ejecutable'
+    )
     argumentos.add_argument(
         '--raiz',
         type=direccion,

@@ -18,7 +18,7 @@ La tanda ejecutada suma **3.025 casos y pasos**, **215 selecciones**, **dos esta
 
 Además compara80 variantes de1A74 (modelo normal/19, fotogramas0–4, fase0/1, postura0/12 y registros libres/agotados), recogida con capacidad e iconos distintos, rechazo de llevar fuera de25 y512 pasos posteriores a llevar79 en una copia aislada. Esa copia aporta el objeto solo para verificar el manejador: no representa haber completado el capítulo del valle ni forma parte de la partida persistente.
 
-`pnpm comprobar:probador` prepara las referencias con el mismo orden inicial de dibujo, compara entrada y regreso en SDL y recorre las30 vistas F5/F6, incluida restauración en memoria del probador. No toca perfiles ni partidas del usuario. Los resultados quedan en trabajo/comparacion_probador/ y trabajo/comprobacion_probador_sdl/.
+`pnpm comprobar:probador` prepara las referencias con el mismo orden inicial de dibujo, compara entrada y regreso en SDL y recorre las30 vistas F5/F6, incluida restauración en memoria del probador. No toca perfiles ni partidas del usuario. Los resultados quedan en apps/juego/trabajo/comparacion_probador/ y apps/juego/trabajo/comprobacion_probador_sdl/.
 
 La visita temprana no fabrica la oferta de Benn, el vestido ni las condiciones del capítulo posterior. La salida74 desde CHANGE hacia la escena43 y los destinos posteriores siguen fuera del alcance integrado. EDGE30 continúa detenido hasta reconstruir y contrastar C093. Esta tanda no declara el puzle entero del disfraz ni todos los estados del juego completos.
 

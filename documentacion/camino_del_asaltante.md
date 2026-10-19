@@ -25,7 +25,7 @@ El núcleo está en `apps/juego/motor/acciones/asaltante.*`. El servicio de crea
 
 La auditoría recorre las listas de menú ofrecidas en **siete estados y posiciones**, desde el tropiezo hasta el camino despejado. Cubre hablar, examinar, recoger, usar, saltar y las manipulaciones que ofrecen esas listas, también sus rechazos. Las variantes adicionales prueban inventarios vacíos, casi llenos y llenos; modelos normal y pequeño; puntuación al límite; ocho semillas y cero, uno o cuarenta registros libres para el ataque. Las auditorías y variantes conservan la semilla de la partida que continúa después.
 
-`pnpm comprobar:asaltante` añade **doce capturas SDL de 64.000 píxeles** y **treinta y cuatro cambios F5/F6** entre las diecisiete vistas. Las imágenes cubren llegada, tropiezo, espada caída y recogida, inicio y tres momentos del ataque, dinero, camino, sendero y llegada a la población. Resultados en `trabajo/comparacion_asaltante/` y `trabajo/comprobacion_asaltante_sdl/`.
+`pnpm comprobar:asaltante` añade **doce capturas SDL de 64.000 píxeles** y **treinta y cuatro cambios F5/F6** entre las diecisiete vistas. Las imágenes cubren llegada, tropiezo, espada caída y recogida, inicio y tres momentos del ataque, dinero, camino, sendero y llegada a la población. Resultados en `apps/juego/trabajo/comparacion_asaltante/` y `apps/juego/trabajo/comprobacion_asaltante_sdl/`.
 
 Estas pruebas acreditan el recorrido, variantes y menús enumerados, no todos los tiempos y posiciones posibles. La entrada en DRAGON está admitida con su despacho original nulo; sus puzles, tiendas y demás opciones siguen pendientes. El audio usa las tablas comunes y no se añade una comparación acústica específica.
 

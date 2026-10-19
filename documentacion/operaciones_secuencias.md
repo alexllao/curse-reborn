@@ -57,6 +57,6 @@ El selector original se ejecuta hasta su retorno o hasta la entrada a `7A46`, `7
 
 Las secuencias originales ejecutan sus llamadas reales al selector. Un manejador de la interrupción DOS y un servicio nativo suministran el mismo archivo sintético a ambos lados de la comparación y registra apertura, lectura y cierre. Se prueban archivos de cero, 128, 64.000 y 65.000 bytes, con y sin acierto de caché, y dos llamadas consecutivas. Se compara también el búfer completo de 65.536 bytes y el estado aleatorio; los archivos mayores se limitan a la petición original de 64.000.
 
-Los informes se guardan en `trabajo/comparacion_operaciones/muestra.json` y `resultado.json`, incluyendo las huellas del ejecutable y la biblioteca. La muestra se ejecuta añadiendo `--muestra`. Además, cuatro casos selectivos conservan las paradas y selecciones anteriores cuando no se proporcionan servicios.
+Los informes se guardan en `apps/juego/trabajo/comparacion_operaciones/muestra.json` y `resultado.json`, incluyendo las huellas del ejecutable y la biblioteca. La muestra se ejecuta añadiendo `--muestra`. Además, cuatro casos selectivos conservan las paradas y selecciones anteriores cuando no se proporcionan servicios.
 
 El siguiente paso es estudiar las rutinas de dispositivo y la carga real de recursos, antes de conectarlas a la plataforma y a una presentación completa.

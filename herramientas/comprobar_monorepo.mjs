@@ -47,7 +47,7 @@ try {
   const propias = [
     ...fuentesEn(rutaJuego(raiz, 'motor')),
     ...fuentesEn(rutaJuego(raiz, 'plataformas')),
-    ...fuentesEn(join(raiz, 'pruebas')),
+    ...fuentesEn(join(raiz, 'apps/juego/pruebas')),
   ];
   let cabeceras = 0;
   for (const fuente of propias) {

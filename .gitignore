@@ -3,6 +3,8 @@
 !/datos_originales/.gitkeep
 !/datos_originales/README.md
 /recursos_extraidos/
+/apps/juego/trabajo/
+# Compatibilidad hasta trasladar el trabajo local de una copia anterior.
 /trabajo/
 *.zip
 *.exe

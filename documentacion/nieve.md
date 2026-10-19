@@ -16,7 +16,7 @@ El comparador registra la ejecución de85DB. Solo cuando se solicita efectivamen
 
 ## Comprobaciones y alcance
 
-`pnpm comparar:morsa` recorre las cuatro zonas desde la liberación real del ser azul. Incluye auditorías de las listas disponibles antes y después de cambios persistentes, variantes aisladas de las rutinas y de los rodeos, y composiciones originales. Los resultados locales quedan en trabajo/comparacion_morsa. No se versionan recursos, instantáneas ni imágenes comerciales.
+`pnpm comparar:morsa` recorre las cuatro zonas desde la liberación real del ser azul. Incluye auditorías de las listas disponibles antes y después de cambios persistentes, variantes aisladas de las rutinas y de los rodeos, y composiciones originales. Los resultados locales quedan en apps/juego/trabajo/comparacion_morsa. No se versionan recursos, instantáneas ni imágenes comerciales.
 
 `pnpm comprobar:morsa` verifica enSDL la entrada80, el desodorante, su uso y el saludo a la morsa, con seis imágenes y guardar/restaurar. La liberación posterior del hielo y los puzles de las otras zonas tienen su continuación nativa; sus comprobacionesSDL se añaden al habilitar sus conexiones y vistas. El accesoF5/F6 sigue creando una sesión independiente.
 

@@ -36,4 +36,4 @@ Se preparan 84 semillas: la inicial del ejecutable, valores extremos, un patrón
 
 Unicorn ejecuta la rutina original completa, incluido su retorno, con una pila de prueba. Se compara el valor devuelto y las cuatro palabras del estado después de cada llamada; también se comprueba la conservación de BX, CX y DX y el ajuste esperado de la pila del original. El rechazo del límite cero se prueba por separado como contrato exclusivo de C++.
 
-Si todo coincide, el informe se guarda en `trabajo/comparacion_aleatorio/resultado.json`, con las huellas del ejecutable y de la biblioteca. La prueba no valida todos los indicadores de CPU ni el comportamiento completo del juego.
+Si todo coincide, el informe se guarda en `apps/juego/trabajo/comparacion_aleatorio/resultado.json`, con las huellas del ejecutable y de la biblioteca. La prueba no valida todos los indicadores de CPU ni el comportamiento completo del juego.

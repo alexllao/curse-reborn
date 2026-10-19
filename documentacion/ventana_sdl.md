@@ -30,7 +30,7 @@ La versión fijada es [SDL 3.4.18](https://github.com/libsdl-org/SDL/releases/ta
 78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd
 ```
 
-Se comprueba antes de extraerlo a `trabajo/dependencias/`. La compilación deja el programa, `SDL3.dll` y su aviso de licencia en `trabajo/aplicacion/`. Ninguno de esos binarios se publica en Git. La primera preparación necesita acceso a GitHub; el paquete completo permite recompilar después sin red.
+Se comprueba antes de extraerlo a `apps/juego/trabajo/dependencias/`. La compilación deja el programa, `SDL3.dll` y su aviso de licencia en `apps/juego/trabajo/aplicacion/`. Ninguno de esos binarios se publica en Git. La primera preparación necesita acceso a GitHub; el paquete completo permite recompilar después sin red.
 
 También puedes ejecutar las etapas por separado:
 
@@ -49,7 +49,7 @@ pnpm comprobar:ventana
 
 El comando compila la aplicación y genera una referencia mediante `pnpm titulo`. Abre una ventana oculta de 320 × 200 con el dibujante de software de SDL, crea la textura, dibuja, recupera el fotograma y compara **los 64.000 píxeles RGB** con la referencia. Repite la comprobación después de iniciar Core e introducir una pulsación de Intro, esperando a que finalice el fundido normal hacia el título. Ambas capturas deben coincidir con la referencia. Después introduce un evento de Escape en la cola SDL y comprueba que el programa termina por el tratamiento normal de eventos.
 
-La comprobación ha pasado en Windows de 64 bits. Las capturas de Core y del título se han inspeccionado visualmente. Se guardan `trabajo/comprobacion_ventana/fotograma.bmp`, `tras_fundido.bmp` y `resultado.json`; el informe recoge versión, plataforma, tipo de dibujante, huella RGB y alcance.
+La comprobación ha pasado en Windows de 64 bits. Las capturas de Core y del título se han inspeccionado visualmente. Se guardan `apps/juego/trabajo/comprobacion_ventana/fotograma.bmp`, `tras_fundido.bmp` y `resultado.json`; el informe recoge versión, plataforma, tipo de dibujante, huella RGB y alcance.
 
 La aplicación normal no requiere Python. La comprobación utiliza el generador de referencia existente y por ello necesita el entorno preparado con `pnpm preparar`. No vuelve a ejecutar todas las comparaciones diferenciales.
 

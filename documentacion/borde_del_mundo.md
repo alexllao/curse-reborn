@@ -17,7 +17,7 @@ Esta tanda traslada **C093–C4DB** al núcleo C++, con carga de entidades de ED
 
 El banco EDGE.SPR rebasa el espacio que los comparadores anteriores reservaban antes de SMALL.BRD. Esta comparación aislada dispone solo el banco de escena real y comprueba que cabe en su reserva: C093 no lee el modelo ni dibuja. No se oculta el solapamiento para afirmar que el bucle o la imagen ya están contrastados. Antes de comparar el recorrido y su composición habrá que disponer ambos recursos en regiones independientes y conservar las referencias originales de las entidades.
 
-Los resultados locales quedan en trabajo/comparacion_borde/resultado.json. El código está en apps/juego/motor/entidades/borde.cpp y las anotaciones del EXE se conservan en mapa_ejecutable.json.
+Los resultados locales quedan en apps/juego/trabajo/comparacion_borde/resultado.json. El código está en apps/juego/motor/entidades/borde.cpp y las anotaciones del EXE se conservan en mapa_ejecutable.json.
 
 ## Pendiente antes de activar la escena
 
@@ -33,7 +33,7 @@ El comparador completo conserva EDGE.SPR en4000, sitúa el modelo sustituible en
 
 `pnpm comprobar:entrada-borde` prepara las referencias y compara la composición de llegada SDL con el EXE. Se ha comprobado esa captura de64.000 píxeles, reutilizando el ejecutable ya compilado y completando secuencialmente las fases después de un bloqueo de recompilación por una biblioteca en uso. La regresión del probador mantiene sus3.025 casos/pasos y dos composiciones. No ejecutar dos comparaciones que recompilen tabla_acciones.dll al mismo tiempo en Windows.
 
-La llegada SDL sigue detenida. Estas pruebas no resuelven las interacciones ni acreditan el recorrido completo del acantilado. Los resultados nuevos quedan en trabajo/comparacion_recorrido_borde/ y trabajo/comprobacion_entrada_borde_sdl/.
+La llegada SDL sigue detenida. Estas pruebas no resuelven las interacciones ni acreditan el recorrido completo del acantilado. Los resultados nuevos quedan en apps/juego/trabajo/comparacion_recorrido_borde/ y apps/juego/trabajo/comprobacion_entrada_borde_sdl/.
 
 ## Primer sendero y contratos de acciones
 

@@ -54,7 +54,7 @@ const pendientes = escenas
   .flatMap((e) =>
     e.salidas.filter((s) => !s.enlace_habilitado).map((s) => ({ origen: e.escena, ...s })),
   );
-const destino = join(raiz, 'trabajo', 'auditoria_rutas');
+const destino = join(raiz, 'apps', 'juego', 'trabajo', 'auditoria_rutas');
 mkdirSync(destino, { recursive: true });
 writeFileSync(
   join(destino, 'resultado.json'),

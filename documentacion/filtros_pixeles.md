@@ -12,6 +12,6 @@ Los escaladores reciben únicamente la imagen final. No leen DS, no modifican re
 
 ## Comprobaciones
 
-`pnpm comprobar:filtros` compila una prueba C++ sin SDL para colores planos, dimensiones mínimas, bordes, opacidad, escritura acotada y contornos conocidos. También simula Alt + Enter dos veces y comprueba las banderas SDL de pantalla completa sin modo exclusivo y el regreso a ventana. Después simula seis pulsaciones de F11 y guarda siete capturas SDL a 960 × 600. Comprueba que los seis modos producen imágenes diferentes, que volver al original recupera exactamente la primera captura y que se conservan los 64.000 píxeles originales del título. Los resultados quedan en `trabajo/comprobacion_filtros/`.
+`pnpm comprobar:filtros` compila una prueba C++ sin SDL para colores planos, dimensiones mínimas, bordes, opacidad, escritura acotada y contornos conocidos. También simula Alt + Enter dos veces y comprueba las banderas SDL de pantalla completa sin modo exclusivo y el regreso a ventana. Después simula seis pulsaciones de F11 y guarda siete capturas SDL a 960 × 600. Comprueba que los seis modos producen imágenes diferentes, que volver al original recupera exactamente la primera captura y que se conservan los 64.000 píxeles originales del título. Los resultados quedan en `apps/juego/trabajo/comprobacion_filtros/`.
 
 Estas pruebas verifican los contratos y la integración visual; no acreditan equivalencia píxel a píxel con todas las versiones de escaladores de otros emuladores. La presentación sin filtro es la referencia para comparar el juego con DOS.

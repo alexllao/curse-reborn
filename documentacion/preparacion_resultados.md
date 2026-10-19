@@ -25,6 +25,6 @@ El comando compila la biblioteca y ejecuta **solo esta comparación integrada**.
 
 Se preparan 64 semillas, dos estados iniciales de memoria y 16 operaciones consecutivas por secuencia: **2.048 operaciones previstas**. Se incluyen listas con el identificador en cada posición, sin él y con duplicados situados después de una marca `FFFFh`.
 
-Después de cada operación se compara el segmento DS completo y las cuatro palabras del estado aleatorio; también se comprueba que las llamadas originales dejan la pila equilibrada. Las modificaciones se conservan entre operaciones para detectar desajustes acumulados. El informe se guarda en `trabajo/comparacion_resultados/resultado.json`.
+Después de cada operación se compara el segmento DS completo y las cuatro palabras del estado aleatorio; también se comprueba que las llamadas originales dejan la pila equilibrada. Las modificaciones se conservan entre operaciones para detectar desajustes acumulados. El informe se guarda en `apps/juego/trabajo/comparacion_resultados/resultado.json`.
 
 No se comparan todos los registros ni indicadores de la CPU, el dibujo posterior ni una partida completa. La ampliación que continúa por `886B` hasta el retorno está en [avance_acciones_movimiento.md](avance_acciones_movimiento.md); el propietario ha confirmado la coincidencia de sus 10.930 casos.

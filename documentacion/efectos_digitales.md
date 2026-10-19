@@ -36,4 +36,4 @@ Los efectos digitales se seleccionan al arrancar. **F3** alterna con PC Speaker,
 - Prioridad FF que impide interrumpir una voz con un efecto ambiental, finalización, parada y silencio posterior.
 - SDL con dispositivo `dummy`: cuatro escenas, F3, F4, volumen, silencio y continuidad musical durante la desconexión. Comprueba alimentación y estado, no una escucha física.
 
-La muestra corta compara 31 efectos, 465.270 muestras y las mismas 140 programaciones DMA. Los resultados y el WAV con tres respuestas generales quedan en `trabajo/comparacion_digital/`, excluido de Git. El contraste verifica estas rutas digitales y sus datos; no acredita equivalencia acústica con hardware físico ni completa las acciones pendientes del juego.
+La muestra corta compara 31 efectos, 465.270 muestras y las mismas 140 programaciones DMA. Los resultados y el WAV con tres respuestas generales quedan en `apps/juego/trabajo/comparacion_digital/`, excluido de Git. El contraste verifica estas rutas digitales y sus datos; no acredita equivalencia acústica con hardware físico ni completa las acciones pendientes del juego.

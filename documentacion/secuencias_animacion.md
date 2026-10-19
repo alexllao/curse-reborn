@@ -83,6 +83,6 @@ pnpm comparar:secuencias
 
 Unicorn ejecuta las instrucciones originales y el generador real; las dimensiones proceden de tres tablas y cabeceras sintéticas equivalentes al lector del C++. Se compara DS completo, las cuatro palabras aleatorias y el equilibrio de la pila. Los casos pendientes se detienen en `84E9` y `8574`, antes de las llamadas externas, y contrastan también el motivo devuelto por el C++.
 
-El informe registra las direcciones originales visitadas y las huellas del ejecutable y de la biblioteca. La instrumentación permanece activa al alternar retornos y paradas de bloque. Los informes se guardan en `trabajo/comparacion_secuencias/muestra.json` y `resultado.json`; para la muestra se añade `--muestra` al comando.
+El informe registra las direcciones originales visitadas y las huellas del ejecutable y de la biblioteca. La instrumentación permanece activa al alternar retornos y paradas de bloque. Los informes se guardan en `apps/juego/trabajo/comparacion_secuencias/muestra.json` y `resultado.json`; para la muestra se añade `--muestra` al comando.
 
 Esta comprobación no incluye reproducción de sonido, lectura de archivos reales, temporización de plataforma, dibujo ni una partida completa. El [traslado siguiente](operaciones_secuencias.md) continúa con la selección de sonido y los servicios externos de las secuencias.
