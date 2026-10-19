@@ -19,3 +19,7 @@ Resultado: **5.968 casos/pasos,858 selecciones, cinco estados de menú auditados
 Se habilitan en el cargador70 desde33,52 desde33 además de20, y71 desde32 además de35. Las tablas originales de destino/entrada permanecen intactas. Ambos destinos regresan realmente por71: DINO por480/190,480/199; POST por750/145,750/110,720/100,700/95,685/90. También se contrasta el acceso inferior55 a REMOTE y su regreso56, antes comprobado solo como carga aislada. Cada paso compara DS completo, azar y orden de dibujo; las seis imágenes coinciden con el EXE.
 
 Este bloque completa esos enlaces del núcleo; no incrementa aún las32 vistas SDL ni acredita todos los estados futuros de estas salas. Se mantienen los puzles ya documentados del valle y el pendiente de integración SDL. La lista inicial de pendientes de este documento es histórica; consultar las ampliaciones de AGENTS.md y los documentos de nube, barco y plataforma para el estado posterior.
+
+## REMOTE en SDL
+
+`pnpm comprobar:remoto` utiliza las referencias comunes preparadas con `pnpm comprobar:poste` y repite el contraste nativo de ramas-valle. Reproduce desde el comienzo del juego los mismos clics hastaREMOTE y compara la entrada, la reacción y el rechazo del mando: tres capturas de64000 píxeles. Comprueba guardar/restaurar cada estado y68 cambios deF5/F6 entre34 vistas. La prueba SDL todavía no incluye el retorno56 ni la recogida108 después del estornudo; sus contratos nativos ya están documentados. POST yREMOTE son las primeras dos salas del valle activadas enSDL.

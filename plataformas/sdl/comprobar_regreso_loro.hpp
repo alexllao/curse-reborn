@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_ramas_valle.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -80,5 +81,6 @@ bool comprobar_regreso_loro(Mazmorra &p, const std::string &opcion, Avanzar avan
     return true;
   if (!ruta({{0, 165}}, 35))
     return false;
-  return detener("valle_post_entrada");
+  return detener("valle_post_entrada") ||
+         comprobar_ramas_valle(p, opcion, avanzar, abrir, elegir, objeto, ruta);
 }

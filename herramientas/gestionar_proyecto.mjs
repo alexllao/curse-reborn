@@ -213,6 +213,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
 const [accion, ...argumentos] = process.argv.slice(2);
 try {
   switch (accion) {
+    case 'comprobar:remoto':
+      await gestionarSdl('comprobar:poblacion', ['--remoto']);
+      break;
     case 'comprobar:poste':
       await gestionarSdl('comprobar:poblacion', ['--poste']);
       break;

@@ -44,6 +44,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {30, 22, 47, "El borde del mundo", "EDGE"},
     {31, 30, 72, "La habitación del loro sabio", "WISE"},
     {35, 20, 52, "La encrucijada del valle", "POST"},
+    {34, 35, 60, "El mando del valle", "REMOTE"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -53,13 +54,13 @@ struct SalidaIntegrada {
   unsigned short escena, salida;
 };
 inline constexpr SalidaIntegrada salidas_integradas[] = {
-    {0, 0},   {1, 1},   {1, 2},   {2, 3},   {3, 4},   {8, 17},  {4, 5},   {4, 6},
-    {5, 7},   {5, 8},   {5, 9},   {6, 10},  {6, 11},  {6, 12},  {6, 13},  {7, 14},
-    {7, 15},  {7, 16},  {9, 18},  {10, 19}, {11, 20}, {12, 21}, {12, 24}, {13, 22},
-    {14, 23}, {15, 25}, {16, 26}, {21, 42}, {21, 43}, {29, 51}, {17, 28}, {17, 31},
-    {18, 32}, {18, 34}, {22, 44}, {22, 47}, {17, 29}, {17, 30}, {18, 33}, {21, 41},
-    {19, 37}, {20, 40}, {23, 45}, {28, 50}, {19, 35}, {20, 38}, {20, 39}, {24, 46},
-    {26, 48}, {27, 49}, {24, 36}, {25, 27}, {30, 72}, {31, 73}, {22, 72}, {20, 52}};
+    {0, 0},   {1, 1},   {1, 2},   {2, 3},   {3, 4},   {8, 17},  {4, 5},   {4, 6},   {5, 7},
+    {5, 8},   {5, 9},   {6, 10},  {6, 11},  {6, 12},  {6, 13},  {7, 14},  {7, 15},  {7, 16},
+    {9, 18},  {10, 19}, {11, 20}, {12, 21}, {12, 24}, {13, 22}, {14, 23}, {15, 25}, {16, 26},
+    {21, 42}, {21, 43}, {29, 51}, {17, 28}, {17, 31}, {18, 32}, {18, 34}, {22, 44}, {22, 47},
+    {17, 29}, {17, 30}, {18, 33}, {21, 41}, {19, 37}, {20, 40}, {23, 45}, {28, 50}, {19, 35},
+    {20, 38}, {20, 39}, {24, 46}, {26, 48}, {27, 49}, {24, 36}, {25, 27}, {30, 72}, {31, 73},
+    {22, 72}, {20, 52}, {35, 60}};
 
 // No confunde reconocer una salida original con disponer de su habitación y sus puzles.
 inline bool salida_integrada(unsigned short escena, unsigned short salida) {
