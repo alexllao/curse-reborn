@@ -47,7 +47,7 @@ bool comprobar_ramas_valle(Mazmorra &p, const std::string &opcion, Avanzar avanz
   if (detener("post_regreso_rama"))
     return true;
   if (opcion.rfind("--comprobar-final-poblacion-borde_dinosaurio_", 0) == 0 ||
-      detener("pelo_recogido"))
+      detener("pelo_recogido") || opcion.rfind("--comprobar-final-poblacion-borde_valle_", 0) == 0)
     return comprobar_dinosaurio(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
   if (!abrir() || !elegir(1) || !objeto(111) || !avanzar(128) || !p.conserva_objeto(111))
     return false;

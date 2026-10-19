@@ -1194,7 +1194,8 @@ int main(int argc, char *argv[]) {
       if ((mazmorra.escena_actual() == 24 || mazmorra.escena_actual() == 25 ||
            mazmorra.escena_actual() == 26 || mazmorra.escena_actual() == 27 ||
            mazmorra.escena_actual() == 35 || mazmorra.escena_actual() == 34 ||
-           mazmorra.escena_actual() == 33 || mazmorra.escena_actual() == 32) &&
+           mazmorra.escena_actual() == 33 || mazmorra.escena_actual() == 32 ||
+           mazmorra.escena_actual() == 38) &&
           !comprobar_partida_tienda(mazmorra, argv[1]))
         return fallo("Guardar y cargar altera la imagen o la escena de una tienda");
       if (paso_vistas < cantidad_vistas * 2) {
@@ -1672,7 +1673,8 @@ int main(int argc, char *argv[]) {
              opcion == "--comprobar-final-poblacion-borde_post_regreso_rama" ||
              opcion == "--comprobar-final-poblacion-borde_post_objeto_111" ||
              opcion.rfind("--comprobar-final-poblacion-borde_dinosaurio_", 0) == 0 ||
-             opcion == "--comprobar-final-poblacion-borde_pelo_recogido") &&
+             opcion == "--comprobar-final-poblacion-borde_pelo_recogido" ||
+             opcion.rfind("--comprobar-final-poblacion-borde_valle_", 0) == 0) &&
             !comprobar_partida_tienda(mazmorra, argv[1]))
           return fallo("No coincide la restauración DOS en EDGE o durante la visita al loro");
         if (opcion == "--comprobar-final-partidas" &&

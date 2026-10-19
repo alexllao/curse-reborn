@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y seis vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las treinta y siete vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                          | Recurso  |
 | ----- | ---------- | ------------------------------- | -------- |
@@ -42,6 +42,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 34    | 34         | El mando del valle              | REMOTE   |
 | 35    | 33         | El barco del valle              | CELESTE  |
 | 36    | 32         | El valle del dinosaurio         | DINO     |
+| 37    | 38         | La nube del valle               | CLOUD    |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -62,3 +63,5 @@ REMOTE34 permite entrar por60 desdePOST. Se contrasta en SDL la llegada con el m
 CELESTE33 enlaza conREMOTE por55/56 y conPOST por61/71; el destino52 de su umbral aleatorio también está catalogado. Las otras rutas se activan con sus salas. Se contrasta la llegada56, el regreso61 y la recogida111 después de volver, con restauración y navegaciónF5/F6. Los enlaces haciaDINO yHOLD todavía no se presentan como integrados enSDL.
 
 DINO32 incorpora las entradas57 desdePOST,54/70 desdeCELESTE y los regresos58/53/71; su camino59 también enlaza conREMOTE. El núcleo permite todos esos enlaces. La comprobaciónSDL reproduce el pelo110, su inserción en102, el estornudo, sello109 y bolígrafo101, el regreso58 y una segunda entrada54 desde el barco. El interiorGHETTO37 y la plataformaELECTRO39 esperan todavía su adaptadorSDL.
+
+CLOUD38 conserva el movimiento del modeloLOST, el balanceo, la recogida121 y la salida inferior67. El acceso66 desdePOST exige el pase original. El acceso directoF5/F6 sigue siendo una sesión de desarrollo que no fabrica ese pase. Las pruebas de continuidad incluyen la grabación106 y el correo antes de solicitar la entrada66.

@@ -15,3 +15,7 @@ La recogida real incorpora121 y conserva los puntos. Se esperan96 pasos y despu�
 Resultado: **2.620 casos/pasos,400 selecciones, dos estados de menú auditados y cuatro composiciones**. La revisión incluye CLOUD antes de recoger y POST después del regreso; no garantiza todos los estados posibles. B0A9 exige escena39, por lo que las respuestas sobre121 en las escenas del valle integradas conservan el rechazo original.
 
 **Pendiente:** restantes acciones y rutas del valle. CLOUD38 todavía no entra en el catálogo SDL/F5/F6; se mantienen32 vistas. Los decorados ampliados siguen aparcados; sonido común, contador, monitor y marcos se conservan.
+
+## Continuidad SDL
+
+`pnpm comprobar:nube-valle` utiliza las referencias comunes del valle y vuelve a contrastar grabacion-completa, entrega-grabacion y nube. La partidaSDL reproduce mando108, cinta105, grabación106, carta franqueada112, pase99 y entrada66 antes de alcanzarCLOUD. Se comparan sus cuatro composiciones originales, se comprueba guardar/restaurar y74 cambiosF5/F6 entre37 vistas. La salida67 conserva121 al aterrizar. Las imágenes intermedias de grabación/correo se contrastan en el núcleo; esta pruebaSDL verifica sus acciones y consumos hasta llegar aCLOUD, sin presentar cada intermedio como una nueva capturaSDL.

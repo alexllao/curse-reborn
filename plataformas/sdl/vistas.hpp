@@ -47,6 +47,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {34, 35, 60, "El mando del valle", "REMOTE"},
     {33, 34, 56, "El barco del valle", "CELESTE"},
     {32, 35, 57, "El valle del dinosaurio", "DINO"},
+    {38, 35, 66, "La nube del valle", "CLOUD"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -63,7 +64,7 @@ inline constexpr SalidaIntegrada salidas_integradas[] = {
     {17, 29}, {17, 30}, {18, 33}, {21, 41}, {19, 37}, {20, 40}, {23, 45}, {28, 50}, {19, 35},
     {20, 38}, {20, 39}, {24, 46}, {26, 48}, {27, 49}, {24, 36}, {25, 27}, {30, 72}, {31, 73},
     {22, 72}, {20, 52}, {35, 60}, {34, 56}, {33, 61}, {33, 55}, {35, 71}, {33, 52}, {35, 57},
-    {32, 58}, {33, 54}, {32, 53}, {33, 70}, {32, 71}, {32, 59}};
+    {32, 58}, {33, 54}, {32, 53}, {33, 70}, {32, 71}, {32, 59}, {35, 66}, {38, 67}};
 
 // No confunde reconocer una salida original con disponer de su habitación y sus puzles.
 inline bool salida_integrada(unsigned short escena, unsigned short salida) {

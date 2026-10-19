@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_nube.hpp"
 
 // A81A y5D2F–5DD9: conserva la partida real al obtener pelo, sello y bolígrafo y volver a POST.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir,
@@ -35,5 +36,7 @@ bool comprobar_dinosaurio(Mazmorra &p, const std::string &opcion, Avanzar avanza
       return false;
   if (detener("dinosaurio_sello_boligrafo"))
     return true;
+  if (opcion.rfind("--comprobar-final-poblacion-borde_valle_", 0) == 0)
+    return comprobar_nube(p, opcion, avanzar, abrir, elegir, objeto, ir, ruta);
   return ruta({{400, 185}, {250, 197}, {250, 199}}, 35) && detener("dinosaurio_regreso_post");
 }
