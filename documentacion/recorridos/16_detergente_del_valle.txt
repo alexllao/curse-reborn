@@ -1,0 +1,13 @@
+DETERGENTE DEL VALLE — recorrido del núcleo, todavía fuera de SDL
+
+Continuación: misma partida que recoge121 en la nube y regresa aPOST.
+1. Desde el regreso842/96, bajar por850/190 y850/199: salida57 haciaDINO.
+2. Recorrer250/170,150/165 y133/148 para entrar en la cueva por64.
+3. EnGHETTO, abrir Hablar y elegir Ayuda. Esperar512 pasos del derrumbe original.
+4. Acercarse con clic171/145; abrir Recoger y seleccionar la botella120.
+5. Esperar192 pasos de recogida. La botella pasa al inventario y desaparece su entidad.
+6. Ir a150/199 para regresar por65 aDINO, conservando120 y121.
+
+Los números son pasos lógicos del comparador o destinos de clic originales; no son milisegundos ni requisitos de pulsación exacta para el jugador.
+Prueba: pnpm comparar:cueva-valle --muestra
+No activa las escenas del valle en SDL ni acredita sus otros puzles.

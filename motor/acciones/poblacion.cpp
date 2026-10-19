@@ -27,9 +27,50 @@ void actor(unsigned char *d, Palabra registro, Palabra entidad, Palabra interval
 ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short manejador,
                                          unsigned short id, const ServicioSonido &sonido) {
   const auto escena_valle = palabra(d, 0x8082);
-  if (escena_valle < 32 || (escena_valle > 35 && escena_valle != 38))
+  if (escena_valle < 32 || (escena_valle > 35 && escena_valle != 37 && escena_valle != 38))
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1) {
+    // 337D–34D6: pedir ayuda en GHETTO solo derrumba las rocas con2DF9 en tipo3.
+    if (escena_valle == 37 && id == 0) {
+      if (d[0x2df9] != 3) {
+        marcar_accion_rechazada(d);
+        return ResultadoMenu::accion;
+      }
+      guardar(d, 0x1a38, 159);
+      guardar(d, 0x1a3a, 176);
+      guardar(d, 0x2c3b, 0);
+      guardar(d, 0x0ad7, 0x262e);
+      guardar(d, 0x0adc, 0x263f);
+      d[0x4794] = 1;
+      static constexpr Palabra primeros[] = {0x2647, 0x1a2e, 0x2647, 0x2647, 0x1a2e, 0x2647, 0x1a2e,
+                                             0x1a2e, 0x2647, 0x1a2e, 0x1a2e, 0x1a2e, 0x2647};
+      for (unsigned int i = 0; i < 13; ++i) {
+        d[0x471f + i * 9] = 0;
+        guardar(d, 0x2c5c + i * 33, primeros[i]);
+      }
+      static constexpr Palabra terceros[] = {0x2658, 0x2658, 0x2658, 0x2663,
+                                             0x266d, 0x2663, 0x266d, 0x2663};
+      for (unsigned int i = 0; i < 8; ++i)
+        guardar(d, 0x2c66 + i * 33, terceros[i]);
+      guardar(d, 0x2e09, 0x1a2c);
+      d[0x2e0b] = 0;
+      d[0x2e0d] = 1;
+      unsigned short pasos = 0;
+      if (!iniciar_accion(d, pasos))
+        return ResultadoMenu::error;
+      for (unsigned int i = 0; i < 8; ++i)
+        d[0x2c69 + i * 33] = static_cast<unsigned char>(pasos + 4);
+      d[0x2e0c] = static_cast<unsigned char>(pasos + 9);
+      for (unsigned int i = 8; i < 13; ++i)
+        d[0x2c5f + i * 33] = static_cast<unsigned char>(pasos + 9);
+      static constexpr Palabra retardados[] = {0x2cc2, 0x2d04, 0x2d46};
+      for (const auto campo : retardados)
+        d[campo] = static_cast<unsigned char>(pasos + 10);
+      d[0x2ce3] = d[0x2d25] = static_cast<unsigned char>(pasos + 12);
+      d[0x2c80] = static_cast<unsigned char>(pasos + 13);
+      d[0x2c5f] = d[0x2ca1] = static_cast<unsigned char>(pasos + 14);
+      return ResultadoMenu::accion;
+    }
     // 372A–3763: el saludo cercano al personaje98 activa su bocadillo, además del sonido común.
     if (palabra(d, 0x8082) == 32 && id == 1 && d[0x2c4c] == 1) {
       const auto origen = palabra(d, 0x2c4e), destino = palabra(d, 0x2c2d);
@@ -47,12 +88,13 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
                                                                             : ResultadoMenu::error;
   }
   // 5D2F–5DD9: entidad, desplazamientos y familia615C/61A7 de cada recogida contrastada.
-  const Palabra recogidas[][6] = {
+  static constexpr Palabra recogidas[][6] = {
       {105, 33, 0x2cf1, 3, 1, 0},       {108, 34, 0x2c6d, 45, 0xffea, 1},
       {110, 35, 0x2d33, 45, 0xfff4, 1}, {111, 35, 0x2c4c, 7, 1, 0},
       {112, 35, 0x2c4c, 7, 1, 0},       {99, 32, 0x2cf1, 5, 1, 0},
       {100, 32, 0x2d75, 15, 0xfffc, 1}, {101, 32, 0x2d54, 35, 0xfffc, 1},
-      {109, 32, 0x2d33, 45, 0xfffc, 1}, {121, 38, 0x2c4c, 0, 0, 2}};
+      {109, 32, 0x2d33, 45, 0xfffc, 1}, {121, 38, 0x2c4c, 0, 0, 2},
+      {120, 37, 0x2df9, 5, 1, 0}};
   const Palabra *recogida = nullptr;
   for (const auto &fila : recogidas)
     if (fila[0] == id && fila[1] == palabra(d, 0x8082))
@@ -301,7 +343,7 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
       id != 102 && id != 105 && id != 106 && id != 108 && id != 109 && id != 110 && id != 111 &&
-      id != 112 && id != 113 && id != 114 && id != 116 && id != 121)
+      id != 112 && id != 113 && id != 114 && id != 116 && id != 120 && id != 121)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

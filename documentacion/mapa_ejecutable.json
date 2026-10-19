@@ -3,6 +3,16 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:337D",
+      "nombre": "Ayuda y derrumbe de las rocas de GHETTO",
+      "comentario": "337D–34D6 exige escena37/tipo3 en2DF9; destino159/176,262E/263F,4794=1 y trece ofertas retiradas. Conserva fases/intervalos no escritos; programa trece primeros canales y ocho terceros, con retardos desdeAX tras886B (+4,+9,+10,+12,+13,+14). 48 variantes aisladas y petición real con512 pasos de derrumbe. comparar:cueva-valle:4489 casos/pasos,691 selecciones, tres auditorías y cuatro composiciones. No activaSDL del valle."
+    },
+    {
+      "direccion": "0000:5E57",
+      "nombre": "Recogida del detergente del valle",
+      "comentario": "5E57–5E65 elige2DF9 con+5/+1 y salta61A7 (96CF/96D8), no615C. Dieciocho variantes de capacidad/icono/puntos y recogida120 real tras Ayuda,192 pasos y regreso65 aDINO en la misma partida. Conserva la bolsa121 deCLOUD. Otras rutas/acciones del valle ySDL pendientes."
+    },
+    {
       "direccion": "0000:5E68",
       "nombre": "Recogida especial de la bolsa de canicas en CLOUD",
       "comentario": "5E68–5E97/623D desactiva la oferta persistente de2C4C y prepara1A2E/fase0/intervalo1, canales deBrad9808/9814 conservando el tercero. 886B reinicia acción; el contador de la bolsa esAL de359A más6, noAX de retorno. 36 variantes de capacidad/iconos/puntos/canal; recogida real y salida inferior67 hasta aterrizar enPOST. comparar:nube:2620 casos/pasos,400 selecciones, dos auditorías, cuatro composiciones; SDL del valle pendiente."
