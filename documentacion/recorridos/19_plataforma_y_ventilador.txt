@@ -1,0 +1,17 @@
+PLATAFORMA Y VENTILADOR — recorrido del núcleo, todavía fuera de SDL
+
+Continuación: misma partida del puente, con trapo119, detergente120 y canicas121.
+1. DesdeCELESTE, bajar por330/170 y100/198: salida61 haciaPOST.
+2. Pasar550/140,450/145,300/160,140/175 y94/165. Recoger115 y esperar192 pasos.
+3. Volver por140/175,300/160,450/145,550/140,620/145,704/145,850/190 y850/199: salida57 aDINO.
+4. Con los cuatro objetos se abre la puerta. Rodear por250/170,340/170,320/140 y295/130: salida68 aELECTRO.
+5. Lanzar120; esperar256 pasos. Empujar119 desde el inventario; esperar256 pasos.
+6. Empujar el botón122 recién descubierto; esperar512 pasos.
+7. Lanzar121 y esperar256 pasos. Lanzar115 y esperar1024 pasos del cruce automático.
+8. Acercarse245/180 y264/176; Recoger124 y esperar192 pasos.
+9. Manipular→Desbloquear, abrir el inventario y elegir3, después la puerta123. La prueba espera hasta256 pasos y se detiene cuando el guion solicita69 automáticamente.
+10. CargarCOUNTRY2/16 y dejar128 pasos de llegada. Se conserva124, se consumieron3/99 y se activó el bit2 de35C9.
+
+Los números son pasos lógicos y destinos de clic del comparador, no milisegundos ni requisitos de pulsación exacta. El recorrido no prepara inventario/posiciones para saltarse puzles.
+Prueba: pnpm comparar:plataforma-valle --muestra
+Pendientes otros enlaces/estados del valle, menús posteriores del campo y SDL.

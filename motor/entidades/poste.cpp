@@ -7,6 +7,8 @@ namespace motor {
 // C5E0–C793/C8B1–C8F8: umbrales del valle y proximidad de los tablones de HOLD.
 bool actualizar_ramas_valle(unsigned char *d) {
   const auto escena = palabra(d, 0x8082);
+  if (escena == 39)
+    return actualizar_electro(d);
   if (escena == 36) {
     // C8B1–C8F8: solo los tablones en cuadro2 cambian el rectángulo de proximidad.
     const bool primero = d[0x2c4d] == 2, segundo = d[0x2c6e] == 2;
@@ -166,6 +168,47 @@ bool actualizar_nube(unsigned char *d, EstadoAleatorio &azar) {
     guardar(d, actor + 21, static_cast<Palabra>(0xb2e0 + valor * 2));
     d[actor + 23] = 0;
     d[actor + 24] = d[actor + 25] = 1;
+  }
+  return true;
+}
+// CAE1–CBCF: barrera, límites inclinados de la plataforma y caída con división firmada original.
+bool actualizar_electro(unsigned char *d) {
+  if (con_signo(palabra(d, 0x2c71)) >= -70) {
+    const int diferencia = con_signo(static_cast<Palabra>(palabra(d, 0x2c2f) - 127));
+    const int mitad = diferencia >= 0 ? diferencia / 2 : -((-diferencia + 1) / 2);
+    const auto borde = static_cast<Palabra>(mitad + 92);
+    guardar(d, 0x18f5, borde);
+    guardar(d, 0x18f9, static_cast<Palabra>(borde + 50));
+    guardar(d, 0x18fb, 199);
+  }
+  if (d[0x3594]) {
+    const int x = con_signo(palabra(d, 0x2c2d));
+    const bool izquierda = x < 160;
+    const int diferencia = con_signo(static_cast<Palabra>(palabra(d, 0x2c2f) - 102));
+    const int cociente = (diferencia * (izquierda ? 45 : 69)) / 49;
+    // IDIV del EXE falla fuera de16 bits; la API rechaza ese estado artificial.
+    if (cociente < -32768 || cociente > 32767)
+      return false;
+    const auto borde = static_cast<Palabra>(cociente + (izquierda ? 72 : 177));
+    if (izquierda ? con_signo(borde) <= x : con_signo(borde) >= x) {
+      guardar(d, 0x2c40, izquierda ? 0x0e36 : 0x0e26);
+      d[0x3594] = d[0x3595] = d[0x3596] = 0;
+      guardar(d, 0x359a, 0);
+      guardar(d, 0x0dfa, 0);
+      guardar(d, 0x2c3b, 0xb2e4);
+      guardar(d, 0x2c45, 0x0e46);
+      for (unsigned int i = 0; i < 3; ++i) {
+        const auto canal = static_cast<Palabra>(0x2c3b + i * 5);
+        d[canal + 2] = 0;
+        d[canal + 3] = d[canal + 4] = 1;
+      }
+    }
+  }
+  if (d[0x2d33] == 1 && con_signo(palabra(d, 0x2c2d)) >= 160) {
+    guardar(d, 0x18f5, 259);
+    guardar(d, 0x18f9, 319);
+    guardar(d, 0x18f7, 163);
+    guardar(d, 0x18fb, 175);
   }
   return true;
 }

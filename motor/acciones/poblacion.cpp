@@ -94,7 +94,7 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
       {112, 35, 0x2c4c, 7, 1, 0},       {99, 32, 0x2cf1, 5, 1, 0},
       {100, 32, 0x2d75, 15, 0xfffc, 1}, {101, 32, 0x2d54, 35, 0xfffc, 1},
       {109, 32, 0x2d33, 45, 0xfffc, 1}, {121, 38, 0x2c4c, 0, 0, 2},
-      {120, 37, 0x2df9, 5, 1, 0}};
+      {120, 37, 0x2df9, 5, 1, 0},       {115, 35, 0x2c8e, 5, 0xfffe, 1}};
   const Palabra *recogida = nullptr;
   for (const auto &fila : recogidas)
     if (fila[0] == id && fila[1] == palabra(d, 0x8082))
@@ -379,8 +379,8 @@ ResultadoMenu ejecutar_interaccion_poste(unsigned char *d, unsigned short maneja
   }
   if (id != 3 && id != 70 && id != 76 && id != 98 && id != 99 && id != 100 && id != 101 &&
       id != 102 && id != 104 && id != 105 && id != 106 && id != 107 && id != 108 && id != 109 &&
-      id != 110 && id != 111 && id != 112 && id != 113 && id != 114 && id != 116 && id != 119 &&
-      id != 120 && id != 121)
+      id != 110 && id != 111 && id != 112 && id != 113 && id != 114 && id != 115 && id != 116 &&
+      id != 119 && id != 120 && id != 121)
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

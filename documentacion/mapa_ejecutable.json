@@ -3,6 +3,41 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:5DCB",
+      "nombre": "Bandeja del volcán del valle",
+      "comentario": "5DCB–5DD9/615C recoge115 con2C8E/+5/-2 y retira su oferta persistente. Dieciocho variantes de capacidad/iconos/puntos y recogida real desde la partida con119/120/121. Juntos activan la puerta deDINO antes de la ruta68."
+    },
+    {
+      "direccion": "0000:CAE1",
+      "nombre": "Barrera y caída en la plataforma inclinada de ELECTRO",
+      "comentario": "CAE1–CBCF: altura2C71 firmada contra-70, resta16 bits ySAR1 para límites de barrera, IMUL45/69 eIDIV49 para ambos lados; conserva adiciones envolventes y bloqueo B2E4/0E26/0E36/0E46. El ventilador define la zona final. 720 variantes y recorrido real con rutina completa. La API rechaza estados artificiales cuyoIDIV original desborda."
+    },
+    {
+      "direccion": "0000:AFBE",
+      "nombre": "Detergente y limpieza de la pared de ELECTRO",
+      "comentario": "AFBE–B062: lanzar120 preparaA438/A441 y2CD0/107/1A2C; empujar119 exige2CD0=1, retira119 y usaA447/A450,2CD0/1A2E y2CAF/1A2C. Preserva A2/A4 y suma5 por acción. 36 variantes por acción y ejecución real hasta122 descubierto."
+    },
+    {
+      "direccion": "0000:B065",
+      "nombre": "Botón que retira la barrera de ELECTRO",
+      "comentario": "B065–B0A6 programa22/155,A456/A467. Para2C6D/10D escribe soloA4=A565 y conservaA0/A2; para2C4C/10D escribeA0=A4EC conservandoA2/A4. Suma5. 36 variantes y recorrido real con barrera elevada."
+    },
+    {
+      "direccion": "0000:B0A9",
+      "nombre": "Canicas y bandeja para cruzar la plataforma",
+      "comentario": "B0A9–B16A: lanzar121 exige2C71 distinto de0 y programa2CF1; lanzar115 exige2CF1=1 y enlaza2D12/2CF1 conA482/A498/A4B9 y sus canales diferidos.36 variantes por acción, cruce real automático y consumo de ambos. Preserva los campos diferidos no escritos."
+    },
+    {
+      "direccion": "0000:B16D",
+      "nombre": "Desbloqueo y regreso del valle con el ventilador",
+      "comentario": "B16D–B1F5 admite3/123 en ambos órdenes; retira3/99, OR2 en35C9 y cambios persistentes de capítulo, programa puerta2C8E.36 variantes y solicitud69 automática, seguida de regresoCOUNTRY2/16 con124. comparar:plataforma-valle:15751 casos/pasos,1026 selecciones, tres auditorías y diez composiciones. Menús posteriores del campo ySDL pendientes."
+    },
+    {
+      "direccion": "0000:85D0",
+      "nombre": "Marcador transitorio F6 antes del cambio de escena",
+      "comentario": "85D0–85F6 escribe el destinoF6 como imagen y lee sus dimensiones antes de0A5C. ELECTRO usa69, cuya cabecera cae fuera del archivoSPR: el EXE lee RAM y la referencia DOS devuelve0/0. La API portable normaliza a cero solo la cabecera inaccesible deF6 (no se dibuja), continúa los canales y cambia de escena. No emula RAM arbitraria de otra asignación. Los fotogramas normales inválidos siguen rechazados. Regresión secuencias462 y servicios245 correctas."
+    },
+    {
       "direccion": "0000:5DDC",
       "nombre": "Recogida excluyente de los dos tablones del barco",
       "comentario": "5DDC–5E43/563A permite117/118 pero rechaza llevar ambos después del preámbulo de capacidad/iconos. Entidades2C4C/2C6D, destino+35/+2,97EE/97FA/9801 y1A34 con intervalo2/contadorAX+8 tras886B. Preserva oferta persistente. Comparación de duplicados, capacidad, puntos y otro tablón presente, además de ambas recogidas reales con modeloFE."

@@ -364,3 +364,5 @@ La [cueva del valle](documentacion/cueva_del_valle.md) continúa esa misma parti
 El [guardia del barco](documentacion/guardia_del_barco.md) ya se aparta mediante el calcetín y las monedas realmente obtenidos:8.202 casos/pasos y cinco composiciones contrastan la recogida100, combinación104, golpe y entrada62 aHOLD. Los tablones/trapo y la integración SDL del valle siguen pendientes.
 
 El [puente del barco](documentacion/puente_del_barco.md) prolonga la misma partida: dos tablones, colocación horizontal/vertical, cruce, trapo119 y regreso63. Se contrastan11.453 casos/pasos y cinco composiciones; las demás ramas del valle y SDL siguen pendientes.
+
+La [plataforma del valle](documentacion/plataforma_del_valle.md) ya continúa esa partida: bandeja, puerta68, detergente/trapo, botón, cruce con canicas/bandeja, ventilador124 y regreso69 al campo. Se contrastan15.751 casos/pasos y diez composiciones; otros enlaces/estados del valle, menús posteriores del campo y SDL siguen pendientes.

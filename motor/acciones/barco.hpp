@@ -5,4 +5,8 @@ namespace motor {
 ResultadoMenu ejecutar_interaccion_barco(unsigned char *datos, unsigned short manejador,
                                          unsigned short identificador,
                                          const ServicioSonido &sonido);
+// AFBE–B1F5/5E9A: limpieza, barrera, cruce y salida de ELECTRO39 con servicios comunes.
+ResultadoMenu ejecutar_interaccion_electro(unsigned char *datos, unsigned short manejador,
+                                           unsigned short identificador,
+                                           const ServicioSonido &sonido);
 } // namespace motor

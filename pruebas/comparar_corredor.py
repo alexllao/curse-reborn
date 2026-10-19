@@ -12,6 +12,7 @@ BANCOS_ESCENA = {
     36: 'HOLD',
     37: 'GHETTO',
     38: 'CLOUD',
+    39: 'ELECTRO',
     0: 'DUNGEON',
     1: 'CORRIDOR',
     2: 'DROP',

@@ -20,4 +20,6 @@ void actualizar_escena_cinco(unsigned char *datos);
 bool actualizar_rutina_escena(unsigned char *datos);
 // C8F9–CADE: conserva la deriva y el reciclado original de CLOUD38.
 bool actualizar_nube(unsigned char *datos, EstadoAleatorio &azar);
+// CAE1–CBCF: conserva barrera, geometría inclinada y caída de ELECTRO39.
+bool actualizar_electro(unsigned char *datos);
 } // namespace motor

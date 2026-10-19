@@ -91,6 +91,7 @@ EstadoSecuencias avanzar_secuencias_entidad(unsigned char *datos, EstadoAleatori
         return EstadoSecuencias::correcto;
       }
       if (canal == 0) {
+        bool marcador_transicion = false;
         if (valor == 0xff || valor == 0xfe) {
           datos[posicion] = valor == 0xff ? static_cast<unsigned char>(datos[posicion] & 0xfd)
                                           : static_cast<unsigned char>(datos[posicion] | 2);
@@ -160,13 +161,18 @@ EstadoSecuencias avanzar_secuencias_entidad(unsigned char *datos, EstadoAleatori
         } else if (valor == 0xf6) {
           valor = tomar();
           datos[0x9975] = valor;
+          marcador_transicion = true;
         }
         datos[direccion(1)] = valor;
         Palabra ancho = 0, alto = 0;
         if (!recursos.dimensiones ||
             !recursos.dimensiones(recursos.contexto, palabra(datos, direccion(0x1f)), valor & 0x7f,
                                   ancho, alto)) {
-          return EstadoSecuencias::entrada_invalida;
+          // F6 reutiliza la salida como imagen transitoria; 0A5C carga la escena sin dibujarla.
+          // El EXE puede leer fuera del banco; la API acotada normaliza esa cabecera a cero.
+          if (!marcador_transicion)
+            return EstadoSecuencias::entrada_invalida;
+          ancho = alto = 0;
         }
         guardar(datos, direccion(6), ancho);
         guardar(datos, direccion(8), alto);
