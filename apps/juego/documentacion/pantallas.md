@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las74 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las75 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -80,6 +80,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 72    | 70         | El estudio del castillo           | STUDY    |
 | 73    | 71         | La biblioteca del castillo        | LIBRARY  |
 | 74    | 72         | La cámara de la bruja             | FINAL    |
+| 75    | 73         | El regreso a casa                 | BASEBAT  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -176,3 +177,7 @@ Catálogo73 vistas:0–71 y77. Entrada122, regreso123 y libro176 hasta solicitar
 ## Duelo con la bruja integrado
 
 Catálogo74 vistas:0–72 y77. Duelo72 desde124, tres defensas y anillo hasta125; desenlace73 pendiente.1.611 casos/pasos,480 variantes directas, siete composiciones. Véase [Duelo](duelo_bruja.md).
+
+## Desenlace integrado: catálogo completo
+
+75 vistas: escenas0–73 y77. Las74–76 son reservasDUNGEON, no habitaciones adicionales de la aventura. Entrada125, vaciado original de inventario y tres actores finales contrastados:391 casos/pasos y seis composiciones. Sigue pendiente revisar una partida continua con todas sus alternativas. Véase [Desenlace](desenlace.md).

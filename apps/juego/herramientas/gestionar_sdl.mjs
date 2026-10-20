@@ -458,6 +458,23 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--desenlace',
+      nombre: 'desenlace',
+      referencia: 'desenlace',
+      prefijo: 'borde_valle_bruja_',
+      comparadores: [],
+      hitos: [
+        'desenlace_entrada',
+        'desenlace_16',
+        'desenlace_32',
+        'desenlace_48',
+        'desenlace_reposo',
+        'desenlace_final',
+      ],
+      alcance:
+        'entrada125, inventario y temas vaciados, animación completa del campo y reposo; restauración',
+    },
+    {
       argumento: '--bruja',
       nombre: 'bruja',
       referencia: 'bruja',
@@ -1031,6 +1048,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--estudio-castillo',
       '--biblioteca-castillo',
       '--bruja',
+      '--desenlace',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

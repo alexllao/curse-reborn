@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_desenlace.hpp"
 
 // 20CD/4925–4A76: repite las defensas de la ruta DOS sin cambiar fases ni inventario.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
@@ -34,5 +35,7 @@ bool comprobar_bruja_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar
     return true;
   if (!avanzar(32))
     return false;
-  return detener("anillo_64");
+  if (detener("anillo_64"))
+    return true;
+  return avanzar(21) && comprobar_desenlace_sdl(p, opcion, avanzar);
 }

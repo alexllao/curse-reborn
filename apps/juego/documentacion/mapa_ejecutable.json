@@ -3,6 +3,12 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:4D40",
+      "nombre": "Inventario del desenlace",
+      "comentario": "4D40–4D8C: BX ya contiene escena;73 vacía doce palabras5225–523B antes de continuar la carga. Entrada125 y OUTRO completo contrastados.",
+      "traslado": "apps/juego/motor/estado/inicializar.cpp"
+    },
+    {
       "direccion": "0000:4A1D",
       "nombre": "Anillo contra la bruja",
       "comentario": "418A/4A1D–4A76: Combinar7 con previo175 y destino177, orden único y sin otra condición de fase; canales y+5/886B.",

@@ -80,3 +80,7 @@ Catálogo73 vistas:0–71 y77. Entrada122, regreso123 y libro176 hasta solicitar
 ## Duelo con la bruja integrado
 
 Catálogo74 vistas:0–72 y77. Duelo72 desde124, tres defensas y anillo hasta125; desenlace73 pendiente.1.611 casos/pasos,480 variantes directas, siete composiciones. Véase [Duelo](duelo_bruja.md).
+
+## Desenlace integrado: catálogo completo
+
+75 vistas: escenas0–73 y77. Las74–76 son reservasDUNGEON, no habitaciones adicionales de la aventura. Entrada125, vaciado original de inventario y tres actores finales contrastados:391 casos/pasos y seis composiciones. Sigue pendiente revisar una partida continua con todas sus alternativas. Véase [Desenlace](desenlace.md).

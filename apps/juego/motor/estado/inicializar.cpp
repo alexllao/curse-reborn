@@ -12,7 +12,8 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
   // Accesos nativos contrastados del valle y WISE; los demás destinos tardíos siguen detenidos.
-  if (salida == 124                    ? palabra(d, 0x8082) != 71
+  if (salida == 125                    ? palabra(d, 0x8082) != 72
+      : salida == 124                  ? palabra(d, 0x8082) != 71
       : salida == 123                  ? palabra(d, 0x8082) != 71
       : salida == 122                  ? palabra(d, 0x8082) != 69
       : salida == 121                  ? palabra(d, 0x8082) != 70
@@ -119,6 +120,10 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
   }
   guardar(d, 0x2c4a, modelo == 0xff ? referencia_estandar : referencia_modelo);
   guardar(d, 0x8082, palabra(d, static_cast<Palabra>(0x7482 + salida * 2)));
+  // 4D40–4D8C: el regreso al campo73 vacía inventario y temas de conversación.
+  if (palabra(d, 0x8082) == 73)
+    for (unsigned int i = 0; i < 12; ++i)
+      guardar(d, static_cast<Palabra>(0x5225 + i * 2), 0xffff);
   guardar(d, 0x358d, 64);
   guardar(d, 0x358f, 223);
   d[0x3594] = d[0x3595] = d[0x3596] = d[0x3593] = 0;

@@ -205,6 +205,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     estudio_castillo: 'comparar_estudio_castillo.py',
     biblioteca_castillo: 'comparar_biblioteca_castillo.py',
     bruja: 'comparar_bruja.py',
+    desenlace: 'comparar_desenlace.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -284,6 +285,9 @@ try {
       break;
     case 'comprobar:bruja':
       await gestionarSdl('comprobar:poblacion', ['--bruja']);
+      break;
+    case 'comprobar:desenlace':
+      await gestionarSdl('comprobar:poblacion', ['--desenlace']);
       break;
     case 'comprobar:mano-palacio':
       await gestionarSdl('comprobar:poblacion', ['--mano-palacio']);
@@ -559,6 +563,9 @@ try {
       break;
     case 'comparar:bruja':
       compararAcciones('bruja', argumentos);
+      break;
+    case 'comparar:desenlace':
+      compararAcciones('desenlace', argumentos);
       break;
     case 'comparar:laberinto-palacio':
       compararAcciones('laberinto_palacio', argumentos);

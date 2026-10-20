@@ -39,6 +39,7 @@ BANCOS_ESCENA = {
     70: 'STUDY',
     71: 'LIBRARY',
     72: 'FINAL',
+    73: 'BASEBAT',
     77: 'GRAVEYD2',
     42: 'SNOWAST3',
     41: 'SNOWAST2',
@@ -141,6 +142,8 @@ class ComparacionCorredor(ComparacionPuzle):
         self.ejecutar_hasta(0x4C43, 0x4D2B)
         m.reg_write(r.UC_X86_REG_BX, salida)
         self.ejecutar_hasta(0x4D2B, 0x4D40)
+        if palabra(bytes(m.mem_read(self.segmento, 65536)), 0x8082) == 73:
+            self.ejecutar_hasta(0x4D40, 0x4D8D)
         self.ejecutar_hasta(0x5145, 0x5182)
         esperado = bytes(m.mem_read(self.segmento, 65536))
         ancho, alto = 32, 48
@@ -423,6 +426,8 @@ class ComparacionCorredor(ComparacionPuzle):
                 (
                     'GRAVEYD'
                     if escena in (65, 77)
+                    else 'OUTRO'
+                    if escena == 73
                     else 'SNOWAST3'
                     if escena == 40
                     else BANCOS_ESCENA[escena]
@@ -514,7 +519,15 @@ class ComparacionCorredor(ComparacionPuzle):
         self.escena = (
             self.carpeta
             / (
-                ('GRAVEYD' if escena in (65, 77) else 'SNOWAST3' if escena == 40 else nombre)
+                (
+                    'GRAVEYD'
+                    if escena in (65, 77)
+                    else 'OUTRO'
+                    if escena == 73
+                    else 'SNOWAST3'
+                    if escena == 40
+                    else nombre
+                )
                 + '.SPR'
             )
         ).read_bytes()

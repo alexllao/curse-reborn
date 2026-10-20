@@ -6,7 +6,15 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 74 vistas SDL
+## Estado vigente: 20 de octubre, 75 vistas SDL, desenlace integrado
+
+Catálogo completo de escenas reales:0–73 y77;74–76 son reservasDUNGEON. Duelo72 publicado9d67161. Desenlace73 por125: BASEBAT.MAP/OUTRO.SPR/ENDGAME.SFX, CS17A3 nulo.4D40–4D8C vacía doce palabras5225–523B; la comparación ejecuta esa rama del EXE. Tres actores de5206, nueve canales, terminan tras51 pasos con el THE END gráfico original; menú habilitado, movimiento sigue bloqueado. No inventar salida ni puzle posterior.
+
+comparar:desenlace391 casos/pasos,179 pasos jugables (51 de animación+128 reposo), seis imágenes y19 selecciones en un estado auditado. comprobar:desenlace seis capturas idénticas, restauración y150 cambiosF5/F6. CMake compila con62 fuentes; duelo/anillo64 y final idénticos en64.000 píxeles cada uno. Calidad208C++/92Python correcta. monorepo62fuentes/220includes/169referenciasASM; auditoría78tablas sin salidas BOXDET pendientes. No confundir ese resultado con todos los guiones o variantes exhaustivamente revisados.
+
+SIGUIENTE TRABAJO: revisión de partida CONTINUA de principio a fin, rutas alternativas y guardados en puntos clave; vídeo optimizado basado en la guía acordado para después. La integración por bloques usa DS/semilla reales encadenados y pruebas SDL, pero aún no acredita esa revisión integral. Documentación desenlace.md, recorrido37_el_regreso_a_casa.txt. Preservar decorados ampliados aparcados, marcos/monitor, audio/tiempo, idioma y organización de carpetas. No añadir puzles extendidos ni pistas ahora; siguen aplazados. No publicar recursos comerciales ni resultados locales.
+
+## Estado anterior: 20 de octubre, 74 vistas SDL
 
 Duelo72 FINAL integrado desde124: rutina20CD–2549, aspiradora171 fase0, extintor164 Empujar2 fase1, ventilador124 fase2 y Combinar7 previo175/destino177 (solo ese orden). Núcleo1.611 casos/pasos,480 variantes directas de rutina,80 variantes de selección incluidas en856 selecciones, siete imágenes y cuatro auditorías. SDL siete capturas idénticas, restauración y148 cambiosF5/F6. Catálogo0–72 y77. Sigue pendiente73. Continuar desde trabajo/comparacion_bruja/bruja_solicitud125 (DS/semilla reales). Los tiempos de la ruta SDL son65,30,28,159 y luego32/64 tras combinar; petición125 a los85 del anillo. Documentado F6: una cabecera transitoria fuera de banco acotada a cero en cuatro bytes, no dibujada; no afirmar equivalencia de RAM ajena al recurso. Decorados aparcados, marcos/monitor y sonido común conservados.
 
