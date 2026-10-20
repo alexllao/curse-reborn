@@ -23,6 +23,8 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 ## Estado actual
 
+La [revisión integral y sus límites](documentacion/auditoria_pantallas.md) incluye un recorrido SDL hasta THE END, tres ramas adicionales con regreso y59.470 selecciones contrastadas en429 estados de73 escenas con menú. Las75 escenas reales quedan visitadas entre esos recorridos; sigue abierta la revisión de consecuencias y condiciones alternativas. El vestíbulo añade tres caídas con recuperación y continuación comprobadas contra el EXE.
+
 Los **decorados ampliados están aparcados** por decisión de Àlex: Frank y el pozo conservan sus gráficos originales. Los PNG se guardan como referencia para una revisión futura; el catálogo activo está vacío. Mayús+F1 informa de esta situación y no añade ilustraciones. Los marcos exteriores F1 y el monitor continúan disponibles. Detalles en [Recursos propios](../../packages/assets/README.md); `pnpm comprobar:decorados` verifica que las escenas permanezcan originales.
 
 **75 vistas de desarrollo: todas las escenas de la aventura, desde la mazmorra hasta el regreso a casa. Duelo y desenlace contrastados con el original. Falta la revisión integral de una partida continua con sus alternativas; el número de vistas no acredita esa revisión. Véanse [las pantallas](documentacion/pantallas.md), [el duelo](documentacion/duelo_bruja.md) y [el desenlace](documentacion/desenlace.md).**

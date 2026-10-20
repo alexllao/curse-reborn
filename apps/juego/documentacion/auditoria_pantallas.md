@@ -2,6 +2,26 @@
 
 Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue enlaces entre habitaciones, interacciones ofrecidas por el menú, variantes de progreso y capítulos posteriores.
 
+## Revisión integral del 20 de octubre
+
+Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
+
+El recorrido principal pasa por 72 escenas, incluida la mazmorra inicial. Se han ejecutado además tres ramas con regreso: tienda abandonada23 por33/45, adivina26 por38/48 y posada28 por41/50. Sus imágenes de regreso coinciden con las referencias contrastadas. Entre el recorrido y estas ramas se visitan las75 escenas reales; esto acredita visitas, no todas las combinaciones posibles de acciones.
+
+`pnpm comparar:opciones --todas` amplía la auditoría a las instantáneas de todas las carpetas locales de comparación. Conserva el modo anterior sin `--todas`, separa el azar de cada rama y restaura sus recursos para que una alternativa no contamine otra. Deduplica memoria y semilla iguales y publica el detalle por escena en `apps/juego/trabajo/auditoria_opciones/resultado.json`.
+
+Resultado ejecutado: **59.470 selecciones coincidentes, 429 estados distintos y 73 escenas con menú**, sin manejadores pendientes en las listas recorridas. Las escenas2 (caída) y68 (puente) son secuencias automáticas sin estado de menú auditable. Se descartaron131 instantáneas sin menú habilitado o fuera del catálogo. De los429 estados,392 conservan su semilla guardada;37 referencias antiguas se comparan con la semilla inicial del comparador, sin afirmar que reproducen su azar histórico.
+
+La comprobación del vestíbulo69 se amplía con tres clics centrales (170/175/180,131): en cada rama se contrasta la caída original54F0–5638, la recuperación del control y la continuación hasta solicitar120 hacia el estudio. El bloque completo suma3.909 casos/pasos, incluidas444 selecciones, cuatro composiciones y tres caídas recuperadas. Esta ampliación se comprueba en el núcleo contra el EXE; no añade una nueva prueba visual SDL de las caídas.
+
+### Límites que siguen abiertos
+
+- La auditoría recorre opciones realmente ofrecidas en esas posiciones y estados. Contrasta el despacho inmediato, todas sus escrituras en DS y el azar; no ejecuta después cada animación alternativa hasta devolver el control.
+- El recorrido hasta el final y las ramas citadas no agotan todos los regresos con inventarios posteriores ni todas las condiciones de progreso.
+- Queda verificar la continuación después de cargar partidas en distintos capítulos. Las escaleras y la restauración visual ya tienen pruebas anteriores. Las tres aproximaciones centrales contrastadas no equivalen a agotar todas las direcciones y posiciones posibles de caída.
+
+No se ha encontrado una implementación ausente en esta tanda. No se declara todavía cerrada la revisión de todas las alternativas. La finalidad de estas comprobaciones es detectar omisiones del port fiel; no calcular la duración de una ruta con desvíos.
+
 `pnpm auditar:rutas` verifica la huella del EXE y recorre los 78 índices de BOXDET.DAT. Cruza sus umbrales de tipo 2 con la tabla DOS de destinos en DS:7482 y la lista única `salidas_integradas` de SDL. El informe completo queda en `apps/juego/trabajo/auditoria_rutas/resultado.json`. No ejecuta puzles, predicados ni destinos indirectos de guiones; un enlace habilitado tampoco acredita todas las opciones de su destino.
 
 ## Rutas detectadas en esta revisión

@@ -10,6 +10,29 @@ from comparar_objetos import palabra
 
 
 class ComparacionVestibuloCastillo(ComparacionPuenteCastillo):
+    # 54F0–5638, BOXDET3/id11: provoca la caída con clics y comprueba recuperación y salida120.
+    def comprobar_caidas(self, base, semilla):
+        for x in (170, 175, 180):
+            d = bytearray(base)
+            self.semilla_menu[:] = semilla
+            self.retomar_recursos(d)
+            self.clic(d, x, 131)
+            caida = False
+            for _ in range(128):
+                if self.andar(d, self.semilla_menu, 65535, 1) is not None:
+                    raise ErrorAnalisis('La caída central cambia de habitación inesperadamente.')
+                caida |= palabra(d, 0x2C3B) == 0x9678 and not d[0x3594]
+            if not caida or not d[0x3594] or palabra(d, 0x2C3B):
+                raise ErrorAnalisis(f'La caída desde el clic{x},131 no termina con control libre.')
+            for xx, yy in ((90, 160), (48, 126)):
+                salida = ComparacionCalles.ir(self, d, self.semilla_menu, xx, yy)
+                if salida is not None:
+                    break
+            if salida != 120:
+                raise ErrorAnalisis('No se puede seguir hacia el estudio después de caer.')
+            self.resumen['caidas_recuperadas'] = self.resumen.get('caidas_recuperadas', 0) + 1
+        self.semilla_menu[:] = semilla
+
     # CS17A3[69]=0: conserva menú, colisiones y ambas salidas reales sin fabricar progreso.
     def ejecutar(self):
         origen = (
@@ -31,6 +54,7 @@ class ComparacionVestibuloCastillo(ComparacionPuenteCastillo):
         self.hito_borde(d, 'vestibulo_control')
         self.auditar(d, 'vestíbulo tras el puente')
         base, semilla = bytes(d), list(self.semilla_menu)
+        self.comprobar_caidas(base, semilla)
         for nombre, puntos, salida_esperada in (
             ('izquierda', ((90, 160), (48, 126)), 120),
             ('derecha', ((270, 190), (280, 170), (300, 150)), 122),
@@ -63,7 +87,7 @@ class ComparacionVestibuloCastillo(ComparacionPuenteCastillo):
             grupos=self.resumen,
             capturas=self.capturas,
             estados_auditados=self.estados_auditados,
-            limite='CASTHALL69 desde119 hasta las solicitudes120/122. STUDY70 y LIBRARY71 pendientes.',
+            limite='CASTHALL69 hasta120/122 y tres caídas centrales con recuperación y continuación hacia120; no agota todas las aproximaciones.',
         )
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
