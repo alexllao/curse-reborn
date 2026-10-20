@@ -120,6 +120,14 @@ Comandos: `pnpm comparar:calles --muestra` y `pnpm comparar:consecuencias --esce
 
 Esto no vuelve a ejecutar ni reemplaza el balance global histórico de59.470 selecciones; sus392 semillas reales y37 referencias antiguas describen aquella ejecución. Quedan más referencias antiguas sin azar persistente, además de estados e interacciones posteriores pendientes.
 
+### Semillas del recorrido inicial completo
+
+El comparador del corredor conserva ahora el mismo objeto de semilla que recibe `despues_puerta` para la partida real. Cada captura guarda sus cuatro palabras antes de componer la imagen; no lee el azar de una rutina de dibujo ni lo reconstruye a partir de DS. Las subclases de lago, poza, cuevas y catapulta heredan esa conservación. Los estados posteriores de `ComparacionFinalCuevas` mantienen también su registro existente de semilla y contexto.
+
+Ejecutado `pnpm comparar:final-cuevas --muestra`:32.933 casos/pasos coincidentes con el EXE. Las58 instantáneas DS de `comparacion_final_cuevas/` son idénticas por SHA-256 a las anteriores y todas conservan semilla; las29 referencias que antes carecían de ella en esa carpeta quedan regeneradas desde el recorrido, sin adjuntar a un estado antiguo un azar supuesto. Los resultados locales están en `trabajo/semillas_inicio_regeneracion.log`, `trabajo/semillas_inicio_antes.json` y `comparacion_final_cuevas/muestra.json`.
+
+Esto habilita nuevas comprobaciones de consecuencias con semilla real. No implica que se hayan recuperado automáticamente las semillas de todas las copias históricas en otras carpetas ni sustituye el balance global de la auditoría antigua. La preservación de la referencia por sí sola no aumenta el número de escenas con consecuencias observadas.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
