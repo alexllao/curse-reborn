@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_guardia_palacio.hpp"
 
 // 27BA–27F1/60B2: sigue los desvíos reales sin cambiar azar, recoge161/162 y vuelve al paso del
 // guardia.
@@ -49,6 +50,8 @@ bool comprobar_laberinto_palacio_sdl(Mazmorra &p, const std::string &opcion, Ava
     if (!cruzar(sala == 58 || sala == 61 ? 160 : sala == 62 ? 204 : 115))
       return false;
     const auto nueva = p.escena_actual();
+    if (nueva == 63)
+      return comprobar_guardia_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
     if (nueva < 58 || nueva > 62)
       return false;
     const auto base = "laberinto_" + std::to_string(nueva);

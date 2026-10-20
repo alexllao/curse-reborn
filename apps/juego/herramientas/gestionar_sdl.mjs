@@ -442,6 +442,27 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--guardia-palacio',
+      nombre: 'guardia_palacio',
+      referencia: 'guardia_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'guardia_entrada',
+        'guardia_control',
+        'guardia_columna',
+        'guardia_dormido',
+        'guardia_cerilla',
+        'guardia_fuego_48',
+        'guardia_fuego_96',
+        'guardia_fuego_192',
+        'guardia_regreso_benn',
+        'guardia_benn_control',
+      ],
+      alcance:
+        'columna, sueño, cerilla162, caja161, extintor164 y regreso111 a Benn; diez imágenes y restauración',
+    },
+    {
       argumento: '--laberinto-palacio',
       nombre: 'laberinto_palacio',
       referencia: 'laberinto_palacio',
@@ -838,6 +859,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--reina-hielo',
       '--mano-palacio',
       '--laberinto-palacio',
+      '--guardia-palacio',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

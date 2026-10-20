@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las63 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las64 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -69,6 +69,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 61    | 60         | La sala de las dos puertas        | ICEROOM  |
 | 62    | 61         | El desvío central                 | ICEROOM  |
 | 63    | 62         | La sala de las cerillas           | ICEROOM  |
+| 64    | 63         | La sala del guardia dormilón      | ICEGUARD |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -130,4 +131,6 @@ La vista58 incorpora [la reina del hielo](reina_hielo.md): entrada103, proyectil
 
 Vista59: [La sala de la mano](mano_palacio.md), entrada104, captura y liberación con el aceite144. Siete capturas, restauración y118 cambiosF5/F6. Puerta105 contrastada; habitación de destino pendiente.
 
-Vistas60–63: [desvíos del palacio](laberinto_palacio.md), puertas aleatorias originales, regreso persistente a58, caja161 y cerilla162. Trece imágenesSDL y126 cambiosF5/F6 contrastados; el guardia63 permanece pendiente.
+Vistas60–63: [desvíos del palacio](laberinto_palacio.md), puertas aleatorias originales, regreso persistente a58, caja161 y cerilla162. Trece imágenesSDL y126 cambiosF5/F6 contrastados; el guardia63 continúa en [su bloque](guardia_palacio.md).
+
+Vista64: [guardia del palacio](guardia_palacio.md), sueño tras la columna, cerilla y encendido, recogida del extintor y regreso111 a Benn. Conserva los tiempos y rechazos originales.

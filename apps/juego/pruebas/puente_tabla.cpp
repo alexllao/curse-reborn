@@ -1102,3 +1102,22 @@ extern "C" EXPORTAR int procesar_rutina_mano(unsigned char *datos) {
   motor::EstadoAleatorio azar{};
   return motor::actualizar_rutina_escena(datos, azar, {}) ? 1 : 0;
 }
+
+// D41C–D578: contrasta sueño y partículas sin adelantar los canales de las entidades.
+extern "C" EXPORTAR int
+procesar_rutina_guardia(unsigned char *datos, unsigned short *palabras,
+                        bool (*dimensiones)(void *, unsigned short, unsigned short,
+                                            unsigned short &, unsigned short &)) {
+  motor::EstadoAleatorio azar{palabras[0], palabras[1], palabras[2], palabras[3]};
+  const auto consultar = [](void *contexto, unsigned short indice, unsigned short &ancho,
+                            unsigned short &alto) {
+    return (*static_cast<decltype(dimensiones) *>(contexto))(nullptr, 0x4000, indice, ancho, alto);
+  };
+  const motor::RecursosEntidades recursos{&dimensiones, consultar, 0x4000};
+  const bool valido = motor::actualizar_rutina_escena(datos, azar, recursos);
+  palabras[0] = azar.primera;
+  palabras[1] = azar.segunda;
+  palabras[2] = azar.tercera;
+  palabras[3] = azar.cuarta;
+  return valido ? 1 : 0;
+}

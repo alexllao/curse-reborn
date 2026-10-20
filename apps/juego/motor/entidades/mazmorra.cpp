@@ -129,6 +129,66 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  // D41C–D578: sueño del guardia detrás de la columna, reacción y diez partículas por intento.
+  if (palabra(d, 0x8082) == 63) {
+    if (d[0x2c4c] == 1) {
+      guardar(d, 0x18f5, 190);
+      guardar(d, 0x18f9, 261);
+      guardar(d, 0x18fb, 158);
+      const auto dy = static_cast<Palabra>(palabra(d, 0x2c2f) - 122);
+      const auto absdy = con_signo(palabra(d, 0x2c2f)) < 122 ? static_cast<Palabra>(0 - dy) : dy;
+      if (con_signo(palabra(d, 0x2c2d)) <= 80 && con_signo(absdy) < 5) {
+        const auto previo = con_signo(palabra(d, 0x35ce));
+        auto dormir = static_cast<Palabra>(palabra(d, 0x35ce) + 1);
+        guardar(d, 0x35ce, dormir);
+        // INC/JGE conserva OF: el salto usa el incremento con signo antes de envolver.
+        if (previo >= -1) {
+          if (con_signo(dormir) > 100)
+            guardar(d, 0x35ce, 100);
+          if (palabra(d, 0x2c5c) != 0xb526) {
+            configurar_secuencia(d, 0x2c5c, 0xb526, 1, 4);
+            configurar_secuencia(d, 0x2c7d, 0xb533, 1, 2);
+          }
+        }
+      } else {
+        const auto previo = con_signo(palabra(d, 0x35ce));
+        const auto dormir = static_cast<Palabra>(palabra(d, 0x35ce) - 1);
+        guardar(d, 0x35ce, dormir);
+        // DEC/JLE también distingue el desbordamiento de8000 a7FFF.
+        if (previo <= 1) {
+          guardar(d, 0x35ce, 0xffec);
+          if (palabra(d, 0x2c5c) == 0xb526) {
+            configurar_secuencia(d, 0x2c5c, 0xb531, 1, 4);
+            configurar_secuencia(d, 0x2c7d, 0xb535, 1, 2);
+          }
+          if (palabra(d, 0x2c7d) == 0) {
+            if (con_signo(palabra(d, 0x2c2d)) < 230 && d[0x2c6e] == 10)
+              configurar_secuencia(d, 0x2c7d, 0xb520, 1, 2);
+            else if (con_signo(palabra(d, 0x2c2d)) >= 230 && d[0x2c6e] == 8)
+              configurar_secuencia(d, 0x2c7d, 0xb523, 1, 2);
+          }
+        }
+      }
+    }
+    if (d[0x2d33] == 1 && d[0x2d34] != 30 && d[0x2d34] != 36 &&
+        static_cast<signed char>(d[0x2d45]) >= 8) {
+      for (unsigned int i = 0; i < 10; ++i) {
+        Palabra valor = 0;
+        if (!generar_aleatorio(azar, 24, valor))
+          return false;
+        guardar(d, 0xb53c, static_cast<Palabra>(valor + 4 + palabra(d, 0x2c2d)));
+        if (!generar_aleatorio(azar, 47, valor))
+          return false;
+        guardar(d, 0xb53e, static_cast<Palabra>(valor + 1 + palabra(d, 0x2c2f)));
+        if (!generar_aleatorio(azar, 4, valor))
+          return false;
+        d[0xb53b] = static_cast<unsigned char>(valor + 37);
+        if (!crear_entidad(d, azar, recursos, 0xb539).valido)
+          return false;
+      }
+    }
+    return true;
+  }
   // D36C–D41B: la mano atrapa al avanzar por la franja del suelo y ordena su profundidad.
   if (palabra(d, 0x8082) == 58) {
     if (d[0x2c4c] == 3 && con_signo(palabra(d, 0x2c2f)) <= 130 && d[0x3594]) {

@@ -1,0 +1,10 @@
+Recorrido propio: guardia del palacio
+
+1. Desde el laberinto, lleva la caja de cerillas para alcanzar la sala del guardia.
+2. Ocúltate a la izquierda de la columna y espera a que se duerma.
+3. Acércate e inserta una cerilla en su pie antes de que se despierte.
+4. Regresa rodeando la base de la columna para volver a esconderte y esperar.
+5. Acércate de nuevo y ataca con la caja de cerillas para encender el pie.
+6. Cuando el guardia salga disparado, recoge el extintor. Benn aparece y te lleva a su tienda.
+
+Contratos y límites: documentacion/guardia_palacio.md. No se consideran comprobados el cementerio ni el final por completar este tramo.

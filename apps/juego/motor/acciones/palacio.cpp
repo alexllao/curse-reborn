@@ -27,6 +27,29 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
     marcar_accion_rechazada(d);
     return ResultadoMenu::accion;
   }
+  // 6154: el pie163 no se puede recoger; deshace la inserción común y responde con88A0.
+  if (id == 163) {
+    retirar_identificador(d, id);
+    marcar_accion_rechazada(d);
+    return ResultadoMenu::accion;
+  }
+  // 62CF–6322: recoger164 prepara la aparición de Benn y el transporte original.
+  if (id == 164) {
+    d[0x35c9] |= 4;
+    d[0x41ec] = 3;
+    guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, 0x2cb1) + 2));
+    guardar(d, 0x1a3a, static_cast<Palabra>(palabra(d, 0x2cb3) + palabra(d, 0x2cb7)));
+    guardar(d, 0x0ad7, 0x985f);
+    guardar(d, 0x0adc, 0x9872);
+    guardar(d, 0x0ae1, 0x9878);
+    guardar(d, 0x009c, 0x2caf);
+    guardar(d, 0x009e, 0x0107);
+    guardar(d, 0x00a0, 0x1a2e);
+    guardar(d, 0x00a6, 0x2d33);
+    guardar(d, 0x00a8, 0x0211);
+    guardar(d, 0x00aa, 0x987c);
+    return comenzar(d);
+  }
   const bool dados = id == 140;
   // 5FFD–6060: retirar un reflector conserva el soporte elegido, no la habitación de origen.
   const bool reflector =
@@ -88,7 +111,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 62)
+  if (escena < 46 || escena > 63)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
@@ -105,7 +128,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
   if (manejador == 0x563a &&
       ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
        (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150) ||
-       (escena >= 59 && escena <= 62 && id == 161) ||
+       (escena >= 59 && escena <= 62 && id == 161) || (escena == 63 && (id == 164 || id == 163)) ||
        (escena >= 52 && escena <= 55 && id == escena + 99) ||
        (escena == 56 && (id == 150 || id == 153 || id == 154 || id == 145))))
     return recoger(d, id);
@@ -196,6 +219,60 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   const auto previo = palabra(d, 0xb638), verbo = palabra(d, 0xb634);
+  // BD73–BEA6: planifica acercarse al pie y compara AL+6 (sin acarreo a AH) con el sueño.
+  const bool poner_cerilla = manejador == 0x3b53 && verbo == 1 &&
+                             ((id == 162 && previo == 163) || (id == 163 && previo == 162));
+  const bool encender_caja = (manejador == 0x2fca && id == 161) ||
+                             (manejador == 0x3b53 && verbo == 2 && previo == 0xffff && id == 161);
+  if (escena == 63 && (poner_cerilla || encender_caja)) {
+    if (con_signo(palabra(d, 0x35ce)) <= 0) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    guardar(d, 0x1a38, 242);
+    guardar(d, 0x1a3a, 163);
+    guardar(d, 0x0ad7, 0xad53);
+    guardar(d, 0x0adc, 0xad61);
+    guardar(d, 0x0ae1, 0xad6c);
+    unsigned short pasos = 0;
+    if (!iniciar_accion(d, pasos))
+      return ResultadoMenu::error;
+    const Palabra plazo =
+        static_cast<Palabra>((pasos & 0xff00) | static_cast<unsigned char>(pasos + 6));
+    if (con_signo(plazo) >= con_signo(palabra(d, 0x35ce))) {
+      guardar(d, 0x0ad7, 0xad50);
+      guardar(d, 0x0adc, 0);
+      guardar(d, 0x0ae1, 0);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, poner_cerilla ? 162 : 161);
+    guardar(d, 0x009c, 0x2c8e);
+    guardar(d, 0x009e, 0x0107);
+    guardar(d, 0x00a0, poner_cerilla ? 0x1a2c : 0xad77);
+    if (encender_caja) {
+      guardar(d, 0x00a6, 0x2cd0);
+      guardar(d, 0x00a8, 0x012d);
+      guardar(d, 0x00aa, 0x1a2c);
+      guardar(d, 0x00b0, 0x2c6d);
+      guardar(d, 0x00b2, 0x0211);
+      guardar(d, 0x00b4, 0xad9e);
+      guardar(d, 0x00ba, 0x2c4c);
+      guardar(d, 0x00bc, 0x0213);
+      guardar(d, 0x00be, 0xada8);
+      guardar(d, 0x00c0, 0xadb8);
+      guardar(d, 0x00c2, 0xadbc);
+      guardar(d, 0x00c4, 0x2d12);
+      guardar(d, 0x00c6, 0x022d);
+      guardar(d, 0x00c8, 0xadca);
+      guardar(d, 0x00ce, 0x2cf1);
+      guardar(d, 0x00d0, 0x022b);
+      guardar(d, 0x00d2, 0xadc0);
+      guardar(d, 0x00d4, 0xadc4);
+      guardar(d, 0x00d6, 0xadc7);
+    }
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return ResultadoMenu::accion;
+  }
   // BD00–BD70: ponerse el aceite144 solo libera a Brad con el modelo23 y cuadro1D.
   if (escena == 58 && manejador == 0x3b53 && verbo == 4 && previo == 0xffff && id == 144) {
     if (d[0x358c] != 23 || d[0x2c2c] != 29) {
@@ -308,7 +385,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && (id < 140 || id > 162))
+  if (id != 76 && id != 124 && (id < 140 || id > 164))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

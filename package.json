@@ -161,6 +161,8 @@
     "comparar:laterales-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:laterales-palacio",
     "comprobar:arma-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:arma-palacio",
     "comparar:resolucion-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:resolucion-palacio",
+    "comparar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:guardia-palacio",
+    "comprobar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:guardia-palacio",
     "comparar:laberinto-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:laberinto-palacio",
     "comparar:mano-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:mano-palacio",
     "comparar:reina-hielo": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:reina-hielo",

@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 20 de octubre,63 vistasSDL
+## Estado vigente: 20 de octubre,64 vistasSDL
 
-CatálogoSDL0–62,63 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina y mano, cuatro desvíos y cerillas hasta solicitar107. Calidad186 C++/79 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino63 de107 y capítulo siguiente aún faltan;63 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–63,64 vistas. El recorrido persistente llega al guardia63, lo duerme tras la columna, inserta162, enciende161, recoge extintor164 y vuelve a Benn24 por111. Núcleo:5293 casos/pasos,384 variantes de rutina,480 de cerillas y36 de extintor incluidas, once imágenes y cinco auditorías. SDL: diez imágenes idénticas, restauración y128 cambiosF5/F6. Cementerio64–77 y final siguen pendientes;64 vistas no significa juego acabado. Publicar cada habitación comprobada por separado. Decorados ampliados aparcados; preservar monitor, marcos, sonido y contador. No modificar enfoque de ventana ni añadir logo en habitación.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -625,3 +625,7 @@ Vista59, escena58 ICEROOM/ICEPAL.SFX, entrada104 desde57. D36C–D41B captura al
 ## Cuatro desvíos del palacio
 
 Vistas60–63, escenas59–62, todas ICEROOM/ICEPAL.SFX y manejador CS17A3 nulo.27BA–27F1:105/106 aleatorio desde58,107 desde59 exige caja161 o se vuelve108 a61,108 desde60 escoge108/109 hacia61/62 y110 vuelve a58. La mano permanece retirada. Caja161 en62 añade162 por62C9 y usa recogida60B2/615C, x+5/y+alto−2, sin forzar capacidad extra. comparar:laberinto-palacio3073casos/pasos,36variantes de recogida y128inventarios, trece imágenes y ocho auditorías; veinte puertas reales sin forzar semillas. SDL trece capturas, restauración y126 cambiosF5/F6. Guardia63/destino107 pendiente. Publicar cada sala por separado; los cuatro accesos comparten comprobación del recorrido relacionado.
+
+## Guardia del palacio y regreso111
+
+Vista64, escena63 ICEGUARD/ICEPAL.SFX, entrada107 desde59. D41C–D578: sueño tras columna, contador35CE con enfriamiento−20 y límite100, saltos INC/DEC conservando OF, despertar y partículas con azar incluso sin huecos. BD73/BDD8: Insertar162/163, encender Atacar/Usar161, plazo con ADD AL,6, fallosAD50 y consumo/+5 solo si hay tiempo. El original no exige otra condición de cerilla para encender. Recoger164 por62CF conserva OR4 en35C9,41EC=3 y aparición/transporte111 a Benn24. Recoger pie163 aplica6154/88A0. Tipo3/parámetro8 de BOXDET se ignora como en2868; no inventar función. comprobar:guardia-palacio diez imágenes idénticas y128 cambiosF5/F6; comparar:guardia-palacio5293 casos/pasos,384 variantes de rutina,480 de cerillas y36 de extintor, once imágenes y cinco auditorías. Siguiente bloque: regresar de Benn al mago con oro76 y progreso7, seguir secuencias hasta WISE31/salida112, implementar cementerio64 desde el EXE y guía. No dar por comprobados estos destinos por estar documentados. Documentación guardia_palacio.md; recorrido propio27_guardia_del_palacio.txt.

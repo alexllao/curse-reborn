@@ -3,6 +3,30 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:62CF",
+      "nombre": "Extintor y transporte desde el palacio",
+      "comentario": "62CF–6322: recoger164, OR4 en35C9,41EC=3, aparición de Benn y salida111 a24.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:BDD8",
+      "nombre": "Encendido de la cerilla del guardia",
+      "comentario": "BDD8–BEA6: Atacar/Usar161, plazo original y seis registros auxiliares; sin condiciones añadidas.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:BD73",
+      "nombre": "Cerilla en el pie del guardia",
+      "comentario": "BD73–BDD7: Insertar162/163, plazo con ADD AL,6, intento tardíoAD50, consumo y cinco puntos.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:D41C",
+      "nombre": "Guardia dormilón del palacio",
+      "comentario": "D41C–D578: columna, contador35CE, INC/DEC con OF, despertar, canales y diez intentos de partículas; DS y azar contrastados.",
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
+    },
+    {
       "direccion": "0000:609E",
       "nombre": "Carámbano de la repisa",
       "comentario": "154:6285 y2C4C,x+5/y+alto−2,615C. La escoba debe bajarlo desde89 a151 conBB18. Variantes y recorrido real101/regreso102; palacio.cpp."
