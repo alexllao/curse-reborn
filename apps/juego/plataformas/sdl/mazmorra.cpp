@@ -322,10 +322,10 @@ bool Mazmorra::dibujar_panel_partidas(unsigned int modo, const std::vector<unsig
 bool Mazmorra::preparar_cursor_rgba(unsigned char *rgba) const {
   std::vector<unsigned char> oscuro(64000, 0), claro(64000, 255);
   if (!rgba ||
-      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()), 0,
-                                oscuro.data(), 0, 0, false) ||
-      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()), 0,
-                                claro.data(), 0, 0, false))
+      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()),
+                                fotograma_cursor(), oscuro.data(), 0, 0, false) ||
+      !motor::dibujar_fotograma(raton.data(), static_cast<unsigned int>(raton.size()),
+                                fotograma_cursor(), claro.data(), 0, 0, false))
     return false;
   for (unsigned int y = 0; y < 16; ++y)
     for (unsigned int x = 0; x < 16; ++x) {

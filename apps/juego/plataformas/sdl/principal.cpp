@@ -44,6 +44,7 @@
 #include "lanzador/sonidos_pc.hpp"
 #include "video/decorados.hpp"
 #include "video/cursor.hpp"
+#include "pruebas/comprobar_respuesta_cursor.hpp"
 
 namespace {
 // Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
@@ -475,6 +476,9 @@ bool comprobar_cursor(const std::string &carpeta, const std::string &destino) {
         !presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, base.data()))
       return SDL_SetError("Ampliar el monitor no recupera el filtro elegido");
   }
+  if (!comprobar_respuesta_cursor(presentacion.ventana, presentacion.dibujante, presentacion.cursor,
+                                  mazmorra, destino))
+    return false;
   registrar_accion("Cursor: tres formatos con y sin habitación; cuatro bordes, salida de ventana, "
                    "regreso de la mano, seis filtros y panel sin duplicación comprobados");
   return true;

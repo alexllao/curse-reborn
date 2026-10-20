@@ -22,6 +22,7 @@ public:
     }
     cursor = nullptr;
     ancho_actual = 0;
+    fotograma_actual = 256;
     mano_software = false;
   }
   // Adapta la escala a la imagen jugable; los paneles DOS mantienen su cursor ya incorporado.
@@ -70,7 +71,8 @@ public:
     }
     const int deseado =
         std::clamp(static_cast<int>(std::lround(juego.w * ventana_ancho / ancho / 20.0f)), 1, 256);
-    if (!cursor || ancho_actual != deseado) {
+    const auto fotograma = partida.fotograma_cursor();
+    if (!cursor || ancho_actual != deseado || fotograma_actual != fotograma) {
       std::vector<unsigned char> rgba(16u * 16u * 4u);
       if (!partida.preparar_cursor_rgba(rgba.data()))
         return false;
@@ -89,6 +91,7 @@ public:
       cerrar();
       cursor = siguiente;
       ancho_actual = deseado;
+      fotograma_actual = fotograma;
     }
     if (SDL_GetCursor() != cursor && !SDL_SetCursor(cursor))
       return false;
@@ -116,4 +119,5 @@ private:
   int cursor_x = 0, cursor_y = 0;
   SDL_Cursor *cursor = nullptr;
   int ancho_actual = 0;
+  unsigned int fotograma_actual = 256;
 };

@@ -109,6 +109,8 @@ Los marcos se orientan según las bandas: laterales en ventanas anchas y girados
 
 Frank y el pozo se muestran sin decorados ampliados. Su posible revisión visual queda para más adelante; la prioridad vuelve a los puzles y caminos del port fiel.
 
+La mano sigue el fotograma vivo del juego: al rechazar un uso o una combinación cambia temporalmente a la mano hacia abajo y recupera la normal al terminar su secuencia. Se conserva también la respuesta de acción aceptada; el port no añade temporizadores propios. El cursor nativo y el compuesto antes de los filtros usan el mismo fotograma de MOUSE.SPR (EA48, DS:2C0B; rechazo88A0 y canal9976).
+
 La mano original del ratón aparece únicamente dentro de la imagen jugable. Sobre el marco, la habitación o las bandas, y al salir de la ventana, se recupera la flecha normal. Volver al juego restaura la mano a su escala actual, también con zoom. Los paneles DOS ocultan el cursor nativo solo mientras el puntero permanece dentro del juego, para evitar duplicar su mano incorporada.
 
 ## Alimentación de la habitación
