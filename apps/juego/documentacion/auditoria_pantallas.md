@@ -74,6 +74,25 @@ Total nuevo:91 observaciones de interacción y11.648 pasos, incluidas48 CLC, sin
 
 Esta ampliación compara el núcleo y el contexto de las referencias; no añade capturas SDL ni agota todos los verbos, inventarios o visitas posibles. El ámbito del comando sigue limitado a0–25 salvo2; los capítulos siguientes se incorporarán con referencias completas.
 
+### Respuestas CLC de las cuevas
+
+Tanda selectiva posterior ejecutada con `--solo-clc`, sin repetir la observación STC anterior ni fabricar objetos. Se restauran las instantáneas y semillas reales de `comparacion_final_cuevas/`; cada selección y sus128 pasos de continuación se contrastan con el EXE, incluidos DS completo, azar y fase externa del comparador.
+
+| Referencia real           | Escena | Ramas CLC | Pasos coincidentes |
+| ------------------------- | ------ | --------- | ------------------ |
+| `final_casco.ds.bin`      | 9      | 24        | 3.072              |
+| `final_mascara.ds.bin`    | 12     | 14        | 1.792              |
+| `final_agujero_68.ds.bin` | 14     | 23        | 2.944              |
+| `final_trampa.ds.bin`     | 5      | 22        | 2.816              |
+
+Total:83 observaciones nuevas y10.624 pasos coincidentes. Las83 llegan al reposo con menú habilitado; no se han encontrado diferencias ni un manejador pendiente en estas ramas. No agota todas las posiciones ni los inventarios posibles de estas escenas.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <índice> --estado comparacion_final_cuevas/<referencia.ds.bin> --solo-clc`. Informes locales preservados como `resultado_9_final_casco_solo_clc.json`, `resultado_12_final_mascara_solo_clc.json`, `resultado_14_final_agujero_68_solo_clc.json` y `resultado_5_final_trampa_solo_clc.json`, en `trabajo/auditoria_consecuencias/`. Los nombres filtrados genéricos también conservan la ejecución de cada escena.
+
+Se revisó además `corredor_izquierda.ds.bin` de escena1 con el mismo filtro:24 selecciones inmediatas coincidentes, pero ninguna rama CLC observada (cero pasos). Su informe `resultado_1_filtrado_solo_clc.json` no se cuenta como avance de consecuencias ni acredita ausencia de CLC en otros estados del corredor.
+
+Las cuatro escenas ya estaban incluidas entre las18/73 con muestras, por lo que el porcentaje se mantiene en24,7%. No hay nuevas capturas ni nuevas salas SDL en esta tanda. Siguen pendientes más estados iniciales, referencias antiguas sin semilla real y capítulos posteriores al ámbito0–25 del comando.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
