@@ -24,6 +24,8 @@ Antes de jugar, coloca tu copia del juego y las ROM según la [guía de datos or
 
 `pnpm calidad` revisa formato y código; `pnpm monorepo:comprobar` comprueba las rutas. Los comandos anteriores de compilación y comparación siguen disponibles desde la raíz.
 
+`pnpm empaquetar:beta` genera una carpeta y un ZIP para Windows en `apps/juego/dist/`, con el ejecutable y recursos propios optimizados. `--con-datos` añade la copia local del juego. Opciones y verificación en [Distribución](apps/juego/documentacion/distribucion.md).
+
 Consulta [los controles](apps/juego/documentacion/controles.md), [la documentación del port](apps/juego/README.md) y [la organización del repositorio](apps/juego/documentacion/monorepo.md).
 
 La raíz conserva pnpm y las configuraciones generales de JavaScript/Markdown del monorepositorio. CMake, clang-format y Ruff pertenecen a `apps/juego`. El juego original, las ROM, las partidas y los resultados locales no se distribuyen en este repositorio.

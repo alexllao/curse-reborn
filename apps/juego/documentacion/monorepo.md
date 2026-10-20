@@ -47,5 +47,5 @@ Al actualizar una copia que aún tenga `trabajo/` en la raíz, los comandos del 
 ## Siguientes tareas
 
 - Crear la web y una compilación WebAssembly con el mismo motor cuando se aborden esas plataformas.
-- Preparar `pnpm empaquetar:beta`: ejecutable, dependencias, recursos propios, versión y controles en un ZIP, con optimización de copias de distribución. Todavía no implementado.
+- `pnpm empaquetar:beta` ya genera carpeta y ZIP para Windows x64, con recursos propios optimizados, dependencias, licencias, versión e integridad. `--con-datos` incluye la copia local del juego y ejecuta las pruebas ocultas desde el paquete. Véase [Distribución](distribucion.md).
 - Los sonidos de presentación del ordenador ya están integrados: botón, ventilador/disco y recuento de RAM. Terminan antes de la música del juego y respetan M/volumen. No son efectos del juego DOS.

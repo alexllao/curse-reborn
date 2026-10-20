@@ -1,6 +1,6 @@
 # Archivos del juego original
 
-Copia aquí tu juego original de **Curse of Enchantia para DOS** y, si quieres música Roland MT-32, sus ROM. Estos archivos no se distribuyen con el port ni se suben a Git.
+Copia aquí tu juego original de **Curse of Enchantia para DOS** y, si quieres música Roland MT-32, sus ROM. Estos archivos no se descargan ni se suben a Git. El paquete beta predeterminado los deja fuera; `pnpm empaquetar:beta --con-datos` copia el ejecutable y los recursos locales del juego, excluyendo ROM y partidas. Véase [Distribución](../documentacion/distribucion.md).
 
 La estructura debe quedar así, sin añadir otra carpeta intermedia:
 

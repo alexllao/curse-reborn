@@ -510,6 +510,16 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
   configurar_consola();
+  // Un doble clic usa los datos portables junto al ejecutable, sin depender del directorio actual.
+  std::string datos_portables;
+  char *argumentos_portables[] = {argv[0], nullptr, nullptr};
+  if (argc == 1) {
+    const char *base = SDL_GetBasePath();
+    datos_portables = std::string(base ? base : "") + "datos_originales/CURSE/DATA";
+    argumentos_portables[1] = datos_portables.data();
+    argv = argumentos_portables;
+    argc = 2;
+  }
   // El idioma pertenece a la interfaz; las opciones de comprobación y el estado DOS se conservan.
   bool idioma_elegido = false;
   for (int i = 2; i < argc; ++i) {

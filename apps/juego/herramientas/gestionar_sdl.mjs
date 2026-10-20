@@ -137,7 +137,8 @@ function entornoCompilador() {
   return variables;
 }
 
-async function compilar() {
+async function compilar(distribucion = false) {
+  const aplicacion = rutaJuego(raiz, 'trabajo', distribucion ? 'aplicacion_beta' : 'aplicacion');
   mkdirSync(aplicacion, { recursive: true });
   const versionJuego = JSON.parse(readFileSync(rutaJuego(raiz, 'package.json'), 'utf8')).version;
   if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(versionJuego))
@@ -184,6 +185,7 @@ async function compilar() {
       `-DCURSE_REBORN_VERSION="${versionJuego}"`,
       '-std=c++17',
       '-O2',
+      ...(distribucion ? ['-DNDEBUG', '-ffunction-sections', '-fdata-sections'] : []),
       '-Wall',
       '-Wextra',
       '-Werror',
@@ -191,7 +193,8 @@ async function compilar() {
       '-fno-rtti',
       '-fuse-ld=lld',
       '-Xlinker',
-      '/subsystem:console',
+      distribucion ? '/subsystem:windows' : '/subsystem:console',
+      ...(distribucion ? ['-Xlinker', '/opt:ref', '-Xlinker', '/opt:icf'] : []),
       '-I',
       join(sdl, 'include'),
       '-I',
@@ -1052,7 +1055,15 @@ export async function gestionarSdl(accion, argumentos) {
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);
-  if (argumentos.length && !sinSonido && !comprobarCalles && accion !== 'exportar:musica')
+  const distribucion =
+    accion === 'sdl:compilar' && argumentos.length === 1 && argumentos[0] === '--distribucion';
+  if (
+    argumentos.length &&
+    !sinSonido &&
+    !comprobarCalles &&
+    !distribucion &&
+    accion !== 'exportar:musica'
+  )
     throw new Error('Solo ventana admite el argumento --sin-sonido.');
   if (accion === 'sdl:preparar') {
     if (await preparar()) console.log('Dependencia SDL preparada.');
@@ -1402,7 +1413,7 @@ export async function gestionarSdl(accion, argumentos) {
         throw new Error('La huella de CURSE.EXE no coincide con la versión reconstruida.');
     }
   }
-  const programa = await compilar();
+  const programa = await compilar(distribucion);
   if (accion === 'sdl:compilar') {
     console.log(`Aplicación compilada: ${programa}`);
     return;
