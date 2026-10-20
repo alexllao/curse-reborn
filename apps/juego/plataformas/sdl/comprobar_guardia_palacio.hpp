@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_ataud.hpp"
 
 // D41C/BD73/BDD8/62CF: reproduce la partida contrastada hasta el regreso111 a Benn.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
@@ -50,5 +51,7 @@ bool comprobar_guardia_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanz
     return true;
   if (!avanzar(192))
     return false;
-  return detener("guardia_benn_control");
+  if (detener("guardia_benn_control"))
+    return true;
+  return comprobar_ataud_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

@@ -23,7 +23,7 @@ Cada parte trasladada deberá conservar una referencia a su dirección en el eje
 
 Los **decorados ampliados están aparcados** por decisión de Àlex: Frank y el pozo conservan sus gráficos originales. Los PNG se guardan como referencia para una revisión futura; el catálogo activo está vacío. Mayús+F1 informa de esta situación y no añade ilustraciones. Los marcos exteriores F1 y el monitor continúan disponibles. Detalles en [Recursos propios](../../packages/assets/README.md); `pnpm comprobar:decorados` verifica que las escenas permanezcan originales.
 
-**64 vistas de desarrollo, desde la mazmorra hasta el guardia del palacio. El recorrido persistente incluye sus puzles, el extintor y el regreso a Benn. Cementerio y castillo final siguen pendientes. El número de vistas no acredita el juego completo. Véanse [las pantallas](documentacion/pantallas.md) y [el guardia](documentacion/guardia_palacio.md).**
+**65 vistas de desarrollo, desde la mazmorra hasta el ataúd del cementerio. El recorrido persistente incluye sus puzles, el extintor, el regreso a Benn, el tercer pago al mago y la excavación del ataúd. El exterior del cementerio y castillo final siguen pendientes. El número de vistas no acredita el juego completo. Véanse [las pantallas](documentacion/pantallas.md) y [el guardia](documentacion/guardia_palacio.md).**
 
 El propietario ha confirmado el [generador de valores acotados](documentacion/generador_aleatorio.md) en **18.816 llamadas**, la [preparación integrada de resultados](documentacion/preparacion_resultados.md) en **2.048 operaciones** y el [avance de acciones y movimiento](documentacion/avance_acciones_movimiento.md) en **10.930 casos**. También ha confirmado los **3.028 casos** de [creación y actualización de entidades](documentacion/entidades.md). El propietario ha confirmado también los **8.924 casos** de [secuencias de animación](documentacion/secuencias_animacion.md).
 
@@ -382,3 +382,5 @@ La vista58 añade [El trono de la reina del hielo](documentacion/reina_hielo.md)
 La vista59 incorpora [la sala de la mano](documentacion/mano_palacio.md): captura, aceite144 y puerta105 desde la partida real de la reina. `pnpm comprobar:mano-palacio` verifica siete imágenesSDL, restauración y118 cambiosF5/F6. El destino59 sigue pendiente.
 
 Las vistas60–63 añaden [los desvíos del palacio](documentacion/laberinto_palacio.md): cuatro salas, rutas con azar original, caja y cerilla, regreso persistente y acceso107 solicitado. Trece imágenesSDL, restauración y126 cambiosF5/F6 comprobados. El guardia63 continúa en [su bloque comprobado](documentacion/guardia_palacio.md).
+
+La vista65 integra [el ataúd](documentacion/ataud.md), entrada112/modelo25, hueso165 y excavación hasta solicitar113. El destino65 y los vampiros son el siguiente bloque.

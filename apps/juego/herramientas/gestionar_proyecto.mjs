@@ -196,6 +196,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     mano_palacio: 'comparar_mano_palacio.py',
     laberinto_palacio: 'comparar_laberinto_palacio.py',
     guardia_palacio: 'comparar_guardia_palacio.py',
+    ataud: 'comparar_ataud.py',
     enlaces_valle: 'comparar_enlaces_valle.py',
     puente_barco: 'comparar_puente_barco.py',
     guardia_barco: 'comparar_guardia_barco.py',
@@ -246,6 +247,9 @@ try {
       break;
     case 'comprobar:guardia-palacio':
       await gestionarSdl('comprobar:poblacion', ['--guardia-palacio']);
+      break;
+    case 'comprobar:ataud':
+      await gestionarSdl('comprobar:poblacion', ['--ataud']);
       break;
     case 'comprobar:mano-palacio':
       await gestionarSdl('comprobar:poblacion', ['--mano-palacio']);
@@ -490,6 +494,9 @@ try {
       break;
     case 'comparar:guardia-palacio':
       compararAcciones('guardia_palacio', argumentos);
+      break;
+    case 'comparar:ataud':
+      compararAcciones('ataud', argumentos);
       break;
     case 'comparar:laberinto-palacio':
       compararAcciones('laberinto_palacio', argumentos);

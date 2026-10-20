@@ -442,6 +442,23 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--ataud',
+      nombre: 'ataud',
+      referencia: 'ataud',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'ataud_mago',
+        'ataud_entrada',
+        'ataud_control',
+        'ataud_hueso',
+        'ataud_excavar_32',
+        'ataud_excavar_64',
+      ],
+      alcance:
+        'tercer pago real al mago, entrada112 con modelo25, hueso165 y excavación; seis imágenes y restauración',
+    },
+    {
       argumento: '--guardia-palacio',
       nombre: 'guardia_palacio',
       referencia: 'guardia_palacio',
@@ -860,6 +877,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--mano-palacio',
       '--laberinto-palacio',
       '--guardia-palacio',
+      '--ataud',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

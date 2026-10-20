@@ -3,6 +3,18 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:4502",
+      "nombre": "Excavación con el hueso",
+      "comentario": "4502–4554: retira165 ignorando ausencia,2714 y2742/2752/2758 con9/8,+5 y886B; salida113 mediante secuencias originales.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:60CE",
+      "nombre": "Hueso del ataúd",
+      "comentario": "60CE–60E0: capacidad e iconos comunes,2C6D=0 y recogida9858/886B. Entrada112/modelo25 y recogida real165 contrastadas.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
       "direccion": "0000:62CF",
       "nombre": "Extintor y transporte desde el palacio",
       "comentario": "62CF–6322: recoger164, OR4 en35C9,41EC=3, aparición de Benn y salida111 a24.",

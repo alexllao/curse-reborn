@@ -1,0 +1,9 @@
+Recorrido propio: llegada al cementerio
+
+1. Desde Benn, vuelve por la calle de los disfraces hasta la plaza de la fuente.
+2. Sube a la calle de las maravillas y entra en la tienda del mago.
+3. Entrega dinero al mago tras haber completado el palacio. Su transporte llega al ataúd.
+4. Recoge el hueso que acompaña a Brad.
+5. Ataca con el hueso para excavar y salir.
+
+La continuación exterior y sus vampiros son otro bloque. Contratos y límites: documentacion/ataud.md.

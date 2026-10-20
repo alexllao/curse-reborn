@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 20 de octubre,64 vistasSDL
+## Estado vigente: 20 de octubre,65 vistasSDL
 
-CatálogoSDL0–63,64 vistas. El recorrido persistente llega al guardia63, lo duerme tras la columna, inserta162, enciende161, recoge extintor164 y vuelve a Benn24 por111. Núcleo:5293 casos/pasos,384 variantes de rutina,480 de cerillas y36 de extintor incluidas, once imágenes y cinco auditorías. SDL: diez imágenes idénticas, restauración y128 cambiosF5/F6. Cementerio64–77 y final siguen pendientes;64 vistas no significa juego acabado. Publicar cada habitación comprobada por separado. Decorados ampliados aparcados; preservar monitor, marcos, sonido y contador. No modificar enfoque de ventana ni añadir logo en habitación.
+CatálogoSDL0–64,65 vistas. Guardia63 resuelto con extintor y regreso111 a Benn; el recorrido real vuelve al mago y el tercer pago solicita112 directamente desdeMAGE22. Ataúd64/modelo25: recoger165 y Atacar165 excavan y solicitan113. Núcleo ataúd5155 casos/pasos,30 variantes, seis imágenes y tres auditorías. SDL seis imágenes idénticas, restauración y130 cambiosF5/F6. Calidad190C++/81Python. Cementerio65/77 y castillo/final siguen pendientes; no confundir65 vistas con juego completo. Publicar cada sala comprobada. Decorados ampliados aparcados, conservar monitor/marcos/sonido/contador, sin cambios de foco ni logo en habitación.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -629,3 +629,7 @@ Vistas60–63, escenas59–62, todas ICEROOM/ICEPAL.SFX y manejador CS17A3 nulo.
 ## Guardia del palacio y regreso111
 
 Vista64, escena63 ICEGUARD/ICEPAL.SFX, entrada107 desde59. D41C–D578: sueño tras columna, contador35CE con enfriamiento−20 y límite100, saltos INC/DEC conservando OF, despertar y partículas con azar incluso sin huecos. BD73/BDD8: Insertar162/163, encender Atacar/Usar161, plazo con ADD AL,6, fallosAD50 y consumo/+5 solo si hay tiempo. El original no exige otra condición de cerilla para encender. Recoger164 por62CF conserva OR4 en35C9,41EC=3 y aparición/transporte111 a Benn24. Recoger pie163 aplica6154/88A0. Tipo3/parámetro8 de BOXDET se ignora como en2868; no inventar función. comprobar:guardia-palacio diez imágenes idénticas y128 cambiosF5/F6; comparar:guardia-palacio5293 casos/pasos,384 variantes de rutina,480 de cerillas y36 de extintor, once imágenes y cinco auditorías. Siguiente bloque: regresar de Benn al mago con oro76 y progreso7, seguir secuencias hasta WISE31/salida112, implementar cementerio64 desde el EXE y guía. No dar por comprobados estos destinos por estar documentados. Documentación guardia_palacio.md; recorrido propio27_guardia_del_palacio.txt.
+
+## Ataúd del cementerio comprobado
+
+Vista65, escena64 GRAVE.MAP/SPR, sinSFXpropio; entrada112/modelo25. Tercer pago43B4 con progreso7 solicita112 desde22 sin pasar porWISE31. BOXDET de31 también ofrece112; conservar enlace original. CS17A3[64]=0. Recoger165 por563A/60CE desactiva2C6D y prepara9858, sin retirar descriptor; capacidad/iconos/puntos comunes. Atacar165 por4502 consume ignorando ausencia,2714 y2742/2752/2758 con9/8,+5/886B. Se contrasta hasta petición113 tras89 pasos; destino65 pendiente. comparar:ataud5155casos/pasos,18variantes de recogida y12deexcavación, seis imágenes y tres auditorías. comprobar:ataud seis imágenes idénticas, restauración y130 cambiosF5/F6. Calidad190C++/81Python. Documentación ataud.md y recorrido28_el_ataud.txt. Siguiente: GRAVEYD1 escena65 por113/modelo26, rutina1BA3 y vampiros; GRAVEYD2 escena77. Reconstruir EXE antes de activar destinos. Àlex acepta posponer puzles nuevos de una futura versión extendida hasta terminar el port fiel; no implementarlos ahora.

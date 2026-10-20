@@ -162,6 +162,8 @@
     "comprobar:arma-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:arma-palacio",
     "comparar:resolucion-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:resolucion-palacio",
     "comparar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:guardia-palacio",
+    "comparar:ataud": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:ataud",
+    "comprobar:ataud": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:ataud",
     "comprobar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:guardia-palacio",
     "comparar:laberinto-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:laberinto-palacio",
     "comparar:mano-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:mano-palacio",

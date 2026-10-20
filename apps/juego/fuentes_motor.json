@@ -1,6 +1,7 @@
 [
   "motor/acciones/construir_tabla.cpp",
   "motor/acciones/poblacion.cpp",
+  "motor/acciones/cementerio.cpp",
   "motor/acciones/barco.cpp",
   "motor/acciones/borde.cpp",
   "motor/acciones/poza.cpp",

@@ -170,3 +170,5 @@ Vista59: La sala de la mano, escena58. Ponerse el aceite144 después de quedar a
 Vistas60–63: El paso del guardia, La sala de las dos puertas, El desvío central y La sala de las cerillas. Los caminos conservan el azar original; Recoger161 añade la caja y una cerilla cuando hay capacidad. Trece capturas y126 cambiosF5/F6 contrastados. [Alcance](laberinto_palacio.md).
 
 Vista64: La sala del guardia dormilón. Insertar la cerilla162 en el pie163 y Atacar con la caja161; esconderse tras la columna permite esperar el sueño. Recoger164 conduce de vuelta a Benn. [Contratos y alcance](guardia_palacio.md).
+
+Vista65: El interior del ataúd. Recoger el hueso y Atacar con él inicia la excavación original. [Alcance](ataud.md).
