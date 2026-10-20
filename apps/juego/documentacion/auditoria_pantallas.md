@@ -60,3 +60,7 @@ Catálogo68 vistas:0–66 y77. Entrada116 desde77, ambos senderos deCOPSE66 hast
 ## Verja del castillo integrada
 
 Catálogo69 vistas:0–67 y77. Entrada117 desde66, apertura174 y recorrido hasta118; CASTLENT68 pendiente. Núcleo2.954 casos/pasos,12 variantes y cinco composiciones. Véase [Verja](verja.md).
+
+## Puente del castillo integrado
+
+Catálogo70 vistas:0–68 y77. Entrada118 desde67 y derrumbe automático hasta119, sin etapa libre de menú. Núcleo180 casos/pasos y cuatro composiciones; CASTHALL69 pendiente. Véase [Puente](puente_castillo.md).

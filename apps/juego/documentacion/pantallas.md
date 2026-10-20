@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las69 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las70 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -75,6 +75,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 67    | 77         | La verja del cementerio           | GRAVEYD2 |
 | 68    | 66         | El bosque del castillo            | COPSE    |
 | 69    | 67         | La verja del castillo             | GATE     |
+| 70    | 68         | El puente del castillo            | CASTLENT |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -151,3 +152,7 @@ Catálogo68 vistas:0–66 y77. Entrada116 desde77, ambos senderos deCOPSE66 hast
 ## Verja del castillo integrada
 
 Catálogo69 vistas:0–67 y77. Entrada117 desde66, apertura174 y recorrido hasta118; CASTLENT68 pendiente. Núcleo2.954 casos/pasos,12 variantes y cinco composiciones. Véase [Verja](verja.md).
+
+## Puente del castillo integrado
+
+Catálogo70 vistas:0–68 y77. Entrada118 desde67 y derrumbe automático hasta119, sin etapa libre de menú. Núcleo180 casos/pasos y cuatro composiciones; CASTHALL69 pendiente. Véase [Puente](puente_castillo.md).

@@ -1,0 +1,5 @@
+EL PUENTE DEL CASTILLO
+
+Tras cruzar la verja, deja terminar la animación: el puente se derrumba detrás de Brad. El juego continúa automáticamente hacia el vestíbulo del castillo; no hace falta utilizar ningún objeto ni hacer clic durante la travesía.
+
+Recorrido propio basado en la guía de Sophie Cheshire (2003) y contrastado con CURSE.EXE hasta la solicitud119. El vestíbulo es el siguiente bloque.

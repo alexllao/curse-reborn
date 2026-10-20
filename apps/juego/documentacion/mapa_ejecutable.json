@@ -1026,7 +1026,7 @@
     {
       "direccion": "0000:4C43",
       "nombre": "Preparación del personaje al cambiar de escena",
-      "comentario": "Fragmentos reconstruidos para las salidas cero a tres; STD y PLUNGE con intervalos y dimensiones de banco. Comparados DS completo y modelos, conectados con carga y fundidos SDL.",
+      "comentario": "Fragmentos reconstruidos para las salidas cero a tres; STD y PLUNGE con intervalos y dimensiones de banco. Comparados DS completo y modelos, conectados con carga y fundidos SDL. Entrada118 contrastada: CASTLENT68, canales84E7/8503/851E y85 pasos comunes hasta119 automático, sin control libre; cuatro imágenes.",
       "traslado": "apps/juego/motor/estado/inicializar.cpp"
     },
     {

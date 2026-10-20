@@ -458,6 +458,20 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--puente-castillo',
+      nombre: 'puente_castillo',
+      referencia: 'puente_castillo',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'puente_castillo_entrada',
+        'puente_castillo_32',
+        'puente_castillo_64',
+        'puente_castillo_80',
+      ],
+      alcance: 'entrada118, derrumbe del puente, canales originales y restauración',
+    },
+    {
       argumento: '--verja',
       nombre: 'verja',
       referencia: 'verja',
@@ -951,6 +965,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--cementerio',
       '--bosque',
       '--verja',
+      '--puente-castillo',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

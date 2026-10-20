@@ -6,7 +6,11 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 69 vistas SDL
+## Estado vigente: 20 de octubre, 70 vistas SDL
+
+CASTLENT68 integrado desde118, FINAL.SFX, CS17A3[68]=0. Canales84E7/8503/851E cruzan y derrumban el puente, salida119 AUTOMÁTICA tras85 pasos. No hay control libre de menú en este tramo. Núcleo180 casos/pasos y cuatro composiciones; SDL cuatro imágenes idénticas, restauración y140 cambiosF5/F6. Catálogo0–68 y77. CASTHALL69 y escenas70–73 pendientes: continuar desde trabajo/comparacion_puente_castillo/puente_castillo_solicitud119 (DS/semilla). Documentación puente_castillo.md y recorrido32_el_puente_del_castillo.txt. Conservar decorados aparcados y marcos/monitor.
+
+## Estado anterior: 20 de octubre, 69 vistas SDL
 
 Verja67 integrada desde117, GATE.MAP/SPR y FINAL.SFX; CS17A3[67]=0. Empujar174 según4838–48AF: cuatro auxiliares preservando campos no escritos,+5/886B. Núcleo2.954 casos/pasos,12 variantes,cinco imágenes,tres auditorías; SDL cinco imágenes idénticas, restauración y138 cambiosF5/F6. Catálogo0–67 y77. CASTLENT68 y escenas69–73 pendientes. Seguir desde trabajo/comparacion_verja/verja_solicitud118 (DS/semilla reales). Documentación verja.md, recorrido31_la_verja_del_castillo.txt. Publicar cada sala comprobada; conservar marcos/monitor y decorados ampliados aparcados.
 
