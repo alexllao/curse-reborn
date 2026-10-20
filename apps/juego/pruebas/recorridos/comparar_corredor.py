@@ -476,7 +476,7 @@ class ComparacionCorredor(ComparacionPuzle):
     def captura(self, datos, carpeta, nombre):
         # Solo se registra el objeto de azar recibido al iniciar el recorrido real.
         # No se deduce del emulador de dibujo ni se usa una semilla inicial sustitutiva.
-        if hasattr(self, 'semilla_capturas_recorrido'):
+        if datos is getattr(self, 'datos_capturas_recorrido', None):
             (carpeta / f'{nombre}.semilla.json').write_text(
                 json.dumps(list(self.semilla_capturas_recorrido)), encoding='utf-8'
             )
@@ -650,6 +650,7 @@ class ComparacionCorredor(ComparacionPuzle):
     # Cruza la salida original, prueba las dos direcciones de cámara y vuelve por la salida dos.
     def despues_puerta(self, datos, semilla, carpeta):
         self.semilla_capturas_recorrido = semilla
+        self.datos_capturas_recorrido = datos
         inventario = bytes(datos[0x5225:0x5239])
         self.clic(datos, 45, 152)
         salida = self.andar(datos, semilla, 0xFFFF, 96)

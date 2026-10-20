@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 18/73 con menú       | 24,7 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 25/73 con menú       | 34,2 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16 y17–25. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–25 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -122,11 +122,31 @@ Esto no vuelve a ejecutar ni reemplaza el balance global histórico de59.470 sel
 
 ### Semillas del recorrido inicial completo
 
-El comparador del corredor conserva ahora el mismo objeto de semilla que recibe `despues_puerta` para la partida real. Cada captura guarda sus cuatro palabras antes de componer la imagen; no lee el azar de una rutina de dibujo ni lo reconstruye a partir de DS. Las subclases de lago, poza, cuevas y catapulta heredan esa conservación. Los estados posteriores de `ComparacionFinalCuevas` mantienen también su registro existente de semilla y contexto.
+El comparador del corredor conserva ahora el mismo objeto de semilla que recibe `despues_puerta` para la partida real. El registro se limita al mismo objeto DS recibido en ese recorrido: una copia sintética, aunque tenga bytes idénticos, no hereda automáticamente su azar. Cada captura guarda sus cuatro palabras antes de componer la imagen; no lee el azar de una rutina de dibujo ni lo reconstruye a partir de DS. Las subclases de lago, poza, cuevas y catapulta heredan esa conservación. Los estados posteriores de `ComparacionFinalCuevas` mantienen también su registro existente de semilla y contexto.
 
 Ejecutado `pnpm comparar:final-cuevas --muestra`:32.933 casos/pasos coincidentes con el EXE. Las58 instantáneas DS de `comparacion_final_cuevas/` son idénticas por SHA-256 a las anteriores y todas conservan semilla; las29 referencias que antes carecían de ella en esa carpeta quedan regeneradas desde el recorrido, sin adjuntar a un estado antiguo un azar supuesto. Los resultados locales están en `trabajo/semillas_inicio_regeneracion.log`, `trabajo/semillas_inicio_antes.json` y `comparacion_final_cuevas/muestra.json`.
 
-Esto habilita nuevas comprobaciones de consecuencias con semilla real. No implica que se hayan recuperado automáticamente las semillas de todas las copias históricas en otras carpetas ni sustituye el balance global de la auditoría antigua. La preservación de la referencia por sí sola no aumenta el número de escenas con consecuencias observadas.
+Esto habilita nuevas comprobaciones de consecuencias con semilla real. No implica que se hayan recuperado automáticamente las semillas de todas las copias históricas en otras carpetas ni sustituye el balance global de la auditoría antigua. La preservación de la referencia por sí sola no aumenta el número de escenas con consecuencias observadas. La guardia de identidad se comprobó selectivamente con una referencia, una copia y la actualización del mismo objeto de semilla; es una prueba de metadatos, sin composición ni casos jugables añadidos. La regeneración completa citada precede a esa guardia adicional.
+
+### Nuevas muestras del inicio: siete escenas
+
+Después de regenerar las referencias se ejecutaron las consecuencias con `--incluir-clc`, tanto STC como verbos CLC tras el cierre lógico del menú:
+
+| Referencia real en `comparacion_final_cuevas/` | Escena | Observaciones | Pasos coincidentes | CLC |
+| ---------------------------------------------- | ------ | ------------- | ------------------ | --- |
+| `mazmorra_regreso.ds.bin`                      | 0      | 32            | 4.096              | 10  |
+| `lago_hablar.ds.bin`                           | 3      | 32            | 4.096              | 10  |
+| `cuevas_corredor.ds.bin`                       | 4      | 18            | 2.304              | 8   |
+| `poza_puerta.ds.bin`                           | 8      | 31            | 3.968              | 10  |
+| `cuevas_cuerda.ds.bin`                         | 10     | 41            | 5.248              | 14  |
+| `catapulta_tablon.ds.bin`                      | 11     | 56            | 7.168              | 19  |
+| `catapulta_monitor.ds.bin`                     | 13     | 30            | 3.840              | 16  |
+
+Total nuevo:240 observaciones,30.720 pasos y87 ramas CLC, todas reposo con menú habilitado y coincidentes en DS completo, azar y fase externa del comparador. No se han encontrado omisiones ni diferencias en estas referencias. Reproducción: `pnpm comparar:consecuencias --escenas <índice> --estado comparacion_final_cuevas/<referencia.ds.bin> --incluir-clc`.
+
+Los informes se preservan como `resultado_<escena>_<referencia>_clc.json` en `trabajo/auditoria_consecuencias/`, además de los nombres genéricos filtrados. Los logs locales son `consecuencias_inicio_<referencia>.log`. No se modifican ni publican las instantáneas comerciales.
+
+Las siete escenas no estaban incluidas en el indicador adicional: este pasa de18/73 a25/73 (34,2%). La franja0–25 dispone ahora de muestras de consecuencias salvo la caída automática2, pero no se acreditan todos sus estados. El regreso de la mazmorra no sustituye todas las condiciones de su inicio, y un estado de cada tramo no agota variantes de inventario ni visitas posteriores. No se han añadido capturas SDL en esta ampliación; siguen75/75 salas accesibles y73/73 escenas con continuación tras cargar dentro del alcance descrito.
 
 ### Límites que siguen abiertos
 
