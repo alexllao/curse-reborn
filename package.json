@@ -191,6 +191,7 @@
     "comparar:mano-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:mano-palacio",
     "comparar:reina-hielo": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:reina-hielo",
     "comparar:laser-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:laser-palacio",
+    "comprobar:preferencias": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:preferencias",
     "comprobar:avisos": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:avisos",
     "comprobar:megafono-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:megafono-palacio",
     "comprobar:hielo-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:hielo-palacio",

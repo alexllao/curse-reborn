@@ -407,6 +407,7 @@ try {
     case 'comprobar:menu':
     case 'comprobar:introduccion':
     case 'comprobar:fps':
+    case 'comprobar:preferencias':
     case 'comprobar:avisos':
     case 'comprobar:tiempo':
     case 'comprobar:filtros':

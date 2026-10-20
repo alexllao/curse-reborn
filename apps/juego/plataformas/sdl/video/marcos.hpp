@@ -27,7 +27,13 @@ public:
     cerrar();
   }
   // F1 alterna el marco decorativo sin modificar la habitación ni avanzar la partida.
-  void alternar(Uint64 ahora = SDL_GetTicksNS(), bool incluir_panorama = true);
+  void alternar(Uint64 ahora = SDL_GetTicksNS());
+  bool activado() const {
+    return visible;
+  }
+  const char *nombre_actual() const {
+    return visible ? "Cielo encantado" : "Sin marco";
+  }
   // Mantiene el máximo salvo que se elija manualmente alejar el monitor.
   bool preparar_encuadre(SDL_Renderer *dibujante, Uint64 ahora = SDL_GetTicksNS()) const;
   // Devuelve el área física del juego, también dentro de la carcasa del monitor.
@@ -41,8 +47,6 @@ public:
 private:
   int filtro_actual = -1;
   bool visible = false;
-  unsigned int modo = 0;
-  unsigned int modo_visible = 1;
   float origen_animacion = 0.0f;
   Uint64 inicio_animacion = 0;
   // Interpola desde el nivel actual para que otra pulsación invierta el recorrido sin saltos.

@@ -164,6 +164,7 @@ export function prepararMarcos(raiz, destino) {
     );
   }
   copyFileSync(join(cielo, 'catalogo.json'), join(destinoCielo, 'catalogo.json'));
+  identificadores.push(panoramas.id);
   if (!identificadores.includes(catalogo.predeterminado))
     throw new Error('Falta el marco predeterminado del catálogo.');
   const asignaciones = [];

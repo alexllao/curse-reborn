@@ -89,38 +89,61 @@ bool FiltrosPantalla::actualizar(SDL_Texture *original, const unsigned char *rgb
 
 // Se prepara solo al cambiar el marco o F11, nunca por fotograma. El arte maestro queda intacto.
 SDL_Surface *FiltrosPantalla::filtrar_marco(SDL_Surface *imagen) const {
-  if (indice_actual() < 2)
-    return SDL_ConvertSurface(imagen, SDL_PIXELFORMAT_RGBA32);
-  const int alto = 200;
-  const int ancho = std::max(1, imagen->w * alto / imagen->h);
-  SDL_Surface *base = SDL_CreateSurface(ancho, alto, SDL_PIXELFORMAT_RGBA32);
-  SDL_Surface *doble = SDL_CreateSurface(ancho * 2, alto * 2, SDL_PIXELFORMAT_RGBA32);
-  SDL_Surface *resultado = SDL_CreateSurface(imagen->w, imagen->h, SDL_PIXELFORMAT_RGBA32);
-  bool ok = base && doble && resultado && SDL_SetSurfaceBlendMode(imagen, SDL_BLENDMODE_NONE) &&
-            SDL_BlitSurfaceScaled(imagen, nullptr, base, nullptr, SDL_SCALEMODE_LINEAR);
-  if (ok) {
-    std::vector<unsigned char> entrada(static_cast<size_t>(ancho) * alto * 4);
-    std::vector<unsigned char> salida(static_cast<size_t>(ancho) * alto * 16);
-    for (int y = 0; y < alto; ++y)
-      std::memcpy(entrada.data() + y * ancho * 4,
-                  static_cast<unsigned char *>(base->pixels) + y * base->pitch, ancho * 4);
-    filtrar_rgba(entrada.data(), salida.data(), ancho, alto, indice_actual());
-    // Los escaladores RGB son opacos; el canal alfa conserva el relieve del marco original.
-    for (int y = 0; y < alto * 2; ++y) {
-      for (int x = 0; x < ancho * 2; ++x)
-        salida[(y * ancho * 2 + x) * 4 + 3] = entrada[((y / 2) * ancho + x / 2) * 4 + 3];
-      std::memcpy(static_cast<unsigned char *>(doble->pixels) + y * doble->pitch,
-                  salida.data() + y * ancho * 8, ancho * 8);
+  SDL_Surface *base = SDL_ConvertSurface(imagen, SDL_PIXELFORMAT_RGBA32);
+  if (!base || indice_actual() < 2)
+    return base;
+  const int ancho = base->w, alto = base->h;
+  const unsigned int efecto = indice_actual();
+  if (efecto <= 3) {
+    // El dibujo mantiene cada píxel nativo. Solo se modula su luz; nunca se reduce a VGA.
+    std::vector<unsigned char> fila(static_cast<size_t>(ancho) * 4);
+    for (int y = 0; y < alto; ++y) {
+      auto *p = static_cast<unsigned char *>(base->pixels) + y * base->pitch;
+      std::memcpy(fila.data(), p, ancho * 4);
+      const unsigned int linea = ((y * 400 / alto) & 1) ? 178u : 256u;
+      for (int x = 0; x < ancho; ++x) {
+        const int vecino = std::min(x + 1, ancho - 1);
+        const float dx = (2.0f * x - ancho) / ancho;
+        const float dy = (2.0f * y - alto) / alto;
+        for (unsigned int c = 0; c < 3; ++c) {
+          unsigned int color = fila[x * 4 + c];
+          if (efecto == 3) {
+            color = (3 * color + fila[vecino * 4 + c]) / 4;
+            color =
+                color * (static_cast<unsigned int>(x * 640 / ancho % 3) == c ? 256u : 220u) / 256u;
+            color =
+                static_cast<unsigned int>(color * (1.0f - (20 * dx * dx + 16 * dy * dy) / 256.0f));
+          }
+          p[x * 4 + c] = static_cast<unsigned char>(color * linea / 256u);
+        }
+      }
     }
-    ok = SDL_SetSurfaceBlendMode(doble, SDL_BLENDMODE_NONE) &&
-         SDL_BlitSurfaceScaled(doble, nullptr, resultado, nullptr,
-                               indice_actual() == 3 ? SDL_SCALEMODE_LINEAR : SDL_SCALEMODE_NEAREST);
+    return base;
   }
-  SDL_DestroySurface(base);
-  SDL_DestroySurface(doble);
-  if (!ok) {
-    SDL_DestroySurface(resultado);
+  // Los escaladores reciben también el maestro completo, sin cuantizarlo a 200 líneas.
+  SDL_Surface *doble = SDL_CreateSurface(ancho * 2, alto * 2, SDL_PIXELFORMAT_RGBA32);
+  if (!doble) {
+    SDL_DestroySurface(base);
     return nullptr;
   }
-  return resultado;
+  std::vector<unsigned char> entrada(static_cast<size_t>(ancho) * alto * 4);
+  std::vector<unsigned char> salida(static_cast<size_t>(ancho) * alto * 16);
+  for (int y = 0; y < alto; ++y)
+    std::memcpy(entrada.data() + y * ancho * 4,
+                static_cast<unsigned char *>(base->pixels) + y * base->pitch, ancho * 4);
+  filtrar_rgba(entrada.data(), salida.data(), ancho, alto, efecto);
+  for (int y = 0; y < alto * 2; ++y) {
+    for (int x = 0; x < ancho * 2; ++x)
+      salida[(y * ancho * 2 + x) * 4 + 3] = entrada[((y / 2) * ancho + x / 2) * 4 + 3];
+    std::memcpy(static_cast<unsigned char *>(doble->pixels) + y * doble->pitch,
+                salida.data() + y * ancho * 8, ancho * 8);
+  }
+  const bool ok = SDL_SetSurfaceBlendMode(doble, SDL_BLENDMODE_NONE) &&
+                  SDL_BlitSurfaceScaled(doble, nullptr, base, nullptr, SDL_SCALEMODE_LINEAR);
+  SDL_DestroySurface(doble);
+  if (!ok) {
+    SDL_DestroySurface(base);
+    return nullptr;
+  }
+  return base;
 }

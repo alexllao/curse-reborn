@@ -36,6 +36,9 @@ public:
 
   // Procesa también los marcos con el mismo modo, conservando su tamaño y transparencia.
   SDL_Surface *filtrar_marco(SDL_Surface *imagen) const;
+  unsigned int indice_elegido() const {
+    return modo;
+  }
   unsigned int indice_actual() const {
     return suspendidos ? 0 : modo;
   }

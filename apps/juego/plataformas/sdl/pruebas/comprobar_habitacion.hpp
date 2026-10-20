@@ -14,6 +14,38 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
   if (!p.textura || !SDL_SetTextureScaleMode(p.textura, SDL_SCALEMODE_NEAREST) ||
       !cambiar_pantalla(carpeta, 0, p))
     return false;
+  SDL_Surface *detalle = SDL_CreateSurface(97, 603, SDL_PIXELFORMAT_RGBA32);
+  if (!detalle || !p.filtros.alternar(p.dibujante, p.textura, pixeles) ||
+      !p.filtros.alternar(p.dibujante, p.textura, pixeles))
+    return false;
+  for (int y = 0; y < detalle->h; ++y) {
+    auto *fila = static_cast<Uint8 *>(detalle->pixels) + y * detalle->pitch;
+    for (int x = 0; x < detalle->w; ++x) {
+      fila[x * 4] = static_cast<Uint8>((x * 73 + y * 11) % 256);
+      fila[x * 4 + 1] = static_cast<Uint8>((x * 19 + y * 29) % 256);
+      fila[x * 4 + 2] = static_cast<Uint8>((x * 5 + y * 47) % 256);
+      fila[x * 4 + 3] = static_cast<Uint8>((x + y) % 256);
+    }
+  }
+  SDL_Surface *scanlines = p.filtros.filtrar_marco(detalle);
+  bool conserva_detalle = scanlines && scanlines->w == detalle->w && scanlines->h == detalle->h;
+  for (int y = 0; conserva_detalle && y < detalle->h; ++y) {
+    const auto *a = static_cast<const Uint8 *>(detalle->pixels) + y * detalle->pitch;
+    const auto *b = static_cast<const Uint8 *>(scanlines->pixels) + y * scanlines->pitch;
+    const unsigned int luz = ((y * 400 / detalle->h) & 1) ? 178u : 256u;
+    for (int x = 0; x < detalle->w; ++x) {
+      for (int c = 0; c < 3; ++c)
+        conserva_detalle = conserva_detalle && b[x * 4 + c] == a[x * 4 + c] * luz / 256;
+      conserva_detalle = conserva_detalle && a[x * 4 + 3] == b[x * 4 + 3];
+    }
+  }
+  SDL_DestroySurface(detalle);
+  SDL_DestroySurface(scanlines);
+  if (!conserva_detalle)
+    return fallo_monitor("Las scanlines reducen o alteran el detalle nativo del marco");
+  for (int i = 0; i < 4; ++i)
+    if (!p.filtros.alternar(p.dibujante, p.textura, pixeles))
+      return false;
   p.habitacion.iniciar();
   Uint64 reloj = 1000000000ull;
   unsigned int capturas = 0;
@@ -241,7 +273,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
         if (!base_marcos)
           return false;
         bool correcto = true;
-        for (int modo = 1; modo <= 3 && correcto; ++modo) {
+        for (int modo = 1; modo <= 2 && correcto; ++modo) {
           p.marcos.alternar(reloj);
           reloj += 300000000ull;
           correcto = capturar(nombre + ".marco_" + std::to_string(modo), false);
@@ -251,7 +283,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
             break;
           }
           unsigned int banda = 0;
-          const float margen = modo == 1 ? juego.w / 10 : 2;
+          const float margen = 2;
           for (int y = 0; y < con_marco->h; ++y) {
             const auto *a =
                 static_cast<const Uint8 *>(base_marcos->pixels) + y * base_marcos->pitch;
@@ -260,7 +292,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
               const bool distinto = std::memcmp(a + x * 4, b + x * 4, 4) != 0;
               const bool interior = x >= juego.x + margen && x < juego.x + juego.w - margen &&
                                     y >= juego.y + margen && y < juego.y + juego.h - margen;
-              if (distinto && (interior || modo == 3))
+              if (distinto && (interior || modo == 2))
                 correcto = false;
               if (distinto && (x < juego.x - 2 || x >= juego.x + juego.w + 2 || y < juego.y - 2 ||
                                y >= juego.y + juego.h + 2))
@@ -268,7 +300,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
             }
           }
           const bool sin_bandas = tamano.first * 10 == tamano.second * 16;
-          if (modo != 3 && !sin_bandas && banda == 0)
+          if (modo != 2 && !sin_bandas && banda == 0)
             correcto = false;
           SDL_DestroySurface(con_marco);
         }

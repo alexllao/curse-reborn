@@ -65,16 +65,11 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
 } // namespace
 
 // Conserva la preferencia durante los cambios de escena y los de modo de ventana.
-void MarcosPantalla::alternar(Uint64 ahora, bool incluir_panorama) {
+void MarcosPantalla::alternar(Uint64 ahora) {
   origen_animacion = nivel_animacion(ahora);
-  modo = (modo + 1) % (incluir_panorama ? 3 : 2);
-  visible = modo != 0;
-  if (visible)
-    modo_visible = modo;
+  visible = !visible;
   inicio_animacion = ahora;
-  registrar_accion("Marcos: %s", modo == 2 ? "Cielo encantado"
-                                 : visible ? "predeterminado"
-                                           : "sin marco");
+  registrar_accion("Marcos: %s", nombre_actual());
 }
 
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
@@ -126,7 +121,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   int salida_ancho = 0, salida_alto = 0;
   if (!SDL_GetRenderOutputSize(dibujante, &salida_ancho, &salida_alto) || salida_alto <= 0)
     return false;
-  if (modo_visible == 2) {
+  if (seleccion && seleccion->panoramico) {
     const float proporcion = float(salida_ancho) / salida_alto;
     float distancia = 1000.0f;
     for (const auto &marco : catalogo_marcos) {
@@ -166,8 +161,9 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                        SDL_GetError());
       return true;
     }
-    if (!SDL_SetTextureScaleMode(textura, filtro == 1 || filtro == 3 ? SDL_SCALEMODE_LINEAR
-                                                                     : SDL_SCALEMODE_NEAREST) ||
+    if (!SDL_SetTextureScaleMode(textura, seleccion->panoramico || filtro == 1 || filtro == 3
+                                              ? SDL_SCALEMODE_LINEAR
+                                              : SDL_SCALEMODE_NEAREST) ||
         !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND))
       return false;
     actual = seleccion;

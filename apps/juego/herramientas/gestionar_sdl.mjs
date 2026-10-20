@@ -1475,6 +1475,46 @@ export async function gestionarSdl(accion, argumentos) {
     console.log('Caída SDL: coinciden dos fases de DROP y la llegada sumergida a LAKEBED.');
     return;
   }
+  if (accion === 'comprobar:preferencias') {
+    const carpeta = join(raiz, 'apps/juego/trabajo/comprobacion_preferencias');
+    mkdirSync(carpeta, { recursive: true });
+    ejecutar(programa, [datos, '--comprobar-preferencias', join(carpeta, 'perfil')], {
+      ...process.env,
+      SDL_AUDIODRIVER: 'dummy',
+    });
+    for (const [volumen, silencio, marco, filtro] of [
+      [300, 1, 1, 5],
+      [0, 0, 0, 0],
+    ]) {
+      const archivo = join(carpeta, 'arranque.json');
+      const valores = { version: 1, volumen, silencio, marco, filtro };
+      writeFileSync(archivo, JSON.stringify(valores));
+      const salida = ejecutar(
+        programa,
+        [datos, '--comprobar-arranque', join(carpeta, `arranque_${filtro}.bmp`)],
+        {
+          ...process.env,
+          SDL_RENDER_DRIVER: 'software',
+          SDL_AUDIODRIVER: 'dummy',
+          CURSE_REBORN_PREFERENCIAS: archivo,
+          CURSE_REBORN_TIEMPO: join(carpeta, 'tiempo.json'),
+          CURSE_REBORN_PARTIDAS: join(carpeta, 'partidas.sav'),
+        },
+        true,
+      );
+      if (
+        !salida.includes(
+          `Preferencias aplicadas: volumen ${volumen}, silencio ${silencio}, marco ${marco}, filtro ${filtro}`,
+        ) ||
+        JSON.stringify(JSON.parse(readFileSync(archivo, 'utf8'))) !== JSON.stringify(valores)
+      )
+        throw new Error('El arranque no recupera las preferencias guardadas.');
+    }
+    console.log(
+      'Preferencias: dos procesos nuevos recuperan audio, marco y filtro; perfil del usuario intacto.',
+    );
+    return;
+  }
   if (accion === 'comprobar:avisos') {
     const programa = await compilar();
     const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_avisos');
@@ -1680,113 +1720,29 @@ export async function gestionarSdl(accion, argumentos) {
         ...process.env,
         SDL_RENDER_DRIVER: 'software',
       });
-      const capturas = [0, 1, 2, 3].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
-      if (!capturas[0].equals(capturas[3]))
+      const capturas = [0, 1, 2].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
+      if (!capturas[0].equals(capturas[2]))
         throw new Error(`F1 no recupera las bandas originales: ${opcion}.`);
       const escala = Math.min(ancho / 320, alto / 200);
       const x0 = (ancho - 320 * escala) / 2,
         y0 = (alto - 200 * escala) / 2;
-      const solapeX = Math.min(2 * escala, x0 * 0.15),
-        solapeY = Math.min(2 * escala, y0 * 0.15);
-      const catalogo = JSON.parse(
-        readFileSync(rutaAssets(raiz, 'marcos', 'catalogo.json'), 'utf8'),
-      );
-      const contexto =
-        opcion === 'marcos-mazmorra'
-          ? 'escena_0'
-          : opcion === 'marcos-corredor'
-            ? 'escena_1'
-            : opcion === 'marcos-lago'
-              ? 'escena_3'
-              : 'titulo';
-      const nombre = catalogo.pantallas[contexto] ?? catalogo.predeterminado;
-      const marco = JSON.parse(
-        readFileSync(rutaAssets(raiz, 'marcos', `${nombre}.png.json`), 'utf8'),
-      );
-      const margenIzquierdo =
-        x0 > 0
-          ? (marco.innerPadding?.left ?? 0) *
-            Math.max(
-              (200 * escala) / marco.left.height,
-              Math.floor(x0 + solapeX) / (marco.left.width - (marco.innerPadding?.left ?? 0)),
-            )
-          : 0;
-      const margenDerecho =
-        x0 > 0
-          ? (marco.innerPadding?.right ?? 0) *
-            Math.max(
-              (200 * escala) / marco.right.height,
-              Math.floor(x0 + solapeX) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
-            )
-          : 0;
-      const margenSuperior =
-        y0 > 0
-          ? (marco.innerPadding?.left ?? 0) *
-            Math.max(
-              (320 * escala) / marco.left.height,
-              Math.floor(y0 + solapeY) / (marco.left.width - (marco.innerPadding?.left ?? 0)),
-            )
-          : 0;
-      const margenInferior =
-        y0 > 0
-          ? (marco.innerPadding?.right ?? 0) *
-            Math.max(
-              (320 * escala) / marco.right.height,
-              Math.floor(y0 + solapeY) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
-            )
-          : 0;
-      // El panorama solo rellena bandas: ningún píxel interior puede cambiar.
-      let panorama = 0;
+      let modificados = 0;
       for (let y = 0; y < alto; y++)
         for (let x = 0; x < ancho; x++) {
           const p = (y * ancho + x) * 3;
-          if (capturas[0].subarray(p, p + 3).equals(capturas[2].subarray(p, p + 3))) continue;
+          if (capturas[0].subarray(p, p + 3).equals(capturas[1].subarray(p, p + 3))) continue;
           if (
             x >= Math.ceil(x0) &&
             x < Math.floor(ancho - x0) &&
             y >= Math.ceil(y0) &&
             y < Math.floor(alto - y0)
           )
-            throw new Error(`El panorama invade el juego: ${opcion}, ${x}, ${y}.`);
-          panorama++;
-        }
-      if ((opcion === 'marcos-ajustado') !== (panorama === 0))
-        throw new Error(`Presencia de panorama incorrecta: ${opcion}.`);
-      let modificados = 0;
-      let relieve = 0;
-      for (let y = 0; y < alto; y++)
-        for (let x = 0; x < ancho; x++) {
-          const p = (y * ancho + x) * 3;
-          const distinto =
-            capturas[0][p] !== capturas[1][p] ||
-            capturas[0][p + 1] !== capturas[1][p + 1] ||
-            capturas[0][p + 2] !== capturas[1][p + 2];
-          if (!distinto) continue;
-          if (
-            x >= Math.ceil(x0 + solapeX + margenIzquierdo) &&
-            x < Math.floor(ancho - x0 - solapeX - margenDerecho) &&
-            y >= Math.ceil(y0 + solapeY + margenSuperior) &&
-            y < Math.floor(alto - y0 - solapeY - margenInferior)
-          )
-            throw new Error(`El marco modifica el área del juego: ${opcion}, ${x}, ${y}.`);
-          if (
-            y >= Math.ceil(y0 + solapeY) &&
-            y < Math.floor(alto - y0 - solapeY) &&
-            x >= Math.ceil(x0 + solapeX) &&
-            x < Math.floor(ancho - x0 - solapeX)
-          )
-            relieve++;
+            throw new Error(`El marco invade el juego: ${opcion}, ${x}, ${y}.`);
           modificados++;
         }
       if ((opcion === 'marcos-ajustado') !== (modificados === 0))
         throw new Error(`Presencia de marco incorrecta: ${opcion}.`);
-      if (x0 > 0 && margenIzquierdo > 0 && relieve === 0)
-        throw new Error(`El remate interior sigue cortado: ${opcion}.`);
-      if (y0 > 0 && margenSuperior > 0 && relieve === 0)
-        throw new Error(`El remate girado sigue cortado: ${opcion}.`);
-      console.log(
-        `${opcion}: F1 reversible; ${modificados} píxeles decorados y ${relieve} de relieve interior conservados.`,
-      );
+      console.log(`${opcion}: F1 reversible; ${modificados} píxeles de marco, juego intacto.`);
     }
     const animacion = join(carpeta, 'animacion');
     ejecutar(programa, [datos, '--comprobar-marcos-animacion', animacion], {
@@ -1812,19 +1768,19 @@ export async function gestionarSdl(accion, argumentos) {
         )
           throw new Error('La animación del marco cambia el interior del juego.');
     console.log(
-      'Animación F1: zoom y fundido de 250 ms, fases intermedias simétricas y juego conservado.',
+      'Animación F1: fundido de 250 ms, fases intermedias simétricas y juego conservado.',
     );
     writeFileSync(
       join(carpeta, 'resultado.json'),
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 65,
+          capturas: 50,
           panorama: 'Cielo encantado: 32:9, 24:9, 16:9 y 4:3; 16:10 sin bandas',
           filtros_marco: 'seis modos compartidos con el juego',
           animacion_ms: 250,
-          bandas_horizontales: 'predeterminado girado 90 grados; panorama horizontal sin giro',
-          zoom_inicial: 1.1,
+          bandas_horizontales: 'panorama horizontal sin giro',
+          zoom_inicial: 1.0,
           formatos: [
             '32:9',
             '24:9',
@@ -1839,8 +1795,7 @@ export async function gestionarSdl(accion, argumentos) {
             'mazmorra',
           ],
           interior_conservado: true,
-          remate_artistico_completo: true,
-          solape_logico_adicional: 2,
+          sin_solape_sobre_juego: true,
           ciclo_reversible: true,
         },
         null,

@@ -24,7 +24,7 @@ El **100 %** es el nivel normal. Entre **110 % y 400 %** se aplica amplificació
 
 **Mayús + F1** queda reservado a los **decorados ampliados**, actualmente aparcados. La consola informa de ello y la imagen permanece original. No hay decorados asignados a ninguna escena; se conservan los PNG como referencia. F1 sigue controlando los marcos exteriores, y F2 el límite de FPS.
 
-**F1** alterna el marco predeterminado y las bandas sin marco. Conserva su zoom y fundido de 250 ms. En ventanas altas gira los paneles laterales hacia arriba y abajo. Esta opción se ve cuando el juego está ampliado; no cambia la habitación.
+**F1** activa o quita Cielo encantado, con fundido de250 ms y aviso blanco «Marco cambiado a: Cielo encantado» o «Sin marco». Es el único marco activo; el anterior queda archivado en `packages/assets/marcos/extras/`. Solo ocupa las bandas sobrantes y se ve al ampliar el juego; no cambia la habitación. En16:10 no hay bandas.
 
 El port arranca siempre en una **habitación interactiva**, inicialmente **Buhardilla**, con el PC apagado. Pulsa el botón de la torre para encenderlo. BIOS y DOS duran siete segundos completos y no se saltan con Intro. Después carga Core, título e introducción dentro del monitor. El sonido y la lógica permanecen detenidos mientras está apagado o arrancando.
 
@@ -36,7 +36,7 @@ En la habitación, el monitor pequeño siempre muestra el juego **sin filtro**. 
 
 **F11** recorre **original → suavizado → líneas de escaneo → CRT suave → xBRZ 2x → 2xSaI → original**. La consola muestra el nombre elegido. Funciona en Core, título, introducción, escenas y menús, sin avanzar la presentación ni cambiar la partida. Al mantener pulsada la tecla no se repite el cambio.
 
-El original arranca siempre sin filtro, con vecino más próximo. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena durante la misma ejecución.
+Sin preferencias previas, el port arranca con líneas de escaneo. El modo Original conserva el vecino más próximo del juego. Suavizado usa interpolación lineal. Líneas de escaneo atenúa filas alternas a doble resolución. CRT suave añade mezcla horizontal, máscara RGB y una viñeta tenue; es un efecto visual sencillo. Se conservan proporciones, bandas negras y coordenadas del ratón. El ajuste permanece al cambiar de escena y al reiniciar la aplicación.
 
 **xBRZ 2x** reconstruye diagonales y redondea contornos mediante diferencias perceptuales de color. **2xSaI** interpola diagonales con un aspecto más suave, similar al de emuladores clásicos. Ambos amplían la imagen compuesta de 320 × 200 a 640 × 400 antes de ajustarla a la ventana; también afectan al menú original. Son opciones visuales para probar, independientes de la reconstrucción del motor. Detalles y comprobaciones en [Filtros de píxeles](filtros_pixeles.md).
 
@@ -174,3 +174,11 @@ Vistas60–63: El paso del guardia, La sala de las dos puertas, El desvío centr
 Vista64: La sala del guardia dormilón. Insertar la cerilla162 en el pie163 y Atacar con la caja161; esconderse tras la columna permite esperar el sueño. Recoger164 conduce de vuelta a Benn. [Contratos y alcance](guardia_palacio.md).
 
 Vista65: El interior del ataúd. Recoger el hueso y Atacar con él inicia la excavación original. [Alcance](ataud.md).
+
+## Preferencias persistentes
+
+Volumen0–400%, silencio deM, marco activado/desactivado y filtro deF11 se guardan al cambiar y se recuperan en el siguiente arranque. El filtro elegido se conserva incluso si se cambia volumen o silencio desde la habitación, donde permanece suspendido. El perfil vive en `%APPDATA%/AlexLlao/CurseReborn/preferencias.json` enWindows; en otras plataformas se usa `SDL_GetPrefPath`. Es independiente de CURSE.SAV, del contador de tiempo y de los datos comerciales. Se puede aislar con `CURSE_REBORN_PREFERENCIAS` para comprobarlo.
+
+Los PNG del marco conservan su resolución nativa también con scanlines yCRT: el filtro modula luz y color, sin reducir la ilustración a200 líneas. El juego mantiene su ruta VGA320×200 y sus escaladores habituales. La habitación sigue sin filtros. `pnpm comprobar:preferencias` revisa valores iniciales, combinaciones guardadas, rechazo de formatos ajenos y recuperación al arrancar procesos nuevos con perfiles locales aislados.
+
+Comprobado en esta tanda:101 casos de serialización/lectura y rechazo de archivos ajenos; dos procesos nuevos recuperan los cuatro ajustes con perfiles locales aislados (300%/mute/marco/2xSaI y0%/sin mute/sin marco/Original). La prueba no lee ni modifica las preferencias reales del usuario. Guardar se hace con temporal y sustitución del archivo; un fallo se registra y permite seguir jugando con el ajuste en memoria.

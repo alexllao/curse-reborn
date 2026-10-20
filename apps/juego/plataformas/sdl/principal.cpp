@@ -25,6 +25,8 @@
 #include "interfaz/avisos_hud.hpp"
 #include "pruebas/comprobar_avisos_hud.hpp"
 #include "tiempo_juego.hpp"
+#include "interfaz/preferencias.hpp"
+#include "pruebas/comprobar_preferencias.hpp"
 #include "pruebas/comprobar_tiempo.hpp"
 #include "vistas.hpp"
 #include "pruebas/comprobar_cuevas.hpp"
@@ -544,6 +546,11 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-preferencias" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_preferencias(argv[3]) ? 0
+                                                          : fallo("No coinciden las preferencias");
+  }
   if (opcion == "--comprobar-avisos" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(SDL_INIT_VIDEO) && comprobar_avisos_hud(argv[3])
@@ -686,6 +693,16 @@ int main(int argc, char *argv[]) {
   AvisosHud avisos(!comprobar);
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
+  PreferenciasUsuario preferencias;
+  const bool preferencias_habilitadas =
+      !comprobar && (!comprobar_arranque || SDL_getenv("CURSE_REBORN_PREFERENCIAS") != nullptr);
+  if (preferencias_habilitadas) {
+    preferencias.cargar();
+    if (!mazmorra.ajustar_volumen(static_cast<int>(preferencias.volumen) -
+                                  static_cast<int>(mazmorra.nivel_volumen())) ||
+        (mazmorra.silenciado() != bool(preferencias.silencio) && !mazmorra.alternar_silencio()))
+      return fallo("No se han podido recuperar las preferencias de audio");
+  }
   if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
     return fallo("No se ha podido abrir el audio para el recorrido del corredor");
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta, true))
@@ -749,9 +766,11 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido disponer la vista de caída con F6");
   }
   if (!comprobar) {
-    if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles) ||
-        !presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
-      return fallo("No se ha podido preparar el filtro inicial de scanlines");
+    for (unsigned int i = 0; i < preferencias.filtro; ++i)
+      if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
+        return fallo("No se ha podido recuperar el filtro elegido");
+    if (preferencias.marco)
+      presentacion.marcos.alternar();
     presentacion.habitacion.iniciar();
     presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque);
     if (!mazmorra.pausar_audio_reinicio())
@@ -806,6 +825,17 @@ int main(int argc, char *argv[]) {
       mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
     partidas.abrir(modo, presentacion.ventana);
   };
+  const auto guardar_preferencias = [&]() {
+    if (preferencias_habilitadas)
+      preferencias.guardar(mazmorra.nivel_volumen(), mazmorra.silenciado(),
+                           presentacion.marcos.activado(), presentacion.filtros.indice_elegido());
+  };
+  guardar_preferencias();
+  if (preferencias_habilitadas)
+    registrar_accion("Preferencias aplicadas: volumen %u, silencio %u, marco %u, filtro %u",
+                     mazmorra.nivel_volumen(), unsigned(mazmorra.silenciado()),
+                     unsigned(presentacion.marcos.activado()),
+                     presentacion.filtros.indice_elegido());
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
     // Durante el banner solo se atienden cierre y pantalla completa; el PC sigue apagado.
@@ -880,6 +910,7 @@ int main(int argc, char *argv[]) {
         if (!mazmorra.alternar_silencio())
           return fallo("No se ha podido alternar el silencio");
         avisos.mostrar(mazmorra.silenciado() ? "Sonido silenciado" : "Sonido activado");
+        guardar_preferencias();
         continue;
       }
       if (!salir && presentacion.habitacion.reiniciando())
@@ -920,9 +951,11 @@ int main(int argc, char *argv[]) {
         if (evento.key.key == SDLK_F1) {
           if (evento.key.mod & SDL_KMOD_SHIFT)
             presentacion.decorados.alternar();
-          else
-            presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS(),
-                                         !comprobar_animacion_marcos);
+          else {
+            presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
+            avisos.mostrar(std::string("Marco cambiado a: ") + presentacion.marcos.nombre_actual());
+            guardar_preferencias();
+          }
           if ((!presentacion.marcos.preparar_encuadre(presentacion.dibujante,
                                                       comprobar_marcos ? reloj_marcos_prueba
                                                                        : SDL_GetTicksNS()) ||
@@ -937,6 +970,7 @@ int main(int argc, char *argv[]) {
           if (!mazmorra.ajustar_volumen(bajar ? -10 : 10))
             return fallo("No se ha podido ajustar el volumen");
           avisos.mostrar("Volumen: " + std::to_string(mazmorra.nivel_volumen()) + "%");
+          guardar_preferencias();
           continue;
         }
         if (evento.key.key == SDLK_F2) {
@@ -959,6 +993,7 @@ int main(int argc, char *argv[]) {
           if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
             return fallo("No se ha podido cambiar el filtro de pantalla");
           avisos.mostrar(std::string("Filtro: ") + presentacion.filtros.nombre_actual());
+          guardar_preferencias();
           continue;
         }
         if (evento.key.key == SDLK_F3) {
@@ -975,6 +1010,7 @@ int main(int argc, char *argv[]) {
           if (!mazmorra.alternar_silencio())
             return fallo("No se ha podido alternar el silencio");
           avisos.mostrar(mazmorra.silenciado() ? "Sonido silenciado" : "Sonido activado");
+          guardar_preferencias();
           continue;
         }
         if (pantalla >= 3) {
@@ -1845,7 +1881,7 @@ int main(int argc, char *argv[]) {
       if ((comprobar_filtros && paso_aspecto < 6) ||
           (comprobar_animacion_marcos && paso_aspecto < 4) ||
           ((comprobar_fps && paso_aspecto < 2) ||
-           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 3))) {
+           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 2))) {
         const bool pulsar = !comprobar_animacion_marcos || paso_aspecto == 0 || paso_aspecto == 2;
         ++paso_aspecto;
         SDL_Event filtro{};
