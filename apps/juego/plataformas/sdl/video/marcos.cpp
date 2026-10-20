@@ -1,4 +1,5 @@
 #include "marcos.hpp"
+#include "filtros.hpp"
 #include "catalogo_marcos.hpp"
 #include "../registro.hpp"
 #include <algorithm>
@@ -64,12 +65,16 @@ bool dibujar_panel(SDL_Renderer *dibujante, SDL_Texture *textura, const PanelMar
 } // namespace
 
 // Conserva la preferencia durante los cambios de escena y los de modo de ventana.
-void MarcosPantalla::alternar(Uint64 ahora) {
+void MarcosPantalla::alternar(Uint64 ahora, bool incluir_panorama) {
   origen_animacion = nivel_animacion(ahora);
-  modo = (modo + 1) % 2;
+  modo = (modo + 1) % (incluir_panorama ? 3 : 2);
   visible = modo != 0;
+  if (visible)
+    modo_visible = modo;
   inicio_animacion = ahora;
-  registrar_accion("Marcos: %s", visible ? "predeterminado" : "sin marco");
+  registrar_accion("Marcos: %s", modo == 2 ? "Cielo encantado"
+                                 : visible ? "predeterminado"
+                                           : "sin marco");
 }
 
 // Completa en 250 ms una curva suave independiente de FPS, lógica, menús y sonido.
@@ -111,21 +116,46 @@ bool MarcosPantalla::area_juego(SDL_Renderer *dibujante, SDL_FRect &juego) {
   return SDL_GetRenderLogicalPresentationRect(dibujante, &juego);
 }
 
-// Dibuja las bandas y el solape autorizado; los filtros siguen actuando solo sobre el juego.
-bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora) {
+// Dibuja las bandas y el solape autorizado con el mismo filtro que la imagen del juego.
+bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora,
+                             const FiltrosPantalla *filtros) {
   const float nivel = nivel_animacion(ahora);
   if (nivel <= 0.0f && !visible)
     return true;
   const auto *seleccion = elegir_marco(pantalla);
+  int salida_ancho = 0, salida_alto = 0;
+  if (!SDL_GetRenderOutputSize(dibujante, &salida_ancho, &salida_alto) || salida_alto <= 0)
+    return false;
+  if (modo_visible == 2) {
+    const float proporcion = float(salida_ancho) / salida_alto;
+    float distancia = 1000.0f;
+    for (const auto &marco : catalogo_marcos) {
+      if (!marco.panoramico)
+        continue;
+      const float diferencia = std::abs(std::log(proporcion / marco.proporcion));
+      if (diferencia < distancia) {
+        distancia = diferencia;
+        seleccion = &marco;
+      }
+    }
+  }
   if (!seleccion)
     return true;
-  if (actual != seleccion || !textura) {
+  const int filtro = filtros ? static_cast<int>(filtros->indice_actual()) : 0;
+  if (actual != seleccion || !textura || filtro_actual != filtro) {
     cerrar();
     const char *base = SDL_GetBasePath();
     const std::string ruta = std::string(base ? base : "") + seleccion->archivo;
     SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
     if (imagen) {
-      textura = SDL_CreateTextureFromSurface(dibujante, imagen);
+      SDL_Surface *filtrada = filtros ? filtros->filtrar_marco(imagen) : nullptr;
+      textura = SDL_CreateTextureFromSurface(dibujante, filtrada ? filtrada : imagen);
+      if (filtrada)
+        SDL_DestroySurface(filtrada);
+      if (filtros && !filtrada) {
+        SDL_DestroyTexture(textura);
+        textura = nullptr;
+      }
       SDL_DestroySurface(imagen);
     }
     if (!textura) {
@@ -136,10 +166,12 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                        SDL_GetError());
       return true;
     }
-    if (!SDL_SetTextureScaleMode(textura, SDL_SCALEMODE_NEAREST) ||
+    if (!SDL_SetTextureScaleMode(textura, filtro == 1 || filtro == 3 ? SDL_SCALEMODE_LINEAR
+                                                                     : SDL_SCALEMODE_NEAREST) ||
         !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND))
       return false;
     actual = seleccion;
+    filtro_actual = filtro;
     registrar_accion("Marco de pantalla: %s", actual->nombre);
   }
   int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
@@ -150,6 +182,29 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       !SDL_GetRenderLogicalPresentationRect(dibujante, &juego) ||
       !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
     return false;
+  if (actual->panoramico) {
+    float tw = 0, th = 0;
+    bool ok = SDL_GetTextureSize(textura, &tw, &th);
+    const float escala = std::max(ancho / tw, alto / th);
+    const float ox = (tw * escala - ancho) / 2.0f;
+    const float oy = (th * escala - alto) / 2.0f;
+    const SDL_FRect bandas[] = {{0, 0, juego.x, float(alto)},
+                                {juego.x + juego.w, 0, ancho - juego.x - juego.w, float(alto)},
+                                {juego.x, 0, juego.w, juego.y},
+                                {juego.x, juego.y + juego.h, juego.w, alto - juego.y - juego.h}};
+    ok = ok && SDL_SetTextureAlphaMod(textura, static_cast<Uint8>(nivel * 255.0f));
+    for (const auto &banda : bandas) {
+      if (banda.w <= 0.01f || banda.h <= 0.01f)
+        continue;
+      const SDL_FRect origen{(banda.x + ox) / escala, (banda.y + oy) / escala, banda.w / escala,
+                             banda.h / escala};
+      ok = SDL_RenderTexture(dibujante, textura, &origen, &banda) && ok;
+    }
+    const bool alfa = SDL_SetTextureAlphaMod(textura, 255);
+    const bool restaurar =
+        SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
+    return ok && alfa && restaurar;
+  }
   const float deseado = actual->solape * juego.w / 320.0f;
   const float solape_x = std::min(deseado, juego.x * 0.15f);
   const float solape_y = std::min(deseado, juego.y * 0.15f);

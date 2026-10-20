@@ -34,6 +34,12 @@ public:
     return suspendidos || modo < 2 ? original : textura;
   }
 
+  // Procesa también los marcos con el mismo modo, conservando su tamaño y transparencia.
+  SDL_Surface *filtrar_marco(SDL_Surface *imagen) const;
+  unsigned int indice_actual() const {
+    return suspendidos ? 0 : modo;
+  }
+
 private:
   unsigned int modo = 0;
   bool suspendidos = false;

@@ -1,0 +1,23 @@
+{
+  "id": "cielo_encantado",
+  "nombre": "Cielo encantado",
+  "variantes": [
+    {
+      "archivo": "32x9.png",
+      "proporcion": [32, 9]
+    },
+    {
+      "archivo": "24x9.png",
+      "proporcion": [24, 9]
+    },
+    {
+      "archivo": "16x9.png",
+      "proporcion": [16, 9]
+    },
+    {
+      "archivo": "4x3.png",
+      "proporcion": [4, 3]
+    }
+  ],
+  "sinMarcoEn": "16:10"
+}

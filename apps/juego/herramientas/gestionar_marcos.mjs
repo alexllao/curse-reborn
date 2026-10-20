@@ -131,6 +131,39 @@ export function prepararMarcos(raiz, destino) {
     copyFileSync(join(origen, png), join(carpeta, png));
     copyFileSync(join(origen, archivo), join(carpeta, archivo));
   }
+  // Los panoramas remaster son variantes completas; el dibujante conserva solo las bandas.
+  const cielo = rutaAssets(raiz, 'remaster', 'marcos', 'cielo_encantado');
+  const destinoCielo = join(destino, 'assets/remaster/marcos/cielo_encantado');
+  mkdirSync(destinoCielo, { recursive: true });
+  const panoramas = JSON.parse(readFileSync(join(cielo, 'catalogo.json'), 'utf8'));
+  for (const variante of panoramas.variantes) {
+    if (
+      !/^[a-z0-9_-]+\.png$/.test(variante.archivo) ||
+      !Array.isArray(variante.proporcion) ||
+      variante.proporcion.length !== 2 ||
+      !variante.proporcion.every((n) => Number.isFinite(n) && n > 0)
+    )
+      throw new Error('Variante panorámica inválida.');
+    const png = readFileSync(join(cielo, variante.archivo));
+    const parametros = JSON.parse(readFileSync(join(cielo, variante.archivo + '.json'), 'utf8'));
+    if (
+      png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
+      png.readUInt32BE(16) !== parametros.resolucion[0] ||
+      png.readUInt32BE(20) !== parametros.resolucion[1] ||
+      createHash('sha256').update(png).digest('hex') !== parametros.sourceSha256
+    )
+      throw new Error('Resolución o huella panorámica incorrecta.');
+    const ruta = `assets/remaster/marcos/cielo_encantado/${variante.archivo}`;
+    marcos.push(
+      `{"cielo_encantado","Cielo encantado",${JSON.stringify(ruta)},{0,0,0,0,0},{0,0,0,0,0},0.0f,true,false,true,${(variante.proporcion[0] / variante.proporcion[1]).toFixed(6)}f}`,
+    );
+    copyFileSync(join(cielo, variante.archivo), join(destinoCielo, variante.archivo));
+    copyFileSync(
+      join(cielo, variante.archivo + '.json'),
+      join(destinoCielo, variante.archivo + '.json'),
+    );
+  }
+  copyFileSync(join(cielo, 'catalogo.json'), join(destinoCielo, 'catalogo.json'));
   if (!identificadores.includes(catalogo.predeterminado))
     throw new Error('Falta el marco predeterminado del catálogo.');
   const asignaciones = [];

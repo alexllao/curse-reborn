@@ -1659,11 +1659,18 @@ export async function gestionarSdl(accion, argumentos) {
     const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_marcos');
     mkdirSync(carpeta, { recursive: true });
     for (const [opcion, ancho, alto] of [
+      ['marcos-cielo-32', 1920, 540],
+      ['marcos-cielo-24', 1440, 540],
+      ['marcos-cielo-4', 960, 720],
       ['marcos', 1280, 720],
       ['marcos-vertical', 720, 1280],
       ['marcos-ajustado', 960, 600],
       ['marcos-impar', 1279, 721],
       ['marcos-filtro', 1280, 720],
+      ['marcos-modo-1', 1280, 720],
+      ['marcos-modo-2', 1280, 720],
+      ['marcos-modo-3', 1280, 720],
+      ['marcos-modo-5', 1280, 720],
       ['marcos-corredor', 1280, 720],
       ['marcos-lago', 1280, 720],
       ['marcos-mazmorra', 1280, 720],
@@ -1673,8 +1680,8 @@ export async function gestionarSdl(accion, argumentos) {
         ...process.env,
         SDL_RENDER_DRIVER: 'software',
       });
-      const capturas = [0, 1, 2].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
-      if (!capturas[0].equals(capturas[2]))
+      const capturas = [0, 1, 2, 3].map((i) => leerCaptura(`${prefijo}.${i}.bmp`, ancho, alto));
+      if (!capturas[0].equals(capturas[3]))
         throw new Error(`F1 no recupera las bandas originales: ${opcion}.`);
       const escala = Math.min(ancho / 320, alto / 200);
       const x0 = (ancho - 320 * escala) / 2,
@@ -1728,6 +1735,23 @@ export async function gestionarSdl(accion, argumentos) {
               Math.floor(y0 + solapeY) / (marco.right.width - (marco.innerPadding?.right ?? 0)),
             )
           : 0;
+      // El panorama solo rellena bandas: ningún píxel interior puede cambiar.
+      let panorama = 0;
+      for (let y = 0; y < alto; y++)
+        for (let x = 0; x < ancho; x++) {
+          const p = (y * ancho + x) * 3;
+          if (capturas[0].subarray(p, p + 3).equals(capturas[2].subarray(p, p + 3))) continue;
+          if (
+            x >= Math.ceil(x0) &&
+            x < Math.floor(ancho - x0) &&
+            y >= Math.ceil(y0) &&
+            y < Math.floor(alto - y0)
+          )
+            throw new Error(`El panorama invade el juego: ${opcion}, ${x}, ${y}.`);
+          panorama++;
+        }
+      if ((opcion === 'marcos-ajustado') !== (panorama === 0))
+        throw new Error(`Presencia de panorama incorrecta: ${opcion}.`);
       let modificados = 0;
       let relieve = 0;
       for (let y = 0; y < alto; y++)
@@ -1795,11 +1819,16 @@ export async function gestionarSdl(accion, argumentos) {
       JSON.stringify(
         {
           resultado: 'coinciden',
-          capturas: 37,
+          capturas: 65,
+          panorama: 'Cielo encantado: 32:9, 24:9, 16:9 y 4:3; 16:10 sin bandas',
+          filtros_marco: 'seis modos compartidos con el juego',
           animacion_ms: 250,
-          bandas_horizontales: 'paneles laterales girados 90 grados',
+          bandas_horizontales: 'predeterminado girado 90 grados; panorama horizontal sin giro',
           zoom_inicial: 1.1,
           formatos: [
+            '32:9',
+            '24:9',
+            '4:3',
             'apaisado',
             'vertical',
             'ajustado',

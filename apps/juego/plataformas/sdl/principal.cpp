@@ -622,11 +622,12 @@ int main(int argc, char *argv[]) {
   const bool comprobar_filtros = opcion == "--comprobar-filtros";
   const bool comprobar_animacion_marcos = opcion == "--comprobar-marcos-animacion";
   const bool comprobar_marcos =
-      comprobar_animacion_marcos || opcion == "--comprobar-marcos" ||
-      opcion == "--comprobar-marcos-vertical" || opcion == "--comprobar-marcos-ajustado" ||
-      opcion == "--comprobar-marcos-impar" || opcion == "--comprobar-marcos-filtro" ||
-      opcion == "--comprobar-marcos-corredor" || opcion == "--comprobar-marcos-lago" ||
-      opcion == "--comprobar-marcos-mazmorra";
+      opcion.rfind("--comprobar-marcos-modo-", 0) == 0 ||
+      opcion.rfind("--comprobar-marcos-cielo-", 0) == 0 || comprobar_animacion_marcos ||
+      opcion == "--comprobar-marcos" || opcion == "--comprobar-marcos-vertical" ||
+      opcion == "--comprobar-marcos-ajustado" || opcion == "--comprobar-marcos-impar" ||
+      opcion == "--comprobar-marcos-filtro" || opcion == "--comprobar-marcos-corredor" ||
+      opcion == "--comprobar-marcos-lago" || opcion == "--comprobar-marcos-mazmorra";
   const bool comprobar_vistas = opcion == "--comprobar-vistas";
   const bool comprobar_caida = opcion == "--comprobar-caida-16" ||
                                opcion == "--comprobar-caida-32" || opcion == "--comprobar-agua-24";
@@ -693,17 +694,21 @@ int main(int argc, char *argv[]) {
       SDL_WINDOW_RESIZABLE | ((comprobar || comprobar_arranque) ? SDL_WINDOW_HIDDEN : 0);
   if (!SDL_CreateWindowAndRenderer(
           "Curse Reborn — Pantalla de título",
-          comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 720
-                              : opcion == "--comprobar-marcos-ajustado" ? 960
-                              : opcion == "--comprobar-marcos-impar"    ? 1279
-                                                                        : 1280)
+          opcion == "--comprobar-marcos-cielo-32"   ? 1920
+          : opcion == "--comprobar-marcos-cielo-24" ? 1440
+          : opcion == "--comprobar-marcos-cielo-4"  ? 960
+          : comprobar_marcos                        ? (opcion == "--comprobar-marcos-vertical"   ? 720
+                                                       : opcion == "--comprobar-marcos-ajustado" ? 960
+                                                       : opcion == "--comprobar-marcos-impar"    ? 1279
+                                                                                                 : 1280)
           : comprobar && !comprobar_filtros && !comprobar_fps ? 320
           : comprobar_fps                                     ? 1000
                                                               : 960,
-          comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 1280
-                              : opcion == "--comprobar-marcos-ajustado" ? 600
-                              : opcion == "--comprobar-marcos-impar"    ? 721
-                                                                        : 720)
+          opcion == "--comprobar-marcos-cielo-32" || opcion == "--comprobar-marcos-cielo-24" ? 540
+          : comprobar_marcos ? (opcion == "--comprobar-marcos-vertical"   ? 1280
+                                : opcion == "--comprobar-marcos-ajustado" ? 600
+                                : opcion == "--comprobar-marcos-impar"    ? 721
+                                                                          : 720)
           : comprobar && !comprobar_filtros && !comprobar_fps ? 200
           : comprobar_fps                                     ? 700
                                                               : 600,
@@ -744,6 +749,9 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido disponer la vista de caída con F6");
   }
   if (!comprobar) {
+    if (!presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles) ||
+        !presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura, pixeles))
+      return fallo("No se ha podido preparar el filtro inicial de scanlines");
     presentacion.habitacion.iniciar();
     presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque);
     if (!mazmorra.pausar_audio_reinicio())
@@ -776,11 +784,13 @@ int main(int argc, char *argv[]) {
     if (!SDL_PushEvent(&alternar) || !SDL_PushEvent(&alternar))
       return fallo("No se ha podido preparar Alt + Enter");
   }
-  if (opcion == "--comprobar-marcos-filtro") {
+  if (opcion == "--comprobar-marcos-filtro" || opcion.rfind("--comprobar-marcos-modo-", 0) == 0) {
     SDL_Event filtro{};
     filtro.type = SDL_EVENT_KEY_DOWN;
     filtro.key.key = SDLK_F11;
-    for (unsigned int i = 0; i < 4; ++i)
+    const unsigned int modo_prueba =
+        opcion == "--comprobar-marcos-filtro" ? 4 : static_cast<unsigned int>(opcion.back() - '0');
+    for (unsigned int i = 0; i < modo_prueba; ++i)
       if (!SDL_PushEvent(&filtro))
         return fallo("No se ha podido preparar xBRZ con el marco");
   }
@@ -911,7 +921,8 @@ int main(int argc, char *argv[]) {
           if (evento.key.mod & SDL_KMOD_SHIFT)
             presentacion.decorados.alternar();
           else
-            presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS());
+            presentacion.marcos.alternar(comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS(),
+                                         !comprobar_animacion_marcos);
           if ((!presentacion.marcos.preparar_encuadre(presentacion.dibujante,
                                                       comprobar_marcos ? reloj_marcos_prueba
                                                                        : SDL_GetTicksNS()) ||
@@ -1781,7 +1792,8 @@ int main(int argc, char *argv[]) {
                                            : "escena_" + std::to_string(mazmorra.escena_actual());
     if (presentacion.habitacion.ampliada() &&
         !presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
-                                     comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
+                                     comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS(),
+                                     &presentacion.filtros))
       return fallo("No se ha podido dibujar el marco de pantalla");
     if (!presentacion.habitacion.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar la habitación");
@@ -1833,7 +1845,7 @@ int main(int argc, char *argv[]) {
       if ((comprobar_filtros && paso_aspecto < 6) ||
           (comprobar_animacion_marcos && paso_aspecto < 4) ||
           ((comprobar_fps && paso_aspecto < 2) ||
-           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 2))) {
+           (comprobar_marcos && !comprobar_animacion_marcos && paso_aspecto < 3))) {
         const bool pulsar = !comprobar_animacion_marcos || paso_aspecto == 0 || paso_aspecto == 2;
         ++paso_aspecto;
         SDL_Event filtro{};
