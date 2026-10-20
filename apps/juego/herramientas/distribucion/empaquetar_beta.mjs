@@ -60,8 +60,8 @@ function recursosNecesarios(compilacion) {
   const rutas = new Set([
     'assets/lanzador/habitaciones/habitaciones.json',
     'assets/lanzador/presentacion/presentacion.json',
-    'assets/original/marcos/catalogo.json',
-    'assets/remaster/marcos/cielo_encantado/catalogo.json',
+    'assets/marcos/catalogo.json',
+    'assets/marcos/cielo_encantado/catalogo.json',
     'assets/original/decorados/catalogo.json',
     'assets/lanzador/sonidos_pc/arranque.wav',
     'assets/lanzador/sonidos_pc/boton.wav',
@@ -161,7 +161,7 @@ async function empaquetar(argumentos) {
     );
   }
   // Los metadatos de marco describen la copia entregada; los maestros conservan su huella original.
-  for (const i of imagenes.filter((i) => /assets\/(original|remaster)\/marcos\//.test(i.ruta))) {
+  for (const i of imagenes.filter((i) => /assets\/marcos\//.test(i.ruta))) {
     const ruta = i.ruta + '.json';
     if (!existsSync(join(carpeta, ruta))) continue;
     const c = JSON.parse(readFileSync(join(carpeta, ruta), 'utf8'));

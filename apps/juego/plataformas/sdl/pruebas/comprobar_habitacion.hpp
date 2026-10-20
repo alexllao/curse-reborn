@@ -25,6 +25,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
       return false;
     const auto destino = p.habitacion.destino_juego(reloj);
     if ((destino.h > 0 && !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino)) ||
+        (p.habitacion.ampliada(reloj) &&
+         !p.marcos.dibujar(p.dibujante, "core", reloj, &p.filtros)) ||
         !p.habitacion.dibujar(p.dibujante, reloj))
       return false;
     SDL_FRect imagen, pantalla, juego;
@@ -232,8 +234,48 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
       if (!SDL_RenderCoordinatesFromWindow(p.dibujante, centro.x, centro.y, &x, &y) ||
           std::abs(x - 160) > 0.01 || std::abs(y - 100) > 0.01)
         return fallo_monitor("El ratón se desplaza durante el zoom");
-      if (tema == 0 && !capturar(nombre + ".ampliado", false))
-        return false;
+      if (tema == 0) {
+        if (!capturar(nombre + ".ampliado", false))
+          return false;
+        SDL_Surface *base_marcos = capturar_monitor(p.dibujante);
+        if (!base_marcos)
+          return false;
+        bool correcto = true;
+        for (int modo = 1; modo <= 3 && correcto; ++modo) {
+          p.marcos.alternar(reloj);
+          reloj += 300000000ull;
+          correcto = capturar(nombre + ".marco_" + std::to_string(modo), false);
+          SDL_Surface *con_marco = correcto ? capturar_monitor(p.dibujante) : nullptr;
+          if (!con_marco) {
+            correcto = false;
+            break;
+          }
+          unsigned int banda = 0;
+          const float margen = modo == 1 ? juego.w / 10 : 2;
+          for (int y = 0; y < con_marco->h; ++y) {
+            const auto *a =
+                static_cast<const Uint8 *>(base_marcos->pixels) + y * base_marcos->pitch;
+            const auto *b = static_cast<const Uint8 *>(con_marco->pixels) + y * con_marco->pitch;
+            for (int x = 0; x < con_marco->w; ++x) {
+              const bool distinto = std::memcmp(a + x * 4, b + x * 4, 4) != 0;
+              const bool interior = x >= juego.x + margen && x < juego.x + juego.w - margen &&
+                                    y >= juego.y + margen && y < juego.y + juego.h - margen;
+              if (distinto && (interior || modo == 3))
+                correcto = false;
+              if (distinto && (x < juego.x - 2 || x >= juego.x + juego.w + 2 || y < juego.y - 2 ||
+                               y >= juego.y + juego.h + 2))
+                ++banda;
+            }
+          }
+          const bool sin_bandas = tamano.first * 10 == tamano.second * 16;
+          if (modo != 3 && !sin_bandas && banda == 0)
+            correcto = false;
+          SDL_DestroySurface(con_marco);
+        }
+        SDL_DestroySurface(base_marcos);
+        if (!correcto)
+          return fallo_monitor("Los marcos no rellenan las bandas al ampliar desde la habitación");
+      }
       SDL_Event escape{};
       escape.type = SDL_EVENT_KEY_DOWN;
       escape.key.key = SDLK_ESCAPE;

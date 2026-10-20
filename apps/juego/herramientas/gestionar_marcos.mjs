@@ -29,8 +29,8 @@ function validarPanel(panel, ancho, alto, margen) {
 
 // Conserva el PNG aportado y convierte únicamente sus parámetros de presentación a constantes.
 export function prepararMarcos(raiz, destino) {
-  const origen = rutaAssets(raiz, 'original', 'marcos');
-  const carpeta = join(destino, 'assets', 'original', 'marcos');
+  const origen = rutaAssets(raiz, 'marcos');
+  const carpeta = join(destino, 'assets', 'marcos');
   mkdirSync(carpeta, { recursive: true });
   const origenDecorados = rutaAssets(raiz, 'original', 'decorados');
   const destinoDecorados = join(destino, 'assets', 'original', 'decorados');
@@ -125,15 +125,15 @@ export function prepararMarcos(raiz, destino) {
     if (typeof solape !== 'number' || !Number.isFinite(solape) || solape < 0 || solape > 4)
       throw new Error(`Solape de marco inválido: ${png}.`);
     marcos.push(
-      `{${JSON.stringify(id)},${JSON.stringify(parametros.label ?? id)},${JSON.stringify(`assets/original/marcos/${png}`)},${izquierda},${derecha},${solape.toFixed(4)}f,${parametros.fit === 'cover'},${parametros.mirrorRight === true}}`,
+      `{${JSON.stringify(id)},${JSON.stringify(parametros.label ?? id)},${JSON.stringify(`assets/marcos/${png}`)},${izquierda},${derecha},${solape.toFixed(4)}f,${parametros.fit === 'cover'},${parametros.mirrorRight === true}}`,
     );
     identificadores.push(id);
     copyFileSync(join(origen, png), join(carpeta, png));
     copyFileSync(join(origen, archivo), join(carpeta, archivo));
   }
   // Los panoramas remaster son variantes completas; el dibujante conserva solo las bandas.
-  const cielo = rutaAssets(raiz, 'remaster', 'marcos', 'cielo_encantado');
-  const destinoCielo = join(destino, 'assets/remaster/marcos/cielo_encantado');
+  const cielo = rutaAssets(raiz, 'marcos', 'cielo_encantado');
+  const destinoCielo = join(destino, 'assets/marcos/cielo_encantado');
   mkdirSync(destinoCielo, { recursive: true });
   const panoramas = JSON.parse(readFileSync(join(cielo, 'catalogo.json'), 'utf8'));
   for (const variante of panoramas.variantes) {
@@ -153,7 +153,7 @@ export function prepararMarcos(raiz, destino) {
       createHash('sha256').update(png).digest('hex') !== parametros.sourceSha256
     )
       throw new Error('Resolución o huella panorámica incorrecta.');
-    const ruta = `assets/remaster/marcos/cielo_encantado/${variante.archivo}`;
+    const ruta = `assets/marcos/cielo_encantado/${variante.archivo}`;
     marcos.push(
       `{"cielo_encantado","Cielo encantado",${JSON.stringify(ruta)},{0,0,0,0,0},{0,0,0,0,0},0.0f,true,false,true,${(variante.proporcion[0] / variante.proporcion[1]).toFixed(6)}f}`,
     );
@@ -177,7 +177,7 @@ export function prepararMarcos(raiz, destino) {
   }
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
-  const cabecera = `// Generado desde packages/assets/original/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
+  const cabecera = `// Generado desde packages/assets/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

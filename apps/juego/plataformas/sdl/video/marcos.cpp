@@ -177,11 +177,22 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;
   SDL_RendererLogicalPresentation presentacion;
   SDL_FRect juego;
-  if (!SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
+  SDL_Rect viewport;
+  float escala_x = 1, escala_y = 1;
+  const bool viewport_fijado = SDL_RenderViewportSet(dibujante);
+  if (!SDL_GetRenderViewport(dibujante, &viewport) ||
+      !SDL_GetRenderScale(dibujante, &escala_x, &escala_y) ||
+      !SDL_GetRenderOutputSize(dibujante, &ancho, &alto) ||
       !SDL_GetRenderLogicalPresentation(dibujante, &logico_ancho, &logico_alto, &presentacion) ||
-      !SDL_GetRenderLogicalPresentationRect(dibujante, &juego) ||
-      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED))
+      !area_juego(dibujante, juego) ||
+      !SDL_SetRenderLogicalPresentation(dibujante, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED) ||
+      !SDL_SetRenderViewport(dibujante, nullptr) || !SDL_SetRenderScale(dibujante, 1, 1))
     return false;
+  const auto restaurar_encuadre = [&]() {
+    return SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion) &&
+           SDL_SetRenderScale(dibujante, escala_x, escala_y) &&
+           SDL_SetRenderViewport(dibujante, viewport_fijado ? &viewport : nullptr);
+  };
   if (actual->panoramico) {
     float tw = 0, th = 0;
     bool ok = SDL_GetTextureSize(textura, &tw, &th);
@@ -201,8 +212,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       ok = SDL_RenderTexture(dibujante, textura, &origen, &banda) && ok;
     }
     const bool alfa = SDL_SetTextureAlphaMod(textura, 255);
-    const bool restaurar =
-        SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
+    const bool restaurar = restaurar_encuadre();
     return ok && alfa && restaurar;
   }
   const float deseado = actual->solape * juego.w / 320.0f;
@@ -229,7 +239,6 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                     juego_rotado, true, actual->cubrir, actual->reflejar_derecha, solape_y, zoom,
                     ancho);
   const bool opacidad_restaurada = SDL_SetTextureAlphaMod(textura, 255);
-  const bool restaurado =
-      SDL_SetRenderLogicalPresentation(dibujante, logico_ancho, logico_alto, presentacion);
+  const bool restaurado = restaurar_encuadre();
   return dibujado && opacidad_restaurada && restaurado;
 }

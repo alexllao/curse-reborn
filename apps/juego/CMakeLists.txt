@@ -10,7 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 # Preparar únicamente recursos propios; los archivos comerciales siguen siendo locales.
 find_program(NODE_EXECUTABLE node REQUIRED)
 file(GLOB_RECURSE FUENTES_HABITACIONES CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/habitaciones/*")
-file(GLOB FUENTES_MARCOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/marcos/*")
+file(GLOB_RECURSE FUENTES_MARCOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/marcos/*")
 file(GLOB FUENTES_DECORADOS CONFIGURE_DEPENDS "${RAIZ_ASSETS}/original/decorados/*")
 file(GLOB FUENTES_PRESENTACION CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/presentacion/*")
 file(GLOB FUENTES_SONIDOS_PC CONFIGURE_DEPENDS "${RAIZ_ASSETS}/lanzador/sonidos_pc/*")
@@ -42,8 +42,8 @@ if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL CMAKE_BINARY_DIR OR CMAKE_CONFIGURATION
     "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/habitaciones")
 endif()
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-  "${RAIZ_ASSETS}/original/marcos"
-  "$<TARGET_FILE_DIR:curse-reborn>/assets/original/marcos")
+  "${RAIZ_ASSETS}/marcos"
+  "$<TARGET_FILE_DIR:curse-reborn>/assets/marcos")
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${RAIZ_ASSETS}/original/decorados"
   "$<TARGET_FILE_DIR:curse-reborn>/assets/original/decorados")

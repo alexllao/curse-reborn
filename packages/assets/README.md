@@ -8,17 +8,17 @@ Al empaquetar se comprimen copias de los PNG, manteniendo sus dimensiones y los 
 - `lanzador/icono/`: monograma propio CR en SVG, PNG y un ICO con siete tamaños para ejecutable y ventana.
 - `lanzador/sonidos_pc/`: sonidos de botón y hardware durante BIOS/DOS.
 - `lanzador/habitaciones/`: habitaciones interactivas, cinco diseños con cinco proporciones y catálogo independiente.
-- `original/marcos/`: marcos de estilo pixel art para acompañar la reconstrucción fiel, opcionales con F1.
+- `marcos/`: todos los marcos exteriores, tanto el predeterminado como las alternativas ilustradas, opcionales con F1.
 - `original/decorados/`: PNG de decorados ampliados conservados como referencia; están aparcados y su catálogo activo está vacío.
-- `remaster/marcos/`: ilustraciones del remaster; `cielo_encantado/` incluye cuatro variantes y su catálogo.
+- `marcos/cielo_encantado/`: cuatro variantes ilustradas y su catálogo, dentro del mismo grupo de marcos.
 
-`original` identifica el estilo de la versión del port. Estos marcos no proceden del juego DOS. Àlex ha aportado `default.png` y sus metadatos y ha autorizado incluirlos en el repositorio. El PNG se conserva sin editar; su SHA-256 es `083ee51a182d570125cd97cb4d3783c6311333afec90190018f3a3933aadbd93`. Esta atribución no asigna una licencia al resto del proyecto.
+Estos marcos no proceden del juego DOS y se agrupan sin separar original/remaster. Àlex ha aportado `default.png` y sus metadatos y ha autorizado incluirlos en el repositorio. El PNG se conserva sin editar; su SHA-256 es `083ee51a182d570125cd97cb4d3783c6311333afec90190018f3a3933aadbd93`. Esta atribución no asigna una licencia al resto del proyecto.
 
 ## Asignar marcos por pantalla
 
-Cada imagen tiene sus metadatos en `<nombre>.png.json`. `original/marcos/catalogo.json` elige el identificador `predeterminado` y permite asignaciones en `pantallas`, con claves `core`, `titulo`, `introduccion` o `escena_N`, donde N es el índice original de la escena. Por ejemplo, `escena_0` corresponde a la mazmorra inicial. Los valores son identificadores de imágenes sin `.png`.
+Cada imagen tiene sus metadatos en `<nombre>.png.json`. `marcos/catalogo.json` elige el identificador `predeterminado` y permite asignaciones en `pantallas`, con claves `core`, `titulo`, `introduccion` o `escena_N`, donde N es el índice original de la escena. Por ejemplo, `escena_0` corresponde a la mazmorra inicial. Los valores son identificadores de imágenes sin `.png`.
 
-De momento solo se utiliza `default`, en todas las pantallas, incluida la mazmorra. Àlex ha descartado los marcos específicos de corredor, lago y mazmorra porque no encajan con el acabado deseado. Se han retirado sus PNG y metadatos de la versión actual; las referencias externas permanecen sin modificar. El catálogo conserva la posibilidad de asignar marcos por escena en el futuro.
+El catálogo predeterminado utiliza `default` en todas las pantallas, incluida la mazmorra; F1 permite elegir también Cielo encantado. Àlex ha descartado los marcos específicos de corredor, lago y mazmorra porque no encajan con el acabado deseado. Se han retirado sus PNG y metadatos de la versión actual; las referencias externas permanecen sin modificar. El catálogo conserva la posibilidad de asignar marcos por escena en el futuro.
 
 Al compilar, Node valida recortes, dimensiones, huella y asignaciones, genera un catálogo C++ local y copia los assets junto al ejecutable. Añadir o cambiar una asignación requiere recompilar. El programa no depende de la ruta del proyecto anterior.
 
@@ -46,10 +46,14 @@ El catálogo especifica cada carpeta, imagen y sus controles; instrucciones y l�
 
 ## Cielo encantado
 
-`remaster/marcos/cielo_encantado/catalogo.json` identifica las variantes 32:9,24:9,16:9 y4:3. Cada PNG tiene metadatos de dimensiones reales y huella; no son capturas del juego. Son ilustraciones nuevas generadas con la herramienta integrada a partir de la portada Reborn aportada por Àlex: cielo azul/violeta, cabello oscuro, destellos dorados y paisaje discreto, sin título ni personajes. Los originales generados se conservan sin estirar ni convertir el boceto comparativo en un recurso.
+`marcos/cielo_encantado/catalogo.json` identifica las variantes 32:9,24:9,16:9 y4:3. Cada PNG tiene metadatos de dimensiones reales y huella; no son capturas del juego. Son ilustraciones nuevas generadas con la herramienta integrada a partir de la portada Reborn aportada por Àlex: cielo azul/violeta, cabello oscuro, destellos dorados y paisaje discreto, sin título ni personajes. Los originales generados se conservan sin estirar ni convertir el boceto comparativo en un recurso.
 
 La aplicación elige la proporción más cercana mediante distancia logarítmica y cubre la ventana sin deformar el dibujo. Solo dibuja los fragmentos de las bandas sobrantes: laterales en panorámico, superior/inferior en4:3; en16:10 no se ve marco. La variante32:9 tiene maestro2172×724 (3:1), cuyo encuadre se recorta al cubrir32:9; no se presenta como un PNG nativo32:9. Las demás dimensiones son2048×768,1672×941 y1448×1086. Cada tamaño de ventana utiliza estos maestros escalables, sin duplicar archivos por resolución física.
 
 F1 conserva el encuadre máximo del juego. El panorama no invade la imagen, no gira y no reutiliza el relieve del marco de piedra. El builder copia los cuatro PNG, sus metadatos y el catálogo; las optimizaciones modifican exclusivamente las copias entregadas. El filtro del marco se prepara al cambiar F11 o variante, no en cada fotograma; la imagen del juego conserva sus reglas originales de filtrado. Los decorados ampliados internos continúan aparcados.
 
 Comprobación de esta integración: `pnpm comprobar:marcos` pasa65 capturas (quince ciclos de cuatro imágenes más cinco fases del predeterminado). Incluye32:9,24:9,16:9,16:10 y4:3, ventana alta e impar, seis modos y asignaciones de contexto; el interior queda intacto y el ciclo termina como empezó. También se contrastaron las bandas de ambos marcos: seis huellas diferentes para los seis filtros. `pnpm comprobar:filtros` conserva los64.000 píxeles originales al volver a modo original; `pnpm comprobar:cursor` pasa los seis modos y el relevo dentro/fuera del monitor. Calidad, monorepo y seis pruebas del builder correctos. No se ha generado un ZIP beta nuevo para esta tanda.
+
+Corrección del encuadre desde el lanzador: los marcos consultan el área física del viewport de la habitación, desactivan temporalmente su escala/viewport al dibujar bandas y restauran ambos después. Las pruebas aisladas de marcos no ejercitaban ese estado; `pnpm comprobar:habitaciones` incluye ahora el ciclo de ambos marcos al ampliar desde el botón del monitor en seis formatos. La carpeta unificada es `packages/assets/marcos/`, sin separación original/remaster para estos recursos de presentación.
+
+Ejecutado tras la corrección: `pnpm comprobar:habitaciones` pasa64 capturas y la comprobación de arranque normal. Incluye18 capturas nuevas del ciclo de marcos desde el monitor ampliado en seis formatos, con detección de bandas vacías, conservación del interior y regreso a la imagen sin marco. Las imágenes de referencia de ese recorrido están en `apps/juego/trabajo/comprobacion_monitor/monitor.0.<ancho>x<alto>.marco_2.png`, incluido3200×900. El fallo anterior era de coordenadas y recorte del viewport, no de carga de PNG.

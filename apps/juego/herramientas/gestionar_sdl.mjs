@@ -1689,7 +1689,7 @@ export async function gestionarSdl(accion, argumentos) {
       const solapeX = Math.min(2 * escala, x0 * 0.15),
         solapeY = Math.min(2 * escala, y0 * 0.15);
       const catalogo = JSON.parse(
-        readFileSync(rutaAssets(raiz, 'original', 'marcos', 'catalogo.json'), 'utf8'),
+        readFileSync(rutaAssets(raiz, 'marcos', 'catalogo.json'), 'utf8'),
       );
       const contexto =
         opcion === 'marcos-mazmorra'
@@ -1701,7 +1701,7 @@ export async function gestionarSdl(accion, argumentos) {
               : 'titulo';
       const nombre = catalogo.pantallas[contexto] ?? catalogo.predeterminado;
       const marco = JSON.parse(
-        readFileSync(rutaAssets(raiz, 'original', 'marcos', `${nombre}.png.json`), 'utf8'),
+        readFileSync(rutaAssets(raiz, 'marcos', `${nombre}.png.json`), 'utf8'),
       );
       const margenIzquierdo =
         x0 > 0

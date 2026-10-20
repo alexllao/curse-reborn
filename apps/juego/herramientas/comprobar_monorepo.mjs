@@ -74,7 +74,7 @@ try {
   };
   revisarMapa(mapa);
   for (const archivo of [
-    'original/marcos/catalogo.json',
+    'marcos/catalogo.json',
     'lanzador/habitaciones/habitaciones.json',
     'lanzador/presentacion/presentacion.json',
     'original/decorados/catalogo.json',
