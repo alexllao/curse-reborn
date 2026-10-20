@@ -11,7 +11,7 @@
     {
       "direccion": "0000:313E",
       "nombre": "Respuestas comunes del bosque",
-      "comentario": "COPSE66 no tiene rutina en CS17A3. Entrada116 y ambos senderos117 contrastados;313E/32D9/3B4F conservan rechazo o consulta de los cinco objetos de la partida real.",
+      "comentario": "COPSE66 y CASTHALL69 no tienen rutina en CS17A3. Entradas116/119, ambos senderos117 y escaleras120/122 contrastados;313E/32D9/3B4F conservan rechazo o consulta de los cinco objetos de la partida real.",
       "traslado": "apps/juego/motor/acciones/bosque.hpp"
     },
     {

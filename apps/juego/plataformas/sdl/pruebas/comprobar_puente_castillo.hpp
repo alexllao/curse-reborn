@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_vestibulo_castillo.hpp"
 
 // 84E7/8503/851E: conserva los mismos pasos de entrada y derrumbe que el EXE.
 template <typename Avanzar>
@@ -19,5 +20,7 @@ bool comprobar_puente_castillo_sdl(Mazmorra &p, const std::string &opcion, Avanz
       return true;
     anterior = paso;
   }
-  return false;
+  if (!avanzar(5))
+    return false;
+  return comprobar_vestibulo_castillo_sdl(p, opcion, avanzar);
 }

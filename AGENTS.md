@@ -6,7 +6,11 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 70 vistas SDL
+## Estado vigente: 20 de octubre, 71 vistas SDL
+
+CASTHALL69 integrado desde119, FINAL.SFX, CS17A3[69]=0. Dos escaleras contrastadas hasta120 haciaSTUDY70 y122 haciaLIBRARY71; no cargar esos destinos hasta contrastarlos. Núcleo1.911 casos/pasos,444 selecciones en tres auditorías y cuatro imágenes; SDL cuatro capturas idénticas, restauración y142 cambiosF5/F6. Catálogo0–69 y77. Continuar desde trabajo/comparacion_vestibulo_castillo/vestibulo_solicitud120 o122 (DS/semilla reales). Ruta derecha270,190 /280,170 /300,150 rodea la pendiente; no cambiar BOXDET. Zona central tipo3/id11 conservada; no se afirman todas sus caídas comprobadas. Documentación vestibulo_castillo.md, recorrido33. Quedan70–73. Mantener decorados aparcados, marcos/monitor y carpetas ordenadas.
+
+## Estado anterior: 20 de octubre, 70 vistas SDL
 
 CASTLENT68 integrado desde118, FINAL.SFX, CS17A3[68]=0. Canales84E7/8503/851E cruzan y derrumban el puente, salida119 AUTOMÁTICA tras85 pasos. No hay control libre de menú en este tramo. Núcleo180 casos/pasos y cuatro composiciones; SDL cuatro imágenes idénticas, restauración y140 cambiosF5/F6. Catálogo0–68 y77. CASTHALL69 y escenas70–73 pendientes: continuar desde trabajo/comparacion_puente_castillo/puente_castillo_solicitud119 (DS/semilla). Documentación puente_castillo.md y recorrido32_el_puente_del_castillo.txt. Conservar decorados aparcados y marcos/monitor.
 

@@ -81,6 +81,7 @@ inline constexpr VistaDesarrollo vistas_desarrollo[] = {
     {66, 77, 116, "El bosque del castillo", "COPSE"},
     {67, 66, 117, "La verja del castillo", "GATE"},
     {68, 67, 118, "El puente del castillo", "CASTLENT"},
+    {69, 68, 119, "El vestíbulo del castillo", "CASTHALL"},
 };
 inline constexpr unsigned int cantidad_vistas =
     sizeof(vistas_desarrollo) / sizeof(vistas_desarrollo[0]);
@@ -105,7 +106,7 @@ inline constexpr SalidaIntegrada salidas_integradas[] = {
     {51, 94},  {48, 95},  {52, 96},  {48, 97},  {53, 98},  {49, 99},  {54, 100}, {49, 101},
     {55, 102}, {49, 90},  {56, 103}, {57, 104}, {58, 105}, {58, 106}, {59, 108}, {60, 108},
     {60, 109}, {61, 110}, {62, 110}, {59, 107}, {63, 111}, {22, 112}, {31, 112}, {64, 113},
-    {65, 113}, {65, 114}, {77, 115}, {77, 116}, {66, 117}, {67, 118}};
+    {65, 113}, {65, 114}, {77, 115}, {77, 116}, {66, 117}, {67, 118}, {68, 119}};
 
 // No confunde reconocer una salida original con disponer de su habitación y sus puzles.
 inline bool salida_integrada(unsigned short escena, unsigned short salida) {

@@ -110,7 +110,7 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_catapulta(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 4 && palabra(d, 0x8082) <= 7) || palabra(d, 0x8082) == 10)
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
-  if (palabra(d, 0x8082) == 66)
+  if (palabra(d, 0x8082) == 66 || palabra(d, 0x8082) == 69)
     return ejecutar_interaccion_bosque(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 67)
     return ejecutar_interaccion_verja(d, manejador, id, sonido);
@@ -421,7 +421,7 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
         return ejecutar_interaccion_inicial(d, 0x9954, objeto, sonido, creacion);
     }
     const auto escena = palabra(d, 0x8082);
-    if (escena == 66)
+    if (escena == 66 || escena == 69)
       return ejecutar_interaccion_bosque(d, 0x3b53, objeto, sonido);
     if (escena == 67)
       return ejecutar_interaccion_verja(d, 0x3b53, objeto, sonido);

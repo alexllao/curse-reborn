@@ -458,6 +458,15 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--vestibulo-castillo',
+      nombre: 'vestibulo_castillo',
+      referencia: 'vestibulo_castillo',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: ['vestibulo_entrada', 'vestibulo_control', 'vestibulo_izquierda', 'vestibulo_derecha'],
+      alcance: 'entrada119, ambas escaleras, restauración y navegación entre vistas',
+    },
+    {
       argumento: '--puente-castillo',
       nombre: 'puente_castillo',
       referencia: 'puente_castillo',
@@ -966,6 +975,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--bosque',
       '--verja',
       '--puente-castillo',
+      '--vestibulo-castillo',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

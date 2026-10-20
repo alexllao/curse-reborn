@@ -64,3 +64,7 @@ Catálogo69 vistas:0–67 y77. Entrada117 desde66, apertura174 y recorrido hasta
 ## Puente del castillo integrado
 
 Catálogo70 vistas:0–68 y77. Entrada118 desde67 y derrumbe automático hasta119, sin etapa libre de menú. Núcleo180 casos/pasos y cuatro composiciones; CASTHALL69 pendiente. Véase [Puente](puente_castillo.md).
+
+## Vestíbulo del castillo integrado
+
+Catálogo71 vistas:0–69 y77. Entrada119 y dos escaleras hasta120/122; STUDY70 yLIBRARY71 pendientes. Núcleo1.911 casos/pasos,444 selecciones y cuatro composiciones. Véase [Vestíbulo](vestibulo_castillo.md).

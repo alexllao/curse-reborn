@@ -4,7 +4,7 @@
 #include "../estado/segmento.hpp"
 
 namespace motor {
-// 313E/32D9/3B4F/3545/37FF: COPSE no añade acciones a los cinco objetos conservados del recorrido.
+// 313E/32D9/3B4F/3545/37FF: COPSE/CASTHALL no añaden acciones a los cinco objetos del recorrido.
 inline ResultadoMenu ejecutar_interaccion_bosque(unsigned char *d, unsigned short manejador,
                                                  unsigned short id, const ServicioSonido &sonido) {
   if (manejador == 0x32de && id <= 1)

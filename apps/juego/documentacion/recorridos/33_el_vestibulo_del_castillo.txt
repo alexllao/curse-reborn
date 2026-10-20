@@ -1,0 +1,7 @@
+EL VESTÍBULO DEL CASTILLO
+
+Tras el derrumbe llegarás al vestíbulo. La escalera algo oculta de la izquierda lleva al estudio, donde la guía indica que está el anillo. El acceso de la derecha lleva a la biblioteca.
+
+Para avanzar por la derecha, acércate primero al pie de la escalera y sigue su pendiente; no intentes atravesar la columna o subir en vertical desde cualquier punto.
+
+Recorrido propio basado en la guía de Sophie Cheshire (2003). Ambos umbrales se han contrastado con CURSE.EXE; los interiores son los siguientes bloques.
