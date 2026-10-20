@@ -635,6 +635,9 @@ try {
     case 'comparar:nube':
       compararAcciones('nube', argumentos);
       break;
+    case 'comparar:cinta-vacia':
+      compararAcciones('cinta_vacia', argumentos);
+      break;
     case 'comparar:entrega-grabacion':
       compararAcciones('entrega_grabacion', argumentos);
       break;

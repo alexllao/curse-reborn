@@ -120,6 +120,7 @@
     "comparar:guardia-barco": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:guardia-barco",
     "comparar:cueva-valle": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:cueva-valle",
     "comparar:nube": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:nube",
+    "comparar:cinta-vacia": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:cinta-vacia",
     "comparar:entrega-grabacion": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:entrega-grabacion",
     "comparar:grabacion-completa": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:grabacion-completa",
     "comparar:grabacion-valle": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:grabacion-valle",

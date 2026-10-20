@@ -18,4 +18,10 @@ El generador conserva ahora destinatario_antes_entrega con DS, semilla y context
 
 Las alternativas en ese checkpoint, pase_recibido y puerta_antes_del_pase añaden159 observaciones y20.249 pasos coincidentes con el EXE.158 terminan en reposo con menú y una solicita66 al paso25; no se carga CLOUD en esta prueba. Incluye64 ramas CLC después del cierre lógico del menú. Los comandos y límites están en la [auditoría vigente](auditoria_pantallas.md).
 
-Sigue pendiente en la revisión ampliada la continuación de la respuesta a una cinta vacía105 desde una partida real: las864 variantes anteriores contrastan su despacho, pero no sustituyen ese recorrido. Los catálogos y destinos pendientes descritos en las primeras tandas son históricos; consultar el balance actual de la auditoría para la accesibilidad global.
+## Respuesta real a la cinta vacía105
+
+`pnpm comparar:cinta-vacia --muestra` retoma105/108 realmente recogidos desde cinta_y_mando, vuelve por61/57 y se acerca a150/165 sin fabricar objetos, banderas o fotogramas. Da105 a98 sin grabación ni correo y contrasta256 pasos posteriores de A8AE–A8DC: conserva inventario,216 puntos y44F9, mantiene activo al destinatario y recupera el menú sin conceder99. Su bocadillo específico no equivale al rechazo genérico88A0 ni exige mostrar el cursor2.
+
+Resultado:3.023 casos/pasos coincidentes,1.497 pasos jugables, cuatro selecciones y dos composiciones nativas. Se guardan cinta_vacia_antes_entrega y cinta_vacia_respuesta con DS, semilla y contexto5800 reales. Las consecuencias ampliadas en ambos puntos suman164 observaciones,20.992 pasos,60 ramas CLC y522 selecciones; todas terminan en reposo con menú y coinciden en DS/azar/fase. Los comandos, informes separados y límites están en la auditoría vigente.
+
+Esta rama cubre el pendiente105 anterior, sin incorporarlo a la ruta principal ni agotar otros estados del destinatario. La cobertura sigue35/73 escenas con muestras; no cambia motor ni añade capturas SDL. Los catálogos y destinos pendientes descritos en las primeras tandas son históricos; consultar el balance actual de la auditoría para la accesibilidad global.

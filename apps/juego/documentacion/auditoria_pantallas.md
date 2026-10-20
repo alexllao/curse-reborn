@@ -279,6 +279,21 @@ Reproducción: `pnpm comparar:consecuencias --escenas <32|35> --estado comparaci
 
 La revisión mantiene35/73 (47,9%) con muestras,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No se modifica el motor ni se añaden capturas SDL. Las864 variantes aisladas del generador cubren el despacho de105/106 con varios estados, pero no equivalen a observar una entrega negativa105 desde un recorrido real ni todas sus consecuencias. Queda pendiente esa rama real con cinta vacía y sin correo, más estados del valle y capítulos36+. Una ruta reproducible puede partir de cinta_y_mando de grabacion_completa, pasar por61/57 y acercarse al destinatario conservando105 real; no fabricar105 ni cambiar el fotograma para forzar el rechazo.
 
+### Cinta vacía105 desde un inventario real, antes y después de la respuesta
+
+`pnpm comparar:cinta-vacia --muestra` conserva una rama separada de la solución principal: retoma cinta_y_mando de comparacion_grabacion_completa, con105 y108 realmente recogidos; camina por61 aPOST y por57 aDINO y se aproxima a150/165. No añade objetos ni modifica el fotograma del destinatario para forzar una respuesta. Comprueba ausencia de99/106/111/112 y destinatario activo sin el fotograma4 del correo.
+
+La selección Dar105 a98 ejecuta A8AE–A8DC y observa256 pasos posteriores. Mantiene exactamente el inventario,216 puntos,44F9 y el destinatario activo; recupera el menú sin entregar99. Es una respuesta específica con bocadillo2D12/2805/1A2F, no la rutina genérica de rechazo88A0; no se fuerza el cursor2 para esta respuesta. El generador contrasta3.023 casos/pasos, entre ellos1.497 pasos jugables, cuatro selecciones y dos composiciones nativas, con DS completo y azar coincidentes. Conserva DS, semilla y contexto5800 antes y después.
+
+| Escena | Referencia de comparacion_cinta_vacia | Observaciones | Pasos  | CLC | Selecciones |
+| ------ | ------------------------------------- | ------------- | ------ | --- | ----------- |
+| 32     | cinta_vacia_antes_entrega             | 82            | 10.496 | 30  | 261         |
+| 32     | cinta_vacia_respuesta                 | 82            | 10.496 | 30  | 261         |
+
+Total nuevo de consecuencias:164 observaciones,20.992 pasos,60 ramas CLC y522 selecciones; todas llegan a reposo con menú, con DS/azar/fase coincidentes. Reproducción: `pnpm comparar:consecuencias --escenas 32 --estado comparacion_cinta_vacia/<referencia>.ds.bin --incluir-clc`. Informes locales separados `resultado_32_<referencia>_clc.json`; logs `consecuencias_cinta_vacia_<referencia>.log`. Los resultados generados y recursos originales no se versionan.
+
+Queda cubierta la rama real105 sin correo señalada en la tanda anterior, dentro de estos estados concretos. No se agotan los demás estados del destinatario, más hitos del valle ni los capítulos36+. La cobertura permanece35/73 (47,9%) con muestras de consecuencias,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No es un porcentaje global de fidelidad1:1; no hay cambios del motor ni capturas SDL nuevas.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
