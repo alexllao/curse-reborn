@@ -4,6 +4,16 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 
 ## Revisión integral del 20 de octubre
 
+Àlex solicita continuar los pendientes y recibir un balance cada hora. Los porcentajes se separan para evitar confundir accesibilidad y revisión de comportamiento:
+
+| Indicador                                                       | Cobertura comprobada | Porcentaje | Límite                                                      |
+| --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
+| Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
+| Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 9/73 con menú        | 12,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+
+El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
 El recorrido principal pasa por 72 escenas, incluida la mazmorra inicial. Se han ejecutado además tres ramas con regreso: tienda abandonada23 por33/45, adivina26 por38/48 y posada28 por41/50. Sus imágenes de regreso coinciden con las referencias contrastadas. Entre el recorrido y estas ramas se visitan las75 escenas reales; esto acredita visitas, no todas las combinaciones posibles de acciones.
@@ -29,6 +39,8 @@ Las dos puertas de60 se recorren también en el núcleo desde el mismo estado y 
 El cubo y las ofertas del pozo permiten acciones con el movimiento bloqueado: el reposo se identifica por menú habilitado y ausencia de camino y secuencia de Brad, sin exigir3594. Dos selecciones del corredor (2FCA/32DE) conservan un canal de caminar anterior; una cambia únicamente el cursor y la otra no inicia una secuencia nueva. Se observan128 pasos y se identifican aparte, sin confundirlas con una acción nueva bloqueada. Esta clasificación no elimina bytes de las comparaciones contra el EXE, incluido el cursor.
 
 Resultado ejecutado:551 ramas únicas resultantes de2.786 selecciones,17 estados con semilla real en las escenas1/5/6/7/9/12/14 y70.925 pasos coincidentes.548 ramas llegan al reposo observado y una solicita una salida coincidente; las otras dos conservan la secuencia previa del corredor. El primer informe amplio dejó2FCA señalado por plazo agotado, sin diferencia de DS ni azar; revisado su manejador y el cambio de cursor, se repitieron selectivamente ambas ramas:256 pasos coincidentes. Se conservan el informe amplio y `resultado_filtrado.json`, sin reescribir el resultado histórico. `--estado comparacion_final_cuevas/corredor_izquierda.ds.bin` reproduce esa revisión selectiva. No se ha repetido la tanda amplia después de refinar esta clasificación.
+
+La extensión por `--escenas` admite0–24, salvo2 automática; no admite25 porque requiere conservar además el byte mutable CS:1BA2 del probador. El ámbito no supone que sus escenas se hayan probado. Ejecutadas dos muestras nuevas: `--escenas 15 --estado comparacion_campo/campo_160.ds.bin` contrasta21 ramas/2.688 pasos; `--escenas 16 --estado comparacion_asaltante/asaltante_dinero.ds.bin`,12 ramas/1.536 pasos. Ambas coinciden en DS y azar y terminan en reposo observado. Sus informes `resultado_15_filtrado.json` y `resultado_16_filtrado.json` no sobrescriben el histórico inicial. Son33 ramas nuevas y4.224 pasos, no una revisión completa de las visitas aCOUNTRY1/2.
 
 ### Límites que siguen abiertos
 
