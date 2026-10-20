@@ -442,6 +442,24 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--mano-palacio',
+      nombre: 'mano_palacio',
+      referencia: 'mano_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'mano_entrada',
+        'mano_control',
+        'mano_atrapado',
+        'mano_libera_8',
+        'mano_libera_24',
+        'mano_libera_40',
+        'mano_liberado',
+      ],
+      alcance:
+        'entrada104, captura por la mano, aceite144 y liberación; siete imágenes y restauración; destino105 pendiente',
+    },
+    {
       argumento: '--reina-hielo',
       nombre: 'reina_hielo',
       referencia: 'reina_hielo',
@@ -794,6 +812,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--resolucion-palacio',
       '--laser-palacio',
       '--reina-hielo',
+      '--mano-palacio',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

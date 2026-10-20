@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 19 de octubre,58 vistasSDL
+## Estado vigente: 20 de octubre,59 vistasSDL
 
-CatálogoSDL0–57,58 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina hasta solicitar104. Calidad184 C++/77 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino58 de104 y capítulo siguiente aún faltan;58 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–58,59 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina y mano hasta solicitar105. Calidad185 C++/78 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino59 de105 y capítulo siguiente aún faltan;59 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -617,3 +617,7 @@ Por petición de Àlex, habitaciones, sonidos_pc y presentacion viven en package
 ## Reina del hielo
 
 Vista58, escena57 ICEQUEEN/ICEPAL.SFX, entrada103 desde56. D114–D36B: tres canales de proyectiles, inmunidad únicamente en los cuadros82/83 del salto9 y según umbral vertical original, impacto que transforma a24 y retrocede hasta40, recuperación y acceso al trono desde197. BCDF–BCFD Saltar160 cancela camino y prepara ACC2/ACD8/ACE7 mediante886B. No inventar salto automático. comparar:reina-hielo contrasta1237casos/pasos,540variantesD114 y36selecciones de salto, once imágenes y tres estados auditados. SDL: once capturas, restauración y116 cambiosF5/F6. Salida104 solicitada por las secuencias, destino58 pendiente; no confundirlo con escena57 ya comprobada. Documentación reina_hielo.md. Logo de presentación conservado; Àlex descarta por ahora ponerlo como pegatina en el monitor y lo reconsiderará con un futuro menú ingame. No modificar el enfoque de la ventana: Àlex ha cancelado esa tarea.
+
+## Sala de la mano
+
+Vista59, escena58 ICEROOM/ICEPAL.SFX, entrada104 desde57. D36C–D41B captura al avanzar con y<=130, mano en actividad3 y control; preserva descriptor4D94, canales y profundidad. BD00–BD70 Ponerse144 solo con modelo23/cuadro29, consume aceite, tres canales auxiliares y +5. Sin comprobación adicional de inventario: el EXE ignora el resultado de retirada. comparar:mano-palacio585casos/pasos,48variantes de rutina y36 de aceite, siete imágenes y tres auditorías. comprobar:mano-palacio siete capturas, restauración y118 cambiosF5/F6. Salida105 hacia escena59 comprobada; destino aún pendiente. No modificar habitaciones del lanzador ni añadir el logo descartado.

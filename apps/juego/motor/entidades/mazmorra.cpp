@@ -129,6 +129,26 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  // D36C–D41B: la mano atrapa al avanzar por la franja del suelo y ordena su profundidad.
+  if (palabra(d, 0x8082) == 58) {
+    if (d[0x2c4c] == 3 && con_signo(palabra(d, 0x2c2f)) <= 130 && d[0x3594]) {
+      d[0x4d94] = 0;
+      d[0x3594] = d[0x3595] = d[0x3596] = 0;
+      guardar(d, 0x359a, 0);
+      guardar(d, 0x0dfa, 0);
+      guardar(d, 0x2c4e, static_cast<Palabra>(palabra(d, 0x2c2d) + 128));
+      guardar(d, 0x2c50, static_cast<Palabra>(palabra(d, 0x2c2f) - 106));
+      configurar_secuencia(d, 0x2c3b, 0xb4ee, 1, 1);
+      configurar_secuencia(d, 0x2c40, 0xb4fa, 1, 1);
+      configurar_secuencia(d, 0x2c45, 0xb503, 1, 1);
+      guardar(d, 0x2c5c, 0xb4cd);
+      guardar(d, 0x2c61, 0xb4d4);
+      guardar(d, 0x2c66, 0xb4e1);
+    }
+    if (d[0x2c2b] & 2)
+      guardar(d, 0x2c56, 200);
+    return true;
+  }
   // D114–D36B: proyectiles de la reina, retroceso al recibir un golpe y acceso al trono.
   if (palabra(d, 0x8082) == 57) {
     d[0x3593] = 1;

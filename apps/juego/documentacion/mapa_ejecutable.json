@@ -1826,6 +1826,18 @@
       "nombre": "Salto ante la reina160",
       "comentario": "BCDF–BCFD cancela camino y programa ACC2/ACD8/ACE7 mediante886B.36 variantes y dos saltos correctos contrastados.",
       "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:D36C",
+      "nombre": "Captura por la mano",
+      "comentario": "D36C–D41B: actividad3,y<=130 firmado,control, descriptor4D94, canales y profundidad200.48 variantes y recorrido persistente contrastados.",
+      "traslado": "apps/juego/motor/entidades/mazmorra.cpp"
+    },
+    {
+      "direccion": "0000:BD00",
+      "nombre": "Aceite144 para liberarse de la mano",
+      "comentario": "BD00–BD70: Ponerse144 solo modelo23/cuadro29, retirada sin comprobar resultado, tres canales auxiliares y +5.36 variantes contrastadas.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
     }
   ],
   "tablas": [

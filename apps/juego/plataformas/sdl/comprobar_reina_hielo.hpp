@@ -1,5 +1,6 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_mano_palacio.hpp"
 
 // D114/BCDF: continúa la reja real, sufre un golpe y esquiva dos proyectiles hasta el trono.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
@@ -61,5 +62,7 @@ bool comprobar_reina_hielo_sdl(Mazmorra &p, const std::string &opcion, Avanzar a
     return true;
   if (!caminar(16))
     return false;
-  return detener("reina_expulsion");
+  if (detener("reina_expulsion"))
+    return true;
+  return comprobar_mano_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

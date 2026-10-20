@@ -164,3 +164,5 @@ Con los filtros F11, la mano original se compone antes de filtrar el fotograma, 
 La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro reflectores recuperables y gato bajo la reja. Nueve imágenesSDL y114 cambiosF5/F6 comprobados. La salida103 y su habitación de destino siguen pendientes. Véase [la documentación](laser_palacio.md).
 
 La vista58 añade [El trono de la reina del hielo](reina_hielo.md): Saltar sobre la reina160 esquiva sus proyectiles; los golpes y la recuperación siguen el original. `pnpm comprobar:reina-hielo` verifica once imágenes, restauración y116 cambiosF5/F6. Salida104 contrastada en el núcleo; destino58 pendiente.
+
+Vista59: La sala de la mano, escena58. Ponerse el aceite144 después de quedar atrapado conserva el menú original. Siete capturas y118 cambiosF5/F6 comprobados; véase [el alcance](mano_palacio.md).

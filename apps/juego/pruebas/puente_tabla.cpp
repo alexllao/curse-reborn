@@ -1096,3 +1096,9 @@ extern "C" EXPORTAR int procesar_rutina_reina(unsigned char *datos) {
   motor::EstadoAleatorio azar{};
   return motor::actualizar_rutina_escena(datos, azar, {}) ? 1 : 0;
 }
+
+// D36C–D41B: permite contrastar directamente el umbral y los canales de la mano.
+extern "C" EXPORTAR int procesar_rutina_mano(unsigned char *datos) {
+  motor::EstadoAleatorio azar{};
+  return motor::actualizar_rutina_escena(datos, azar, {}) ? 1 : 0;
+}

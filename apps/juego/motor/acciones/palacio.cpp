@@ -85,7 +85,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 57)
+  if (escena < 46 || escena > 58)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
@@ -192,6 +192,31 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   const auto previo = palabra(d, 0xb638), verbo = palabra(d, 0xb634);
+  // BD00–BD70: ponerse el aceite144 solo libera a Brad con el modelo23 y cuadro1D.
+  if (escena == 58 && manejador == 0x3b53 && verbo == 4 && previo == 0xffff && id == 144) {
+    if (d[0x358c] != 23 || d[0x2c2c] != 29) {
+      marcar_accion_rechazada(d);
+      return ResultadoMenu::accion;
+    }
+    retirar_identificador(d, 144);
+    guardar(d, 0x2c3b, 0xacf6);
+    guardar(d, 0x2c40, 0xad0e);
+    guardar(d, 0x2c45, 0xad21);
+    guardar(d, 0x2c5c, 0xad34);
+    d[0x2c5e] = 0;
+    d[0x2c5f] = 29;
+    d[0x2c60] = 1;
+    guardar(d, 0x2c61, 0xad3a);
+    d[0x2c63] = 0;
+    d[0x2c64] = 29;
+    d[0x2c65] = 1;
+    guardar(d, 0x2c66, 0xad45);
+    d[0x2c68] = 0;
+    d[0x2c69] = 29;
+    d[0x2c6a] = 1;
+    guardar(d, 0x35c7, static_cast<Palabra>(palabra(d, 0x35c7) + 5));
+    return comenzar(d);
+  }
   // BB8D–BC6E: los cuatro útiles pueden colocarse en cualquiera de los cuatro soportes.
   if (escena == 56 && manejador == 0x3b53 && (verbo == 7 || verbo == 1)) {
     const auto soporte = id;
