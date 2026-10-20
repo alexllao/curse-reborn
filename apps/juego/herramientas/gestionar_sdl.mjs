@@ -458,6 +458,25 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--cementerio',
+      nombre: 'cementerio',
+      referencia: 'cementerio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'cementerio_entrada',
+        'cementerio_control',
+        'cementerio_pala',
+        'cementerio_vampiro_tumba',
+        'cementerio_util_169',
+        'cementerio_pala_vampiro',
+        'cementerio_util_170',
+        'cementerio_util_173',
+        'cementerio_piedra',
+      ],
+      alcance: 'primer cementerio65 hasta la piedra; nueve imágenes, restauración y rutas reales',
+    },
+    {
       argumento: '--ataud',
       nombre: 'ataud',
       referencia: 'ataud',
@@ -902,6 +921,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--laberinto-palacio',
       '--guardia-palacio',
       '--ataud',
+      '--cementerio',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

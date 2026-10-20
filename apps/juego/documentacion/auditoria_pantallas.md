@@ -48,3 +48,7 @@ La salida52 desdeGYPSY20 ya está conectada aPOST35. `comprobar:poste` recorre l
 Las40 vistasSDL cubren las escenas0–39. La auditoría de las78 tablas deja dos enlaces pendientes desde ese catálogo: CHANGE25/salida74→43 y WISE31/salida112→64. Todas las rutasBOXDET del valle32–39 están catalogadas, incluida70; su alternativa52 y los retornos71 se contrastan por separado con enlaces-valle. Los destinos de guiones66/67/69 están ejercitados en los recorridosSDL. Esto describe enlaces y casos revisados, no todas las combinaciones de estados posteriores del juego.
 
 Las secciones anteriores conservan la historia de ampliaciones; sus recuentos de32 vistas o52 pendiente quedan superados por esta revisión. Las38 capturasSDL añadidas en las ocho salas del valle y80 cambiosF5/F6 están contrastados. Sigue pendiente el capítulo posterior al ventilador, empezando por el regreso aBenn y su probador.
+
+## Estado vigente tras las tumbas del cementerio
+
+Las66 vistas abarcan0–65. Se añade113 desde64/65. El núcleo de77 y sus vampiros ya está contrastado; falta activar su vista y las conexiones114/115 en SDL en la siguiente entrega. Véase [Cementerios](cementerio.md).

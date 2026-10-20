@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_cementerio.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -64,5 +65,12 @@ bool comprobar_ataud_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar
     return false;
   if (detener("ataud_excavar_32"))
     return true;
-  return avanzar(32) && detener("ataud_excavar_64");
+  if (!avanzar(32))
+    return false;
+  if (detener("ataud_excavar_64"))
+    return true;
+  for (unsigned int i = 0; i < 128 && p.escena_actual() == 64; ++i)
+    if (!avanzar(1))
+      return false;
+  return comprobar_cementerio_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

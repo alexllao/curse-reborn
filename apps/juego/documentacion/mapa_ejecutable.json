@@ -3,6 +3,54 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:1BA3",
+      "nombre": "Vampiros de ambos cementerios",
+      "comentario": "1BA3–20CC: murciélagos y partículas con azar, tumbas, fases0–6 y apertura de verja en65/77. Fase2 conserva AL de447−cámara al caer a1EF4. Contraste DS/azar en comparar:cementerio.",
+      "traslado": "apps/juego/motor/entidades/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:4555",
+      "nombre": "Pala frente al vampiro",
+      "comentario": "4555–4604: exige fase1, XOR18, retira168 sin comprobar presencia, cuatro fragmentos y auxiliares de canales; +5/886B.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:4605",
+      "nombre": "Piedra del cementerio",
+      "comentario": "4605–467F: Usar172 en fase2, XOR8,512D=1, piedra4E9F=26 y4EA2+16; conserva el canal auxiliar no escrito.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:4680",
+      "nombre": "Pan con ajo frente al vampiro",
+      "comentario": "4680–472F: Comer170 en fase3, XOR38, retira el objeto, destino78/177, auxiliares y cinco fragmentos; +5. Ruta real tras114 en77.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:4730",
+      "nombre": "Cruz frente al vampiro",
+      "comentario": "4730–47D5: Atacar173 en fase4, XOR8, retira cruz, destino167/165, siete fragmentos y auxiliares; +5.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:47D6",
+      "nombre": "Platillos frente al vampiro",
+      "comentario": "47D6–4837: Atacar169 en fase5, XOR18, retirada y destino312/143, tres canales auxiliares y +5.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
+      "direccion": "0000:54F0",
+      "nombre": "Tropiezos y caída del cementerio",
+      "comentario": "54F0–5638: BOXDET tipo3/id9/10/11; cuatro orientaciones conservadas, id9 intervalo8, id10 intervalo2; id11 prepara9678/968C/9697. Recorrido contrasta los tropiezos alcanzados, no todos los estados de id11.",
+      "traslado": "apps/juego/motor/estado/paso_escena.cpp"
+    },
+    {
+      "direccion": "0000:60E1",
+      "nombre": "Útiles del cementerio",
+      "comentario": "60E1–6140/615C: recogidas167/168/169/170/171/173, capacidad e iconos comunes; baja del descriptor, aproximación y canales según modelo20 o normal.",
+      "traslado": "apps/juego/motor/acciones/cementerio.cpp"
+    },
+    {
       "direccion": "0000:4502",
       "nombre": "Excavación con el hueso",
       "comentario": "4502–4554: retira165 ignorando ausencia,2714 y2742/2752/2758 con9/8,+5 y886B; salida113 mediante secuencias originales.",

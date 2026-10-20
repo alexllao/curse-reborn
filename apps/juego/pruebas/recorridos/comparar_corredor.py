@@ -31,6 +31,8 @@ BANCOS_ESCENA = {
     62: 'ICEROOM',
     63: 'ICEGUARD',
     64: 'GRAVE',
+    65: 'GRAVEYD1',
+    77: 'GRAVEYD2',
     42: 'SNOWAST3',
     41: 'SNOWAST2',
     40: 'SNOWAST1',
@@ -409,7 +411,17 @@ class ComparacionCorredor(ComparacionPuzle):
             raise ErrorAnalisis(f'Tabla de tiras distinta al entrar en la escena: {diferencias}.')
         escena = palabra(datos, 0x8082)
         self.escena = (
-            self.carpeta / (('SNOWAST3' if escena == 40 else BANCOS_ESCENA[escena]) + '.SPR')
+            self.carpeta
+            / (
+                (
+                    'GRAVEYD'
+                    if escena in (65, 77)
+                    else 'SNOWAST3'
+                    if escena == 40
+                    else BANCOS_ESCENA[escena]
+                )
+                + '.SPR'
+            )
         ).read_bytes()
         self.nombre_mapa = BANCOS_ESCENA[escena] + '.MAP'
         mapa = (self.carpeta / self.nombre_mapa).read_bytes()
@@ -493,7 +505,11 @@ class ComparacionCorredor(ComparacionPuzle):
         escena = palabra(datos, 0x8082)
         nombre = BANCOS_ESCENA[escena]
         self.escena = (
-            self.carpeta / (('SNOWAST3' if escena == 40 else nombre) + '.SPR')
+            self.carpeta
+            / (
+                ('GRAVEYD' if escena in (65, 77) else 'SNOWAST3' if escena == 40 else nombre)
+                + '.SPR'
+            )
         ).read_bytes()
         self.nombre_mapa = nombre + '.MAP'
         modelo = datos[0x9974]

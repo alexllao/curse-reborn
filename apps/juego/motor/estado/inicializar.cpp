@@ -12,7 +12,10 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
   // Accesos nativos contrastados del valle y WISE; los demás destinos tardíos siguen detenidos.
-  if (salida == 112                    ? palabra(d, 0x8082) != 22 && palabra(d, 0x8082) != 31
+  if (salida == 115                    ? palabra(d, 0x8082) != 77
+      : salida == 114                  ? palabra(d, 0x8082) != 65
+      : salida == 113                  ? palabra(d, 0x8082) != 64 && palabra(d, 0x8082) != 65
+      : salida == 112                  ? palabra(d, 0x8082) != 22 && palabra(d, 0x8082) != 31
       : salida == 107                  ? palabra(d, 0x8082) != 59
       : salida == 111                  ? palabra(d, 0x8082) != 63
       : salida == 105 || salida == 106 ? palabra(d, 0x8082) != 58
@@ -78,7 +81,7 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);
   const auto modelo = d[static_cast<Palabra>(descriptor + 13)];
   if (modelo != 0xff && modelo != 5 && modelo != 11 && modelo != 14 && modelo != 18 &&
-      modelo != 19 && modelo != 20 && modelo != 22 && modelo != 23 && modelo != 25)
+      modelo != 19 && modelo != 20 && modelo != 22 && modelo != 23 && modelo != 25 && modelo != 26)
     return false;
   guardar(d, 0x3598, salida);
   d[0x2c0b] = 0;

@@ -91,6 +91,32 @@ Colision avanzar_escena(unsigned char *d, EstadoAleatorio &azar,
     d[0x2c0b] = 0;
     guardar(d, 0x2c1a, 0);
     guardar(d, 0x359c, 2);
+  } else if (colision.valida && colision.acciones == 8 && colision.parametro >= 9 &&
+             colision.parametro <= 11) {
+    // 54F0–5638: tropiezos por orientación y caída especial; conserva la diferencia9/10 de
+    // intervalo.
+    reiniciar_estado_accion(d);
+    if (colision.parametro == 11) {
+      guardar(d, 0x2c3b, 0x9678);
+      guardar(d, 0x2c40, 0x968c);
+      guardar(d, 0x2c45, 0x9697);
+      guardar(d, 0x2c5c, 0x1a2f);
+      d[0x2c5e] = 0;
+      d[0x2c5f] = 1;
+      d[0x2c60] = 50;
+    } else {
+      const unsigned int grupo = d[0x2c2c] <= 8 ? 0 : d[0x2c2c] <= 17 ? 1 : d[0x2c2c] <= 26 ? 2 : 3;
+      constexpr Palabra canales[][3] = {{0x9634, 0x963d, 0x9641},
+                                        {0x9656, 0x965f, 0x9663},
+                                        {0x9667, 0x9670, 0x9674},
+                                        {0x9645, 0x964e, 0x9652}};
+      guardar(d, 0x2c3b, canales[grupo][0]);
+      guardar(d, 0x2c40, canales[grupo][1]);
+      guardar(d, 0x2c45, canales[grupo][2]);
+      if (colision.parametro == 9)
+        d[0x2c3f] = d[0x2c44] = d[0x2c49] = 8;
+    }
+    guardar(d, 0x359c, 2);
   } else if (!colision.valida || colision.acciones != 0)
     return colision;
   actualizar_historial_personaje(d);

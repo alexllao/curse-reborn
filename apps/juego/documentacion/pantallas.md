@@ -71,6 +71,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 63    | 62         | La sala de las cerillas           | ICEROOM  |
 | 64    | 63         | La sala del guardia dormilón      | ICEGUARD |
 | 65    | 64         | El interior del ataúd             | GRAVE    |
+| 66    | 65         | Las tumbas del cementerio         | GRAVEYD1 |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -137,3 +138,5 @@ Vistas60–63: [desvíos del palacio](laberinto_palacio.md), puertas aleatorias 
 Vista64: [guardia del palacio](guardia_palacio.md), sueño tras la columna, cerilla y encendido, recogida del extintor y regreso111 a Benn. Conserva los tiempos y rechazos originales.
 
 Vista65: [el ataúd](ataud.md), tercer pago al mago desde el regreso111, hueso y excavación hasta solicitar113. No equivale a tener resueltos los vampiros del destino65.
+
+Vista66: [las tumbas](cementerio.md), entrada113, recogidas, pala y piedra. Nueve imágenes SDL y132 cambios F5/F6 comprobados; la segunda zona77 tiene núcleo contrastado y su activación SDL continúa en el siguiente bloque.

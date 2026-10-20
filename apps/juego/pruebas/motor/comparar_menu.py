@@ -201,7 +201,9 @@ class ComparacionMenu(ComparacionComposicion):
             ('MOUSE.SPR', 0x74000, self.raton),
             ('MENU.DAT', 0x76000, bytes(self.fondo_menu)),
         )
-        for anterior, siguiente in zip(bancos, bancos[1:]):
+        # El modelo puede quedar después deSTD en escenas grandes comoGRAVEYD; verificar por dirección.
+        ordenados = sorted(bancos, key=lambda banco: banco[1])
+        for anterior, siguiente in zip(ordenados, ordenados[1:]):
             if anterior[1] + len(anterior[2]) > siguiente[1]:
                 raise ErrorAnalisis(
                     f'Bancos de referencia solapados: {anterior[0]} y {siguiente[0]}.'

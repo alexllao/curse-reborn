@@ -1,0 +1,12 @@
+LOS DOS CEMENTERIOS
+
+Continuación propia del recorrido contrastado con CURSE.EXE.
+
+1. Tras salir del ataúd, recoger la pala y rodear la tumba vacía hacia la izquierda. El primer vampiro cae en ella.
+2. Recoger los útiles del primer fondo. Atacar con la pala al siguiente vampiro y usar la piedra ante el siguiente encuentro.
+3. Continuar hacia la derecha al segundo cementerio. Comer el pan con ajo, atacar al siguiente vampiro con la cruz y al siguiente con los platillos, en ese orden.
+4. Recoger la aspiradora del segundo fondo. El regreso por la izquierda lleva otra vez al primer cementerio; también se comprueba la recogida de la bandeja.
+5. Volver a la derecha y rodear las tumbas. Al avanzar con la aspiradora, la huida del último vampiro abre la verja.
+6. La verja solicita la salida116 hacia el bosque del castillo. El destino se incorpora en el bloque siguiente.
+
+Los objetos se pueden recoger en otro orden cuando las condiciones originales lo permitan. No se han añadido soluciones automáticas ni inventario artificial. Evitar los huecos y los tropiezos del suelo: el original también castiga algunos atajos.

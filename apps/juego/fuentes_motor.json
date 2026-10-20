@@ -23,6 +23,7 @@
   "motor/entidades/cargar.cpp",
   "motor/entidades/crear.cpp",
   "motor/entidades/mazmorra.cpp",
+  "motor/entidades/cementerio.cpp",
   "motor/entidades/secuencias.cpp",
   "motor/estado/inicializar.cpp",
   "motor/movimiento/avanzar.cpp",
