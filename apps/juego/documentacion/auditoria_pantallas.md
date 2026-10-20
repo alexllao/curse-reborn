@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 9/73 con menú        | 12,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 17/73 con menú       | 23,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16 y17–24. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -42,9 +42,21 @@ Resultado ejecutado:551 ramas únicas resultantes de2.786 selecciones,17 estados
 
 La extensión por `--escenas` admite0–24, salvo2 automática; no admite25 porque requiere conservar además el byte mutable CS:1BA2 del probador. El ámbito no supone que sus escenas se hayan probado. Ejecutadas dos muestras nuevas: `--escenas 15 --estado comparacion_campo/campo_160.ds.bin` contrasta21 ramas/2.688 pasos; `--escenas 16 --estado comparacion_asaltante/asaltante_dinero.ds.bin`,12 ramas/1.536 pasos. Ambas coinciden en DS y azar y terminan en reposo observado. Sus informes `resultado_15_filtrado.json` y `resultado_16_filtrado.json` no sobrescriben el histórico inicial. Son33 ramas nuevas y4.224 pasos, no una revisión completa de las visitas aCOUNTRY1/2.
 
+### Población y respuestas que mantienen el menú abierto
+
+`--incluir-clc` observa también los verbos32DE/563A/2FCA/3143/384A/3B53 cuando devuelven CLC. Las ramas parten del estado posterior a la selección y representan la continuación después de cerrar con clic derecho: en el adaptador ese cierre solo cambia `menu_visible`, sin alterar DS ni azar. No simula pasos mientras el menú está abierto ni cuenta los simples cambios de submenú como acciones. La selección y cada paso posterior siguen comparándose con el EXE completo; no se excluyen bytes de cursor ni de menú de esa comparación. No añade en esta tanda una prueba visual SDL del gesto de cierre.
+
+Tanda ejecutada:304 observaciones en diez estados reales,38.887 pasos y130 ramas CLC, todas coincidentes en DS y azar. Las ocho referencias de escenas17–24 son `comparacion_asaltante/poblacion_fuente`, `comparacion_asaltante/poblacion_maravillas`, `comparacion_calles/calle_29`, `comparacion_calles/calle_30`, `comparacion_poblacion/poblacion_guardias`, `comparacion_poblacion/poblacion_mago`, `comparacion_calles/calle_33` y `comparacion_tiendas/tienda_35`. Cada una aporta24 ramas/3.072 pasos salvo el mago22, con42 ramas/5.351 pasos y una petición de salida contrastada. Son210 observaciones y26.855 pasos en esta primera visita.
+
+Dos referencias posteriores amplían estados ya existentes: `comparacion_regreso_benn/benn_frente_vendedor` aporta52 ramas/6.656 pasos (18 CLC) y `comparacion_regreso_loro/regreso_mago`,42 ramas/5.376 pasos (14 CLC). Conservan el inventario y progreso reales del recorrido; no se fabrica un estado de prueba. No se cuentan estas dos visitas como escenas adicionales.
+
+Se reproducen con `pnpm comparar:consecuencias --escenas <índice> --estado <carpeta/nombre.ds.bin> --incluir-clc`. Los informes están en `trabajo/auditoria_consecuencias/resultado_<índice>_filtrado_clc.json`; para22/24 se conservaron copias separadas `resultado_<índice>_visita_inicial_clc.json` y `resultado_<índice>_regreso_clc.json` antes de reutilizar el nombre filtrado. Las selecciones de inventario al entrar en una calle no equivalen a agotar todos sus personajes, posiciones o visitas posteriores.
+
+`--solo-clc` permite ampliar las referencias anteriores sin repetir las observaciones STC ya contrastadas. Comprobado selectivamente en fuente17:12 ramas/1.536 pasos, todas CLC y coincidentes. Esta repetición valida el filtro y no aumenta el porcentaje ni se suma a las304 observaciones nuevas. Su informe usa el sufijo `_solo_clc.json`.
+
 ### Límites que siguen abiertos
 
-- La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La nueva observación de consecuencias solo cubre las referencias iniciales citadas; quedan las de capítulos posteriores, las selecciones que mantienen abierto el menú (CLC) y los estados no representados en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
+- La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
 - El recorrido hasta el final y las ramas citadas no agotan todos los regresos con inventarios posteriores ni todas las condiciones de progreso.
 - Las recargas nuevas se realizan en reposo con menú habilitado, sin camino, tecla ni secuencia activa de Brad. No agotan guardados durante animaciones, todas las variantes de inventario, ni importaciones entre procesos o ediciones DOS. Las tres aproximaciones centrales contrastadas no equivalen a agotar todas las direcciones y posiciones posibles de caída.
 

@@ -11,7 +11,7 @@ from comparar_objetos import palabra
 
 
 # Explora las listas reales de un estado, sin ejecutar los paneles de plataforma.
-def auditar_estado(comparacion, datos, nombre, consecuencia=None):
+def auditar_estado(comparacion, datos, nombre, consecuencia=None, consecuencia_clc=None):
     pendientes = []
     comparacion.nativa.procesar_menu(0, (ctypes.c_ubyte * 65536).from_buffer(datos), 152, 92)
     semilla_inicial = list(comparacion.semilla_menu)
@@ -43,6 +43,8 @@ def auditar_estado(comparacion, datos, nombre, consecuencia=None):
             termina = bool(comparacion.maquina.reg_read(comparacion.r.UC_X86_REG_EFLAGS) & 1)
             if termina and consecuencia is not None:
                 consecuencia(comparacion, copia, nombre, ruta + (casilla,), manejador, base)
+            if not termina and consecuencia_clc is not None:
+                consecuencia_clc(comparacion, copia, nombre, ruta + (casilla,), manejador, base)
             if not termina:
                 cola.append((copia, ruta + (casilla,), list(comparacion.semilla_menu)))
     comparacion.semilla_menu[:] = semilla_inicial

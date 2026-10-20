@@ -12,7 +12,8 @@ from comparar_objetos import palabra
 
 
 # No cambia objetos ni posiciones: cada rama parte del menú de una instantánea real y su semilla.
-def auditar(raiz, biblioteca, estado=None, escenas=None):
+def auditar(raiz, biblioteca, estado=None, escenas=None, incluir_clc=False, solo_clc=False):
+    incluir_clc = incluir_clc or solo_clc
     solicitadas = escenas or (1, *range(3, 15))
     comparacion = ComparacionFinalCuevas(raiz, biblioteca, True)
     comparacion.recursos_menu = True
@@ -24,17 +25,20 @@ def auditar(raiz, biblioteca, estado=None, escenas=None):
         'ramas': [],
         'observacion_minima': 128,
         'escenas_solicitadas': solicitadas,
-        'limite': 'Selecciones que cierran el menú (STC) en las instantáneas con semilla de las escenas solicitadas; al menos128 pasos, salvo petición de salida, y hasta512 si no vuelve al reposo. No carga destinos ni agota todos los estados.',
+        'incluye_clc': incluir_clc,
+        'incluye_stc': not solo_clc,
+        'limite': 'Selecciones de los tipos indicados por incluye_stc/incluye_clc; los verbos CLC se observan tras cerrar con clic derecho; referencias con semilla, al menos128 pasos salvo salida y hasta512 sin reposo. No carga destinos, no observa el menú abierto ni agota todos los estados.',
     }
     carpeta = raiz / 'apps/juego/trabajo/auditoria_consecuencias'
     carpeta.mkdir(exist_ok=True)
     sufijo = ('_' + '_'.join(map(str, escenas))) if escenas else ''
     sufijo += '_filtrado' if estado else ''
+    sufijo += '_solo_clc' if solo_clc else '_clc' if incluir_clc else ''
     destino_informe = carpeta / f'resultado{sufijo}.json'
 
     # Compara cada paso contra el EXE y conserva las ramas que no terminan en el plazo observado.
-    def continuar(c, base, nombre, ruta, manejador, antes):
-        clave = (hashlib.sha256(base).digest(), tuple(c.semilla_menu))
+    def continuar(c, base, nombre, ruta, manejador, antes, cierre='STC'):
+        clave = (hashlib.sha256(base).digest(), tuple(c.semilla_menu), cierre)
         if clave in acciones:
             return
         acciones.add(clave)
@@ -45,6 +49,7 @@ def auditar(raiz, biblioteca, estado=None, escenas=None):
             'escena': palabra(base, 0x8082),
             'casillas': ruta,
             'manejador': f'{manejador:04X}',
+            'cierre_menu': cierre,
         }
         # Una respuesta del cursor no sustituye el canal de caminar previo de Brad.
         # Esta clasificación nunca excluye el cursor de las comparaciones contra el EXE.
@@ -73,6 +78,12 @@ def auditar(raiz, biblioteca, estado=None, escenas=None):
             rama['resultado'] = 'plazo agotado; requiere revisión'
         c.retomar_recursos(base)
 
+    # Cerrar con clic derecho solo cambia menu_visible en SDL, sin tocar DS ni el azar.
+    # Observa los verbos CLC después de ese cierre, no los simples cambios de submenú.
+    def continuar_clc(c, base, nombre, ruta, manejador, antes):
+        if manejador in (0x32DE, 0x563A, 0x2FCA, 0x3143, 0x384A, 0x3B53):
+            continuar(c, base, nombre, ruta, manejador, antes, 'CLC seguido de clic derecho')
+
     try:
         for fichero in sorted((raiz / 'apps/juego/trabajo').glob('comparacion*/*.ds.bin')):
             if estado and fichero.resolve() != (raiz / 'apps/juego/trabajo' / estado).resolve():
@@ -93,7 +104,13 @@ def auditar(raiz, biblioteca, estado=None, escenas=None):
             comparacion.retomar_recursos(d)
             nombre = str(fichero.relative_to(raiz / 'apps/juego/trabajo'))
             informe['estados'] += 1
-            errores = auditar_estado(comparacion, d, nombre, continuar)
+            errores = auditar_estado(
+                comparacion,
+                d,
+                nombre,
+                None if solo_clc else continuar,
+                continuar_clc if incluir_clc else None,
+            )
             if errores:
                 raise ErrorAnalisis(f'Despacho distinto en {nombre}: {errores[:3]}')
             print(f'Escena {escena}: {nombre}; {len(acciones)} ramas acumuladas.', flush=True)
@@ -139,6 +156,17 @@ if __name__ == '__main__':
         description='Contrasta las consecuencias de menús en los primeros capítulos.'
     )
     parser.add_argument('--biblioteca', type=Path, required=True)
+    grupo_clc = parser.add_mutually_exclusive_group()
+    grupo_clc.add_argument(
+        '--incluir-clc',
+        action='store_true',
+        help='Observa también verbos CLC tras cerrar el menú con clic derecho.',
+    )
+    grupo_clc.add_argument(
+        '--solo-clc',
+        action='store_true',
+        help='Observa solo verbos CLC para no repetir las animaciones STC ya contrastadas.',
+    )
     parser.add_argument(
         '--escenas', type=leer_escenas, help='Índices0–24 separados por comas; por defecto1,3–14.'
     )
@@ -152,6 +180,8 @@ if __name__ == '__main__':
             opciones.biblioteca,
             opciones.estado,
             opciones.escenas,
+            opciones.incluir_clc,
+            opciones.solo_clc,
         )
     except (OSError, ErrorAnalisis) as error:
         parser.exit(1, f'Error: {error}\n')
