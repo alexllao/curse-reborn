@@ -1,5 +1,9 @@
 # Pruebas del motor
 
+`pnpm comprobar:continuidad` compara el recorrido SDL hasta el final y cinco desvíos con y sin recargas intermedias en la misma partida. Perfiles, SAV, imágenes y resultados se conservan exclusivamente en `../trabajo/continuidad_*`. Alcance y límites en [partidas](../documentacion/partidas.md) y [auditoría](../documentacion/auditoria_pantallas.md).
+
+`pnpm comparar:consecuencias` prolonga las selecciones que cierran el menú de las referencias iniciales con semilla. Compara128–512 pasos contra el EXE y señala las ramas sin reposo; no equivale a revisar todos los estados ni todos los capítulos. El informe está en `../trabajo/auditoria_consecuencias/resultado.json`.
+
 | Carpeta         | Contenido                                                                         |
 | --------------- | --------------------------------------------------------------------------------- |
 | `motor/`        | Estado, acciones comunes, azar, secuencias, partidas y puente C++ de comparación. |

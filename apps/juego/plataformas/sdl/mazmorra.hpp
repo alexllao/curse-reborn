@@ -31,6 +31,8 @@ public:
   // Consulta el inventario persistente para comprobar recogidas y transiciones sin alterar la
   // Consulta el bloqueo de animación para contrastar el final de la inmersión.
   bool secuencia_personaje_activa() const;
+  // Restringe las recargas automáticas de prueba a reposo, sin teclas, rutas, menús ni fundidos.
+  bool reposo_para_comprobar_partida() const;
   // Distingue un retrazo de cámara de un paso lógico durante las comprobaciones deterministas.
   bool camara_en_presentacion() const {
     return animacion == 2;

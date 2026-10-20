@@ -12,6 +12,8 @@ Textos: `pnpm ventana es` para castellano; `pnpm ventana en` o `pnpm ventana` pa
 
 Para entregar una beta: `pnpm empaquetar:beta --con-datos` genera la carpeta y el ZIP Windows con ejecutable, dependencias, recursos propios optimizados y solo la habitación inicial del JSON. `--habitacion todas` incluye todos los diseños y `--habitacion <id>` elige otro. La [guía de distribución](documentacion/distribucion.md) documenta los perfiles, exclusiones, archivos persistentes, verificación, resultados reales y límites de la primera entrega0.9.0. Añadir `--sin-perdida` conserva también los colores exactos de todas las imágenes.
 
+La revisión integral sigue abierta: completar la ruta principal no agota sus interacciones alternativas. `pnpm comprobar:continuidad` contrasta la partida hasta el desenlace y cinco desvíos con recargas intermedias reales. Se ha comprobado la continuación tras cargar en73 escenas; las dos restantes son secuencias automáticas. Véase el [alcance de la auditoría](documentacion/auditoria_pantallas.md).
+
 ## El proyecto que queremos construir
 
 El trabajo se plantea en dos etapas:

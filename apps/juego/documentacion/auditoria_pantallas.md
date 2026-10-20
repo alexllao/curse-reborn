@@ -14,11 +14,27 @@ Resultado ejecutado: **59.470 selecciones coincidentes, 429 estados distintos y 
 
 La comprobación del vestíbulo69 se amplía con tres clics centrales (170/175/180,131): en cada rama se contrasta la caída original54F0–5638, la recuperación del control y la continuación hasta solicitar120 hacia el estudio. El bloque completo suma3.909 casos/pasos, incluidas444 selecciones, cuatro composiciones y tres caídas recuperadas. Esta ampliación se comprueba en el núcleo contra el EXE; no añade una nueva prueba visual SDL de las caídas.
 
+### Continuación después de cargar y puertas alternativas
+
+`pnpm comprobar:continuidad` ejecuta seis recorridos SDL con las mismas entradas: primero sin recargas y después guardando y cargando en la misma partida viva. No sustituye la continuación por una instancia nueva que solo dibuja la imagen. Cada punto comprueba escena, cámara, 64.000 píxeles y paleta inmediatamente después de cargar; las acciones posteriores deben alcanzar el mismo resultado final que la ejecución de control.
+
+La tanda ejecutada comprende el recorrido hasta THE END (313 recargas en 70 escenas), los regresos33/38/41 (102/102/98 recargas) y las dos puertas de60 con regreso110 (270 recargas en cada recorrido). Son1.155 operaciones en seis recorridos que repiten el tramo inicial, no1.155 estados independientes. En conjunto hay continuación tras cargar en73 escenas;2 y68 son secuencias automáticas sin punto de menú. Los archivos y resultados quedan en `trabajo/continuidad_*`, fuera de Git.
+
+Las dos puertas de60 se recorren también en el núcleo desde el mismo estado y semilla reales, atravesando108/109 hasta61/62 y110 de vuelta a58, sin cambiar inventario ni forzar azar. El bloque laberinto pasa a3.381 casos/pasos y17 imágenes. Las dos imágenes de regreso SDL coinciden píxel a píxel con esas referencias contrastadas contra el EXE, tanto con recargas como sin ellas.
+
+### Consecuencias de las interacciones iniciales
+
+`pnpm comparar:consecuencias` reutiliza la exploración de los menús reales y prolonga las selecciones que los cierran (STC). Solo admite las referencias iniciales con semilla persistida; no sustituye una semilla ausente por una inventada. Deduplica el estado y azar resultantes, compara DS completo y azar contra el EXE durante al menos128 pasos, o hasta una petición de salida anterior. Si al terminar ese plazo sigue una acción sin reposo, la prolonga hasta512 pasos y la registra como pendiente si no termina. No carga el destino solicitado ni agota animaciones posteriores a esa observación.
+
+El cubo y las ofertas del pozo permiten acciones con el movimiento bloqueado: el reposo se identifica por menú habilitado y ausencia de camino y secuencia de Brad, sin exigir3594. Dos selecciones del corredor (2FCA/32DE) conservan un canal de caminar anterior; una cambia únicamente el cursor y la otra no inicia una secuencia nueva. Se observan128 pasos y se identifican aparte, sin confundirlas con una acción nueva bloqueada. Esta clasificación no elimina bytes de las comparaciones contra el EXE, incluido el cursor.
+
+Resultado ejecutado:551 ramas únicas resultantes de2.786 selecciones,17 estados con semilla real en las escenas1/5/6/7/9/12/14 y70.925 pasos coincidentes.548 ramas llegan al reposo observado y una solicita una salida coincidente; las otras dos conservan la secuencia previa del corredor. El primer informe amplio dejó2FCA señalado por plazo agotado, sin diferencia de DS ni azar; revisado su manejador y el cambio de cursor, se repitieron selectivamente ambas ramas:256 pasos coincidentes. Se conservan el informe amplio y `resultado_filtrado.json`, sin reescribir el resultado histórico. `--estado comparacion_final_cuevas/corredor_izquierda.ds.bin` reproduce esa revisión selectiva. No se ha repetido la tanda amplia después de refinar esta clasificación.
+
 ### Límites que siguen abiertos
 
-- La auditoría recorre opciones realmente ofrecidas en esas posiciones y estados. Contrasta el despacho inmediato, todas sus escrituras en DS y el azar; no ejecuta después cada animación alternativa hasta devolver el control.
+- La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La nueva observación de consecuencias solo cubre las referencias iniciales citadas; quedan las de capítulos posteriores, las selecciones que mantienen abierto el menú (CLC) y los estados no representados en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
 - El recorrido hasta el final y las ramas citadas no agotan todos los regresos con inventarios posteriores ni todas las condiciones de progreso.
-- Queda verificar la continuación después de cargar partidas en distintos capítulos. Las escaleras y la restauración visual ya tienen pruebas anteriores. Las tres aproximaciones centrales contrastadas no equivalen a agotar todas las direcciones y posiciones posibles de caída.
+- Las recargas nuevas se realizan en reposo con menú habilitado, sin camino, tecla ni secuencia activa de Brad. No agotan guardados durante animaciones, todas las variantes de inventario, ni importaciones entre procesos o ediciones DOS. Las tres aproximaciones centrales contrastadas no equivalen a agotar todas las direcciones y posiciones posibles de caída.
 
 No se ha encontrado una implementación ausente en esta tanda. No se declara todavía cerrada la revisión de todas las alternativas. La finalidad de estas comprobaciones es detectar omisiones del port fiel; no calcular la duración de una ruta con desvíos.
 

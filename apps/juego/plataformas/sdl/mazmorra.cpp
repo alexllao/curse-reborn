@@ -805,7 +805,14 @@ void Mazmorra::registrar_estado() {
   registro_preparado = true;
 }
 
-// Lee el canal principal de Brad; no altera sus controles ni sus contadores.
+// Limita las recargas de pruebas a menú habilitado y ausencia de rutas, teclas y secuencias de
+// Brad.
+bool Mazmorra::reposo_para_comprobar_partida() const {
+  return !en_presentacion() && !menu_visible && (direccion == 0xffff || direccion == 0) &&
+         datos[0x3595] && motor::palabra(datos, 0x359a) == 0 && !secuencia_personaje_activa();
+}
+
+// Consulta los canales activos sin alterar la secuencia original del personaje.
 bool Mazmorra::secuencia_personaje_activa() const {
   return motor::palabra(datos, 0x2c3b) != 0;
 }

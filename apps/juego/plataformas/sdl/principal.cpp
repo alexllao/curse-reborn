@@ -35,6 +35,7 @@
 #include "pruebas/comprobar_poblacion.hpp"
 #include "interfaz/partidas.hpp"
 #include "pruebas/comprobar_partidas.hpp"
+#include "pruebas/comprobar_continuidad.hpp"
 #include "video/marcos.hpp"
 #include "lanzador/habitacion.hpp"
 #include "lanzador/banner_lanzador.hpp"
@@ -1185,13 +1186,14 @@ int main(int argc, char *argv[]) {
       caida_comprobada = true;
     }
     if (comprobar_jugabilidad && pantalla >= 3 && !jugabilidad_comprobada) {
+      ComprobarContinuidad continuidad(SDL_getenv("CURSE_REBORN_COMPROBAR_RECARGAS"));
       // Recorre los mismos clics del menú que el jugador, sin cambiar directamente su inventario.
       const auto elegir = [](unsigned short casilla) {
         return mazmorra.entrada_menu(static_cast<unsigned short>(casilla * 32 + 16), 92, true,
                                      false);
       };
       // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
-      const auto avanzar = [comprobar_lago](unsigned int cantidad) {
+      const auto avanzar = [comprobar_lago, &continuidad](unsigned int cantidad) {
         for (unsigned int i = 0; i < cantidad; ++i) {
           if (!mazmorra.actualizar_audio() || !mazmorra.avanzar())
             return false;
@@ -1201,6 +1203,8 @@ int main(int argc, char *argv[]) {
           // EAD5 termina el desplazamiento antes de ejecutar la iteración lógica del mismo ciclo.
           if (camara && (!mazmorra.avanzar() || !mazmorra.avanzar_presentacion(
                                                     SDL_GetTicksNS() * 70u / 1000000000u + 100u)))
+            return false;
+          if (!continuidad.comprobar(mazmorra))
             return false;
         }
         return true;

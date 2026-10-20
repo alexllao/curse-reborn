@@ -213,6 +213,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     nube: 'comparar_nube.py',
     entrega_grabacion: 'comparar_entrega_grabacion.py',
     opciones: 'auditar_opciones.py',
+    consecuencias: 'auditar_consecuencias.py',
     secuencias: 'comparar_secuencias.py',
     operaciones: 'comparar_operaciones.py',
     altavoz: 'comparar_altavoz.py',
@@ -527,6 +528,9 @@ try {
       break;
     case 'comparar:opciones':
       compararAcciones('opciones', argumentos);
+      break;
+    case 'comparar:consecuencias':
+      compararAcciones('consecuencias', argumentos);
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);

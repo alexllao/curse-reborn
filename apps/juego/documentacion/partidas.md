@@ -30,7 +30,7 @@ El formato puro está en `apps/juego/motor/estado/partidas.*`, sin acceso al dis
 
 El adaptador prepara un estado temporal y comprueba sus recursos antes de sustituir la sesión activa. Conserva los objetos, animaciones, inventario, puntuación y control del personaje guardados. Sigue la rama AL=1 del cargador: **513F–5143 salta a 5185**, por lo que no debe ejecutar el reinicio de 5145 ni recrear entidades mediante 8AA6. E28B–E2B3 adapta los segmentos de los actores y superposiciones a las referencias de los recursos portables; el cursor y Brad reciben sus bancos correspondientes.
 
-Se reconocen las zonas integradas, incluido el trayecto de comida y mago de Paso del Dragón. EDGE solo admite el punto de llegada detenido; su jugabilidad continúa pendiente. Una partida de una zona posterior puede importarse y conservarse, pero no se carga hasta implementar esa zona. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
+Se reconocen las75 escenas reales integradas (0–73 y77). Los índices74–76 son reservas, no habitaciones jugables adicionales. Un archivo inválido o con recursos no disponibles no sustituye la partida viva.
 
 ## Comprobaciones
 
@@ -41,6 +41,14 @@ Se reconocen las zonas integradas, incluido el trayecto de comida y mago de Paso
 `pnpm comparar:panel-partidas` compara **23 composiciones de64.000 píxeles** con E997, E89D y E46D/D87A: cargar, guardar, borrar, las ocho posiciones y el teclado vacío, parcial y completo. Otros cuatro casos comprueban la adaptación visual de nombres del panel anterior: se comparan sus minúsculas con la representación en mayúsculas de la fuente original, sin afirmar que sean entradas DOS idénticas. `pnpm comprobar:partidas` agrupa ambos comparadores y la integración SDL. No equivale a validar todos los estados ni todos los errores de disco.
 
 La compatibilidad comprobada corresponde al EXE con la huella del proyecto y a archivos escritos por sus rutinas. No se ha validado una colección de partidas de otras ediciones ni el recorrido de ida y vuelta con una sesión interactiva DOSBox.
+
+### Continuar jugando después de cargar
+
+`pnpm comprobar:continuidad` compila SDL y compara seis recorridos sin recargas frente a las mismas entradas con recargas intermedias reales. `--sin-compilar` reutiliza expresamente el ejecutable ya compilado; `--solo-laberinto` limita la tanda a las dos puertas alternativas de60 y sus regresos. Los perfiles de prueba y SAV permanecen en una carpeta nueva de `trabajo/`, separados del perfil del usuario.
+
+El comprobador guarda al cambiar escena, puntuación, progreso o inventario, únicamente con menú habilitado y sin camino, tecla ni secuencia activa de Brad. Carga ese registro en la misma sesión y continúa el recorrido. Comprueba escena, cámara, imagen y paleta al cargar y exige la misma imagen final que el control. El azar y CS permanecen vivos: el formato DOS no los guarda.
+
+Ejecutados313 puntos hasta el desenlace en70 escenas, tres regresos laterales con102/102/98 puntos y ambas puertas de60 con270 puntos cada una. En conjunto son1.155 operaciones y73 escenas; los recorridos repiten estados iniciales.2 y68 son secuencias automáticas sin punto de menú. Esto acredita la continuación de estas rutas, sin afirmar todas las animaciones, partidas de otras ediciones ni restauración del azar tras reiniciar el proceso.
 
 ## Información del último icono
 

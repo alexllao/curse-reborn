@@ -59,6 +59,25 @@ bool comprobar_laberinto_palacio_sdl(Mazmorra &p, const std::string &opcion, Ava
       return true;
     if (!avanzar(16))
       return false;
+    // Contrasta cada puerta de60 hasta su destino y su regreso real110, sin cambiar la semilla.
+    for (const int puerta : {115, 204}) {
+      const auto alternativa = "laberinto_alternativa_" + std::to_string(puerta);
+      if (nueva != 60 || (!detener(alternativa + "_destino") && !detener(alternativa + "_regreso")))
+        continue;
+      bool inventario[178]{};
+      for (unsigned short id = 0; id < 178; ++id)
+        inventario[id] = p.conserva_objeto(id);
+      if (!cruzar(puerta) || (p.escena_actual() != 61 && p.escena_actual() != 62) || !avanzar(16))
+        return false;
+      if (detener(alternativa + "_regreso")) {
+        if (!cruzar(p.escena_actual() == 61 ? 160 : 204) || p.escena_actual() != 58 || !avanzar(16))
+          return false;
+      }
+      for (unsigned short id = 0; id < 178; ++id)
+        if (inventario[id] != p.conserva_objeto(id))
+          return false;
+      return true;
+    }
     if (!vistos[nueva] && detener(base + "_control"))
       return true;
     vistos[nueva] = true;

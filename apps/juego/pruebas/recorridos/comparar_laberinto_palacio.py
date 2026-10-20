@@ -5,9 +5,43 @@ import json
 from pathlib import Path
 from comparar_mano_palacio import ComparacionManoPalacio, ErrorAnalisis
 from comparar_objetos import palabra
+from comparar_calles import ComparacionCalles
 
 
 class ComparacionLaberintoPalacio(ComparacionManoPalacio):
+    # Recorre ambas puertas108 con clics reales hasta61/62 y el regreso110 a58, conservando azar e inventario.
+    def comprobar_puertas_60(self, base):
+        semilla = list(self.semilla_menu)
+        inventario = bytes(base[0x5225:0x5239])
+        for x in (115, 204):
+            d = bytearray(base)
+            self.semilla_menu[:] = semilla
+            self.retomar_recursos(d)
+            salida = ComparacionCalles.ir(self, d, self.semilla_menu, x, 140)
+            if salida not in (108, 109):
+                raise ErrorAnalisis(f'Puerta60 en{x}: salida inesperada{salida}.')
+            self.cambiar(d, self.semilla_menu, salida)
+            self.esperar(d, 16)
+            escena = palabra(d, 0x8082)
+            if escena not in (61, 62) or bytes(d[0x5225:0x5239]) != inventario:
+                raise ErrorAnalisis('El desvío60 cambia el inventario o entrega otra escena.')
+            self.hito_borde(d, f'laberinto_alternativa_{x}_destino')
+            regreso = ComparacionCalles.ir(
+                self, d, self.semilla_menu, 160 if escena == 61 else 204, 140
+            )
+            if regreso != 110:
+                raise ErrorAnalisis(f'El desvío de la puerta{x} no permite regresar110.')
+            self.cambiar(d, self.semilla_menu, regreso)
+            self.esperar(d, 16)
+            if palabra(d, 0x8082) != 58 or bytes(d[0x5225:0x5239]) != inventario:
+                raise ErrorAnalisis('El regreso del laberinto altera inventario o destino58.')
+            self.hito_borde(d, f'laberinto_alternativa_{x}_regreso')
+            self.variantes['puertas60_con_regreso'] = (
+                self.variantes.get('puertas60_con_regreso', 0) + 1
+            )
+        self.semilla_menu[:] = semilla
+        self.retomar_recursos(base)
+
     # Recorre puertas reales con su azar original; no elige destinos cambiando la semilla.
     def ejecutar(self):
         origen = self.raiz / 'apps/juego/trabajo/comparacion_mano_palacio/mano_solicitud105'
@@ -75,6 +109,8 @@ class ComparacionLaberintoPalacio(ComparacionManoPalacio):
             if escena not in vistos:
                 self.hito_borde(d, 'laberinto_' + str(escena) + '_control')
                 self.auditar(d, 'laberinto sala' + str(escena))
+                if escena == 60:
+                    self.comprobar_puertas_60(d)
                 vistos.add(escena)
         else:
             raise ErrorAnalisis('El laberinto no entrega107 en64 puertas.')
@@ -86,7 +122,7 @@ class ComparacionLaberintoPalacio(ComparacionManoPalacio):
             capturas=self.capturas,
             estados_auditados=self.estados_auditados,
             recorrido=recorrido,
-            limite='Cuatro salas y rutas originales contrastadas en núcleo; destino107/escena63 pendiente.',
+            limite='Cuatro salas, ambas puertas60 hasta61/62 y regreso110 a58 contrastados; no agota todos los estados ni semillas.',
         )
         (self.destino / 'resultado.json').write_text(
             json.dumps(informe, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
