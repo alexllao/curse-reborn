@@ -164,7 +164,9 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
     if (!SDL_SetTextureScaleMode(textura, seleccion->panoramico || filtro == 1 || filtro == 3
                                               ? SDL_SCALEMODE_LINEAR
                                               : SDL_SCALEMODE_NEAREST) ||
-        !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND))
+        !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND) ||
+        !SDL_SetTextureColorMod(textura, seleccion->luminosidad, seleccion->luminosidad,
+                                seleccion->luminosidad))
       return false;
     actual = seleccion;
     filtro_actual = filtro;

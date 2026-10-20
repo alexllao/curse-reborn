@@ -14,6 +14,7 @@ struct DefinicionMarco {
   bool cubrir, reflejar_derecha;
   bool panoramico = false;
   float proporcion = 0;
+  Uint8 luminosidad = 255;
 };
 struct AsignacionMarco {
   const char *pantalla;

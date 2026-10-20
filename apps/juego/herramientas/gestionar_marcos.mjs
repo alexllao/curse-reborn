@@ -136,6 +136,9 @@ export function prepararMarcos(raiz, destino) {
   const destinoCielo = join(destino, 'assets/marcos/cielo_encantado');
   mkdirSync(destinoCielo, { recursive: true });
   const panoramas = JSON.parse(readFileSync(join(cielo, 'catalogo.json'), 'utf8'));
+  const luminosidad = panoramas.luminosidad ?? 1;
+  if (!Number.isFinite(luminosidad) || luminosidad < 0 || luminosidad > 1)
+    throw new Error('Luminosidad panorámica inválida.');
   for (const variante of panoramas.variantes) {
     if (
       !/^[a-z0-9_-]+\.png$/.test(variante.archivo) ||
@@ -155,7 +158,7 @@ export function prepararMarcos(raiz, destino) {
       throw new Error('Resolución o huella panorámica incorrecta.');
     const ruta = `assets/marcos/cielo_encantado/${variante.archivo}`;
     marcos.push(
-      `{"cielo_encantado","Cielo encantado",${JSON.stringify(ruta)},{0,0,0,0,0},{0,0,0,0,0},0.0f,true,false,true,${(variante.proporcion[0] / variante.proporcion[1]).toFixed(6)}f}`,
+      `{"cielo_encantado","Cielo encantado",${JSON.stringify(ruta)},{0,0,0,0,0},{0,0,0,0,0},0.0f,true,false,true,${(variante.proporcion[0] / variante.proporcion[1]).toFixed(6)}f,${Math.round(luminosidad * 255)}}`,
     );
     copyFileSync(join(cielo, variante.archivo), join(destinoCielo, variante.archivo));
     copyFileSync(
