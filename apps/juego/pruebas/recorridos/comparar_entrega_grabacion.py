@@ -1,4 +1,4 @@
-"""Contrasta entrega de106, obtención del pase99 y petición de salida66; CLOUD todavía pendiente."""
+"""Contrasta entrega de106, pase99 y petición de salida66 sin cargar CLOUD."""
 
 import argparse
 import json
@@ -79,6 +79,13 @@ class ComparacionEntregaGrabacion(ComparacionGrabacionCompleta):
         self.hito_borde(d, 'destinatario_con_correo')
         self.ruta_sin_salida(d, 150, 165)
         self.auditar(d, 'destinatario antes de entregar106')
+        # Checkpoint del destinatario alcanzado realmente, antes de variantes aisladas y entrega.
+        nombre = 'destinatario_antes_entrega'
+        (self.destino / f'{nombre}.ds.bin').write_bytes(bytes(d))
+        (self.destino / f'{nombre}.semilla.json').write_text(
+            json.dumps(list(self.semilla_menu)), encoding='utf-8'
+        )
+        self.conservar_contexto(self.destino, nombre)
         self.variantes_entrega(d)
         puntos = palabra(d, 0x35C7)
         self.elegir_objeto(d, (2, 6), 106)

@@ -11,3 +11,11 @@ El recorrido vuelve por58 aPOST, se aproxima850/145 y925/140 e inserta99 con116.
 La acción del pase abre2CD0 y el propio guion solicita66 antes de agotar256 pasos. No añadir otro clic después de esa solicitud ni tratarla como una permanencia enPOST. La prueba se detiene antes de cargarCLOUD38. Resultado:6.286 casos/pasos y cuatro composiciones coincidentes, con DS completo y azar en cada paso real. Las imágenes muestran destinatario con correo, pase recibido, puerta antes del pase y petición66.
 
 **Ya está contrastada la continuidad grabación→correo→entrega→pase→solicitud66 en el núcleo.** La nube38, el interior de la cueva, la combinación100/107 y las demás rutas/puzles del valle todavía no quedan resueltos. Las escenas32–38 siguen fuera del catálogo SDL/F5/F6. No incrementar las32 vistas ni declarar terminado el valle por completar esta rama. Los decorados ampliados siguen aparcados; contador, sonido, marcos y monitor conservados.
+
+## Revisión adicional de consecuencias del21 de octubre
+
+El generador conserva ahora destinatario_antes_entrega con DS, semilla y contexto5800 del punto real ante98, antes de las variantes aisladas y sin otra imagen. La regeneración mantiene6.286 casos/pasos y cuatro composiciones coincidentes, sin cambiar las DS anteriores.
+
+Las alternativas en ese checkpoint, pase_recibido y puerta_antes_del_pase añaden159 observaciones y20.249 pasos coincidentes con el EXE.158 terminan en reposo con menú y una solicita66 al paso25; no se carga CLOUD en esta prueba. Incluye64 ramas CLC después del cierre lógico del menú. Los comandos y límites están en la [auditoría vigente](auditoria_pantallas.md).
+
+Sigue pendiente en la revisión ampliada la continuación de la respuesta a una cinta vacía105 desde una partida real: las864 variantes anteriores contrastan su despacho, pero no sustituyen ese recorrido. Los catálogos y destinos pendientes descritos en las primeras tandas son históricos; consultar el balance actual de la auditoría para la accesibilidad global.

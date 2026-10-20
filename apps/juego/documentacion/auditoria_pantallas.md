@@ -2,7 +2,7 @@
 
 Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue enlaces entre habitaciones, interacciones ofrecidas por el menú, variantes de progreso y capítulos posteriores.
 
-## Revisión integral del 20 de octubre
+## Revisión integral del 20–21 de octubre
 
 Àlex solicita continuar los pendientes y recibir un balance cada hora. Los porcentajes se separan para evitar confundir accesibilidad y revisión de comportamiento:
 
@@ -260,6 +260,24 @@ Total nuevo:225 observaciones,28.800 pasos,100 ramas CLC y799 selecciones, todas
 Reproducción: `pnpm comparar:consecuencias --escenas <34|35> --estado comparacion_grabacion_completa/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json` y logs `consecuencias_grabacion_<referencia>.log`. Los informes genéricos filtrados conservan el último estado de cada escena. Los128 pasos de cada observación y el reposo lógico no constituyen una medición de audio o cadencia; la ruta positiva larga permanece respaldada por la regeneración completa citada.
 
 La cobertura por escenas se mantiene35/73 (47,9%), SDL75/75 y continuidad73/73. No hay cambios del motor ni capturas SDL nuevas. Se comprueban más inventarios y consecuencias en escenas ya contadas, no todas las fases del valle. Siguen pendientes en esta revisión ampliada la entrega105/106 a98 y el pase, otras fases de grabación y REMOTE, el momento previo al envío de la carta, más regresos y capítulos36+. El estado posterior al envío no sustituye todas las condiciones posibles de inserción en el buzón.
+
+### Entrega al destinatario, pase y salida automática66
+
+Se añade `destinatario_antes_entrega`, un checkpoint sin imagen guardado después de acercarse realmente por150/165 y antes de las variantes aisladas. Conserva DS, semilla y contexto5800 desde la partida con grabación106 y correo enviado. No se asignan objetos, puntuación ni fotograma del destinatario para crear ese punto.
+
+`pnpm comparar:entrega-grabacion --muestra` vuelve a coincidir en6.286 casos/pasos,1.522 selecciones, tres estados auditados y cuatro composiciones. Ninguna DS previa cambia de SHA256. Se conservan A8DF–A94F para entregar106 y obtener99 con destinatario en fotograma4, y AC5E–AC8C para usar99 con116. La ruta mantiene las esperas positivas de512 pasos de entrega y hasta256 en la puerta; el guion solicita66 sin consumir el pase ni sumar puntos al abrir.
+
+| Escena | Referencia de comparacion_entrega_grabacion | Observaciones | Pasos | CLC | Selecciones |
+| ------ | ------------------------------------------- | ------------- | ----- | --- | ----------- |
+| 32     | destinatario_antes_entrega                  | 62            | 7.936 | 22  | 179         |
+| 32     | pase_recibido                               | 36            | 4.608 | 20  | 148         |
+| 35     | puerta_antes_del_pase                       | 61            | 7.705 | 22  | 179         |
+
+Total nuevo:159 observaciones,20.249 pasos,64 ramas CLC y506 selecciones coincidentes en DS completo, azar y fase externa del comparador.158 llegan a reposo con menú; la inserción del pase por las casillas0-based2/1/4/0 solicita66 al paso25. El comparador de consecuencias termina en esa petición y no carga CLOUD38. `puerta_solicitud66`, ya emitida por el generador, no se vuelve a contar como otra interacción.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <32|35> --estado comparacion_entrega_grabacion/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_entrega_<referencia>.log`. Los informes filtrados genéricos conservan la última ejecución de cada escena, con los dos estados32 preservados por separado.
+
+La revisión mantiene35/73 (47,9%) con muestras,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No se modifica el motor ni se añaden capturas SDL. Las864 variantes aisladas del generador cubren el despacho de105/106 con varios estados, pero no equivalen a observar una entrega negativa105 desde un recorrido real ni todas sus consecuencias. Queda pendiente esa rama real con cinta vacía y sin correo, más estados del valle y capítulos36+. Una ruta reproducible puede partir de cinta_y_mando de grabacion_completa, pasar por61/57 y acercarse al destinatario conservando105 real; no fabricar105 ni cambiar el fotograma para forzar el rechazo.
 
 ### Límites que siguen abiertos
 
