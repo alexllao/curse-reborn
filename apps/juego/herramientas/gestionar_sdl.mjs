@@ -473,8 +473,17 @@ function configurarComprobacionValle(argumentos) {
         'cementerio_util_170',
         'cementerio_util_173',
         'cementerio_piedra',
+        'cementerio_segundo',
+        'cementerio_ajo',
+        'cementerio_cruz',
+        'cementerio_platillos',
+        'cementerio_util_171',
+        'cementerio_regreso',
+        'cementerio_util_167',
+        'cementerio_puerta',
       ],
-      alcance: 'primer cementerio65 hasta la piedra; nueve imágenes, restauración y rutas reales',
+      alcance:
+        'cementerios65/77, útiles167–173, vampiros, piedra, ajo, cruz, regreso115 y verja; restauración y rutas reales',
     },
     {
       argumento: '--ataud',

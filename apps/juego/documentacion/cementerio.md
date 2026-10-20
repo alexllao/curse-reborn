@@ -1,6 +1,6 @@
 # Los dos cementerios
 
-La vista66 corresponde a65 (GRAVEYD1). La segunda zona77 (GRAVEYD2) tiene núcleo contrastado y su activación SDL continúa en el siguiente bloque. Ambas usan GRAVEYD.SPR y GRAVEYD.SFX según la tabla original784E. La salida113 continúa la excavación del ataúd con el modelo26;114 comunica los dos fondos y115 permite regresar. El destino66 de la verja116 queda para el siguiente bloque.
+Las vistas66 y67 corresponden a las escenas65 (GRAVEYD1) y77 (GRAVEYD2). Ambas usan GRAVEYD.SPR y GRAVEYD.SFX según la tabla original784E. La salida113 continúa la excavación del ataúd con el modelo26;114 comunica los dos fondos y115 permite regresar. El destino66 de la verja116 queda para el siguiente bloque.
 
 ## Encuentros y objetos
 
@@ -32,6 +32,6 @@ Hay atajos que producen una caída y solicitan113 en el original. Se conserva el
 
 GRAVEYD.SPR ocupa112.144 bytes. El comparador sitúa el modelo DOS en9000 para separar los bancos de escena, STD, ratón y menú; verifica los intervalos ordenados por dirección. No normaliza diferencias de los actores.
 
-`pnpm comprobar:cementerio` compara9 capturas SDL del primer fondo, comprueba restauración en memoria y132 cambios F5/F6 de las66 vistas. Los resultados locales quedan en `apps/juego/trabajo/comparacion_cementerio/` y `apps/juego/trabajo/comprobacion_cementerio_sdl/`.
+`pnpm comprobar:cementerio` compara17 capturas SDL, comprueba restauración en memoria y134 cambios F5/F6 de las67 vistas. Los resultados locales quedan en `apps/juego/trabajo/comparacion_cementerio/` y `apps/juego/trabajo/comprobacion_cementerio_sdl/`.
 
 La petición116 se conserva en una instantánea para seguir con el bosque del castillo. Cargar ese destino y resolver las habitaciones finales sigue pendiente. Véase el [recorrido propio](recorridos/29_el_cementerio.txt).

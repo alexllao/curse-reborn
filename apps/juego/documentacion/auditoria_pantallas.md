@@ -49,6 +49,6 @@ Las40 vistasSDL cubren las escenas0–39. La auditoría de las78 tablas deja dos
 
 Las secciones anteriores conservan la historia de ampliaciones; sus recuentos de32 vistas o52 pendiente quedan superados por esta revisión. Las38 capturasSDL añadidas en las ocho salas del valle y80 cambiosF5/F6 están contrastados. Sigue pendiente el capítulo posterior al ventilador, empezando por el regreso aBenn y su probador.
 
-## Estado vigente tras las tumbas del cementerio
+## Estado vigente tras los cementerios
 
-Las66 vistas abarcan0–65. Se añade113 desde64/65. El núcleo de77 y sus vampiros ya está contrastado; falta activar su vista y las conexiones114/115 en SDL en la siguiente entrega. Véase [Cementerios](cementerio.md).
+Las67 vistas abarcan0–65 y77. Se añaden113 desde64/65,114 desde65 y115 desde77. El recorrido persistente contrasta las fases0–6 de los vampiros y solicita116 tras abrir la verja. El destino66 sigue pendiente; no se activa por haber reconocido su salida. Los recuentos anteriores describen entregas históricas. Véase [Cementerios](cementerio.md).
