@@ -33,7 +33,17 @@ class ComparacionFinalCuevas(ComparacionCatapulta):
             (carpeta / f'{nombre}.semilla.json').write_text(
                 json.dumps(list(self.semilla_menu)), encoding='utf-8'
             )
+        self.conservar_contexto(carpeta, nombre)
         self.maquina.ctl_flush_tb()
+
+    # Conserva solo el contexto externo de una referencia, separado del formato DOS de partidas.
+    def conservar_contexto(self, carpeta, nombre):
+        contexto = {'version': 1, 'referencia_modelo': self.referencia_modelo}
+        if hasattr(self, 'fase'):
+            contexto['fase_probador'] = self.fase.value
+        (carpeta / f'{nombre}.contexto.json').write_text(
+            json.dumps(contexto, indent=2) + '\n', encoding='utf-8'
+        )
 
     # Compara el manejador completo, incluidos los fragmentos y todas las escrituras en DS y azar.
     def seleccionar(self, datos, casilla):

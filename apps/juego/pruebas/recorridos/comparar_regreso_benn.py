@@ -29,6 +29,7 @@ class ComparacionRegresoBenn(ComparacionPlataformaValle):
 
     # CS:1BA2 no pertenece al bloque DS y también debe coincidir después de cada paso.
     def paso(self, datos, semilla, direccion=65535):
+        fase_anterior = self.fase.value
         self.maquina.mem_write(0x1BA2, bytes([self.fase.value]))
         self.maquina.ctl_flush_tb()
         salida = super().paso(datos, semilla, direccion)
@@ -36,6 +37,14 @@ class ComparacionRegresoBenn(ComparacionPlataformaValle):
             raise ErrorAnalisis('El regreso al probador altera su fase externa de forma distinta.')
         if getattr(self, 'rastrear_vestido', False):
             self.fotogramas_vestido.add((datos[0x358C], datos[0x2C2C], self.fase.value))
+            # Registra el instante real de cambio de fase, sin inventario ni partículas fabricados.
+            if self.fase.value != fase_anterior:
+                nombre = 'probador_fase_' + str(self.fase.value)
+                (self.destino / f'{nombre}.ds.bin').write_bytes(bytes(datos))
+                (self.destino / f'{nombre}.semilla.json').write_text(
+                    json.dumps(list(semilla)), encoding='utf-8'
+                )
+                self.conservar_contexto(self.destino, nombre)
         return salida
 
     # Continúa la partida real con124, sin asignar79 ni los avances argumentales del vestido.

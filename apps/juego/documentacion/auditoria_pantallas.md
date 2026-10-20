@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 17/73 con menú       | 23,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 18/73 con menú       | 24,7 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16 y17–24. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas1/5/6/7/9/12/14/15/16 y17–25. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -40,7 +40,7 @@ El cubo y las ofertas del pozo permiten acciones con el movimiento bloqueado: el
 
 Resultado ejecutado:551 ramas únicas resultantes de2.786 selecciones,17 estados con semilla real en las escenas1/5/6/7/9/12/14 y70.925 pasos coincidentes.548 ramas llegan al reposo observado y una solicita una salida coincidente; las otras dos conservan la secuencia previa del corredor. El primer informe amplio dejó2FCA señalado por plazo agotado, sin diferencia de DS ni azar; revisado su manejador y el cambio de cursor, se repitieron selectivamente ambas ramas:256 pasos coincidentes. Se conservan el informe amplio y `resultado_filtrado.json`, sin reescribir el resultado histórico. `--estado comparacion_final_cuevas/corredor_izquierda.ds.bin` reproduce esa revisión selectiva. No se ha repetido la tanda amplia después de refinar esta clasificación.
 
-La extensión por `--escenas` admite0–24, salvo2 automática; no admite25 porque requiere conservar además el byte mutable CS:1BA2 del probador. El ámbito no supone que sus escenas se hayan probado. Ejecutadas dos muestras nuevas: `--escenas 15 --estado comparacion_campo/campo_160.ds.bin` contrasta21 ramas/2.688 pasos; `--escenas 16 --estado comparacion_asaltante/asaltante_dinero.ds.bin`,12 ramas/1.536 pasos. Ambas coinciden en DS y azar y terminan en reposo observado. Sus informes `resultado_15_filtrado.json` y `resultado_16_filtrado.json` no sobrescriben el histórico inicial. Son33 ramas nuevas y4.224 pasos, no una revisión completa de las visitas aCOUNTRY1/2.
+La primera extensión por `--escenas` admitía0–24, salvo2 automática. La tanda del probador añade25 con su banco y CS:1BA2 registrados; una referencia25 sin ese contexto se rechaza. El ámbito no supone que sus escenas se hayan probado. Ejecutadas dos muestras nuevas: `--escenas 15 --estado comparacion_campo/campo_160.ds.bin` contrasta21 ramas/2.688 pasos; `--escenas 16 --estado comparacion_asaltante/asaltante_dinero.ds.bin`,12 ramas/1.536 pasos. Ambas coinciden en DS y azar y terminan en reposo observado. Sus informes `resultado_15_filtrado.json` y `resultado_16_filtrado.json` no sobrescriben el histórico inicial. Son33 ramas nuevas y4.224 pasos, no una revisión completa de las visitas aCOUNTRY1/2.
 
 ### Población y respuestas que mantienen el menú abierto
 
@@ -53,6 +53,26 @@ Dos referencias posteriores amplían estados ya existentes: `comparacion_regreso
 Se reproducen con `pnpm comparar:consecuencias --escenas <índice> --estado <carpeta/nombre.ds.bin> --incluir-clc`. Los informes están en `trabajo/auditoria_consecuencias/resultado_<índice>_filtrado_clc.json`; para22/24 se conservaron copias separadas `resultado_<índice>_visita_inicial_clc.json` y `resultado_<índice>_regreso_clc.json` antes de reutilizar el nombre filtrado. Las selecciones de inventario al entrar en una calle no equivalen a agotar todos sus personajes, posiciones o visitas posteriores.
 
 `--solo-clc` permite ampliar las referencias anteriores sin repetir las observaciones STC ya contrastadas. Comprobado selectivamente en fuente17:12 ramas/1.536 pasos, todas CLC y coincidentes. Esta repetición valida el filtro y no aumenta el porcentaje ni se suma a las304 observaciones nuevas. Su informe usa el sufijo `_solo_clc.json`.
+
+### Probador: banco y fase externos de las referencias
+
+Las referencias regeneradas incorporan un archivo propio `.contexto.json`, versión1, con `referencia_modelo` y, cuando el comparador dispone de ella, `fase_probador`. Se registra la fase de la sesión contrastada; no se deduce de DS ni del inventario ni se añade al formato DOS de partidas. Para25 se exige una fase entera válida; se ha verificado el rechazo de contexto ausente y de una fase booleana, así como la conservación de fase1 y banco5800. Las referencias antiguas0–24 sin este archivo conservan el banco inicial compatible5400 y no ejecutan la rutina25.
+
+La auditoría utiliza el puente ya contrastado de `ComparacionRegresoBenn`, con banco explícito y comparación de CS:1BA2 después de cada paso. Cada rama restaura su fase inicial y deduplica incluyendo fase y banco. También comprueba que la selección de menú no modifique ese byte: el puente actual de selección no recibe una fase y detectaría ese contrato pendiente en lugar de darlo por válido.
+
+Se regeneraron `comparar:probador --muestra` (3.025 casos/pasos, dos imágenes) y `comparar:regreso-benn --muestra` (10.109 casos/pasos, siete imágenes). El segundo registra además DS, semilla y contexto en los cambios de fase de la secuencia real del vestido, sin fabricar79 ni generar imágenes nuevas.
+
+| Referencia real de25                              | Ramas STC/CLC | Pasos coincidentes | CLC |
+| ------------------------------------------------- | ------------- | ------------------ | --- |
+| `comparacion_probador/probador_entrada`           | 24            | 3.072              | 12  |
+| `comparacion_regreso_benn/probador_regreso_valle` | 37            | 4.736              | 20  |
+| `comparacion_regreso_benn/probador_vestido_real`  | 30            | 3.840              | 16  |
+
+Total nuevo:91 observaciones de interacción y11.648 pasos, incluidas48 CLC, sin diferencias de DS, azar ni fase externa. Son tres estados de una misma escena; solo aumentan en una la cobertura por escenas. Se reproducen con `pnpm comparar:consecuencias --escenas 25 --estado <referencia.ds.bin> --incluir-clc`. Los informes separados son `resultado_25_visita_inicial_clc.json`, `resultado_25_probador_regreso_valle_clc.json` y `resultado_25_probador_vestido_real_clc.json`; el nombre filtrado genérico conserva el último ejecutado.
+
+`--reanudar` exige una referencia explícita y continúa su secuencia sin abrir ni elegir menús. Probado con `--escenas 25 --estado comparacion_regreso_benn/probador_fase_1.ds.bin --reanudar`: fase real1, menú bloqueado, banco5800;128 pasos idénticos al EXE y llegada a reposo con fase0. Es una prueba de reanudación, no una interacción adicional ni un nuevo estado de guardado DOS. Informe `resultado_25_filtrado_reanudar.json`. No se afirma que los SAV originales conserven CS. La regresión selectiva anterior del corredor sigue coincidiendo:dos selecciones STC/256 pasos; no se ha repetido la tanda amplia del inicio.
+
+Esta ampliación compara el núcleo y el contexto de las referencias; no añade capturas SDL ni agota todos los verbos, inventarios o visitas posibles. El ámbito del comando sigue limitado a0–25 salvo2; los capítulos siguientes se incorporarán con referencias completas.
 
 ### Límites que siguen abiertos
 

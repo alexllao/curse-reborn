@@ -10,7 +10,7 @@ CS:1BA2 se almacena explícitamente fuera del segmento DS, mediante RecursosEnti
 
 La recogida del vestido79 sigue563A–5679 y5CAF–5CF3, incluido rechazo por inventario lleno. Llevar79 despacha3CDF/430F, rechaza fuera del probador y prepara sus canales, retirada de inventario y puntuación. Las demoras se calculan desde AL de886B; no son tiempos fijos añadidos por SDL.
 
-## Comprobación y límites
+## Comprobación y límites de la integración inicial
 
 `pnpm comparar:probador --muestra` contrasta DS completo, generador, decisiones y CS:1BA2 con las instrucciones del EXE. Parte de la entrada real de Benn de comparar:tiendas, camina hasta CHANGE, espera y regresa. Audita los menús ofrecidos en dos estados y compara sus dos composiciones.
 
@@ -25,3 +25,7 @@ La visita temprana no fabrica la oferta de Benn, el vestido ni las condiciones d
 ## Continuación posterior al valle
 
 El vestido ya se obtiene en la misma partida que vuelve con el ventilador124: pagar aBenn, recoger79, entrar36, vestir y solicitar74. La comparación nueva distingue este recorrido de las variantes aisladas preparadas anteriormente. Incluye10.109 casos/pasos nativos, siete composiciones y seis capturasSDL con guardar/restaurar. No carga la sala43 ni aumenta las40 vistas. Alcance detallado en [regreso aBenn](regreso_benn.md).
+
+## Revisión integral posterior
+
+El catálogo actual ya incluye75 escenas reales y el desenlace; los destinos pendientes citados arriba describen la integración histórica. La revisión adicional contrasta91 observaciones STC/CLC en tres estados reales de25,11.648 pasos y el banco y CS:1BA2 externos. Se registra el contexto propio de cada referencia y se comprueba también continuar128 pasos desde una fase1 real de la animación hasta fase0/reposo. No modifica el formato CURSE.SAV. El [alcance de la auditoría](auditoria_pantallas.md) detalla comandos, informes y límites: estas muestras no agotan todas las interacciones.
