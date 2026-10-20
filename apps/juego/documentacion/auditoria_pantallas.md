@@ -242,6 +242,25 @@ Total nuevo:180 observaciones,23.040 pasos,75 ramas CLC y638 selecciones. Todas 
 
 No hay diferencias nuevas detectadas ni cambios de puzles. Se profundiza en escenas ya incluidas: la cobertura mantiene35/73 (47,9%), SDL75/75 y continuidad73/73. Las combinaciones y respuestas ofrecidas en estos cuatro estados no agotan todas las posiciones, fases o inventarios; el checkpoint ante el monstruo no sustituye otros accesos a DINO ni las fases posteriores de grabación, mando o buzón. Próximo: estados significativos de grabación y REMOTE, más regresos, capítulos36+ y restantes hitos de EDGE.
 
+### Consecuencias de grabación, combinaciones de correo y REMOTE tras el estornudo
+
+Se regeneró `pnpm comparar:grabacion-completa --muestra`:13.171 casos/pasos,1.260 selecciones, seis estados auditados y ocho composiciones coincidentes. Las ocho referencias conservan ahora contexto5800 real; ninguna DS previa de la carpeta cambia de SHA256. La partida conserva el mando108 recogido en REMOTE desde59 después del estornudo, la cinta105, la grabación106, sello109 y carta111, sin concederlos desde otra rama. La espera de768 pasos tras empujar el mando y la secuencia de256 del envío continúan contrastadas en ese recorrido completo.
+
+Los contratos AB60–ABD2,ABD5–AC5B,AA6C–AAA0 yAAA3–AB5D conservan las pruebas firmadas, consumos, oferta de la grabación, puntuación y campos ajenos del EXE. La revisión adicional observa las opciones ofrecidas en cuatro estados:
+
+| Escena | Referencia de comparacion_grabacion_completa | Observaciones | Pasos | CLC | Selecciones |
+| ------ | -------------------------------------------- | ------------- | ----- | --- | ----------- |
+| 34     | mando_recogido                               | 42            | 5.376 | 24  | 182         |
+| 35     | cinta_insertada                              | 72            | 9.216 | 26  | 218         |
+| 35     | grabacion_y_carta                            | 50            | 6.400 | 28  | 220         |
+| 35     | grabacion_y_correo_enviado                   | 61            | 7.808 | 22  | 179         |
+
+Total nuevo:225 observaciones,28.800 pasos,100 ramas CLC y799 selecciones, todas en reposo con menú y coincidentes en DS completo, azar y fase externa del comparador. El informe de cinta_insertada incluye Empujar108 desde inventario por las casillas0-based2/2/0/5. El de grabacion_y_carta contiene Combinar109→111 y111→109 por2/7/3/0/6 y2/7/6/0/3. Las respuestas negativas y los otros verbos ofrecidos se observan restaurando la referencia y el azar entre ramas; no se acumulan sobre la solución principal.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <34|35> --estado comparacion_grabacion_completa/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json` y logs `consecuencias_grabacion_<referencia>.log`. Los informes genéricos filtrados conservan el último estado de cada escena. Los128 pasos de cada observación y el reposo lógico no constituyen una medición de audio o cadencia; la ruta positiva larga permanece respaldada por la regeneración completa citada.
+
+La cobertura por escenas se mantiene35/73 (47,9%), SDL75/75 y continuidad73/73. No hay cambios del motor ni capturas SDL nuevas. Se comprueban más inventarios y consecuencias en escenas ya contadas, no todas las fases del valle. Siguen pendientes en esta revisión ampliada la entrega105/106 a98 y el pase, otras fases de grabación y REMOTE, el momento previo al envío de la carta, más regresos y capítulos36+. El estado posterior al envío no sustituye todas las condiciones posibles de inserción en el buzón.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
