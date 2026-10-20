@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 28/73 con menú       | 38,4 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 31/73 con menú       | 42,5 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–28 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–31 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -166,6 +166,26 @@ Total:115 observaciones,14.921 pasos y50 ramas CLC, con389 selecciones de despac
 Dos referencias tenían el menú bloqueado y se comprobaron mediante `--reanudar`, sin contar nuevas selecciones: `comparacion_tiendas/adivina_respuesta` recupera reposo a los137 pasos; `comparacion_calles/posadero` solicita salida50 a los16 pasos. Son153 pasos adicionales coincidentes; el comparador no carga el destino de esa petición. Informes `resultado_26_adivina_respuesta_reanudar.json` y `resultado_28_posadero_reanudar.json`; logs `trabajo/consecuencias_tiendas_<referencia>.log`.
 
 Se añaden tres escenas al indicador:28/73 (38,4%). Estas muestras no agotan las cinco respuestas de la adivina con progresos posteriores ni todos los inventarios y posiciones de la posada. No hay capturas SDL nuevas:75/75 accesibles y continuidad73/73 siguen con el alcance anterior. Próximo bloque: referencias completas y bancos de29–31, además de estados tardíos pendientes.
+
+### Frank, primera roca de EDGE y saludo del loro
+
+El ámbito del comando se amplía hasta31 y sigue exigiendo contexto registrado para25–31. Se regeneraron tres recorridos originales: `pnpm comparar:poblacion --muestra` (8.855 casos/pasos,1.084 selecciones,12 composiciones), `pnpm comparar:recorrido-borde --muestra` (1.142 casos/pasos y seis composiciones) y `pnpm comparar:loro --muestra` (1.484 casos/pasos,442 selecciones y seis composiciones). Ninguna DS previa de sus carpetas cambia de SHA256; solo los hitos realmente emitidos por cada generador reciben contexto nuevo. No se atribuye contexto a las pruebas exploratorias antiguas de EDGE.
+
+Los bancos conservados son5400 para FRANKS29 y5800 para SMALL en EDGE30 y WISE31. El comparador verifica que los recursos no se solapen y mantengan sus bytes originales. CS:17A3 no añade rutina específica en29/31;30 ejecutaC093–C4DB. Se conservan los contratos35FB–3617 del saludo a Frank,41DA–420C del pago,419E–41D7 del consumo y361A–3727 del saludo del loro. La guía local confirma el orden del trayecto; las condiciones y resultados se contrastan con el EXE.
+
+| Escena | Referencia                                | Observaciones STC/CLC | Pasos | CLC |
+| ------ | ----------------------------------------- | --------------------- | ----- | --- |
+| 29     | comparacion_poblacion/poblacion_frank     | 25                    | 3.200 | 12  |
+| 29     | comparacion_poblacion/poblacion_comida    | 53                    | 6.784 | 18  |
+| 29     | comparacion_poblacion/poblacion_consumida | 42                    | 5.376 | 14  |
+| 30     | comparacion_recorrido_borde/borde_roca    | 41                    | 5.248 | 14  |
+| 31     | comparacion_loro/loro_entrada             | 25                    | 3.201 | 12  |
+
+Total:186 observaciones,23.809 pasos,70 ramas CLC y554 selecciones de despacho, sin diferencias de DS completo, azar ni fase externa.185 observaciones terminan en reposo con menú; el saludo del loro solicita salida73 al paso129. El comparador de consecuencias no carga ese destino. Además, `comparacion_loro/loro_saludo_64` se reanuda sin seleccionar menú y solicita73 después de65 pasos coincidentes; se registra aparte, sin contarlo como nueva interacción. Total con esa reanudación:23.874 pasos.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <29|30|31> --estado <referencia.ds.bin> --incluir-clc`; para la secuencia ya iniciada, `--escenas 31 --estado comparacion_loro/loro_saludo_64.ds.bin --reanudar`. Informes locales `resultado_<escena>_<referencia>_clc.json` y `resultado_31_loro_saludo_64_reanudar.json`; logs `consecuencias_franks_edge_<referencia>.log`. Las guardas de ámbito rechazan32 y2;25–31 rechazan contexto ausente, y se comprueba la lectura de5400/5800 sin sumar casos jugables.
+
+La cobertura por muestras pasa a31/73 (42,5%), escenas0–31 salvo2. No se han encontrado diferencias en esta tanda ni se acredita que estén agotados todos sus estados. En particular, esta muestra de EDGE es la aproximación a la primera roca; falta extender consecuencias a los demás puzles y al rescate con sus contextos reales. También quedan visitas posteriores al loro y más inventarios. SDL75/75 y continuidad73/73 no cambian; no hay nuevas capturas SDL. Siguiente: regenerar contextos de los hitos persistentes de `comparar:acciones-borde`, comprobar sus consecuencias y avanzar32+ por bloques.
 
 ### Límites que siguen abiertos
 
