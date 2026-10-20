@@ -446,7 +446,7 @@ static bool dibujar_bios(SDL_Renderer *dibujante, const SDL_FRect &juego, Uint64
     if (tiempo >= 5000)
       bien = bien && linea(10, "C:\\CURSE>CURSE");
     if (tiempo >= 5500)
-      bien = bien && linea(13, "Cargando Curse of Enchantia...");
+      bien = bien && linea(13, "Cargando Curse of Enchantia Reborn...");
     if (tiempo >= 6100)
       bien = bien && linea(15, "Preparando graficos y datos del juego...");
     if ((tiempo / 350) % 2 == 0)
