@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las72 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las73 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -77,6 +77,8 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 69    | 67         | La verja del castillo             | GATE     |
 | 70    | 68         | El puente del castillo            | CASTLENT |
 | 71    | 69         | El vestíbulo del castillo         | CASTHALL |
+| 72    | 70         | El estudio del castillo           | STUDY    |
+| 73    | 71         | La biblioteca del castillo        | LIBRARY  |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -165,3 +167,7 @@ Catálogo71 vistas:0–69 y77. Entrada119 y dos escaleras hasta120/122; STUDY70 
 ## Estudio del castillo integrado
 
 Catálogo72 vistas:0–70 y77. Entrada120, anillo175, regreso121 y segunda visita contrastados. Núcleo2.193 casos/pasos,72 variantes de recogida y seis composiciones. Biblioteca71 sigue pendiente. Véase [Estudio](estudio_castillo.md).
+
+## Biblioteca del castillo integrada
+
+Catálogo73 vistas:0–71 y77. Entrada122, regreso123 y libro176 hasta solicitar124. Núcleo6.524 casos/pasos,48 variantes y ocho composiciones. Batalla72 y desenlace73 pendientes. Véase [Biblioteca](biblioteca_castillo.md).

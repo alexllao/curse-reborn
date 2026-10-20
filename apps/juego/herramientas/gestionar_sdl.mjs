@@ -458,6 +458,25 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--biblioteca-castillo',
+      nombre: 'biblioteca_castillo',
+      referencia: 'biblioteca_castillo',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'biblioteca_entrada',
+        'biblioteca_control',
+        'biblioteca_regreso',
+        'biblioteca_segunda_visita',
+        'biblioteca_libro',
+        'biblioteca_examinada',
+        'biblioteca_abriendo',
+        'biblioteca_abierta',
+      ],
+      alcance:
+        'entrada122, regreso123, anillo conservado y pasadizo176; restauración y rutas reales',
+    },
+    {
       argumento: '--estudio-castillo',
       nombre: 'estudio_castillo',
       referencia: 'estudio_castillo',
@@ -993,6 +1012,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--puente-castillo',
       '--vestibulo-castillo',
       '--estudio-castillo',
+      '--biblioteca-castillo',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

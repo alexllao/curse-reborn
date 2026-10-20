@@ -72,3 +72,7 @@ Catálogo71 vistas:0–69 y77. Entrada119 y dos escaleras hasta120/122; STUDY70 
 ## Estudio del castillo integrado
 
 Catálogo72 vistas:0–70 y77. Entrada120, anillo175, regreso121 y segunda visita contrastados. Núcleo2.193 casos/pasos,72 variantes de recogida y seis composiciones. Biblioteca71 sigue pendiente. Véase [Estudio](estudio_castillo.md).
+
+## Biblioteca del castillo integrada
+
+Catálogo73 vistas:0–71 y77. Entrada122, regreso123 y libro176 hasta solicitar124. Núcleo6.524 casos/pasos,48 variantes y ocho composiciones. Batalla72 y desenlace73 pendientes. Véase [Biblioteca](biblioteca_castillo.md).

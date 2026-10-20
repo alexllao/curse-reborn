@@ -6,7 +6,13 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 72 vistas SDL
+## Estado vigente: 20 de octubre, 73 vistas SDL
+
+LIBRARY71 integrada desde122 con regreso123 y pasadizo176 según48B0–4924. Segundo actor debe estar en187 global, Y>=132 con signo añade nodo intermedio; conserva campos auxiliares, no consume ni suma puntos. Núcleo6.524 casos/pasos,48 variantes incluidas en853 selecciones, ocho imágenes y cuatro auditorías; SDL ocho capturas idénticas, restauración y146 cambiosF5/F6. CMake también coincide64.000 píxeles en biblioteca abierta. Catálogo0–71 y77. Continuar desde trabajo/comparacion_biblioteca_castillo/biblioteca_solicitud124 (DS/semilla reales, anillo175). Solo faltan batalla72 y desenlace73. Investigación orientativa sin validar en trabajo/pendientes_final72.txt. Rutina72 CS20CD–2549; aspiradora171, extintor164, ventilador124 y anillo175 con bruja177: leer y comprobar contratos. No dar por jugables esos dos destinos por cargar datos.
+
+El menú Examinar176 deja CLC/3B4F y permanece abierto. La prueba SDL lo cierra con clic derecho antes de avanzar o comprobar guardado; el fallo inicial de píxel0 era comparar el menú abierto con una partida restaurada sin menú, no una diferencia de escena ni un cambio necesario del motor. Documentación biblioteca_castillo.md, recorrido35. Mantener decorados aparcados, marcos/monitor, organización y un commit por sala comprobada.
+
+## Estado anterior: 20 de octubre, 72 vistas SDL
 
 STUDY70 integrado desde120 con regreso121 y segunda visita; anillo175 según6141/633F/61A7, OR1 en53AD, capacidad/iconos, modelo20 y baja persistente conservados. Núcleo2.193 casos/pasos,72 variantes incluidas en766 selecciones, seis imágenes y cuatro auditorías. SDL seis capturas idénticas, restauración y144 cambiosF5/F6. Catálogo0–70 y77. Continuar desde trabajo/comparacion_estudio_castillo/estudio_vestibulo (DS/semilla de69 con anillo) haciaLIBRARY71 por122. Ruta derecha270,190 /280,170 /300,150. Faltan71–73; no confundir vistas con final completo. Documentación estudio_castillo.md, recorrido34. Decorados aparcados, marcos/monitor conservados.
 

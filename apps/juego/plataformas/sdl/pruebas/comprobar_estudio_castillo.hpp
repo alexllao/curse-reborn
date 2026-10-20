@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_biblioteca_castillo.hpp"
 
 // 6141/633F/61A7: recoge175 por el menú real, regresa121 y comprueba la segunda visita120.
 template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
@@ -34,6 +35,8 @@ bool comprobar_estudio_castillo_sdl(Mazmorra &p, const std::string &opcion, Avan
     return false;
   if (detener("regreso"))
     return true;
+  if (opcion.find("_biblioteca_") != std::string::npos)
+    return comprobar_biblioteca_castillo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
   if (!p.mover_a(48, 126))
     return false;
   for (unsigned int i = 0; i < 192 && p.escena_actual() == 69; ++i)

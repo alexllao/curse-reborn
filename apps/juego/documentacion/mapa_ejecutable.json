@@ -3,6 +3,12 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:48B0",
+      "nombre": "Libro de la biblioteca y pasadizo",
+      "comentario": "48B0–4924: Empujar176 exige segundo actor en187 global; nodo intermedio si Y>=132 con signo, canales2B24/2B34 y auxiliares conservando campos no escritos.48 variantes, regreso123 y solicitud124 contrastados.",
+      "traslado": "apps/juego/motor/acciones/biblioteca.hpp"
+    },
+    {
       "direccion": "0000:6141",
       "nombre": "Anillo del estudio",
       "comentario": "6141–6153/633F/61A7–61F1: recoger175, OR1 en53AD, capacidad e iconos comunes, baja persistente y recogida alta según modelo20.72 variantes, regreso121 y segunda visita120 contrastados.",
