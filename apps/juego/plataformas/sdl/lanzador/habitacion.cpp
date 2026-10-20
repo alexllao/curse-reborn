@@ -424,7 +424,7 @@ static bool dibujar_bios(SDL_Renderer *dibujante, const SDL_FRect &juego, Uint64
            linea(1, "AMI   American Megatrends") && linea(3, "Curse Reborn - 80386 DX / 33 MHz") &&
            linea(4, "Adaptador VGA detectado - 256 KB");
     if (tiempo >= 400) {
-      const auto memoria = std::min<Uint64>(4096, (tiempo - 400) * 4096 / 1800);
+      const auto memoria = std::min<Uint64>(4096, (tiempo - 400) * 4096 / 3200);
       bien = bien &&
              SDL_RenderDebugTextFormat(dibujante, x + 8, y + 56, "Comprobando memoria: %4u KB%s",
                                        unsigned(memoria), memoria == 4096 ? " OK" : "");
