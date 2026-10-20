@@ -3,7 +3,7 @@
 #include <string>
 #include <SDL3/SDL.h>
 #include <vector>
-#include "audio.hpp"
+#include "audio/audio.hpp"
 #include "../../motor/aleatorio/generador.hpp"
 #include "../../motor/video/imagen.hpp"
 

@@ -20,27 +20,27 @@
 #include "mazmorra.hpp"
 #include "introduccion.hpp"
 #include "registro.hpp"
-#include "filtros.hpp"
-#include "contador_fps.hpp"
-#include "avisos_hud.hpp"
-#include "comprobar_avisos_hud.hpp"
+#include "video/filtros.hpp"
+#include "interfaz/contador_fps.hpp"
+#include "interfaz/avisos_hud.hpp"
+#include "pruebas/comprobar_avisos_hud.hpp"
 #include "tiempo_juego.hpp"
-#include "comprobar_tiempo.hpp"
+#include "pruebas/comprobar_tiempo.hpp"
 #include "vistas.hpp"
-#include "comprobar_cuevas.hpp"
-#include "comprobar_catapulta.hpp"
-#include "comprobar_final_cuevas.hpp"
-#include "comprobar_campo.hpp"
-#include "comprobar_asaltante.hpp"
-#include "comprobar_poblacion.hpp"
-#include "partidas.hpp"
-#include "comprobar_partidas.hpp"
-#include "marcos.hpp"
-#include "habitacion.hpp"
-#include "banner_lanzador.hpp"
-#include "sonidos_pc.hpp"
-#include "decorados.hpp"
-#include "cursor.hpp"
+#include "pruebas/comprobar_cuevas.hpp"
+#include "pruebas/comprobar_catapulta.hpp"
+#include "pruebas/comprobar_final_cuevas.hpp"
+#include "pruebas/comprobar_campo.hpp"
+#include "pruebas/comprobar_asaltante.hpp"
+#include "pruebas/comprobar_poblacion.hpp"
+#include "interfaz/partidas.hpp"
+#include "pruebas/comprobar_partidas.hpp"
+#include "video/marcos.hpp"
+#include "lanzador/habitacion.hpp"
+#include "lanzador/banner_lanzador.hpp"
+#include "lanzador/sonidos_pc.hpp"
+#include "video/decorados.hpp"
+#include "video/cursor.hpp"
 
 namespace {
 // Límite de presentación independiente del reloj lógico y de los temporizadores de audio.
@@ -505,7 +505,7 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
   return rgba;
 }
 
-#include "comprobar_habitacion.hpp"
+#include "pruebas/comprobar_habitacion.hpp"
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {

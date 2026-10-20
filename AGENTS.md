@@ -1,5 +1,9 @@
 # Instrucciones de trabajo
 
+## Preferencia permanente de organización
+
+Àlex pide mantener las carpetas ordenadas: agrupar los archivos en carpetas y subcarpetas por función siempre que su cantidad lo justifique. Priorizar nombres claros y pocas entradas en cada nivel; al añadir nuevas fuentes o pruebas, colocarlas directamente en su grupo. Conservar este criterio también en futuras ampliaciones del repositorio.
+
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
 ## Estado vigente: 20 de octubre,65 vistasSDL
@@ -647,3 +651,7 @@ Hay trabajo local del cementerio65/77 sin publicar ni acreditar como sala termin
 pnpm ventana es selecciona castellano; en y ausencia de argumento conservan inglés. Solo cadenas escritas con FONT.SPR: cuatro fichas DOS, rótulos cargar/guardar/borrar/editor y ranura vacía (nueve bloques), más ficha del port. No traducir textos dibujados ni letreros gráficos. Conservar nombres de autores, puntuación y formato CURSE.SAV. La capa SDL dibuja traducciones sin modificar DS vivo ni recursos comerciales; tildes/Ñ propias. Selector bonito dentro de la habitación aplazado. Diez capturas SDL y comprobación de ambos idiomas, cinco fichas/seis paneles, nombres y teclado conservados; cuarenta casos originales ingleses siguen coincidiendo. Calidad193C++/82Python correcta. No supone avance adicional de salas.
 
 Àlex exige agrupar los numerosos ficheros de SDL y de pruebas en subcarpetas claras. Preparada reorganización después de cerrar idiomas. Mantener las órdenes pnpm y ambas compilaciones; no mover trabajo ni datos originales ni añadir carpetas generales a raíz.
+
+Actualización20/10: idioma publicado en e741d52. Reorganización vigente: plataformas/sdl/{audio,interfaz,lanzador,video,pruebas}; raíz SDL conserva arranque, introducción, adaptador, vistas, registro y tiempo. Comparadores en pruebas/{motor,recorridos,audio,video}; pruebas/ejecutar.py conserva importaciones compartidas y órdenes pnpm. No volver a acumular comprobar_*.hpp en raíz SDL ni comparadores en raíz de pruebas. Actualizados Node, CMake, includes y referencias del mapa; documentación en ambos README locales.
+
+Cementerio sigue local sin publicar y sin nuevas vistas SDL. Comparador ahora en apps/juego/pruebas/recorridos/comparar_cementerio.py. Además de la investigación anterior, pasan196 variantes de acciones/recogidas y480 variantes de rutina; piedra172 llega a fase3. Ruta real114 entra a77 antes de comer170: fase4; Atacar173 y Atacar169 llegan a fases5/6 y recuperan control, con estado y azar contrastados. Comer170 aún en65 produce bloqueo también en el EXE: no usar esa ruta equivocada. Falta recoger171, retorno115, gate116 y SDL; no hay resultado.json final ni sala acreditada. Notas en trabajo/pendientes_cementerio.txt. Mantener este trabajo separado del commit de organización.

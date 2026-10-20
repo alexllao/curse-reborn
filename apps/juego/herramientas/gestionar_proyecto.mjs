@@ -137,7 +137,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   ejecutar(compilador, [
     ...opciones,
     ...obtenerFuentesMotor(raiz),
-    join(raiz, 'apps/juego/pruebas', 'puente_tabla.cpp'),
+    join(raiz, 'apps/juego/pruebas/motor', 'puente_tabla.cpp'),
     '-o',
     biblioteca,
   ]);
@@ -222,7 +222,9 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
   }[tipo];
   for (const comparador of Array.isArray(comparadores) ? comparadores : [comparadores]) {
     ejecutar(pythonLocal, [
-      join(raiz, tipo === 'titulo' ? 'apps/juego/herramientas' : 'apps/juego/pruebas', comparador),
+      ...(tipo === 'titulo'
+        ? [join(raiz, 'apps/juego/herramientas', comparador)]
+        : [join(raiz, 'apps/juego/pruebas', 'ejecutar.py'), comparador]),
       '--biblioteca',
       biblioteca,
       ...opcionesComparacion,
@@ -396,7 +398,8 @@ try {
     case 'comprobar':
       comprobarEntorno();
       ejecutar(pythonLocal, [
-        join(raiz, 'apps/juego/pruebas', 'comprobar_analisis.py'),
+        join(raiz, 'apps/juego/pruebas', 'ejecutar.py'),
+        'comprobar_analisis.py',
         ...argumentos,
       ]);
       break;
@@ -427,7 +430,10 @@ try {
     case 'comprobar:mt32':
       compararAcciones('musica_rs', argumentos);
       await gestionarSdl('comprobar:mt32', []);
-      ejecutar(pythonLocal, [join(raiz, 'apps/juego/pruebas', 'comparar_sintesis_mt32.py')]);
+      ejecutar(pythonLocal, [
+        join(raiz, 'apps/juego/pruebas', 'ejecutar.py'),
+        'comparar_sintesis_mt32.py',
+      ]);
       break;
     case 'exportar:musica':
       await gestionarSdl('exportar:musica', argumentos);

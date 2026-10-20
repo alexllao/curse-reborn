@@ -1,5 +1,6 @@
 /** Formato de C++ y comprobaciones Python sobre el código propio. */
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { migrarTrabajoLocal } from './rutas_proyecto.mjs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -62,7 +63,7 @@ try {
       true,
     )
       .split('\0')
-      .filter((archivo) => /\.(cpp|hpp)$/.test(archivo));
+      .filter((archivo) => /\.(cpp|hpp)$/.test(archivo) && existsSync(join(raiz, archivo)));
     console.log(
       `${escribir ? 'Aplicando' : 'Comprobando'} el formato de ${archivos.length} archivos C++…`,
     );

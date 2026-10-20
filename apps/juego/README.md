@@ -8,6 +8,8 @@ La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar 
 
 **[Consultar todas las teclas y controles](documentacion/controles.md)**: juego, volumen, sonido, cambios de pantalla y depuración.
 
+Textos: `pnpm ventana es` para castellano; `pnpm ventana en` o `pnpm ventana` para inglés. Véase [Idiomas](documentacion/idiomas.md). Las fuentes de [SDL](plataformas/sdl/README.md) y las [pruebas](pruebas/README.md) están agrupadas por función.
+
 ## El proyecto que queremos construir
 
 El trabajo se plantea en dos etapas:

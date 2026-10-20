@@ -8,7 +8,7 @@
 #include "../../motor/estado/partidas.hpp"
 #include "registro.hpp"
 #include "vistas.hpp"
-#include "creditos_port.hpp"
+#include "interfaz/creditos_port.hpp"
 #include "../../motor/estado/paso_escena.hpp"
 #include "../../motor/movimiento/geometria.hpp"
 #include "../../motor/movimiento/planificar.hpp"

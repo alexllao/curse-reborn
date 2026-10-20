@@ -6,4 +6,4 @@ Las fuentes seleccionadas se conservan sin modificar. OPL requiere también sus 
 
 La licencia BSD de tres cláusulas está en `LICENSE`; se copia como `LICENCIA_YMFM.txt` junto al ejecutable. Se mantienen sus atribuciones. Esta dependencia no asigna una licencia al resto del proyecto.
 
-Los adaptadores están en `plataformas/sdl/opl2.cpp` y `ymfm_*.cpp`. Los parámetros opcionales no usados de la fuente externa se excluyen de avisos; el código propio conserva sus revisiones. La comparación de bloques y reloj no acredita identidad acústica con una tarjeta física.
+Los adaptadores están en `plataformas/sdl/audio/opl2.cpp` y `ymfm_*.cpp`. Los parámetros opcionales no usados de la fuente externa se excluyen de avisos; el código propio conserva sus revisiones. La comparación de bloques y reloj no acredita identidad acústica con una tarjeta física.

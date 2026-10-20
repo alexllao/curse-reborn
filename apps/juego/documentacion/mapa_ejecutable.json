@@ -1788,7 +1788,7 @@
       "direccion": "0000:7D5D",
       "nombre": "Petición de parada musical",
       "comentario": "Activa DS:9955. La siguiente petición de pista envía 00 FC; al recibir FC se ejecuta la parada MPU 05 desde DS:995B. No contiene rampa de volumen.",
-      "traslado": "apps/juego/plataformas/sdl/musica_mt32.cpp"
+      "traslado": "apps/juego/plataformas/sdl/audio/musica_mt32.cpp"
     },
     {
       "direccion": "0000:7E3B",
@@ -1804,7 +1804,7 @@
     {
       "direccion": "0000:4FD1",
       "nombre": "Carga del banco digital de escena",
-      "comentario": "El tercer campo del registro de ocho bytes DS:784E contiene el nombre SFX o cero. Traslado: apps/juego/motor/sonido/digital.cpp y apps/juego/plataformas/sdl/audio.cpp."
+      "comentario": "El tercer campo del registro de ocho bytes DS:784E contiene el nombre SFX o cero. Traslado: apps/juego/motor/sonido/digital.cpp y apps/juego/plataformas/sdl/audio/audio.cpp."
     },
     {
       "direccion": "0000:7FB3",

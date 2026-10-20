@@ -4,7 +4,7 @@ F11 permite comparar la imagen original con suavizado, líneas de escaneo, CRT s
 
 ## Implementación
 
-`apps/juego/plataformas/sdl/escaladores_pixel.hpp` contiene implementaciones propias RGB de las reglas de escalado. xBRZ 2x compara luminancia y crominancia en una vecindad 5 × 5, distingue diagonales dominantes y pendientes, y mezcla subpíxeles según su cobertura. 2xSaI usa una vecindad 4 × 4, coincidencias de diagonales y promedios por componente de ocho bits. Los bordes prolongan el último píxel válido. Las dos salidas son RGBA opacas de 640 × 400.
+`apps/juego/plataformas/sdl/video/escaladores_pixel.hpp` contiene implementaciones propias RGB de las reglas de escalado. xBRZ 2x compara luminancia y crominancia en una vecindad 5 × 5, distingue diagonales dominantes y pendientes, y mezcla subpíxeles según su cobertura. 2xSaI usa una vecindad 4 × 4, coincidencias de diagonales y promedios por componente de ocho bits. Los bordes prolongan el último píxel válido. Las dos salidas son RGBA opacas de 640 × 400.
 
 Se atribuyen los algoritmos xBRZ a Zenju y 2xSaI a Derek Liauw Kie Fa. Las referencias técnicas consultadas son [xBRZ](https://github.com/atheros/xbrzscale), la [variante 2x de Libretro](https://github.com/libretro/slang-shaders/blob/master/edge-smoothing/xbrz/shaders/2xbrz.slang) y las [reglas 2xSaI conservadas en Snes9x](https://github.com/snes9xgit/snes9x/blob/master/filter/2xsai.cpp). Sus implementaciones tienen sus propias licencias; no se incorpora su código ni se asigna una licencia al proyecto. Esta implementación RGB no se presenta como una reproducción binaria de esas bibliotecas ni de sus versiones RGB565.
 
