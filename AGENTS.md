@@ -1,5 +1,7 @@
 # Instrucciones de trabajo
 
+Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
+
 ## Estado vigente: 20 de octubre,65 vistasSDL
 
 CatálogoSDL0–64,65 vistas. Guardia63 resuelto con extintor y regreso111 a Benn; el recorrido real vuelve al mago y el tercer pago solicita112 directamente desdeMAGE22. Ataúd64/modelo25: recoger165 y Atacar165 excavan y solicitan113. Núcleo ataúd5155 casos/pasos,30 variantes, seis imágenes y tres auditorías. SDL seis imágenes idénticas, restauración y130 cambiosF5/F6. Calidad190C++/81Python. Cementerio65/77 y castillo/final siguen pendientes; no confundir65 vistas con juego completo. Publicar cada sala comprobada. Decorados ampliados aparcados, conservar monitor/marcos/sonido/contador, sin cambios de foco ni logo en habitación.
@@ -639,3 +641,9 @@ Vista65, escena64 GRAVE.MAP/SPR, sinSFXpropio; entrada112/modelo25. Tercer pago4
 Àlex pide Port por Àlex Llaó, versión y fecha de compilación en la última ficha. Se añaden créditos_port.hpp y una quinta ficha SDL al final, preservando las cuatro DOS. Versión de apps/juego/package.json incorporada por Node/CMake; **DATE** real se presentaDD/MM/AAAA. FONT.SPR con tildes À/Ó y separadores propios; placa centrada y consulta sin modificar partida/perfil. comprobar:informacion:40 casos originales y cinco fichas SDL, cierre/avance y conservación; revisión visual de quinta correcta. Monograma CR propio dorado/azul enSVG/PNG/ICO(16/24/32/48/64/128/256) en packages/assets/lanzador/icono. Recurso PE incrustado mediantellvm-rc, SDL_SetWindowIcon al crear ventana. Validada extracción de icono del EXE y CMake con entornoVS/WindowsSDK. Logo web más detallado queda para después. No poner crédito en banner ni habitación sin nueva petición: la indicación final del usuario fue última ficha de Información.
 
 Hay trabajo local del cementerio65/77 sin publicar ni acreditar como sala terminada. Revisar git status y apps/juego/trabajo/pendientes_cementerio.txt antes de retomar. No mezclar sus cambios con el commit de créditos/icono. Las65 vistas publicadas siguen acabando en el ataúd64; primera sala exterior65 solo está en investigación y comparación nativa.
+
+## Idiomas y organización solicitados por Àlex
+
+pnpm ventana es selecciona castellano; en y ausencia de argumento conservan inglés. Solo cadenas escritas con FONT.SPR: cuatro fichas DOS, rótulos cargar/guardar/borrar/editor y ranura vacía (nueve bloques), más ficha del port. No traducir textos dibujados ni letreros gráficos. Conservar nombres de autores, puntuación y formato CURSE.SAV. La capa SDL dibuja traducciones sin modificar DS vivo ni recursos comerciales; tildes/Ñ propias. Selector bonito dentro de la habitación aplazado. Diez capturas SDL y comprobación de ambos idiomas, cinco fichas/seis paneles, nombres y teclado conservados; cuarenta casos originales ingleses siguen coincidiendo. Calidad193C++/82Python correcta. No supone avance adicional de salas.
+
+Àlex exige agrupar los numerosos ficheros de SDL y de pruebas en subcarpetas claras. Preparada reorganización después de cerrar idiomas. Mantener las órdenes pnpm y ambas compilaciones; no mover trabajo ni datos originales ni añadir carpetas generales a raíz.

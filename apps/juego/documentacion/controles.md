@@ -1,5 +1,7 @@
 # Teclas y controles
 
+Idioma de los textos escritos: `pnpm ventana es` para castellano y `pnpm ventana en` para inglés; sin argumento arranca en inglés. No cambia letreros gráficos ni partidas. Véase [Idiomas](idiomas.md).
+
 Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añade aquí. Las asignaciones actuales podrán reorganizarse durante el desarrollo.
 
 ## Sonido

@@ -852,6 +852,14 @@ function configurarComprobacionValle(argumentos) {
 }
 
 export async function gestionarSdl(accion, argumentos) {
+  const idiomas = argumentos.filter((valor) => valor === 'es' || valor === 'en');
+  if (
+    idiomas.length > 1 ||
+    (idiomas.length && !['ventana', 'comprobar:informacion'].includes(accion))
+  )
+    throw new Error('Indica un solo idioma: en o es.');
+  const idioma = idiomas[0] ?? 'en';
+  argumentos = argumentos.filter((valor) => valor !== 'es' && valor !== 'en');
   const sinSonido =
     accion === 'ventana' && argumentos.length === 1 && argumentos[0] === '--sin-sonido';
   const comprobarCalles =
@@ -1254,9 +1262,15 @@ export async function gestionarSdl(accion, argumentos) {
   }
   if (accion === 'ventana') {
     console.log(
-      'Habitación inicial: pulsa el botón del PC para encender. Una vez cargado el juego, pulsa la pantalla o el botón del monitor para acercarlo. Ctrl+R vuelve a la habitación y Ctrl+H cambia de diseño. F5/F6 recorren las vistas de desarrollo; M silencia/reactiva el sonido. Consulta apps/juego/documentacion/controles.md para las demás opciones.',
+      'Habitación inicial: pulsa el botón del PC para encender. Una vez cargado el juego, pulsa el botón del monitor para acercarlo; dentro de la pantalla puedes jugar en pequeño. Ctrl+R vuelve a la habitación y Ctrl+H cambia de diseño. F5/F6 recorren las vistas de desarrollo; M silencia/reactiva el sonido. Consulta apps/juego/documentacion/controles.md para las demás opciones.',
     );
-    ejecutar(programa, [datos, ...(sinSonido ? ['--sin-sonido'] : [])], process.env, false, false);
+    ejecutar(
+      programa,
+      [datos, idioma, ...(sinSonido ? ['--sin-sonido'] : [])],
+      process.env,
+      false,
+      false,
+    );
     return;
   }
   if (accion === 'comprobar:caida') {
@@ -2049,12 +2063,12 @@ export async function gestionarSdl(accion, argumentos) {
       join(raiz, 'apps/juego/herramientas', 'gestionar_proyecto.mjs'),
       'comparar:informacion',
     ]);
-    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_informacion_sdl');
+    const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_informacion_sdl', idioma);
     mkdirSync(carpeta, { recursive: true });
     for (let pagina = 0; pagina < 5; ++pagina) {
       const registro = ejecutar(
         programa,
-        [datos, `--comprobar-info-${pagina}`, join(carpeta, `pagina_${pagina + 1}.bmp`)],
+        [datos, `--comprobar-info-${pagina}`, join(carpeta, `pagina_${pagina + 1}.bmp`), idioma],
         {
           ...process.env,
           SDL_RENDER_DRIVER: 'software',

@@ -510,6 +510,21 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
   configurar_consola();
+  // El idioma pertenece a la interfaz; las opciones de comprobación y el estado DOS se conservan.
+  bool idioma_elegido = false;
+  for (int i = 2; i < argc; ++i) {
+    const std::string argumento = argv[i];
+    if (argumento != "en" && argumento != "es")
+      continue;
+    if (idioma_elegido)
+      return fallo("Indica un solo idioma: en o es");
+    idioma_elegido = true;
+    idioma_interfaz = argumento == "es" ? IdiomaInterfaz::castellano : IdiomaInterfaz::ingles;
+    for (int j = i; j < argc; ++j)
+      argv[j] = argv[j + 1];
+    --argc;
+    --i;
+  }
   if (argc != 2 && argc != 3 && argc != 4 && argc != 5) {
     std::fprintf(
         stderr,

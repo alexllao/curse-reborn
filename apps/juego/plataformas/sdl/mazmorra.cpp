@@ -278,6 +278,11 @@ bool Mazmorra::dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &i
   if (!motor::componer_informacion(datos, fuente.data(), static_cast<unsigned int>(fuente.size()),
                                    pagina, imagen.indices, x, y, ancho, alto))
     return false;
+  if (idioma_interfaz == IdiomaInterfaz::castellano &&
+      !componer_informacion_castellano(datos, fuente.data(),
+                                       static_cast<unsigned int>(fuente.size()), pagina,
+                                       imagen.indices, x, y, ancho, alto))
+    return false;
   placa = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(ancho),
            static_cast<float>(alto)};
   return true;
@@ -291,7 +296,14 @@ bool Mazmorra::dibujar_panel_partidas(unsigned int modo, const std::vector<unsig
   imagen = fondo;
   for (auto &indice : imagen.indices)
     indice = fondo_transparente;
-  if (!motor::componer_panel_partidas(datos, fuente.data(),
+  std::array<unsigned char, 65536> traduccion{};
+  const unsigned char *textos = datos;
+  if (idioma_interfaz == IdiomaInterfaz::castellano) {
+    std::copy(std::begin(datos), std::end(datos), traduccion.begin());
+    traducir_panel_partidas(traduccion);
+    textos = traduccion.data();
+  }
+  if (!motor::componer_panel_partidas(textos, fuente.data(),
                                       static_cast<unsigned int>(fuente.size()), archivo.data(),
                                       static_cast<unsigned int>(archivo.size()), modo, editando,
                                       reinterpret_cast<const unsigned char *>(nombre.data()),

@@ -96,7 +96,8 @@ void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana) {
     seleccionar(0);
   }
   if (modo == 4)
-    registrar_accion("Información: página 1 de 4; clic o Intro avanza, Escape vuelve");
+    registrar_accion("Información: página 1 de %u; clic o Intro avanza, Escape vuelve",
+                     paginas_informacion);
 }
 // Devuelve la entrada al juego sin propagar la pulsación al personaje.
 void PartidasSDL::cerrar(SDL_Window *ventana) {
