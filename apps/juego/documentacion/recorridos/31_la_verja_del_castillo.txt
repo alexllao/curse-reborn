@@ -1,0 +1,7 @@
+LA VERJA DEL CASTILLO
+
+Acércate a la verja y selecciona Usar, Empujar/tirar sobre ella. Deja terminar la animación de apertura y continúa hacia la derecha, por el camino que conduce al puente.
+
+No necesitas gastar objetos del inventario. Conserva la aspiradora, el extintor y el ventilador para el interior del castillo.
+
+Recorrido propio basado en la guía de Sophie Cheshire (2003) y contrastado con CURSE.EXE hasta solicitar118. El puente y el interior son los siguientes bloques.

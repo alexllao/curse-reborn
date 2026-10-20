@@ -41,7 +41,7 @@ bool actualizar_rutina_escena(unsigned char *datos) {
     return actualizar_ramas_valle(datos);
   // CS17A3: los tres corredores y las seis habitaciones laterales tienen manejador nulo.
   if ((escena >= 47 && escena <= 55) || (escena >= 59 && escena <= 62) || escena == 64 ||
-      escena == 66)
+      escena == 66 || escena == 67)
     return true;
   if (escena == 46) {
     // CFA9–CFD1: detiene la puerta de los dados al recortar sus límites verticales.

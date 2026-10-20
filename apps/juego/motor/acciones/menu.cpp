@@ -7,6 +7,7 @@
 #include "palacio.hpp"
 #include "cementerio.hpp"
 #include "bosque.hpp"
+#include "verja.hpp"
 #include "borde.hpp"
 #include "lago.hpp"
 #include "poza.hpp"
@@ -111,6 +112,8 @@ ResultadoMenu ejecutar_interaccion_inicial(unsigned char *d, unsigned short mane
     return ejecutar_interaccion_cuevas(d, manejador, id, sonido);
   if (palabra(d, 0x8082) == 66)
     return ejecutar_interaccion_bosque(d, manejador, id, sonido);
+  if (palabra(d, 0x8082) == 67)
+    return ejecutar_interaccion_verja(d, manejador, id, sonido);
   if ((palabra(d, 0x8082) >= 64 && palabra(d, 0x8082) <= 65) || palabra(d, 0x8082) == 77)
     return ejecutar_interaccion_cementerio(d, manejador, id, sonido, creacion);
   if (palabra(d, 0x8082) >= 46 && palabra(d, 0x8082) <= 63)
@@ -420,6 +423,8 @@ ResultadoMenu seleccionar_menu(unsigned char *d, unsigned short casilla,
     const auto escena = palabra(d, 0x8082);
     if (escena == 66)
       return ejecutar_interaccion_bosque(d, 0x3b53, objeto, sonido);
+    if (escena == 67)
+      return ejecutar_interaccion_verja(d, 0x3b53, objeto, sonido);
     if (escena == 64 || escena == 65 || escena == 77)
       return ejecutar_interaccion_cementerio(d, 0x3b53, objeto, sonido, creacion);
     if (escena >= 46 && escena <= 63)

@@ -141,5 +141,5 @@ bool comprobar_cementerio_sdl(Mazmorra &p, const std::string &opcion, Avanzar av
   for (unsigned int i = 0; i < 192 && p.escena_actual() == 77; ++i)
     if (!avanzar(1))
       return false;
-  return comprobar_bosque_sdl(p, opcion, avanzar);
+  return comprobar_bosque_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

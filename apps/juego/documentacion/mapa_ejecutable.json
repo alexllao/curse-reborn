@@ -3,6 +3,12 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:4838",
+      "nombre": "Apertura de la verja del castillo",
+      "comentario": "4838–48AF: Empujar174, destino180−cámara/171, tres canales pendientes y cuatro auxiliares conservando campos no escritos,+5/886B. Entrada117, apertura real y salida118 contrastadas con12 variantes.",
+      "traslado": "apps/juego/motor/acciones/verja.hpp"
+    },
+    {
       "direccion": "0000:313E",
       "nombre": "Respuestas comunes del bosque",
       "comentario": "COPSE66 no tiene rutina en CS17A3. Entrada116 y ambos senderos117 contrastados;313E/32D9/3B4F conservan rechazo o consulta de los cinco objetos de la partida real.",

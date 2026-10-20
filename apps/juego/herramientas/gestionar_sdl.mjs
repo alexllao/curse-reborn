@@ -458,6 +458,15 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--verja',
+      nombre: 'verja',
+      referencia: 'verja',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: ['verja_entrada', 'verja_control', 'verja_cerrada', 'verja_abriendo', 'verja_abierta'],
+      alcance: 'entrada117, apertura174, canales originales y restauración',
+    },
+    {
       argumento: '--bosque',
       nombre: 'bosque',
       referencia: 'bosque',
@@ -941,6 +950,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--ataud',
       '--cementerio',
       '--bosque',
+      '--verja',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

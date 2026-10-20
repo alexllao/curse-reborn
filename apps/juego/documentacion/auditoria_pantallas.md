@@ -56,3 +56,7 @@ Las67 vistas abarcan0–65 y77. Se añaden113 desde64/65,114 desde65 y115 desde7
 ## Bosque del castillo integrado
 
 Catálogo68 vistas:0–66 y77. Entrada116 desde77, ambos senderos deCOPSE66 hasta117; destino67 pendiente. Native1.797 casos/pasos,296 selecciones en dos estados y tres composiciones. Véase [Bosque](bosque.md).
+
+## Verja del castillo integrada
+
+Catálogo69 vistas:0–67 y77. Entrada117 desde66, apertura174 y recorrido hasta118; CASTLENT68 pendiente. Núcleo2.954 casos/pasos,12 variantes y cinco composiciones. Véase [Verja](verja.md).

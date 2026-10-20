@@ -6,7 +6,11 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 68 vistas SDL
+## Estado vigente: 20 de octubre, 69 vistas SDL
+
+Verja67 integrada desde117, GATE.MAP/SPR y FINAL.SFX; CS17A3[67]=0. Empujar174 según4838–48AF: cuatro auxiliares preservando campos no escritos,+5/886B. Núcleo2.954 casos/pasos,12 variantes,cinco imágenes,tres auditorías; SDL cinco imágenes idénticas, restauración y138 cambiosF5/F6. Catálogo0–67 y77. CASTLENT68 y escenas69–73 pendientes. Seguir desde trabajo/comparacion_verja/verja_solicitud118 (DS/semilla reales). Documentación verja.md, recorrido31_la_verja_del_castillo.txt. Publicar cada sala comprobada; conservar marcos/monitor y decorados ampliados aparcados.
+
+## Estado anterior: 20 de octubre, 68 vistas SDL
 
 Bosque66 integrado desde116, COPSE.MAP/SPR y FINAL.SFX; CS17A3[66]=0. Ambos senderos superiores contrastados hasta solicitar117, sin alterar BOXDET. Núcleo1.797 casos/pasos,296 selecciones en dos estados y tres composiciones. SDL tres capturas idénticas, restauración y136 cambiosF5/F6. Catálogo0–66 y77. Verja67 y escenas68–73 pendientes; seguir desde trabajo/comparacion_bosque/bosque_solicitud117, DS/semilla reales. No presentar vistas como puzles completos ni reactivar decorados ampliados. Documentación bosque.md, recorrido30_el_bosque.txt. Mantener archivos agrupados por función.
 
