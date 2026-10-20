@@ -1,0 +1,3 @@
+Desvíos del palacio (escenas59–62)
+
+Después de la mano, las puertas pueden conducir a varias salas. Los pasillos de desvío devuelven a la sala de la mano, que continúa libre. Buscar la sala con la caja de cerillas y recogerla: se obtiene también una cerilla. Conservar ambas. Volver al paso de la puerta izquierda; con la caja permite solicitar107 hacia el guardia. Sin la caja ese mismo paso conduce a otro desvío. No se modifica el azar para elegir camino. El enfrentamiento del guardia sigue pendiente.

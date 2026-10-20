@@ -166,3 +166,5 @@ La vista57 añade La sala del láser (escena56, ICEROOM), entrada90, cuatro refl
 La vista58 añade [El trono de la reina del hielo](reina_hielo.md): Saltar sobre la reina160 esquiva sus proyectiles; los golpes y la recuperación siguen el original. `pnpm comprobar:reina-hielo` verifica once imágenes, restauración y116 cambiosF5/F6. Salida104 contrastada en el núcleo; destino58 pendiente.
 
 Vista59: La sala de la mano, escena58. Ponerse el aceite144 después de quedar atrapado conserva el menú original. Siete capturas y118 cambiosF5/F6 comprobados; véase [el alcance](mano_palacio.md).
+
+Vistas60–63: El paso del guardia, La sala de las dos puertas, El desvío central y La sala de las cerillas. Los caminos conservan el azar original; Recoger161 añade la caja y una cerilla cuando hay capacidad. Trece capturas y126 cambiosF5/F6 contrastados. [Alcance](laberinto_palacio.md).

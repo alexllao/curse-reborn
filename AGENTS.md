@@ -1,8 +1,8 @@
 # Instrucciones de trabajo
 
-## Estado vigente: 20 de octubre,59 vistasSDL
+## Estado vigente: 20 de octubre,63 vistasSDL
 
-CatálogoSDL0–58,59 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina y mano hasta solicitar105. Calidad185 C++/78 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino59 de105 y capítulo siguiente aún faltan;59 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
+CatálogoSDL0–62,63 vistas en ordenF5/F6 (nombres en vistas.hpp). La continuación real recorre nieve, lago helado, carámbanos, dados, los seis laterales, poleas/ventana, láser y reina y mano, cuatro desvíos y cerillas hasta solicitar107. Calidad186 C++/79 Python. Cada habitación se publica por separado. Leer las últimas secciones para contratos, resultados y pendientes: destino63 de107 y capítulo siguiente aún faltan;63 vistas no significa juego acabado. Decorados ampliados aparcados; preservar monitor/marcos/sonido/contador. Los recuentos anteriores se conservan como historia.
 
 ## Última ampliación: calles e interiores de la población
 
@@ -621,3 +621,7 @@ Vista58, escena57 ICEQUEEN/ICEPAL.SFX, entrada103 desde56. D114–D36B: tres can
 ## Sala de la mano
 
 Vista59, escena58 ICEROOM/ICEPAL.SFX, entrada104 desde57. D36C–D41B captura al avanzar con y<=130, mano en actividad3 y control; preserva descriptor4D94, canales y profundidad. BD00–BD70 Ponerse144 solo con modelo23/cuadro29, consume aceite, tres canales auxiliares y +5. Sin comprobación adicional de inventario: el EXE ignora el resultado de retirada. comparar:mano-palacio585casos/pasos,48variantes de rutina y36 de aceite, siete imágenes y tres auditorías. comprobar:mano-palacio siete capturas, restauración y118 cambiosF5/F6. Salida105 hacia escena59 comprobada; destino aún pendiente. No modificar habitaciones del lanzador ni añadir el logo descartado.
+
+## Cuatro desvíos del palacio
+
+Vistas60–63, escenas59–62, todas ICEROOM/ICEPAL.SFX y manejador CS17A3 nulo.27BA–27F1:105/106 aleatorio desde58,107 desde59 exige caja161 o se vuelve108 a61,108 desde60 escoge108/109 hacia61/62 y110 vuelve a58. La mano permanece retirada. Caja161 en62 añade162 por62C9 y usa recogida60B2/615C, x+5/y+alto−2, sin forzar capacidad extra. comparar:laberinto-palacio3073casos/pasos,36variantes de recogida y128inventarios, trece imágenes y ocho auditorías; veinte puertas reales sin forzar semillas. SDL trece capturas, restauración y126 cambiosF5/F6. Guardia63/destino107 pendiente. Publicar cada sala por separado; los cuatro accesos comparten comprobación del recorrido relacionado.

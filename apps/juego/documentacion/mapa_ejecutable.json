@@ -1838,6 +1838,24 @@
       "nombre": "Aceite144 para liberarse de la mano",
       "comentario": "BD00–BD70: Ponerse144 solo modelo23/cuadro29, retirada sin comprobar resultado, tres canales auxiliares y +5.36 variantes contrastadas.",
       "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:60B2",
+      "nombre": "Recogida de caja de cerillas161",
+      "comentario": "60B2–60C5/615C: caja161 en entidad2C4C, x+5/y+alto−2;36 variantes y128 inventarios contrastados.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:62C9",
+      "nombre": "Cerilla adicional al recoger la caja",
+      "comentario": "62C9–62CE inserta162 sin forzar capacidad; se conserva el resultado del servicio88D9.",
+      "traslado": "apps/juego/motor/acciones/palacio.cpp"
+    },
+    {
+      "direccion": "0000:27BA",
+      "nombre": "Puertas de los desvíos del palacio",
+      "comentario": "27BA–27F1: azar105/106 y108/109,107 solo con caja161. Cuatro salas59–62 y veinte puertas recorridas con azar original.",
+      "traslado": "apps/juego/motor/movimiento/geometria.cpp"
     }
   ],
   "tablas": [
