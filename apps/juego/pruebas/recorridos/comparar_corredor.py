@@ -36,6 +36,7 @@ BANCOS_ESCENA = {
     67: 'GATE',
     68: 'CASTLENT',
     69: 'CASTHALL',
+    70: 'STUDY',
     77: 'GRAVEYD2',
     42: 'SNOWAST3',
     41: 'SNOWAST2',

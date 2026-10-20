@@ -12,7 +12,9 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
   // Accesos nativos contrastados del valle y WISE; los demás destinos tardíos siguen detenidos.
-  if (salida == 119                    ? palabra(d, 0x8082) != 68
+  if (salida == 121                    ? palabra(d, 0x8082) != 70
+      : salida == 120                  ? palabra(d, 0x8082) != 69
+      : salida == 119                  ? palabra(d, 0x8082) != 68
       : salida == 118                  ? palabra(d, 0x8082) != 67
       : salida == 117                  ? palabra(d, 0x8082) != 66
       : salida == 116                  ? palabra(d, 0x8082) != 77

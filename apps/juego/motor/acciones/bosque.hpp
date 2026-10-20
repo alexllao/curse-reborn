@@ -10,7 +10,8 @@ inline ResultadoMenu ejecutar_interaccion_bosque(unsigned char *d, unsigned shor
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
                                                                             : ResultadoMenu::error;
-  if (id != 76 && id != 124 && id != 164 && id != 167 && id != 171)
+  if (id != 76 && id != 124 && id != 164 && id != 167 && id != 171 &&
+      !(id == 175 && palabra(d, 0x8082) == 69))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;

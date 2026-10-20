@@ -1,0 +1,7 @@
+EL ESTUDIO DEL CASTILLO
+
+Entra por la escalera izquierda del vestíbulo. Acércate al anillo que está bajo la ventana y recógelo. Vuelve al vestíbulo por el acceso del lado derecho del estudio.
+
+Conserva el anillo: hará falta al final. Si regresas al estudio después de recogerlo, ya no debe aparecer en su lugar anterior.
+
+Recorrido propio basado en la guía de Sophie Cheshire (2003), contrastado con CURSE.EXE en la recogida175, regreso121 y segunda entrada120.

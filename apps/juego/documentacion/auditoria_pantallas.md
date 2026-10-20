@@ -68,3 +68,7 @@ Catálogo70 vistas:0–68 y77. Entrada118 desde67 y derrumbe automático hasta11
 ## Vestíbulo del castillo integrado
 
 Catálogo71 vistas:0–69 y77. Entrada119 y dos escaleras hasta120/122; STUDY70 yLIBRARY71 pendientes. Núcleo1.911 casos/pasos,444 selecciones y cuatro composiciones. Véase [Vestíbulo](vestibulo_castillo.md).
+
+## Estudio del castillo integrado
+
+Catálogo72 vistas:0–70 y77. Entrada120, anillo175, regreso121 y segunda visita contrastados. Núcleo2.193 casos/pasos,72 variantes de recogida y seis composiciones. Biblioteca71 sigue pendiente. Véase [Estudio](estudio_castillo.md).

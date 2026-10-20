@@ -6,7 +6,11 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 71 vistas SDL
+## Estado vigente: 20 de octubre, 72 vistas SDL
+
+STUDY70 integrado desde120 con regreso121 y segunda visita; anillo175 según6141/633F/61A7, OR1 en53AD, capacidad/iconos, modelo20 y baja persistente conservados. Núcleo2.193 casos/pasos,72 variantes incluidas en766 selecciones, seis imágenes y cuatro auditorías. SDL seis capturas idénticas, restauración y144 cambiosF5/F6. Catálogo0–70 y77. Continuar desde trabajo/comparacion_estudio_castillo/estudio_vestibulo (DS/semilla de69 con anillo) haciaLIBRARY71 por122. Ruta derecha270,190 /280,170 /300,150. Faltan71–73; no confundir vistas con final completo. Documentación estudio_castillo.md, recorrido34. Decorados aparcados, marcos/monitor conservados.
+
+## Estado anterior: 20 de octubre, 71 vistas SDL
 
 CASTHALL69 integrado desde119, FINAL.SFX, CS17A3[69]=0. Dos escaleras contrastadas hasta120 haciaSTUDY70 y122 haciaLIBRARY71; no cargar esos destinos hasta contrastarlos. Núcleo1.911 casos/pasos,444 selecciones en tres auditorías y cuatro imágenes; SDL cuatro capturas idénticas, restauración y142 cambiosF5/F6. Catálogo0–69 y77. Continuar desde trabajo/comparacion_vestibulo_castillo/vestibulo_solicitud120 o122 (DS/semilla reales). Ruta derecha270,190 /280,170 /300,150 rodea la pendiente; no cambiar BOXDET. Zona central tipo3/id11 conservada; no se afirman todas sus caídas comprobadas. Documentación vestibulo_castillo.md, recorrido33. Quedan70–73. Mantener decorados aparcados, marcos/monitor y carpetas ordenadas.
 

@@ -3,8 +3,9 @@
 #include "comprobar_vestibulo_castillo.hpp"
 
 // 84E7/8503/851E: conserva los mismos pasos de entrada y derrumbe que el EXE.
-template <typename Avanzar>
-bool comprobar_puente_castillo_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar) {
+template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
+bool comprobar_puente_castillo_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar,
+                                   Abrir abrir, Elegir elegir, Objeto objeto) {
   const auto detener = [&](const std::string &hito) {
     return opcion == "--comprobar-final-poblacion-borde_valle_puente_castillo_" + hito;
   };
@@ -22,5 +23,5 @@ bool comprobar_puente_castillo_sdl(Mazmorra &p, const std::string &opcion, Avanz
   }
   if (!avanzar(5))
     return false;
-  return comprobar_vestibulo_castillo_sdl(p, opcion, avanzar);
+  return comprobar_vestibulo_castillo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

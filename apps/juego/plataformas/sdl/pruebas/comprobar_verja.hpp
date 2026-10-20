@@ -51,5 +51,5 @@ bool comprobar_verja_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar
     if (p.escena_actual() != 67)
       break;
   }
-  return comprobar_puente_castillo_sdl(p, opcion, avanzar);
+  return comprobar_puente_castillo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }
