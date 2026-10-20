@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 25/73 con menú       | 34,2 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 28/73 con menú       | 38,4 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–25 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–28 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -147,6 +147,25 @@ Total nuevo:240 observaciones,30.720 pasos y87 ramas CLC, todas reposo con menú
 Los informes se preservan como `resultado_<escena>_<referencia>_clc.json` en `trabajo/auditoria_consecuencias/`, además de los nombres genéricos filtrados. Los logs locales son `consecuencias_inicio_<referencia>.log`. No se modifican ni publican las instantáneas comerciales.
 
 Las siete escenas no estaban incluidas en el indicador adicional: este pasa de18/73 a25/73 (34,2%). La franja0–25 dispone ahora de muestras de consecuencias salvo la caída automática2, pero no se acreditan todos sus estados. El regreso de la mazmorra no sustituye todas las condiciones de su inicio, y un estado de cada tramo no agota variantes de inventario ni visitas posteriores. No se han añadido capturas SDL en esta ampliación; siguen75/75 salas accesibles y73/73 escenas con continuación tras cargar dentro del alcance descrito.
+
+### Consecuencias de la adivina, la segunda casa y la posada
+
+Se amplía el ámbito del comando hasta28, conservando la exclusión de2 y la exigencia de contexto registrado para25–28. Las referencias emplean el banco real5400; no se deduce desde el inventario. El puente común contrasta DS completo y azar, y comprueba que CS:1BA2 no cambie. La fase externa del probador solo se exige explícita para25.
+
+Se regeneró `pnpm comparar:tiendas --muestra`:7.261 casos/pasos,681 selecciones y ocho composiciones coincidentes, con contexto y semilla guardados por el recorrido real. La posada usa las referencias de `comparacion_calles` regeneradas en la tanda anterior. El contraste original conserva35DC–35F8 para el saludo,420F–430C para las respuestas al oro según35C9 y541C–547F para el posadero; no se han modificado condiciones del motor.
+
+| Escena | Referencia                         | Observaciones STC/CLC | Pasos | CLC |
+| ------ | ---------------------------------- | --------------------- | ----- | --- |
+| 26     | comparacion_tiendas/tienda_38      | 25                    | 3.200 | 12  |
+| 26     | comparacion_tiendas/adivina_saludo | 42                    | 5.577 | 14  |
+| 27     | comparacion_tiendas/tienda_39      | 24                    | 3.072 | 12  |
+| 28     | comparacion_calles/calle_41        | 24                    | 3.072 | 12  |
+
+Total:115 observaciones,14.921 pasos y50 ramas CLC, con389 selecciones de despacho. Todas terminan en reposo con menú habilitado y coinciden con el EXE. Reproducción: `pnpm comparar:consecuencias --escenas <26|27|28> --estado <referencia.ds.bin> --incluir-clc`. Informes separados `resultado_<escena>_<referencia>_clc.json` en `trabajo/auditoria_consecuencias`; los nombres genéricos filtrados conservan el último estado de cada escena.
+
+Dos referencias tenían el menú bloqueado y se comprobaron mediante `--reanudar`, sin contar nuevas selecciones: `comparacion_tiendas/adivina_respuesta` recupera reposo a los137 pasos; `comparacion_calles/posadero` solicita salida50 a los16 pasos. Son153 pasos adicionales coincidentes; el comparador no carga el destino de esa petición. Informes `resultado_26_adivina_respuesta_reanudar.json` y `resultado_28_posadero_reanudar.json`; logs `trabajo/consecuencias_tiendas_<referencia>.log`.
+
+Se añaden tres escenas al indicador:28/73 (38,4%). Estas muestras no agotan las cinco respuestas de la adivina con progresos posteriores ni todos los inventarios y posiciones de la posada. No hay capturas SDL nuevas:75/75 accesibles y continuidad73/73 siguen con el alcance anterior. Próximo bloque: referencias completas y bancos de29–31, además de estados tardíos pendientes.
 
 ### Límites que siguen abiertos
 
