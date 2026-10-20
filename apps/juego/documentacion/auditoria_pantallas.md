@@ -93,6 +93,21 @@ Se revisó además `corredor_izquierda.ds.bin` de escena1 con el mismo filtro:24
 
 Las cuatro escenas ya estaban incluidas entre las18/73 con muestras, por lo que el porcentaje se mantiene en24,7%. No hay nuevas capturas ni nuevas salas SDL en esta tanda. Siguen pendientes más estados iniciales, referencias antiguas sin semilla real y capítulos posteriores al ámbito0–25 del comando.
 
+### Pozo y cubo: otros cuatro estados CLC
+
+Ampliación separada sin repetir las cuatro referencias anteriores:
+
+| Referencia real en `comparacion_final_cuevas/` | Escena | Ramas CLC | Pasos coincidentes |
+| ---------------------------------------------- | ------ | --------- | ------------------ |
+| `final_casco_suelo.ds.bin`                     | 9      | 20        | 2.560              |
+| `final_ofertas_pozo.ds.bin`                    | 9      | 24        | 3.072              |
+| `final_cubo.ds.bin`                            | 12     | 22        | 2.816              |
+| `final_dentro_cubo.ds.bin`                     | 12     | 22        | 2.816              |
+
+Son88 observaciones nuevas y11.264 pasos: todas llegan al reposo con menú habilitado y coinciden con el EXE en DS completo, azar y fase externa. El segundo estado del cubo permite menú con movimiento bloqueado; la prueba conserva esa condición real. Los informes separados son `resultado_9_final_casco_suelo_solo_clc.json`, `resultado_9_final_ofertas_pozo_solo_clc.json`, `resultado_12_final_cubo_solo_clc.json` y `resultado_12_final_dentro_cubo_solo_clc.json`. Se reproducen con el mismo comando anterior cambiando referencia e índice; no se fabrican objetos ni semillas.
+
+Estas dos escenas ya estaban incluidas en18/73. La ampliación añade estados comprobados, no nuevas salas ni un porcentaje global de fidelidad. Quedan otros estados iniciales y los capítulos posteriores pendientes del contraste explícito de bancos y fases.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
