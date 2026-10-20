@@ -12,60 +12,64 @@ bool preparar_transicion_escena(unsigned char *d, unsigned short salida,
                                          16, 25, 17, 17, 17, 17, 18, 18, 18, 19, 24, 19, 20,
                                          20, 20, 21, 21, 21, 22, 23, 24, 22, 26, 27, 28, 29};
   // Accesos nativos contrastados del valle y WISE; los demás destinos tardíos siguen detenidos.
-  if (salida == 104   ? palabra(d, 0x8082) != 57
-      : salida == 103 ? palabra(d, 0x8082) != 56
-      : salida == 90  ? palabra(d, 0x8082) != 49
-      : salida == 95  ? palabra(d, 0x8082) != 48
-      : salida == 96  ? palabra(d, 0x8082) != 52
-      : salida == 97  ? palabra(d, 0x8082) != 48
-      : salida == 98  ? palabra(d, 0x8082) != 53
-      : salida == 99  ? palabra(d, 0x8082) != 49
-      : salida == 100 ? palabra(d, 0x8082) != 54
-      : salida == 101 ? palabra(d, 0x8082) != 49
-      : salida == 102 ? palabra(d, 0x8082) != 55
-      : salida == 91  ? palabra(d, 0x8082) != 47
-      : salida == 92  ? palabra(d, 0x8082) != 50
-      : salida == 93  ? palabra(d, 0x8082) != 47
-      : salida == 94  ? palabra(d, 0x8082) != 51
-      : salida == 84  ? palabra(d, 0x8082) != 46
-      : salida == 85  ? palabra(d, 0x8082) != 47
-      : salida == 86  ? palabra(d, 0x8082) != 47
-      : salida == 87  ? palabra(d, 0x8082) != 48
-      : salida == 88  ? palabra(d, 0x8082) != 48
-      : salida == 89  ? palabra(d, 0x8082) != 49
-      : salida == 83  ? palabra(d, 0x8082) != 45
-      : salida == 82  ? palabra(d, 0x8082) != 44
-      : salida == 81  ? palabra(d, 0x8082) != 40
-      : salida == 78  ? palabra(d, 0x8082) != 42
-      : salida == 77  ? palabra(d, 0x8082) != 41
-      : salida == 76  ? palabra(d, 0x8082) != 41
-      : salida == 75  ? palabra(d, 0x8082) != 40
-      : salida == 80  ? palabra(d, 0x8082) != 43
-      : salida == 79  ? palabra(d, 0x8082) != 42
-      : salida == 74  ? palabra(d, 0x8082) != 25
-      : salida == 70  ? palabra(d, 0x8082) != 33
-      : salida == 68  ? palabra(d, 0x8082) != 32
-      : salida == 69  ? palabra(d, 0x8082) != 39
-      : salida == 53  ? palabra(d, 0x8082) != 32
-      : salida == 63  ? palabra(d, 0x8082) != 36
-      : salida == 62  ? palabra(d, 0x8082) != 33
-      : salida == 64  ? palabra(d, 0x8082) != 32
-      : salida == 65  ? palabra(d, 0x8082) != 37
-      : salida == 67  ? palabra(d, 0x8082) != 38
-      : salida == 66  ? palabra(d, 0x8082) != 35
-      : salida == 59  ? palabra(d, 0x8082) != 32
-      : salida == 54  ? palabra(d, 0x8082) != 33
-      : salida == 57  ? palabra(d, 0x8082) != 35
-      : salida == 58  ? palabra(d, 0x8082) != 32
-      : salida == 60  ? palabra(d, 0x8082) != 35
-      : salida == 56  ? palabra(d, 0x8082) != 34
-      : salida == 55  ? palabra(d, 0x8082) != 33
-      : salida == 61  ? palabra(d, 0x8082) != 33
-      : salida == 71  ? (palabra(d, 0x8082) != 35 && palabra(d, 0x8082) != 32)
-      : salida == 52  ? (palabra(d, 0x8082) != 20 && palabra(d, 0x8082) != 33)
-      : salida == 72  ? (palabra(d, 0x8082) != 30 && palabra(d, 0x8082) != 22)
-      : salida == 73  ? palabra(d, 0x8082) != 31
-                      : (salida >= sizeof(origenes) / sizeof(origenes[0]) ||
+  if (salida == 105 || salida == 106 ? palabra(d, 0x8082) != 58
+      : salida == 108                ? palabra(d, 0x8082) != 59 && palabra(d, 0x8082) != 60
+      : salida == 109                ? palabra(d, 0x8082) != 60
+      : salida == 110                ? palabra(d, 0x8082) != 61 && palabra(d, 0x8082) != 62
+      : salida == 104                ? palabra(d, 0x8082) != 57
+      : salida == 103                ? palabra(d, 0x8082) != 56
+      : salida == 90                 ? palabra(d, 0x8082) != 49
+      : salida == 95                 ? palabra(d, 0x8082) != 48
+      : salida == 96                 ? palabra(d, 0x8082) != 52
+      : salida == 97                 ? palabra(d, 0x8082) != 48
+      : salida == 98                 ? palabra(d, 0x8082) != 53
+      : salida == 99                 ? palabra(d, 0x8082) != 49
+      : salida == 100                ? palabra(d, 0x8082) != 54
+      : salida == 101                ? palabra(d, 0x8082) != 49
+      : salida == 102                ? palabra(d, 0x8082) != 55
+      : salida == 91                 ? palabra(d, 0x8082) != 47
+      : salida == 92                 ? palabra(d, 0x8082) != 50
+      : salida == 93                 ? palabra(d, 0x8082) != 47
+      : salida == 94                 ? palabra(d, 0x8082) != 51
+      : salida == 84                 ? palabra(d, 0x8082) != 46
+      : salida == 85                 ? palabra(d, 0x8082) != 47
+      : salida == 86                 ? palabra(d, 0x8082) != 47
+      : salida == 87                 ? palabra(d, 0x8082) != 48
+      : salida == 88                 ? palabra(d, 0x8082) != 48
+      : salida == 89                 ? palabra(d, 0x8082) != 49
+      : salida == 83                 ? palabra(d, 0x8082) != 45
+      : salida == 82                 ? palabra(d, 0x8082) != 44
+      : salida == 81                 ? palabra(d, 0x8082) != 40
+      : salida == 78                 ? palabra(d, 0x8082) != 42
+      : salida == 77                 ? palabra(d, 0x8082) != 41
+      : salida == 76                 ? palabra(d, 0x8082) != 41
+      : salida == 75                 ? palabra(d, 0x8082) != 40
+      : salida == 80                 ? palabra(d, 0x8082) != 43
+      : salida == 79                 ? palabra(d, 0x8082) != 42
+      : salida == 74                 ? palabra(d, 0x8082) != 25
+      : salida == 70                 ? palabra(d, 0x8082) != 33
+      : salida == 68                 ? palabra(d, 0x8082) != 32
+      : salida == 69                 ? palabra(d, 0x8082) != 39
+      : salida == 53                 ? palabra(d, 0x8082) != 32
+      : salida == 63                 ? palabra(d, 0x8082) != 36
+      : salida == 62                 ? palabra(d, 0x8082) != 33
+      : salida == 64                 ? palabra(d, 0x8082) != 32
+      : salida == 65                 ? palabra(d, 0x8082) != 37
+      : salida == 67                 ? palabra(d, 0x8082) != 38
+      : salida == 66                 ? palabra(d, 0x8082) != 35
+      : salida == 59                 ? palabra(d, 0x8082) != 32
+      : salida == 54                 ? palabra(d, 0x8082) != 33
+      : salida == 57                 ? palabra(d, 0x8082) != 35
+      : salida == 58                 ? palabra(d, 0x8082) != 32
+      : salida == 60                 ? palabra(d, 0x8082) != 35
+      : salida == 56                 ? palabra(d, 0x8082) != 34
+      : salida == 55                 ? palabra(d, 0x8082) != 33
+      : salida == 61                 ? palabra(d, 0x8082) != 33
+      : salida == 71                 ? (palabra(d, 0x8082) != 35 && palabra(d, 0x8082) != 32)
+      : salida == 52                 ? (palabra(d, 0x8082) != 20 && palabra(d, 0x8082) != 33)
+      : salida == 72                 ? (palabra(d, 0x8082) != 30 && palabra(d, 0x8082) != 22)
+      : salida == 73                 ? palabra(d, 0x8082) != 31
+                                     : (salida >= sizeof(origenes) / sizeof(origenes[0]) ||
                         origenes[salida] == 0xffff || palabra(d, 0x8082) != origenes[salida]))
     return false;
   const auto descriptor = static_cast<Palabra>(0x85ac + salida * 14);

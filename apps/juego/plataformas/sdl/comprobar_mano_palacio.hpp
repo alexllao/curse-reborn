@@ -1,10 +1,11 @@
 #pragma once
 #include "mazmorra.hpp"
+#include "comprobar_laberinto_palacio.hpp"
 
 // D36C/BD00: recibe la expulsión del trono, camina hasta la mano y se libera con el aceite real.
-template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
+template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
 bool comprobar_mano_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar,
-                                Abrir abrir, Elegir elegir, Objeto objeto) {
+                                Abrir abrir, Elegir elegir, Objeto objeto, Ir ir) {
   const auto detener = [&](const char *hito) {
     return opcion == std::string("--comprobar-final-poblacion-borde_valle_") + hito;
   };
@@ -37,5 +38,7 @@ bool comprobar_mano_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanzar 
     return true;
   if (!avanzar(24) || p.conserva_objeto(144))
     return false;
-  return detener("mano_liberado");
+  if (detener("mano_liberado"))
+    return true;
+  return comprobar_laberinto_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

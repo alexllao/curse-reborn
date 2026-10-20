@@ -3,9 +3,9 @@
 #include "comprobar_mano_palacio.hpp"
 
 // D114/BCDF: continúa la reja real, sufre un golpe y esquiva dos proyectiles hasta el trono.
-template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto>
+template <typename Avanzar, typename Abrir, typename Elegir, typename Objeto, typename Ir>
 bool comprobar_reina_hielo_sdl(Mazmorra &p, const std::string &opcion, Avanzar avanzar, Abrir abrir,
-                               Elegir elegir, Objeto objeto) {
+                               Elegir elegir, Objeto objeto, Ir ir) {
   const auto detener = [&](const char *hito) {
     return opcion == std::string("--comprobar-final-poblacion-borde_valle_") + hito;
   };
@@ -64,5 +64,5 @@ bool comprobar_reina_hielo_sdl(Mazmorra &p, const std::string &opcion, Avanzar a
     return false;
   if (detener("reina_expulsion"))
     return true;
-  return comprobar_mano_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto);
+  return comprobar_mano_palacio_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

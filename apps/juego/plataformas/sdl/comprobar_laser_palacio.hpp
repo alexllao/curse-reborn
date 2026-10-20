@@ -54,5 +54,5 @@ bool comprobar_laser_palacio_sdl(Mazmorra &p, const std::string &opcion, Avanzar
     return false;
   if (detener("laser_reja_32"))
     return true;
-  return comprobar_reina_hielo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
+  return comprobar_reina_hielo_sdl(p, opcion, avanzar, abrir, elegir, objeto, ir);
 }

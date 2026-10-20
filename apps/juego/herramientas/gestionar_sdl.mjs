@@ -442,6 +442,30 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--laberinto-palacio',
+      nombre: 'laberinto_palacio',
+      referencia: 'laberinto_palacio',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'laberinto_59_entrada',
+        'laberinto_59_control',
+        'laberinto_61_entrada',
+        'laberinto_61_control',
+        'laberinto_58_entrada',
+        'laberinto_58_control',
+        'laberinto_60_entrada',
+        'laberinto_60_control',
+        'laberinto_62_entrada',
+        'laberinto_62_control',
+        'laberinto_62_ante_cerillas',
+        'laberinto_62_cerillas',
+        'laberinto_59_con_cerillas',
+      ],
+      alcance:
+        'cuatro salas, rutas con azar original, retorno a la mano y recogida161/162; trece imágenes, restauración y salida107 pendiente',
+    },
+    {
       argumento: '--mano-palacio',
       nombre: 'mano_palacio',
       referencia: 'mano_palacio',
@@ -813,6 +837,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--laser-palacio',
       '--reina-hielo',
       '--mano-palacio',
+      '--laberinto-palacio',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

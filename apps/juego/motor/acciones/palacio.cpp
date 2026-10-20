@@ -32,17 +32,20 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
   const bool reflector =
       palabra(d, 0x8082) == 56 && (id == 150 || id == 153 || id == 154 || id == 145);
   const bool sobre_mesa = dados || id == 144 || id == 145;
-  const bool baja = !reflector && (id == 147 || (id >= 149 && id <= 154));
-  const Palabra entidad = reflector                           ? (palabra(d, 0x2cde) == id   ? 0x2cd0
-                                                                 : palabra(d, 0x2cff) == id ? 0x2cf1
-                                                                 : palabra(d, 0x2d41) == id ? 0x2d33
-                                                                                            : 0x2d12)
-                          : dados || (id >= 149 && id <= 154) ? 0x2c4c
-                          : id == 141                         ? 0x2cf1
-                          : id == 144                         ? 0x2caf
-                                                              : 0x2c8e;
+  const bool baja = !reflector && (id == 147 || (id >= 149 && id <= 154) || id == 161);
+  const Palabra entidad = reflector ? (palabra(d, 0x2cde) == id   ? 0x2cd0
+                                       : palabra(d, 0x2cff) == id ? 0x2cf1
+                                       : palabra(d, 0x2d41) == id ? 0x2d33
+                                                                  : 0x2d12)
+                          : dados || (id >= 149 && id <= 154) || id == 161 ? 0x2c4c
+                          : id == 141                                      ? 0x2cf1
+                          : id == 144                                      ? 0x2caf
+                                                                           : 0x2c8e;
   if (!reflector && (id == 144 || id == 145 || id == 149 || id == 150 || (id >= 152 && id <= 154)))
     actualizar_oferta_silbato(d);
+  // 60B2/62C9: la caja161 ofrece también una cerilla162; se conserva el fallo por capacidad.
+  if (id == 161)
+    insertar_identificador(d, 162);
   if (dados) {
     guardar(d, 0x009c, 0x2d12);
     guardar(d, 0x009e, 0x0109);
@@ -52,14 +55,14 @@ ResultadoMenu recoger(unsigned char *d, Palabra id) {
   guardar(d, 0x1a38, static_cast<Palabra>(palabra(d, entidad + 2) + (id == 141 ? 9 : 5)));
   guardar(d, 0x1a3a,
           static_cast<Palabra>(palabra(d, entidad + 4) + palabra(d, entidad + 8) +
-                               (reflector   ? 1
-                                : dados     ? 25
-                                : id == 141 ? 3
-                                : id == 149 ? -16
-                                : id == 153 ? -5
-                                : id == 154 ? -2
-                                : baja      ? -4
-                                            : 33)));
+                               (reflector                ? 1
+                                : dados                  ? 25
+                                : id == 141              ? 3
+                                : id == 149              ? -16
+                                : id == 153              ? -5
+                                : id == 154 || id == 161 ? -2
+                                : baja                   ? -4
+                                                         : 33)));
   const auto lista = palabra(d, static_cast<Palabra>(0x53b5 + palabra(d, 0x8082) * 2));
   d[static_cast<Palabra>(lista + ((entidad - 0x2c4c) / 33) * 9 + 1)] = 0;
   guardar(d, entidad + 16, 0x1a2e);
@@ -85,7 +88,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
                                            unsigned short id, const ServicioSonido &sonido,
                                            const ServicioCreacion &creacion) {
   const auto escena = palabra(d, 0x8082);
-  if (escena < 46 || escena > 58)
+  if (escena < 46 || escena > 62)
     return ResultadoMenu::pendiente;
   if (manejador == 0x32de && id <= 1)
     return emitir_sonido(sonido, d, 0x2c2b, static_cast<unsigned char>(id)) ? ResultadoMenu::accion
@@ -102,6 +105,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
   if (manejador == 0x563a &&
       ((escena == 46 && (id == 140 || id == 141)) || (escena == 47 && (id == 144 || id == 145)) ||
        (escena == 49 && id == 147) || (escena == 50 && id == 149) || (escena == 51 && id == 150) ||
+       (escena >= 59 && escena <= 62 && id == 161) ||
        (escena >= 52 && escena <= 55 && id == escena + 99) ||
        (escena == 56 && (id == 150 || id == 153 || id == 154 || id == 145))))
     return recoger(d, id);
@@ -304,7 +308,7 @@ ResultadoMenu ejecutar_interaccion_palacio(unsigned char *d, unsigned short mane
     return comenzar(d);
   }
   // 49DA/BAA6: ventilador y escoba solo tienen efectos especiales en sus habitaciones posteriores.
-  if (id != 76 && id != 124 && (id < 140 || id > 160))
+  if (id != 76 && id != 124 && (id < 140 || id > 162))
     return ResultadoMenu::pendiente;
   if (manejador == 0x384a)
     return ResultadoMenu::actualizado;
