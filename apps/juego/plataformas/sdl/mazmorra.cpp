@@ -8,6 +8,7 @@
 #include "../../motor/estado/partidas.hpp"
 #include "registro.hpp"
 #include "vistas.hpp"
+#include "creditos_port.hpp"
 #include "../../motor/estado/paso_escena.hpp"
 #include "../../motor/movimiento/geometria.hpp"
 #include "../../motor/movimiento/planificar.hpp"
@@ -269,6 +270,11 @@ bool Mazmorra::dibujar_informacion(unsigned int pagina, motor::ImagenIndexada &i
                                    SDL_FRect &placa) const {
   imagen = fondo;
   unsigned int x = 0, y = 0, ancho = 0, alto = 0;
+  if (pagina == 4) {
+    placa = {24, 51, 272, 98};
+    return componer_creditos_port(datos, fuente.data(), static_cast<unsigned int>(fuente.size()),
+                                  imagen.indices);
+  }
   if (!motor::componer_informacion(datos, fuente.data(), static_cast<unsigned int>(fuente.size()),
                                    pagina, imagen.indices, x, y, ancho, alto))
     return false;

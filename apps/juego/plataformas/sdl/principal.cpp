@@ -684,6 +684,13 @@ int main(int argc, char *argv[]) {
           opciones, &presentacion.ventana, &presentacion.dibujante)) {
     return fallo("No se ha podido crear la ventana");
   }
+  // Recurso propio del port: también identifica la ventana en plataformas sin recursos PE.
+  if (SDL_Surface *icono = SDL_LoadPNG(
+          (std::string(SDL_GetBasePath()) + "assets/lanzador/icono/curse-reborn.png").c_str())) {
+    if (!SDL_SetWindowIcon(presentacion.ventana, icono))
+      std::fprintf(stderr, "No se ha podido asignar el icono: %s\n", SDL_GetError());
+    SDL_DestroySurface(icono);
+  }
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
       !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
                                         SDL_LOGICAL_PRESENTATION_LETTERBOX)) {

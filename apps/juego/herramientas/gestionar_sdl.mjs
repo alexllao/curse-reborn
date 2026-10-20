@@ -139,6 +139,9 @@ function entornoCompilador() {
 
 async function compilar() {
   mkdirSync(aplicacion, { recursive: true });
+  const versionJuego = JSON.parse(readFileSync(rutaJuego(raiz, 'package.json'), 'utf8')).version;
+  if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(versionJuego))
+    throw new Error('Versión del juego inválida.');
   const opl2 = JSON.parse(
     readFileSync(join(raiz, 'apps/juego/herramientas', 'dependencias_opl2.json'), 'utf8'),
   );
@@ -162,11 +165,23 @@ async function compilar() {
   prepararPresentacion(raiz, aplicacion);
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
+  const icono = rutaAssets(raiz, 'lanzador', 'icono', 'curse-reborn.ico');
+  const carpetaIcono = join(aplicacion, 'assets', 'lanzador', 'icono');
+  mkdirSync(carpetaIcono, { recursive: true });
+  copyFileSync(
+    rutaAssets(raiz, 'lanzador', 'icono', 'curse-reborn.png'),
+    join(carpetaIcono, 'curse-reborn.png'),
+  );
+  const recursoIcono = join(aplicacion, 'icono.rc'),
+    objetoIcono = join(aplicacion, 'icono.res');
+  writeFileSync(recursoIcono, `1 ICON "${icono.replaceAll('\\', '/')}"\n`);
+  ejecutar(process.env.RC || 'llvm-rc', ['/FO', objetoIcono, recursoIcono], variables);
   console.log('Compilando Curse Reborn con SDL…');
   ejecutar(
     process.env.CXX || 'clang++',
     [
       '--target=x86_64-pc-windows-msvc',
+      `-DCURSE_REBORN_VERSION="${versionJuego}"`,
       '-std=c++17',
       '-O2',
       '-Wall',
@@ -202,6 +217,7 @@ async function compilar() {
       rutaJuego(raiz, 'plataformas', 'sdl', 'ymfm_pcm.cpp'),
       ...obtenerFuentesMotor(raiz),
       join(sdl, 'lib', 'x64', 'SDL3.lib'),
+      objetoIcono,
       '-o',
       join(aplicacion, 'curse-reborn.exe'),
     ],
@@ -2035,7 +2051,7 @@ export async function gestionarSdl(accion, argumentos) {
     ]);
     const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_informacion_sdl');
     mkdirSync(carpeta, { recursive: true });
-    for (let pagina = 0; pagina < 4; ++pagina) {
+    for (let pagina = 0; pagina < 5; ++pagina) {
       const registro = ejecutar(
         programa,
         [datos, `--comprobar-info-${pagina}`, join(carpeta, `pagina_${pagina + 1}.bmp`)],
@@ -2051,7 +2067,7 @@ export async function gestionarSdl(accion, argumentos) {
     if (existsSync(join(carpeta, 'no_debe_crearse.sav')))
       throw new Error('Información ha creado un perfil de partidas.');
     console.log(
-      `Información: último icono, cuatro páginas, cierres y estado conservado. Capturas: ${carpeta}`,
+      `Información: cuatro páginas originales y créditos del port, cierres y estado conservado. Capturas: ${carpeta}`,
     );
     return;
   }

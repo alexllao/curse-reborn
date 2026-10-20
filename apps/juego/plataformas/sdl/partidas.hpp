@@ -1,4 +1,5 @@
 #pragma once
+#include "creditos_port.hpp"
 #include <SDL3/SDL.h>
 #include <string>
 #include <vector>
@@ -30,7 +31,7 @@ public:
 
 private:
   unsigned int modo = 0, seleccion = 0;
-  unsigned int pagina_informacion = 0, pagina_preparada = 4;
+  unsigned int pagina_informacion = 0, pagina_preparada = paginas_informacion;
   SDL_Texture *textura_informacion = nullptr;
   SDL_FRect placa_informacion{};
   bool disponible = false, editando = false;

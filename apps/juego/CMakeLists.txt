@@ -30,6 +30,10 @@ endforeach()
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/fuentes_motor.json")
 add_executable(curse-reborn plataformas/sdl/contador_fps.cpp plataformas/sdl/filtros.cpp plataformas/sdl/principal.cpp plataformas/sdl/mazmorra.cpp plataformas/sdl/introduccion.cpp plataformas/sdl/audio.cpp plataformas/sdl/musica_adlib.cpp plataformas/sdl/musica_mt32.cpp plataformas/sdl/opl.cpp plataformas/sdl/opl2.cpp plataformas/sdl/ymfm_opl.cpp plataformas/sdl/ymfm_adpcm.cpp plataformas/sdl/ymfm_pcm.cpp ${FUENTES_MOTOR})
 target_compile_features(curse-reborn PRIVATE cxx_std_17)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/package.json" PAQUETE_JUEGO)
+string(JSON VERSION_JUEGO GET "${PAQUETE_JUEGO}" version)
+target_compile_definitions(curse-reborn PRIVATE CURSE_REBORN_VERSION="${VERSION_JUEGO}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/package.json")
 target_sources(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/catalogo_presentacion.hpp" plataformas/sdl/partidas.cpp plataformas/sdl/tiempo_juego.cpp plataformas/sdl/marcos.cpp plataformas/sdl/habitacion.cpp "${CMAKE_CURRENT_BINARY_DIR}/catalogo_habitaciones.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_marcos.hpp" "${CMAKE_CURRENT_BINARY_DIR}/catalogo_decorados.hpp")
 target_include_directories(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL CMAKE_BINARY_DIR OR CMAKE_CONFIGURATION_TYPES)
@@ -44,6 +48,27 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
   "${RAIZ_ASSETS}/original/decorados"
   "$<TARGET_FILE_DIR:curse-reborn>/assets/original/decorados")
 target_link_libraries(curse-reborn PRIVATE SDL3::SDL3)
+add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${RAIZ_ASSETS}/lanzador/icono"
+  "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/icono")
+if(WIN32)
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/icono.rc" "1 ICON \"${RAIZ_ASSETS}/lanzador/icono/curse-reborn.ico\"\n")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    get_filename_component(CARPETA_COMPILADOR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    find_program(COMPILADOR_RECURSOS_LLVM llvm-rc HINTS "${CARPETA_COMPILADOR}" REQUIRED)
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/icono.res"
+      COMMAND "${COMPILADOR_RECURSOS_LLVM}" /FO "${CMAKE_CURRENT_BINARY_DIR}/icono.res" "${CMAKE_CURRENT_BINARY_DIR}/icono.rc"
+      DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/icono.rc" "${RAIZ_ASSETS}/lanzador/icono/curse-reborn.ico"
+      VERBATIM)
+    set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/icono.res" PROPERTIES EXTERNAL_OBJECT TRUE GENERATED TRUE)
+    target_sources(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/icono.res")
+  else()
+    enable_language(RC)
+    target_sources(curse-reborn PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/icono.rc")
+    set_property(SOURCE "${CMAKE_CURRENT_BINARY_DIR}/icono.rc" APPEND PROPERTY OBJECT_DEPENDS
+      "${RAIZ_ASSETS}/lanzador/icono/curse-reborn.ico")
+  endif()
+endif()
 add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${RAIZ_ASSETS}/lanzador/sonidos_pc"
   "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/sonidos_pc")

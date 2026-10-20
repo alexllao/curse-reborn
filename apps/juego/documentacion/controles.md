@@ -97,7 +97,7 @@ La importación DOS queda como integración de escritorio mediante arrastrar CUR
 
 ### Fichas de información
 
-El último icono del menú abre las cuatro páginas originales con puntuación y créditos. Clic izquierdo, Intro o Espacio avanzan; después de la cuarta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.
+El último icono del menú abre las cuatro páginas originales con puntuación y créditos, seguidas de una quinta ficha propia: Port por Àlex Llaó, versión y fecha de compilación. Clic izquierdo, Intro o Espacio avanzan; después de la quinta página se vuelve al juego. Escape o clic derecho cierran directamente. La música continúa y el personaje permanece detenido durante la consulta.
 
 Las últimas vistas F5/F6 son **El borde del mundo (EDGE)** y **La habitación del loro sabio (WISE)**:32 vistas de desarrollo. Reproduce la entrada desde el pozo como una sesión nueva de desarrollo. Para conservar los objetos obtenidos hay que llegar por las salidas normales.
 

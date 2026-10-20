@@ -3,6 +3,7 @@
 Esta carpeta contiene material adicional aportado o creado para Curse Reborn que puede versionarse. Los archivos comerciales del juego y las ROM siguen siendo locales en `apps/juego/datos_originales/`.
 
 - `lanzador/presentacion/`: banners de arranque y tiempos en `presentacion.json`, sin música.
+- `lanzador/icono/`: monograma propio CR en SVG, PNG y un ICO con siete tamaños para ejecutable y ventana.
 - `lanzador/sonidos_pc/`: sonidos de botón y hardware durante BIOS/DOS.
 - `lanzador/habitaciones/`: habitaciones interactivas, cinco diseños con cinco proporciones y catálogo independiente.
 - `original/marcos/`: marcos de estilo pixel art para acompañar la reconstrucción fiel, opcionales con F1.

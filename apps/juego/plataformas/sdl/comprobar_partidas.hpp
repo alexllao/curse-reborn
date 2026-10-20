@@ -141,7 +141,7 @@ inline bool comprobar_partidas_sdl(PartidasSDL &panel, SDL_Window *ventana, Mazm
 inline bool comprobar_informacion_sdl(PartidasSDL &panel, SDL_Window *ventana,
                                       SDL_Renderer *dibujante, Mazmorra &partida,
                                       unsigned int pagina_captura) {
-  if (pagina_captura >= 4 || !partida.menu_abierto())
+  if (pagina_captura >= paginas_informacion || !partida.menu_abierto())
     return false;
   std::vector<unsigned char> antes(motor::bytes_archivo_partidas, 0), despues(antes);
   if (!partida.entrada_menu(304, 92, true, false) || partida.menu_abierto() ||
@@ -158,9 +158,9 @@ inline bool comprobar_informacion_sdl(PartidasSDL &panel, SDL_Window *ventana,
   if (!panel.evento(tecla, ventana, partida, redibujar) || !panel.abierta())
     return false;
   tecla.key.repeat = false;
-  for (unsigned int pagina = 0; pagina < 4; ++pagina)
+  for (unsigned int pagina = 0; pagina < paginas_informacion; ++pagina)
     if (!panel.dibujar(dibujante, partida) || !panel.evento(tecla, ventana, partida, redibujar) ||
-        panel.abierta() != (pagina < 3))
+        panel.abierta() != (pagina + 1 < paginas_informacion))
       return false;
   panel.abrir(4, ventana);
   tecla.key.key = SDLK_ESCAPE;

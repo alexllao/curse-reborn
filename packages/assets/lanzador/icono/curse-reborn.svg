@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Curse Reborn — CR</title>
+  <defs>
+    <linearGradient id="azul" x2="0" y2="1"><stop stop-color="#263f59"/><stop offset="1" stop-color="#091624"/></linearGradient>
+    <linearGradient id="oro" x2="0" y2="1"><stop stop-color="#fff0b1"/><stop offset=".42" stop-color="#ddb869"/><stop offset=".6" stop-color="#a77532"/><stop offset="1" stop-color="#e4bd6c"/></linearGradient>
+    <path id="letras" fill-rule="evenodd" d="M235 124C210 102 190 94 163 96C107 99 72 145 72 212C72 279 109 324 163 326C191 327 216 318 238 300V252H218C208 284 190 300 166 299C131 298 112 265 112 211C112 157 132 122 167 122C191 122 209 139 217 168H237V124ZM249 102H344C395 102 425 128 425 168C425 200 408 221 378 232L425 300H443V322H374L317 240H301V300H323V322H239V300H258V124H239V102ZM301 125V215H335C369 215 385 200 385 170C385 140 370 125 339 125H301Z"/>
+  </defs>
+  <rect x="20" y="20" width="472" height="472" rx="64" fill="#050b13"/>
+  <rect x="28" y="28" width="456" height="456" rx="58" fill="url(#azul)" stroke="#b58a46" stroke-width="8"/>
+  <rect x="45" y="45" width="422" height="422" rx="43" fill="none" stroke="#63809a" stroke-opacity=".4" stroke-width="3"/>
+  <path d="M100 407H412M145 424H367" fill="none" stroke="#b58a46" stroke-width="5" opacity=".7"/>
+  <g transform="translate(0 38)"><use href="#letras" transform="translate(0 8)" fill="#020910"/><use href="#letras" fill="url(#oro)" stroke="#ffdf91" stroke-width="2"/></g>
+</svg>

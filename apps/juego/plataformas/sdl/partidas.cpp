@@ -82,7 +82,7 @@ void PartidasSDL::abrir(unsigned int accion, SDL_Window *ventana) {
   SDL_DestroyTexture(textura_informacion);
   textura_informacion = nullptr;
   pagina_informacion = 0;
-  pagina_preparada = 4;
+  pagina_preparada = paginas_informacion;
   modo = accion;
   if (modo != 4)
     SDL_HideCursor();
@@ -104,7 +104,7 @@ void PartidasSDL::cerrar(SDL_Window *ventana) {
     registrar_accion("Información: volver al juego");
   SDL_DestroyTexture(textura_informacion);
   textura_informacion = nullptr;
-  pagina_preparada = 4;
+  pagina_preparada = paginas_informacion;
   SDL_StopTextInput(ventana);
   SDL_ShowCursor();
   modo = 0;
@@ -247,10 +247,11 @@ bool PartidasSDL::evento(const SDL_Event &entrada, SDL_Window *ventana, Mazmorra
                      entrada.key.key == SDLK_SPACE)) ||
         (raton && entrada.button.button == SDL_BUTTON_LEFT);
     if (avanzar) {
-      if (++pagina_informacion >= 4)
+      if (++pagina_informacion >= paginas_informacion)
         cerrar(ventana);
       else
-        registrar_accion("Información: página %u de 4", pagina_informacion + 1);
+        registrar_accion("Información: página %u de %u", pagina_informacion + 1,
+                         paginas_informacion);
     } else if (teclado || (raton && entrada.button.button == SDL_BUTTON_RIGHT))
       cerrar(ventana);
     return true;
