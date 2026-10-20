@@ -6,6 +6,8 @@ import { randomUUID } from 'node:crypto';
 import { gestionarSdl } from '../gestionar_sdl.mjs';
 import { huella, listarArchivos, rutaDentro, verificarPaquete } from './archivos.mjs';
 import { optimizarPng } from './optimizar_assets.mjs';
+import { analizarOpciones } from './opciones.mjs';
+import { seleccionarHabitaciones } from '../gestionar_habitaciones.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 
@@ -84,15 +86,13 @@ async function empaquetar(argumentos) {
     console.log(`Paquete ${informe.version}: ${informe.archivos.length} archivos verificados.`);
     return;
   }
-  if (
-    argumentos.some((a) => !['--con-datos', '--sin-perdida'].includes(a)) ||
-    new Set(argumentos).size !== argumentos.length
-  )
-    throw new Error(
-      'Uso: pnpm empaquetar:beta [--con-datos] [--sin-perdida] | --verificar <carpeta>',
-    );
-  const conDatos = argumentos.includes('--con-datos'),
-    perfil = argumentos.includes('--sin-perdida') ? 'sin-perdida' : 'equilibrado';
+  const { conDatos, perfil, habitacion } = analizarOpciones(argumentos);
+  const catalogoHabitaciones = seleccionarHabitaciones(
+    JSON.parse(
+      readFileSync(join(raiz, 'packages/assets/lanzador/habitaciones/habitaciones.json'), 'utf8'),
+    ),
+    habitacion,
+  );
   const version = JSON.parse(readFileSync(join(raiz, 'apps/juego/package.json'), 'utf8')).version;
   if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(version))
     throw new Error('Versión del paquete inválida.');
@@ -106,7 +106,7 @@ async function empaquetar(argumentos) {
     if (huella(readFileSync(join(datosOriginales, 'CURSE.EXE'))) !== mapa.sha256)
       throw new Error('CURSE.EXE no coincide con la versión reconstruida.');
   }
-  await gestionarSdl('sdl:compilar', ['--distribucion']);
+  await gestionarSdl('sdl:compilar', ['--distribucion', '--habitacion', habitacion]);
   const compilacion = join(raiz, 'apps/juego/trabajo/aplicacion_beta');
   const fecha = new Date().toISOString();
   const identificador = randomUUID().slice(0, 8);
@@ -249,6 +249,10 @@ async function empaquetar(argumentos) {
         perfil,
         datos_originales: conDatos,
         roms: false,
+        habitaciones: {
+          inicial: catalogoHabitaciones.inicial,
+          incluidas: catalogoHabitaciones.habitaciones.map((h) => h.id),
+        },
         comprobaciones,
         optimizacion: ['O2', 'NDEBUG', 'secciones', 'OPT:REF', 'OPT:ICF'],
         imagenes: { antes, despues, archivos: imagenes },

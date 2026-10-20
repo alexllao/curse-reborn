@@ -123,7 +123,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
   if (p.habitacion.tomar_sonido() != 0 || !p.habitacion.reiniciando())
     return fallo_monitor("El plazo automático vuelve a encender un PC apagado manualmente");
   p.habitacion.iniciar();
-  for (unsigned int tema = 0; tema < 5; ++tema) {
+  for (unsigned int tema = 0; tema < p.habitacion.cantidad_temas(); ++tema) {
     for (const auto &tamano : {std::pair<int, int>{1280, 720},
                                {1280, 800},
                                {1280, 960},
@@ -277,8 +277,8 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
   audio.cerrar();
   if (!comprobar_sonidos_pc())
     return fallo_monitor("Sonidos del PC: cola, mute, volumen o parada incorrectos");
-  registrar_accion("Habitaciones: cinco diseños, cinco proporciones y ventana vertical; PC "
+  registrar_accion("Habitaciones: %u diseños, cinco proporciones y ventana vertical; PC "
                    "apagado, BIOS/DOS completos, botones, zoom máximo y ratón. %u capturas",
-                   capturas);
+                   p.habitacion.cantidad_temas(), capturas);
   return true;
 }

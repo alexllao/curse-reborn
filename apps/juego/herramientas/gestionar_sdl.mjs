@@ -137,7 +137,7 @@ function entornoCompilador() {
   return variables;
 }
 
-async function compilar(distribucion = false) {
+async function compilar(distribucion = false, habitacion = 'inicial') {
   const aplicacion = rutaJuego(raiz, 'trabajo', distribucion ? 'aplicacion_beta' : 'aplicacion');
   mkdirSync(aplicacion, { recursive: true });
   const versionJuego = JSON.parse(readFileSync(rutaJuego(raiz, 'package.json'), 'utf8')).version;
@@ -161,7 +161,7 @@ async function compilar(distribucion = false) {
   }
   const sdl = await preparar();
   prepararMarcos(raiz, aplicacion);
-  prepararHabitaciones(raiz, aplicacion);
+  prepararHabitaciones(raiz, aplicacion, distribucion ? habitacion : 'todas');
   prepararSonidosPC(raiz, aplicacion);
   prepararPresentacion(raiz, aplicacion);
   const variables = entornoCompilador();
@@ -1056,7 +1056,14 @@ export async function gestionarSdl(accion, argumentos) {
       '--megafono-palacio',
     ].includes(argumentos[0]);
   const distribucion =
-    accion === 'sdl:compilar' && argumentos.length === 1 && argumentos[0] === '--distribucion';
+    accion === 'sdl:compilar' &&
+    argumentos[0] === '--distribucion' &&
+    (argumentos.length === 1 ||
+      (argumentos.length === 3 &&
+        argumentos[1] === '--habitacion' &&
+        /^[a-z0-9][a-z0-9_-]*$/.test(argumentos[2])));
+  const habitacionDistribucion =
+    distribucion && argumentos.length === 3 ? argumentos[2] : 'inicial';
   if (
     argumentos.length &&
     !sinSonido &&
@@ -1413,7 +1420,7 @@ export async function gestionarSdl(accion, argumentos) {
         throw new Error('La huella de CURSE.EXE no coincide con la versión reconstruida.');
     }
   }
-  const programa = await compilar(distribucion);
+  const programa = await compilar(distribucion, habitacionDistribucion);
   if (accion === 'sdl:compilar') {
     console.log(`Aplicación compilada: ${programa}`);
     return;

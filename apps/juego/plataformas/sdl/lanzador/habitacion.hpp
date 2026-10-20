@@ -17,6 +17,8 @@ struct TemaHabitacion {
 // Presentación opcional de plataforma, independiente de marcos, escenas y partidas DOS.
 class Habitacion {
 public:
+  // Devuelve solo los diseños presentes en el catálogo compilado de esta entrega.
+  static unsigned int cantidad_temas();
   // Libera sus imágenes antes de destruir el dibujante.
   ~Habitacion() {
     cerrar();

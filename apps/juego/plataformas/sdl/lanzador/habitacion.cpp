@@ -6,7 +6,12 @@
 #include <iterator>
 #include <string>
 
-// Reinicia solo la presentación externa: el motor no avanza hasta encender el PC.
+// Consulta el catálogo compilado para no asumir cinco diseños en una entrega reducida.
+unsigned int Habitacion::cantidad_temas() {
+  return static_cast<unsigned int>(std::size(temas_habitaciones));
+}
+
+// Restaura el diseño inicial y el estado apagado conservando el catálogo de esta compilación.
 void Habitacion::iniciar() {
   habilitada = true;
   tema = habitacion_inicial;

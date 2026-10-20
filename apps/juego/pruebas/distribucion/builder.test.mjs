@@ -11,6 +11,55 @@ import {
   verificarPaquete,
 } from '../../herramientas/distribucion/archivos.mjs';
 import { optimizarPng } from '../../herramientas/distribucion/optimizar_assets.mjs';
+import { analizarOpciones } from '../../herramientas/distribucion/opciones.mjs';
+import { seleccionarHabitaciones } from '../../herramientas/gestionar_habitaciones.mjs';
+
+// El valor inicial del JSON y una elección explícita deben producir un catálogo coherente sin tocar el maestro.
+test('Habitaciones: inicial, alternativa y todas conservan el catálogo fuente', () => {
+  const catalogo = {
+    version: 1,
+    inicial: '02-buhardilla',
+    habitaciones: [{ id: '01-misterio' }, { id: '02-buhardilla' }, { id: '03-lucasarts' }],
+  };
+  const antes = JSON.stringify(catalogo);
+  const inicial = seleccionarHabitaciones(catalogo, analizarOpciones([]).habitacion);
+  assert.equal(inicial.inicial, '02-buhardilla');
+  assert.deepEqual(
+    inicial.habitaciones.map((h) => h.id),
+    ['02-buhardilla'],
+  );
+  const otra = seleccionarHabitaciones(catalogo, '03-lucasarts');
+  assert.equal(otra.inicial, '03-lucasarts');
+  assert.deepEqual(
+    otra.habitaciones.map((h) => h.id),
+    ['03-lucasarts'],
+  );
+  assert.deepEqual(seleccionarHabitaciones(catalogo, 'todas'), catalogo);
+  assert.throws(() => seleccionarHabitaciones(catalogo, 'inexistente'), /desconocida/);
+  assert.throws(
+    () => seleccionarHabitaciones({ ...catalogo, inicial: 'inexistente' }, 'inicial'),
+    /inválidos/,
+  );
+  assert.equal(JSON.stringify(catalogo), antes);
+});
+
+// Valida combinaciones y valores ausentes antes de lanzar una compilación costosa.
+test('Parámetros del builder: selección explícita y errores', () => {
+  assert.deepEqual(analizarOpciones(['--con-datos', '--habitacion', 'todas', '--sin-perdida']), {
+    conDatos: true,
+    perfil: 'sin-perdida',
+    habitacion: 'todas',
+  });
+  assert.equal(analizarOpciones(['--habitacion', '01-misterio']).habitacion, '01-misterio');
+  for (const a of [
+    ['--habitacion'],
+    ['--habitacion', '--con-datos'],
+    ['--habitacion', '../fuera'],
+    ['--habitacion', 'todas', '--habitacion', 'inicial'],
+    ['--otro'],
+  ])
+    assert.throws(() => analizarOpciones(a));
+});
 
 // Retira solo la carpeta de prueba recién creada, verificando que siga dentro del temporal.
 function temporal(t, prefijo) {

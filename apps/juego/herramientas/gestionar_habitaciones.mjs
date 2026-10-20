@@ -3,11 +3,29 @@ import { rutaAssets } from './rutas_proyecto.mjs';
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Selecciona un diseño o todos sin modificar el JSON maestro; el diseño elegido pasa a ser el inicial.
+export function seleccionarHabitaciones(catalogo, seleccion = 'todas') {
+  if (
+    catalogo.version !== 1 ||
+    !Array.isArray(catalogo.habitaciones) ||
+    !catalogo.habitaciones.some((h) => h.id === catalogo.inicial)
+  )
+    throw new Error('Versión, catálogo o habitación inicial inválidos.');
+  const id = seleccion === 'inicial' ? catalogo.inicial : seleccion;
+  if (id === 'todas') return { ...catalogo, habitaciones: [...catalogo.habitaciones] };
+  const habitaciones = catalogo.habitaciones.filter((h) => h.id === id);
+  if (habitaciones.length !== 1) throw new Error('Habitación desconocida o duplicada: ' + id);
+  return { ...catalogo, inicial: id, habitaciones };
+}
+
 // Comprueba cada imagen y cada zona antes de generar el catálogo usado por SDL.
-export function prepararHabitaciones(raiz, destino) {
+export function prepararHabitaciones(raiz, destino, seleccion = 'todas') {
   const origen = rutaAssets(raiz, 'lanzador/habitaciones');
   const carpeta = join(destino, 'assets/lanzador/habitaciones');
-  const catalogo = JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8'));
+  const catalogo = seleccionarHabitaciones(
+    JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8')),
+    seleccion,
+  );
   const variantes = [],
     habitaciones = [],
     ids = new Set();
@@ -95,7 +113,7 @@ export function prepararHabitaciones(raiz, destino) {
   const inicial = catalogo.habitaciones.findIndex((h) => h.id === catalogo.inicial);
   if (inicial < 0) throw new Error('No existe la habitación inicial.');
   mkdirSync(carpeta, { recursive: true });
-  copyFileSync(join(origen, 'habitaciones.json'), join(carpeta, 'habitaciones.json'));
+  writeFileSync(join(carpeta, 'habitaciones.json'), JSON.stringify(catalogo, null, 2) + '\n');
   writeFileSync(
     join(destino, 'catalogo_habitaciones.hpp'),
     `// Generado desde habitaciones.json; no editar.\n#pragma once\ninline constexpr VarianteHabitacion variantes_habitaciones[] = {${variantes.join(',\n')}};\ninline constexpr TemaHabitacion temas_habitaciones[] = {${habitaciones.join(',\n')}};\ninline constexpr unsigned int habitacion_inicial = ${inicial};\n`,

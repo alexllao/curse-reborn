@@ -10,6 +10,8 @@ La primera meta es **desensamblar `CURSE.EXE`, entender sus rutinas y trasladar 
 
 Textos: `pnpm ventana es` para castellano; `pnpm ventana en` o `pnpm ventana` para inglés. Véase [Idiomas](documentacion/idiomas.md). Las fuentes de [SDL](plataformas/sdl/README.md) y las [pruebas](pruebas/README.md) están agrupadas por función.
 
+Para entregar una beta: `pnpm empaquetar:beta --con-datos` genera la carpeta y el ZIP Windows con ejecutable, dependencias, recursos propios optimizados y solo la habitación inicial del JSON. `--habitacion todas` incluye todos los diseños y `--habitacion <id>` elige otro. La [guía de distribución](documentacion/distribucion.md) documenta los perfiles, exclusiones, archivos persistentes, verificación, resultados reales y límites de la primera entrega0.9.0. Añadir `--sin-perdida` conserva también los colores exactos de todas las imágenes.
+
 ## El proyecto que queremos construir
 
 El trabajo se plantea en dos etapas:
