@@ -3,6 +3,12 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:313E",
+      "nombre": "Respuestas comunes del bosque",
+      "comentario": "COPSE66 no tiene rutina en CS17A3. Entrada116 y ambos senderos117 contrastados;313E/32D9/3B4F conservan rechazo o consulta de los cinco objetos de la partida real.",
+      "traslado": "apps/juego/motor/acciones/bosque.hpp"
+    },
+    {
       "direccion": "0000:1BA3",
       "nombre": "Vampiros de ambos cementerios",
       "comentario": "1BA3–20CC: murciélagos y partículas con azar, tumbas, fases0–6 y apertura de verja en65/77. Fase2 conserva AL de447−cámara al caer a1EF4. Contraste DS/azar en comparar:cementerio.",

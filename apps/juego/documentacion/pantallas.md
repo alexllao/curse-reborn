@@ -2,7 +2,7 @@
 
 Nombres descriptivos propios del port, en castellano; no se presentan como títulos oficiales del juego original. Se comparten en la consola, los cambios F5/F6 y el título de la ventana, también al atravesar una salida normal o cargar una partida.
 
-El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las65 vistas de desarrollo.
+El número de vista sigue el orden de F5/F6. El índice de escena es el identificador estable del ejecutable DOS y se conserva para las partidas y las futuras pistas. Core, título e introducción quedan fuera de las68 vistas de desarrollo.
 
 | Vista | Escena DOS | Nombre                            | Recurso  |
 | ----- | ---------- | --------------------------------- | -------- |
@@ -73,6 +73,7 @@ El número de vista sigue el orden de F5/F6. El índice de escena es el identifi
 | 65    | 64         | El interior del ataúd             | GRAVE    |
 | 66    | 65         | Las tumbas del cementerio         | GRAVEYD1 |
 | 67    | 77         | La verja del cementerio           | GRAVEYD2 |
+| 68    | 66         | El bosque del castillo            | COPSE    |
 
 Los cuatro corredores de las cuevas son escenas distintas aunque comparten CAVECOR. Las cuevas del monitor y de los cuatro agujeros comparten CAVE, pero conservan nombres e índices independientes. Un recurso reutilizado no determina el nombre de una escena.
 
@@ -141,3 +142,7 @@ Vista64: [guardia del palacio](guardia_palacio.md), sueño tras la columna, ceri
 Vista65: [el ataúd](ataud.md), tercer pago al mago desde el regreso111, hueso y excavación hasta solicitar113. No equivale a tener resueltos los vampiros del destino65.
 
 Vistas66–67: [los cementerios](cementerio.md), entrada113, seis útiles, encuentros de vampiros, regreso115 y apertura de verja116. Diecisiete imágenes SDL y134 cambios F5/F6 comprobados; el bosque de destino66 sigue pendiente.
+
+## Bosque del castillo integrado
+
+Catálogo68 vistas:0–66 y77. Entrada116 desde77, ambos senderos deCOPSE66 hasta117; destino67 pendiente. Native1.797 casos/pasos,296 selecciones en dos estados y tres composiciones. Véase [Bosque](bosque.md).

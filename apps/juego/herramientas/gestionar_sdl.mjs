@@ -458,6 +458,15 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--bosque',
+      nombre: 'bosque',
+      referencia: 'bosque',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: ['bosque_entrada', 'bosque_control', 'bosque_sendero'],
+      alcance: 'entrada116, sendero de COPSE66, restauración y navegación entre vistas',
+    },
+    {
       argumento: '--cementerio',
       nombre: 'cementerio',
       referencia: 'cementerio',
@@ -931,6 +940,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--guardia-palacio',
       '--ataud',
       '--cementerio',
+      '--bosque',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);

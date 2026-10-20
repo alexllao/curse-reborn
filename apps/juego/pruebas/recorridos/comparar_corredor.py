@@ -32,6 +32,7 @@ BANCOS_ESCENA = {
     63: 'ICEGUARD',
     64: 'GRAVE',
     65: 'GRAVEYD1',
+    66: 'COPSE',
     77: 'GRAVEYD2',
     42: 'SNOWAST3',
     41: 'SNOWAST2',

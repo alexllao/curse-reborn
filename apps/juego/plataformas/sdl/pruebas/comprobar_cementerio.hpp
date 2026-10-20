@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_bosque.hpp"
 #include <initializer_list>
 #include <utility>
 
@@ -133,5 +134,12 @@ bool comprobar_cementerio_sdl(Mazmorra &p, const std::string &opcion, Avanzar av
   if (!ruta({{550, 178}, {606, 195}}, 77) || !ir(110, 170) || !ir(250, 178) || !ir(250, 190) ||
       !ir(450, 190) || !ir(500, 170) || !avanzar(512))
     return false;
-  return detener("puerta");
+  if (detener("puerta"))
+    return true;
+  if (!p.mover_a(static_cast<unsigned short>(500 - p.ventana_actual() * 32u), 138))
+    return false;
+  for (unsigned int i = 0; i < 192 && p.escena_actual() == 77; ++i)
+    if (!avanzar(1))
+      return false;
+  return comprobar_bosque_sdl(p, opcion, avanzar);
 }

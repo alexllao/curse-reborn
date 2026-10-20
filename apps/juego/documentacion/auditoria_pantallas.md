@@ -52,3 +52,7 @@ Las secciones anteriores conservan la historia de ampliaciones; sus recuentos de
 ## Estado vigente tras los cementerios
 
 Las67 vistas abarcan0–65 y77. Se añaden113 desde64/65,114 desde65 y115 desde77. El recorrido persistente contrasta las fases0–6 de los vampiros y solicita116 tras abrir la verja. El destino66 sigue pendiente; no se activa por haber reconocido su salida. Los recuentos anteriores describen entregas históricas. Véase [Cementerios](cementerio.md).
+
+## Bosque del castillo integrado
+
+Catálogo68 vistas:0–66 y77. Entrada116 desde77, ambos senderos deCOPSE66 hasta117; destino67 pendiente. Native1.797 casos/pasos,296 selecciones en dos estados y tres composiciones. Véase [Bosque](bosque.md).
