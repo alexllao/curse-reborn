@@ -13,6 +13,10 @@ class ComparacionCalles(ComparacionPoblacion):
     def captura(self, datos, carpeta, nombre):
         super().captura(datos, carpeta, nombre)
         (carpeta / (nombre + '.ds.bin')).write_bytes(datos)
+        # Este recorrido mantiene sem como alias del azar real, incluso sin recursos_menu.
+        (carpeta / (nombre + '.semilla.json')).write_text(
+            json.dumps(list(self.semilla_menu)), encoding='utf-8'
+        )
 
     # Incluye los umbrales junto al borde, que no necesitan el margen central de las cuevas.
     def ir(self, d, sem, x, y):

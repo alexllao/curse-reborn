@@ -108,6 +108,18 @@ Son88 observaciones nuevas y11.264 pasos: todas llegan al reposo con menú habil
 
 Estas dos escenas ya estaban incluidas en18/73. La ampliación añade estados comprobados, no nuevas salas ni un porcentaje global de fidelidad. Quedan otros estados iniciales y los capítulos posteriores pendientes del contraste explícito de bancos y fases.
 
+### Semillas reales y consecuencias de cuatro regresos del pueblo
+
+`ComparacionCalles.captura` conserva ahora la semilla real de `self.semilla_menu`, que es el mismo objeto usado como `sem` durante este recorrido, incluso cuando `recursos_menu` está desactivado. Antes las cuatro entradas guardaban manualmente su semilla, pero los regresos solo guardaban DS. No se sustituye por una semilla inicial inventada.
+
+Regenerado `comparar_calles.py --muestra`:6.113 casos/pasos, nueve composiciones y368 selecciones coincidentes. Las nueve instantáneas DS resultantes son idénticas por SHA-256 a las anteriores; se recuperan semillas persistentes para `regreso_29`, `regreso_30`, `regreso_33` y `regreso_41`. La rama de la posada conserva también la reacción real del mostrador antes del regreso.
+
+Con esas referencias se ejecutó `--incluir-clc`: cada uno de los cuatro regresos aporta24 observaciones y3.072 pasos, incluidas12 CLC. Total nuevo:96 observaciones,12.288 pasos y48 ramas CLC; todas llegan al reposo con menú y coinciden en DS/azar/fase. Las escenas de destino son17,17,18 y21; ya estaban cubiertas, por lo que permanece18/73 (24,7%).
+
+Comandos: `pnpm comparar:calles --muestra` y `pnpm comparar:consecuencias --escenas <17|18|21> --estado comparacion_calles/regreso_<29|30|33|41>.ds.bin --incluir-clc`. Informes preservados como `resultado_17_regreso_29_clc.json`, `resultado_17_regreso_30_clc.json`, `resultado_18_regreso_33_clc.json` y `resultado_21_regreso_41_clc.json`. Los informes genéricos filtrados quedan actualizados con el último estado ejecutado de cada escena; las visitas iniciales descritas antes siguen siendo reproducibles con sus referencias originales.
+
+Esto no vuelve a ejecutar ni reemplaza el balance global histórico de59.470 selecciones; sus392 semillas reales y37 referencias antiguas describen aquella ejecución. Quedan más referencias antiguas sin azar persistente, además de estados e interacciones posteriores pendientes.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
