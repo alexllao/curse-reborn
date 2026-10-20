@@ -3,6 +3,9 @@
 namespace motor {
 struct EstadoAleatorio;
 struct RecursosEntidades;
+// 20CD–2549: bruja, fantasma, fuego y fases del duelo final.
+bool actualizar_bruja(unsigned char *datos, EstadoAleatorio &azar,
+                      const RecursosEntidades &recursos);
 // 1BA3–20CC: murciélagos, tumbas y fases de vampiros de GRAVEYD1/2.
 bool actualizar_cementerio(unsigned char *datos, EstadoAleatorio &azar,
                            const RecursosEntidades &recursos);

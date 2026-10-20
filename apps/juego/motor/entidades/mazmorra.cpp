@@ -130,6 +130,8 @@ bool actualizar_rutina_escena(unsigned char *datos) {
 // Despacha BEFD, C093 y las rutinas de población con servicios comunes y azar original.
 bool actualizar_rutina_escena(unsigned char *d, EstadoAleatorio &azar,
                               const RecursosEntidades &recursos) {
+  if (palabra(d, 0x8082) == 72)
+    return actualizar_bruja(d, azar, recursos);
   if (palabra(d, 0x8082) == 65 || palabra(d, 0x8082) == 77)
     return actualizar_cementerio(d, azar, recursos);
   // D41C–D578: sueño del guardia detrás de la columna, reacción y diez partículas por intento.

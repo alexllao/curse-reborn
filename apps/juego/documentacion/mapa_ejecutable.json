@@ -3,6 +3,30 @@
   "raices": ["0000:0238", "0000:6A8C", "0000:8C51", "0000:82C6"],
   "anotaciones": [
     {
+      "direccion": "0000:4A1D",
+      "nombre": "Anillo contra la bruja",
+      "comentario": "418A/4A1D–4A76: Combinar7 con previo175 y destino177, orden único y sin otra condición de fase; canales y+5/886B.",
+      "traslado": "apps/juego/motor/acciones/bruja.hpp"
+    },
+    {
+      "direccion": "0000:4953",
+      "nombre": "Extintor frente a la bruja",
+      "comentario": "4953–49D9: Empujar164 solo en72/fase1, XORC0, humo y canales auxiliares,+5/886B.",
+      "traslado": "apps/juego/motor/acciones/bruja.hpp"
+    },
+    {
+      "direccion": "0000:4925",
+      "nombre": "Aspiradora contra el fantasma",
+      "comentario": "4925–4952: Atacar171 solo en72/fase0, dos canales y+5/886B sin consumo.",
+      "traslado": "apps/juego/motor/acciones/bruja.hpp"
+    },
+    {
+      "direccion": "0000:20CD",
+      "nombre": "Duelo con la bruja",
+      "comentario": "20CD–2549: fases C0, fantasma, carga de fuego, proyectiles, derrota y fracasos.480 variantes completas de DS/azar con partículas y falta de registros.",
+      "traslado": "apps/juego/motor/entidades/bruja.cpp"
+    },
+    {
       "direccion": "0000:48B0",
       "nombre": "Libro de la biblioteca y pasadizo",
       "comentario": "48B0–4924: Empujar176 exige segundo actor en187 global; nodo intermedio si Y>=132 con signo, canales2B24/2B34 y auxiliares conservando campos no escritos.48 variantes, regreso123 y solicitud124 contrastados.",
@@ -1891,7 +1915,8 @@
     {
       "direccion": "0000:49DA",
       "nombre": "ataque_del_ventilador_en_escena_72",
-      "comentario": "El ataque124 comprueba escena72 antes de probar el estado de35CA; fuera salta88A0. Se conserva ese rechazo en el inventario real deCOUNTRY2 tras volver del valle. El efecto exitoso de72 sigue pendiente; no se implementa por esta anotación."
+      "comentario": "El ataque124 comprueba escena72 antes de probar el estado de35CA; fuera salta88A0. Se conserva ese rechazo en el inventario real deCOUNTRY2 tras volver del valle. El efecto exitoso de72 sigue pendiente; no se implementa por esta anotación. Duelo72 fase2 contrastado en bruja.hpp y comparar:bruja.",
+      "traslado": "apps/juego/motor/acciones/bruja.hpp"
     },
     {
       "direccion": "0000:5FFD",

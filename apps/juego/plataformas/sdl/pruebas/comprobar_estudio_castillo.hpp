@@ -35,7 +35,8 @@ bool comprobar_estudio_castillo_sdl(Mazmorra &p, const std::string &opcion, Avan
     return false;
   if (detener("regreso"))
     return true;
-  if (opcion.find("_biblioteca_") != std::string::npos)
+  if (opcion.find("_biblioteca_") != std::string::npos ||
+      opcion.find("_bruja_") != std::string::npos)
     return comprobar_biblioteca_castillo_sdl(p, opcion, avanzar, abrir, elegir, objeto);
   if (!p.mover_a(48, 126))
     return false;

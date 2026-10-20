@@ -76,3 +76,7 @@ Catálogo72 vistas:0–70 y77. Entrada120, anillo175, regreso121 y segunda visit
 ## Biblioteca del castillo integrada
 
 Catálogo73 vistas:0–71 y77. Entrada122, regreso123 y libro176 hasta solicitar124. Núcleo6.524 casos/pasos,48 variantes y ocho composiciones. Batalla72 y desenlace73 pendientes. Véase [Biblioteca](biblioteca_castillo.md).
+
+## Duelo con la bruja integrado
+
+Catálogo74 vistas:0–72 y77. Duelo72 desde124, tres defensas y anillo hasta125; desenlace73 pendiente.1.611 casos/pasos,480 variantes directas, siete composiciones. Véase [Duelo](duelo_bruja.md).

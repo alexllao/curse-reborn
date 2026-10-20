@@ -1,5 +1,6 @@
 #pragma once
 #include "../mazmorra.hpp"
+#include "comprobar_bruja.hpp"
 #include <utility>
 
 // 48B0: llega con el anillo del estudio, regresa123 y abre el pasadizo mediante el menú original.
@@ -71,5 +72,14 @@ bool comprobar_biblioteca_castillo_sdl(Mazmorra &p, const std::string &opcion, A
     return true;
   if (!avanzar(224))
     return false;
-  return detener("abierta");
+  if (detener("abierta"))
+    return true;
+  for (const auto &punto :
+       {std::pair<unsigned short, unsigned short>{142, 190}, {205, 190}, {205, 154}}) {
+    if (!caminar(punto.first, punto.second))
+      return false;
+    if (p.escena_actual() != 71)
+      break;
+  }
+  return comprobar_bruja_sdl(p, opcion, avanzar, abrir, elegir, objeto);
 }

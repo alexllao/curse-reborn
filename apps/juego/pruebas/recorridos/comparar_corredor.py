@@ -38,6 +38,7 @@ BANCOS_ESCENA = {
     69: 'CASTHALL',
     70: 'STUDY',
     71: 'LIBRARY',
+    72: 'FINAL',
     77: 'GRAVEYD2',
     42: 'SNOWAST3',
     41: 'SNOWAST2',

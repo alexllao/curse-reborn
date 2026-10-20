@@ -1,5 +1,6 @@
 [
   "motor/acciones/construir_tabla.cpp",
+  "motor/entidades/bruja.cpp",
   "motor/acciones/poblacion.cpp",
   "motor/acciones/cementerio.cpp",
   "motor/acciones/barco.cpp",

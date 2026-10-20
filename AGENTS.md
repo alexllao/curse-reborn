@@ -6,7 +6,13 @@
 
 Nombre público acordado: «Curse of Enchantia: Reborn»; Curse Reborn queda como nombre en clave. La futura ayuda empleará fichas como las de Información, con tres niveles de pistas fijas por pantalla basadas en la guía. Se aplaza hasta completar el port fiel; no implementar ahora condiciones de inventario o puzles resueltos.
 
-## Estado vigente: 20 de octubre, 73 vistas SDL
+## Estado vigente: 20 de octubre, 74 vistas SDL
+
+Duelo72 FINAL integrado desde124: rutina20CD–2549, aspiradora171 fase0, extintor164 Empujar2 fase1, ventilador124 fase2 y Combinar7 previo175/destino177 (solo ese orden). Núcleo1.611 casos/pasos,480 variantes directas de rutina,80 variantes de selección incluidas en856 selecciones, siete imágenes y cuatro auditorías. SDL siete capturas idénticas, restauración y148 cambiosF5/F6. Catálogo0–72 y77. Sigue pendiente73. Continuar desde trabajo/comparacion_bruja/bruja_solicitud125 (DS/semilla reales). Los tiempos de la ruta SDL son65,30,28,159 y luego32/64 tras combinar; petición125 a los85 del anillo. Documentado F6: una cabecera transitoria fuera de banco acotada a cero en cuatro bytes, no dibujada; no afirmar equivalencia de RAM ajena al recurso. Decorados aparcados, marcos/monitor y sonido común conservados.
+
+INVESTIGACIÓN73: tabla784E seleccionaBASEBAT.MAP,OUTRO.SPR,ENDGAME.SFX. CS17A3[73]=0. ATENCIÓN4D40 se ejecuta después de mapear BX a escena: al entrar73 borra5225–523B (12 palabras, inventario y temas). Falta trasladar y contrastar esa rama, pues el comparador entrada se detiene normalmente en4D40. Desenlace actores desde5206: tres descriptores, canales7403/7415/7424 y desplazamientos7433/7459. No hay final validado todavía.
+
+## Estado anterior: 20 de octubre, 73 vistas SDL
 
 LIBRARY71 integrada desde122 con regreso123 y pasadizo176 según48B0–4924. Segundo actor debe estar en187 global, Y>=132 con signo añade nodo intermedio; conserva campos auxiliares, no consume ni suma puntos. Núcleo6.524 casos/pasos,48 variantes incluidas en853 selecciones, ocho imágenes y cuatro auditorías; SDL ocho capturas idénticas, restauración y146 cambiosF5/F6. CMake también coincide64.000 píxeles en biblioteca abierta. Catálogo0–71 y77. Continuar desde trabajo/comparacion_biblioteca_castillo/biblioteca_solicitud124 (DS/semilla reales, anillo175). Solo faltan batalla72 y desenlace73. Investigación orientativa sin validar en trabajo/pendientes_final72.txt. Rutina72 CS20CD–2549; aspiradora171, extintor164, ventilador124 y anillo175 con bruja177: leer y comprobar contratos. No dar por jugables esos dos destinos por cargar datos.
 

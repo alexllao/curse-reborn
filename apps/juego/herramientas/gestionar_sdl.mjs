@@ -458,6 +458,23 @@ function configurarComprobacionValle(argumentos) {
       alcance: 'recogida153, puertas reales y regreso100; 7 imágenes y restauración',
     },
     {
+      argumento: '--bruja',
+      nombre: 'bruja',
+      referencia: 'bruja',
+      prefijo: 'borde_valle_',
+      comparadores: [],
+      hitos: [
+        'bruja_entrada',
+        'bruja_fantasma',
+        'bruja_aspiradora',
+        'bruja_extintor',
+        'bruja_ventilador',
+        'bruja_anillo_32',
+        'bruja_anillo_64',
+      ],
+      alcance: 'duelo72, aspiradora, extintor, ventilador y anillo; restauración y ruta real',
+    },
+    {
       argumento: '--biblioteca-castillo',
       nombre: 'biblioteca_castillo',
       referencia: 'biblioteca_castillo',
@@ -1013,6 +1030,7 @@ export async function gestionarSdl(accion, argumentos) {
       '--vestibulo-castillo',
       '--estudio-castillo',
       '--biblioteca-castillo',
+      '--bruja',
       '--hielo-palacio',
       '--megafono-palacio',
     ].includes(argumentos[0]);
