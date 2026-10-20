@@ -187,6 +187,27 @@ Reproducción: `pnpm comparar:consecuencias --escenas <29|30|31> --estado <refer
 
 La cobertura por muestras pasa a31/73 (42,5%), escenas0–31 salvo2. No se han encontrado diferencias en esta tanda ni se acredita que estén agotados todos sus estados. En particular, esta muestra de EDGE es la aproximación a la primera roca; falta extender consecuencias a los demás puzles y al rescate con sus contextos reales. También quedan visitas posteriores al loro y más inventarios. SDL75/75 y continuidad73/73 no cambian; no hay nuevas capturas SDL. Siguiente: regenerar contextos de los hitos persistentes de `comparar:acciones-borde`, comprobar sus consecuencias y avanzar32+ por bloques.
 
+### Más consecuencias en EDGE: rescate, guantes, puente, piedra e inscripción
+
+Se regeneró `pnpm comparar:acciones-borde --muestra` para registrar los contextos reales de sus quince hitos:12.229 casos/pasos,4.476 selecciones y quince composiciones coincidentes. Ninguna DS previa de la carpeta cambia de SHA256. Solo los hitos emitidos reciben contexto5800; las instantáneas exploratorias antiguas no lo heredan. El recorrido conserva el rescate alternativo por el pájaro, los botones y el ciclo ADCE real, sin fabricar posiciones, inventario ni fases para los estados persistentes. Las variantes aisladas del generador siguen separadas del recorrido.
+
+Se amplían las consecuencias STC y CLC tras cierre lógico de menú en seis referencias distintas de la primera aproximación ya revisada:
+
+| Referencia de comparacion_acciones_borde | Observaciones | Pasos | CLC | Selecciones |
+| ---------------------------------------- | ------------- | ----- | --- | ----------- |
+| borde_roca_empujada                      | 41            | 5.248 | 14  | 113         |
+| borde_rescate                            | 24            | 3.072 | 12  | 92          |
+| borde_guantes                            | 30            | 3.840 | 16  | 118         |
+| borde_puente                             | 64            | 8.192 | 21  | 234         |
+| borde_caramelo_puesto                    | 37            | 4.736 | 20  | 148         |
+| borde_inscripcion                        | 42            | 5.376 | 13  | 114         |
+
+Total nuevo:238 observaciones,30.464 pasos,96 ramas CLC y819 selecciones. Todas llegan a reposo con menú y coinciden en DS completo, azar y fase externa del comparador. La reanudación separada de `borde_abismo_saltado`, cuyo menú está bloqueado en la captura, añade128 pasos coincidentes hasta reposo:30.592 pasos incluyendo esa secuencia, sin contar una selección nueva. No se cambia el motor ni se añaden condiciones de puzles.
+
+Reproducción: `pnpm comparar:consecuencias --escenas 30 --estado comparacion_acciones_borde/<referencia>.ds.bin --incluir-clc`; para el salto ya iniciado, `--estado comparacion_acciones_borde/borde_abismo_saltado.ds.bin --reanudar`. Informes locales `resultado_30_<referencia>_clc.json` y `resultado_30_borde_abismo_saltado_reanudar.json`; logs `consecuencias_edge_<referencia>.log` y `consecuencias_edge_abismo_reanudado.log`. Los nombres filtrados genéricos conservan la última ejecución de su tipo.
+
+Esta tanda profundiza en una escena ya contada, por lo que mantiene31/73 (42,5%) con muestras,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No se añade ninguna captura SDL ni se agotan todas las posiciones, inventarios o ciclos temporizados. Quedan otras referencias persistentes de EDGE: roca_saltada, cuerda, electrico, caramelo, roca_grande, cuerda_lanzada y puerta_abierta, además de estados posteriores y capítulos32+. `borde_salida` conserva una petición ya emitida: no tratarla como una nueva interacción ni como carga del destino. No repetir los seis estados de esta tabla ni la reanudación sin un cambio que lo justifique.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
