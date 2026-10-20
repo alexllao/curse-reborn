@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 31/73 con menú       | 42,5 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 35/73 con menú       | 47,9 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–31 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–35 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -207,6 +207,23 @@ Total nuevo:238 observaciones,30.464 pasos,96 ramas CLC y819 selecciones. Todas 
 Reproducción: `pnpm comparar:consecuencias --escenas 30 --estado comparacion_acciones_borde/<referencia>.ds.bin --incluir-clc`; para el salto ya iniciado, `--estado comparacion_acciones_borde/borde_abismo_saltado.ds.bin --reanudar`. Informes locales `resultado_30_<referencia>_clc.json` y `resultado_30_borde_abismo_saltado_reanudar.json`; logs `consecuencias_edge_<referencia>.log` y `consecuencias_edge_abismo_reanudado.log`. Los nombres filtrados genéricos conservan la última ejecución de su tipo.
 
 Esta tanda profundiza en una escena ya contada, por lo que mantiene31/73 (42,5%) con muestras,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No se añade ninguna captura SDL ni se agotan todas las posiciones, inventarios o ciclos temporizados. Quedan otras referencias persistentes de EDGE: roca_saltada, cuerda, electrico, caramelo, roca_grande, cuerda_lanzada y puerta_abierta, además de estados posteriores y capítulos32+. `borde_salida` conserva una petición ya emitida: no tratarla como una nueva interacción ni como carga del destino. No repetir los seis estados de esta tabla ni la reanudación sin un cambio que lo justifique.
+
+### Entradas y regresos alternativos del valle32–35
+
+Se amplía el ámbito de consecuencias hasta35, siempre con contexto obligatorio25–35. Se regeneró `pnpm comparar:enlaces-valle --muestra`:13.589 casos/pasos,616 selecciones y seis composiciones coincidentes, sin cambiar ninguna DS previa de la carpeta. Los seis hitos registran su banco real5800. La decisión70→DINO32 surge del estado real del barco; la alternativa52→POST35 aparece tras tres pasos reales en POST y el retorno71 a CELESTE, sin asignar semillas para forzarla. Se conservan también55 haciaREMOTE y56 de regreso.
+
+Las rutinasC5E0–C713 (DINO),C714–C736 (CELESTE),C737–C793 (REMOTE) yC794–C8B0 (POST), sus actores y sus umbrales siguen en los servicios comunes. El estado aleatorio se conserva con cada hito y el comparador contrasta DS completo, azar y la fase externa que controla el puente; no se deduce el banco desde el inventario.
+
+| Escena | Referencia de comparacion_enlaces_valle | Observaciones | Pasos | CLC | Selecciones |
+| ------ | --------------------------------------- | ------------- | ----- | --- | ----------- |
+| 32     | celeste_azar_70                         | 54            | 6.912 | 32  | 262         |
+| 33     | celeste_regreso_70                      | 54            | 6.912 | 32  | 262         |
+| 34     | celeste_remote_55                       | 54            | 6.912 | 32  | 262         |
+| 35     | celeste_azar_52                         | 24            | 3.072 | 12  | 92          |
+
+Total nuevo:186 observaciones,23.808 pasos,108 ramas CLC y878 selecciones. Todas llegan a reposo con menú y coinciden con el EXE; no se encontraron diferencias en estas referencias. Reproducción: `pnpm comparar:consecuencias --escenas <32|33|34|35> --estado comparacion_enlaces_valle/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json` y logs `consecuencias_valle_<referencia>.log`. Los nombres filtrados genéricos conservan la ejecución de cada escena. Las guardas de ámbito rechazan2/36 y contexto ausente en25–35; esta comprobación de argumentos no suma pasos jugables.
+
+La cobertura por muestras pasa de31/73 a35/73 (47,9%), escenas0–35 salvo2. Estas son entradas y regresos concretos con inventarios del recorrido del barco, no todas las fases de los puzles de esas salas: no sustituyen las consecuencias pendientes del pelo y estornudo, grabación, mando, buzón ni posteriores visitas. En REMOTE se contrasta la entrada55, sin acreditar automáticamente todas las entradas60/59. No se ha modificado el motor ni se añaden capturas SDL: accesibilidad75/75 y continuidad73/73 mantienen el alcance anterior. Próximo: más estados significativos de32–35, restantes referencias deEDGE y capítulos36+ con contexto registrado.
 
 ### Límites que siguen abiertos
 
