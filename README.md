@@ -10,6 +10,8 @@ Monorepositorio de Àlex Llaó para el port de _Curse of Enchantia_, sus recurso
 
 Se utiliza **pnpm workspaces**, una instalación y un lockfile común. La versión WebAssembly está pendiente.
 
+Versión coordinada de los paquetes: **0.9.0**. El port alcanza el desenlace y está en revisión integral de alternativas y partidas antes de la 1.0.0. La web sigue siendo un espacio reservado; compartir versión no indica que esté implementada.
+
 Desde la raíz:
 
 ```text

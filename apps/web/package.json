@@ -1,6 +1,6 @@
 {
   "name": "@curse-reborn/web",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "description": "Espacio reservado para la futura web de presentación; aún sin aplicación web.",
