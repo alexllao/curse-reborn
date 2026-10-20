@@ -149,6 +149,13 @@ class ComparacionDinosaurio(ComparacionRamasValle):
         for x, y in ((250, 170), (340, 140)):
             self.ruta_sin_salida(d, x, y)
         self.auditar(d, 'DINO antes del estornudo')
+        # Conserva el punto real ante el monstruo para observar alternativas, sin otra imagen.
+        nombre = 'dinosaurio_antes_estornudo'
+        (self.destino / f'{nombre}.ds.bin').write_bytes(bytes(d))
+        (self.destino / f'{nombre}.semilla.json').write_text(
+            json.dumps(list(self.semilla_menu)), encoding='utf-8'
+        )
+        self.conservar_contexto(self.destino, nombre)
         self.variantes_dinosaurio(d)
         self.variantes_saludo(d)
         self.variantes_estornudo(d)

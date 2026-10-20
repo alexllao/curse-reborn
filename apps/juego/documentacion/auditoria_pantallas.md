@@ -225,6 +225,23 @@ Total nuevo:186 observaciones,23.808 pasos,108 ramas CLC y878 selecciones. Todas
 
 La cobertura por muestras pasa de31/73 a35/73 (47,9%), escenas0–35 salvo2. Estas son entradas y regresos concretos con inventarios del recorrido del barco, no todas las fases de los puzles de esas salas: no sustituyen las consecuencias pendientes del pelo y estornudo, grabación, mando, buzón ni posteriores visitas. En REMOTE se contrasta la entrada55, sin acreditar automáticamente todas las entradas60/59. No se ha modificado el motor ni se añaden capturas SDL: accesibilidad75/75 y continuidad73/73 mantienen el alcance anterior. Próximo: más estados significativos de32–35, restantes referencias deEDGE y capítulos36+ con contexto registrado.
 
+### Consecuencias del estornudo y regreso con sello y bolígrafo
+
+La revisión adicional de DINO32 y POST35 añade un checkpoint sin imagen ante el monstruo: `dinosaurio_antes_estornudo`. Se escribe desde el estado y la semilla reales después de acercarse por250/170 y340/140, antes de las variantes aisladas y de insertar el pelo. Conserva su contexto5800 mediante el servicio común, sin asignar inventario, posición ni banderas. No altera la ruta ni añade una captura SDL.
+
+Se regeneró `pnpm comparar:dinosaurio --muestra`:8.587 casos/pasos,1.596 selecciones, seis estados auditados y seis composiciones coincidentes. Ninguna DS previa de su carpeta cambia de SHA256; el checkpoint nuevo permite observar las alternativas en el punto del puzle y no solo desde la entrada. Se conservan A81A–A8AB para insertar110/102,372A–3763 para el saludo cercano y C5E0–C713 para umbrales y actores. La secuencia sigue consumiendo el pelo, conservando el fotograma29 del monstruo y permitiendo recoger109/101 antes del regreso58 según el EXE.
+
+| Escena | Referencia de comparacion_dinosaurio | Observaciones | Pasos | CLC | Selecciones |
+| ------ | ------------------------------------ | ------------- | ----- | --- | ----------- |
+| 32     | dinosaurio_antes_estornudo           | 61            | 7.808 | 20  | 204         |
+| 32     | dinosaurio_estornudo                 | 47            | 6.016 | 15  | 138         |
+| 32     | dinosaurio_sello_boligrafo           | 36            | 4.608 | 20  | 148         |
+| 35     | dinosaurio_regreso_post              | 36            | 4.608 | 20  | 148         |
+
+Total nuevo:180 observaciones,23.040 pasos,75 ramas CLC y638 selecciones. Todas llegan a reposo con menú y coinciden en DS completo, azar y fase externa del comparador. Reproducción: `pnpm comparar:consecuencias --escenas <32|35> --estado comparacion_dinosaurio/<referencia>.ds.bin --incluir-clc`. Informes `resultado_<escena>_<referencia>_clc.json` en `trabajo/auditoria_consecuencias/`; logs `consecuencias_dinosaurio_<referencia>.log`. El nombre genérico32 queda en sello_boligrafo, pero las tres ejecuciones se conservan por separado.
+
+No hay diferencias nuevas detectadas ni cambios de puzles. Se profundiza en escenas ya incluidas: la cobertura mantiene35/73 (47,9%), SDL75/75 y continuidad73/73. Las combinaciones y respuestas ofrecidas en estos cuatro estados no agotan todas las posiciones, fases o inventarios; el checkpoint ante el monstruo no sustituye otros accesos a DINO ni las fases posteriores de grabación, mando o buzón. Próximo: estados significativos de grabación y REMOTE, más regresos, capítulos36+ y restantes hitos de EDGE.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.

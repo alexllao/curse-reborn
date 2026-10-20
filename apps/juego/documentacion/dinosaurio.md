@@ -17,3 +17,9 @@ Una exploración del regreso hacia60 después de recoger el pelo no completó la
 ## Integración SDL
 
 `pnpm comprobar:dinosaurio` prepara la referencia nativa8587 casos/pasos desde las instantáneas comunes de comprobar:poste y comprobar:celeste. Reproduce desde el inicio las dos ramas de entrada57/54, pelo110, estornudo, sello109/bolígrafo101 y regreso58. Seis imágenes de64000 píxeles coinciden; guardar/restaurar cada hito y72 cambios deF5/F6 entre36 vistas correctos. La recogida del mando tras el estornudo y el resto del valle están contrastados en el núcleo y esperan prolongación de las pruebasSDL. No equivale a agotar todos los estados argumentales deDINO.
+
+## Revisión adicional de consecuencias
+
+El generador conserva ahora `dinosaurio_antes_estornudo.ds.bin`, su semilla real y contexto5800 ante el monstruo, antes de las variantes aisladas, sin añadir imagen ni modificar la partida. Se usa para observar alternativas e inserciones desde el punto del puzle.
+
+La tanda ampliada contrasta180 observaciones y23.040 pasos en ese checkpoint, después del estornudo, con sello/bolígrafo y al regresar aPOST. Todas coinciden con el EXE y terminan en reposo con menú; incluye75 ramas CLC tras el cierre lógico del menú. Los resultados y comandos reproducibles están en la [auditoría vigente](auditoria_pantallas.md). Estos cuatro estados no agotan todos los accesos, inventarios o fases posteriores; las cifras históricas de las primeras integraciones no representan el alcance global actual.
