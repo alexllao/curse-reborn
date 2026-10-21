@@ -142,7 +142,11 @@ class ComparacionCorredor(ComparacionPuzle):
         m.reg_write(r.UC_X86_REG_DI, 0x2C2B)
         self.ejecutar_hasta(0x4C43, 0x4D2B)
         m.reg_write(r.UC_X86_REG_BX, salida)
-        self.ejecutar_hasta(0x4D2B, 0x4D40)
+        # 4D35/4D39: un destino igual conserva recursos y salta al redibujado50D2.
+        # Se omite ese dibujo igual que en la entrada habitual; no ejecutar hasta4D40,
+        # que no pertenece a esta rama y termina alcanzando VGA fuera del contrato.
+        destino = palabra(datos, 0x7482 + salida * 2)
+        self.ejecutar_hasta(0x4D2B, 0x50D2 if destino == palabra(datos, 0x8082) else 0x4D40)
         if palabra(bytes(m.mem_read(self.segmento, 65536)), 0x8082) == 73:
             self.ejecutar_hasta(0x4D40, 0x4D8D)
         self.ejecutar_hasta(0x5145, 0x5182)

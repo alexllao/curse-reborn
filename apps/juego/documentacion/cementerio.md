@@ -43,3 +43,9 @@ La revisión ampliada21/10 reproduce una suspensión del original: desde `cement
 `pnpm comparar:ajo-primera-zona` compara4.096 pasos contra el EXE, con DS completo, azar y fase. Exige la misma posición, destino, fase4, menú/control0 y canales de Brad/camino0 en512/1024/2048/4096; tres selecciones reales y ningún objeto o posición asignado por la prueba. Registra el resultado en `trabajo/comparacion_ajo_primera_zona/resultado.json`. No afirma un ciclo infinito: describe la suspensión observada durante ese plazo.
 
 El informe amplio `resultado_65_cementerio_piedra_clc.json` se conserva con su aviso de plazo agotado,72 ramas/9.600 pasos/218 selecciones; no se reescribe para aparentar reposo.71 ramas alcanzan reposo, y la restante queda contrastada por la prueba selectiva anterior. La ruta positiva usa Comer170 después de114 en77, como indica la guía; sus fases posteriores y el regreso115 se comprueban por separado.
+
+## Orientaciones y recuperación ampliadas
+
+`pnpm comparar:tropiezos-cementerio` contrasta768 contratos aislados de54F0–5638:9/10/11 por los256 valores de imagen. La fixture modifica caja/imagen/canales y verifica cuatro grupos de orientación, intervalos8 frente a2 y preparación especial de11; no son768 rutas jugables.
+
+Desde `cementerio_regreso`, izquierda provoca realmente113 al paso61. El regreso a65 recupera control en49, conserva inventario/fase6, observa128 pasos y continúa por114 al segundo cementerio.974 pasos reales;1.742 contando contratos. El comparador compartido reconoce ahora el salto4D35/4D39→50D2 para una entrada al mismo fondo. Más aproximaciones9/10 y otros estados de11 quedan pendientes. Detalle y reproducción en [la auditoría](auditoria_pantallas.md).

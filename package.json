@@ -172,6 +172,7 @@
     "comparar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:guardia-palacio",
     "comparar:ataud": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:ataud",
     "comparar:ajo-primera-zona": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:ajo-primera-zona",
+    "comparar:tropiezos-cementerio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:tropiezos-cementerio",
     "comparar:cementerio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:cementerio",
     "comparar:bosque": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:bosque",
     "comparar:verja": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:verja",
