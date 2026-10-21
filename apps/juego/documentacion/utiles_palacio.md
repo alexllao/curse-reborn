@@ -17,3 +17,11 @@ La vista52 añade la habitación de la lupa. `pnpm comprobar:lupa-palacio` verif
 El [recorrido en texto](recorridos/21_dados_gato_y_lupa.txt) explica la solución comprobada hasta regresar con ambos objetos, con las dependencias posteriores señaladas.
 
 La auditoría de rutas deja seis salidas pendientes desde el catálogo actual:112 del loro y95/97/99/101/90 del palacio. No se han activado destinos que todavía necesitan reconstrucción.
+
+## Revisión ampliada de consecuencias del21 de octubre
+
+Regenerado `pnpm comparar:utiles-palacio --muestra`:17.640 casos/pasos,1.594 selecciones y13 composiciones coincidentes. Las13 DS anteriores mantienen su SHA256 y guardan contexto5800/fase0 real. Se conservan dos tiradas adicionales para50 y tres para51, sin asignar las marcas de puerta ni los objetos.
+
+Las alternativas de gato_ante_objeto50 y lupa_ante_objeto51 suman94 observaciones,12.032 pasos,32 ramas CLC y259 selecciones coincidentes en DS/azar/fase; todas terminan en reposo con menú en128 pasos. Los generadores siguen recogiendo149/150 en sus posiciones originales y conservándolos al regresar. Las máscaras de inventario aisladas no son otras partidas reales.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Quedan otros estados de recogida, marcas e inventarios posteriores y regresos. Las carencias de integración de las tandas iniciales son históricas; esta ampliación no modifica el motor ni añade capturas SDL.

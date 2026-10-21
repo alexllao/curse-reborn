@@ -23,3 +23,11 @@ Vista56: La habitación del carámbano. `pnpm comprobar:carambano-palacio` verif
 La resolución también se comprueba con `pnpm comprobar:resolucion-palacio`: diez imágenesSDL, guardar/restaurar y112 cambiosF5/F6. Las poleas y la ventana se resuelven con los objetos obtenidos durante el recorrido completo. El [recorrido en texto](recorridos/22_laterales_y_ventana_del_palacio.txt) explica los pasos y los límites.
 
 El salto146 se contrasta en el núcleo hasta solicitar90. Su destino es la sala del láser56, todavía sin integrar;SDL se comprueba hasta la ventana abierta. Quedan dos salidas pendientes desde las56 vistas,112 del loro y90 de la ventana. Esto no equivale al número total de escenas o puzles que faltan del juego.
+
+## Revisión ampliada de consecuencias del21 de octubre
+
+Regenerado `pnpm comparar:laterales-palacio --muestra`:29.136 casos/pasos,5.002 selecciones y31 composiciones coincidentes. Las31 DS anteriores mantienen su SHA256 y guardan contexto5800/fase0 real. Las nuevas tiradas para52/53/54/55 son0/2/0/2; cero indica una puerta ya abierta por el azar previo. No se añaden útiles ni se fijan marcas.
+
+Las alternativas de arma_entrada52, megafono_ante_objeto53, hielo_ante_objeto54 y carambano_entrada55 suman246 observaciones,31.488 pasos,108 ramas CLC y891 selecciones coincidentes en DS/azar/fase; todas terminan en reposo con menú en128 pasos.52/55 parten antes de bajar el objeto alto; el recorrido positivo conserva512 pasos de escoba y192 de recogida. Esta tanda no sustituye los estados posteriores al descenso ni todos los usos de los objetos ya recogidos.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Quedan otros inventarios, regresos y consecuencias alternativas de poleas y ventana. Las carencias de integración de las tandas iniciales son históricas; esta ampliación no modifica el motor ni añade capturas SDL.

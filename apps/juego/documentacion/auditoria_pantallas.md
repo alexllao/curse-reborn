@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 49/73 con menú       | 67,1 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 55/73 con menú       | 75,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–49 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–55 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -406,6 +406,29 @@ Total nuevo:202 observaciones,25.856 pasos,79 ramas CLC y641 selecciones coincid
 Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <46|47|48|49> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_dados_corredores_<referencia>.log`. Regeneraciones en `contextos_dados_palacio_regeneracion.log` y `contextos_corredores_palacio_regeneracion.log`. Recursos comerciales, instantáneas y resultados siguen ignorados; no repetir estos seis estados salvo cambios relevantes.
 
 La cobertura asciende a49/73 escenas con muestras (67,1%),0–49 salvo2; no es fidelidad1:1 cerrada ni porcentaje global de aventura implementada. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin cambios del motor ni capturas SDL nuevas. Faltan otras tiradas y marcas, los inventarios posteriores con útiles, las poleas resueltas y la ventana abierta, más regresos y capítulos50+. La espera positiva512 de cada tirada permanece contrastada en el generador;128 no sustituye todas las duraciones audiovisuales ni todas las condiciones de progreso.
+
+### Seis laterales50–55: recogidas y objetos fuera de alcance
+
+Se regeneraron `pnpm comparar:utiles-palacio --muestra` (17.640 casos/pasos,1.594 selecciones, diez auditorías y13 composiciones) y `pnpm comparar:laterales-palacio --muestra` (29.136/5.002/18/31). Las44 DS previas mantienen su SHA256; los44 hitos guardan contexto5800/fase0 registrado. Se conservan las recogidas reales149–154 y los regresos, sin añadir útiles para fabricar estados.
+
+Las nuevas tiradas registradas para abrir50–55 son2/3/0/2/0/2: cero significa que la puerta ya estaba abierta por las tiradas anteriores, no una bandera asignada. Se mantiene el azar compartido del recorrido. En52 y55 se examinan las opciones desde la entrada, con el objeto todavía alto; el generador positivo baja151/154 con141, se aproxima y recoge después. BAA6/BB18 y las recogidas5FC4/6062 y relacionadas se contrastan con el EXE, manteniendo altura, actividad, puntos y servicios comunes. Las máscaras artificiales de inventario son contratos aislados; no se cuentan como partidas o salas nuevas. La guía respalda la búsqueda de útiles y el uso de la escoba, sin sustituir los predicados del EXE.
+
+La CLI de consecuencias admite ahora0–55 salvo2 automática, con contexto obligatorio desde25. Nuevas observaciones:
+
+| Escena | Carpeta comparacion_ | Referencia           | Observaciones | Pasos  | CLC | Selecciones |
+| ------ | -------------------- | -------------------- | ------------- | ------ | --- | ----------- |
+| 50     | utiles_palacio       | gato_ante_objeto     | 42            | 5.376  | 14  | 114         |
+| 51     | utiles_palacio       | lupa_ante_objeto     | 52            | 6.656  | 18  | 145         |
+| 52     | laterales_palacio    | arma_entrada         | 37            | 4.736  | 20  | 148         |
+| 53     | laterales_palacio    | megafono_ante_objeto | 72            | 9.216  | 26  | 219         |
+| 54     | laterales_palacio    | hielo_ante_objeto    | 82            | 10.496 | 30  | 262         |
+| 55     | laterales_palacio    | carambano_entrada    | 55            | 7.040  | 32  | 262         |
+
+Total nuevo:340 observaciones,43.520 pasos,140 ramas CLC y1.150 selecciones coincidentes en DS completo, azar y fase externa. Todas terminan en reposo con menú en128 pasos. Los recorridos positivos conservan sus esperas512 para bajar los objetos altos y192 para recogerlos;128 no sustituye toda la duración audiovisual ni todos los estados posteriores al descenso.
+
+Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <50|51|52|53|54|55> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_laterales_<referencia>.log`. Regeneraciones en `contextos_utiles_palacio_regeneracion.log` y `contextos_laterales_palacio_regeneracion.log`. Recursos comerciales, instantáneas y resultados permanecen ignorados; no repetir estos seis estados salvo cambios relevantes.
+
+La cobertura asciende a55/73 escenas con muestras (75,3%),0–55 salvo2; no es fidelidad1:1 cerrada ni porcentaje global de aventura implementada. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin cambios del motor ni capturas SDL nuevas. Faltan otras marcas de puertas, estados tras bajar y recoger151/154, inventarios posteriores, regresos con todos los útiles, resolución de poleas/ventana en la revisión ampliada y capítulos56+. Los recorridos positivos existentes de resolución no sustituyen sus alternativas pendientes.
 
 ### Límites que siguen abiertos
 
