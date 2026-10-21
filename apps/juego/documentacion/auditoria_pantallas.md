@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 38/73 con menú       | 52,1 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 39/73 con menú       | 53,4 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–38 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–39 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -314,6 +314,28 @@ Total nuevo:349 observaciones,44.672 pasos,161 ramas CLC y1.345 selecciones, con
 Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <36|37|38> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_valle_tardio_<referencia>.log`. Regeneraciones en `contextos_<carpeta>_regeneracion.log`. No repetir estos seis estados salvo cambios relevantes; los resultados, referencias y recursos comerciales permanecen ignorados.
 
 La unión revisada asciende a38/73 escenas con muestras (52,1%),0–38 salvo2. Accesibilidad SDL75/75 y continuidad tras cargar73/73 mantienen su alcance anterior. No hay diferencias detectadas en esta tanda, cambios del motor ni capturas SDL nuevas. Siguen pendientes otras fases y posiciones deHOLD, la botella expuesta antes de recoger, otros impulsos deCLOUD, más regresos tardíos y capítulos39+. No se declara cerrada la fidelidad1:1 ni la revisión de todas las interacciones.
+
+### ELECTRO39 y regreso tardío al campo16 con el ventilador
+
+Se regeneró `pnpm comparar:plataforma-valle --muestra`:17.040 casos/pasos,1.026 selecciones, tres auditorías y doce composiciones coincidentes. La suma actual incluye una cabecera transitoriaF6 acotada, contada separadamente como `cabeceras_F6_acotadas=1`; sin ese diagnóstico son17.039, la cifra histórica. No es un paso jugable adicional. Las12 DS anteriores mantienen su SHA256 y los12 hitos conservan contexto5800 real.
+
+El recorrido retoma119 del barco, recoge115 enPOST, entra68, obtiene el ventilador124 y vuelve69 aCOUNTRY2/16. Conserva la limpieza120/119, el botón122, canicas121, bandeja115 y desbloqueo123/3 con sus condiciones del EXE. No prepara inventarios ni posiciones. La guía local respalda ese orden; CAE1–CBCF, AFBE–B1F5 y5E9A–5EA8 mantienen las condiciones, puntuación y servicios comunes. La cabeceraF6 sigue con el límite documentado de cuatro bytes de dimensiones fuera del recurso, no una afirmación sobre RAM arbitraria del DOS.
+
+La CLI de consecuencias admite ahora0–39 salvo2 automática;25+ continúa exigiendo contexto externo registrado. Nuevas observaciones desde comparacion_plataforma_valle:
+
+| Escena | Referencia                   | Observaciones | Pasos  | CLC | Selecciones |
+| ------ | ---------------------------- | ------------- | ------ | --- | ----------- |
+| 39     | plataforma_entrada           | 61            | 7.808  | 36  | 308         |
+| 39     | plataforma_detergente        | 55            | 7.040  | 32  | 262         |
+| 39     | plataforma_boton_descubierto | 81            | 10.368 | 30  | 261         |
+| 39     | plataforma_ventilador        | 72            | 9.030  | 26  | 218         |
+| 16     | plataforma_regreso_campo     | 30            | 3.840  | 16  | 118         |
+
+Total nuevo:299 observaciones,38.086 pasos,140 ramas CLC y1.167 selecciones coincidentes en DS completo, azar y fase externa.297 alcanzan reposo con menú; dos ramas de desbloqueo en ambos órdenes solicitan69 al paso35, casillas0-based2/0/1/0/0 y2/0/0/0/1. El observador termina en esas peticiones sin cargar el destino; el campo posterior se contrasta aparte desde la llegada real del generador, con124 y bit2 de35C9. No se cuenta16 otra vez como escena nueva.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <39|16> --estado comparacion_plataforma_valle/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_plataforma_<referencia>.log`. Regeneración y comprobación de huellas en `contextos_plataforma_valle_regeneracion.log`. Resultados y recursos comerciales permanecen ignorados; no repetir estos cinco estados salvo cambios relevantes.
+
+La cobertura pasa a39/73 escenas con muestras (53,4%),0–39 salvo2; no es fidelidad1:1 cerrada. Accesibilidad SDL75/75 y continuidad73/73 mantienen sus límites previos, sin capturas SDL nuevas ni cambios del motor. Siguen pendientes las alternativas desde barrera abierta, canicas y cruce, otras posiciones/caídas, más inventarios tardíos y escenas40+. El recorrido positivo conserva su espera1024 del cruce: estas muestras no sustituyen todos sus estados ni toda la duración audiovisual.
 
 ### Límites que siguen abiertos
 

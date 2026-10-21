@@ -1,4 +1,4 @@
-"""Contrasta la continuación de las opciones ofrecidas hasta la nube del valle."""
+"""Contrasta la continuación de las opciones ofrecidas hasta la plataforma del valle."""
 
 import argparse
 import ctypes
@@ -211,15 +211,15 @@ def auditar(
         raise ErrorAnalisis(f'Hay ramas cuyo final requiere revisión; consultar {destino_informe}.')
 
 
-# Admite hasta CLOUD con bancos registrados; el probador exige además su fase externa.
+# Admite hasta ELECTRO con bancos registrados; el probador exige además su fase externa.
 def leer_escenas(texto):
     try:
         escenas = tuple(sorted(set(int(valor) for valor in texto.split(','))))
     except ValueError as error:
         raise argparse.ArgumentTypeError('Indica índices separados por comas.') from error
-    if not escenas or any(i not in range(39) or i == 2 for i in escenas):
+    if not escenas or any(i not in range(40) or i == 2 for i in escenas):
         raise argparse.ArgumentTypeError(
-            'Ámbito admitido:0–38, salvo la secuencia automática2;25–38 exigen contexto externo.'
+            'Ámbito admitido:0–39, salvo la secuencia automática2;25–39 exigen contexto externo.'
         )
     return escenas
 
@@ -246,7 +246,7 @@ if __name__ == '__main__':
         help='Reanuda una referencia explícita sin abrir ni seleccionar menús.',
     )
     parser.add_argument(
-        '--escenas', type=leer_escenas, help='Índices0–38 separados por comas; por defecto1,3–14.'
+        '--escenas', type=leer_escenas, help='Índices0–39 separados por comas; por defecto1,3–14.'
     )
     parser.add_argument(
         '--estado', help='Referencia relativa a trabajo/ para repetir un caso sin rehacer la tanda.'
