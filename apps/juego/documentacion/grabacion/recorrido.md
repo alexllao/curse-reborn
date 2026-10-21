@@ -40,3 +40,17 @@ La grabación usa una tubería anónima heredada entre el juego y FFmpeg para ev
 Muestra de35 segundos verificada:1050 fotogramas,1920×1080,30 fps, vídeo y audio de35,000 segundos, estéreo48000Hz con señal efectiva. Se visitan0/1 mediante la liberación y la salida normales. Tras proteger también el alta y cierre del archivo de audio, otra muestra de10,033 segundos conserva301 fotogramas y mezcla no silenciada en el archivo. La salida física del juego recibe ceros desde la apertura hasta el cierre del dispositivo.
 
 La regresión sin modo de grabación recorre de nuevo la aventura y produce THE END: sus64.000 píxeles coinciden con `comparacion_desenlace/desenlace_final_cpp.png`. Los perfiles de esas pruebas son locales y aislados. La grabación completa tiene su propio resultado; las muestras no se presentan como una partida terminada.
+
+## Toma completa entregada
+
+La toma `trabajo/grabaciones/20261021-175510/partida_completa.mp4` termina correctamente en THE END. El proceso nativo y el montaje final terminan con código0; `resultado.json` registra `completo: true` y `muestra: false`.
+
+- Duración:41min8,033s;74.041 fotogramas a30 fps.
+- Vídeo:H.264,1920×1080,scanlines en juego y mano, Cielo encantado y moldura sin filtros.
+- Audio:AAC,48000Hz,estéreo;2468,033s frente a2468,033333s de vídeo. La mezcla WAV previa dura2468,030s. Una muestra intermedia de30s contiene señal (media−27,3dB,máximo−3,1dB), sin reproducirla por los altavoces.
+- Tamaño:561.419.983 bytes.
+- SHA-256:`5b56db7a9afbb75fa67ab73143014a5ef49df6bba1a585e1833daa550fa5008f`.
+
+Se decodificaron completos el vídeo y el audio con FFmpeg: código0 y registro sin errores. Se revisaron fotogramas intermedios y el final, con el marco completo y THE END visible. La cronología registra72 índices distintos recorridos; es el inventario de esta toma, no otro porcentaje de cobertura de salas. Los archivos comerciales, WAV, MP4 y capturas siguen fuera de Git.
+
+La compilación nativa y las muestras se comprobaron directamente. Formato213C++,Ruff102Python,ESLint,importaciones y monorepo pasan; el agregado `pnpm calidad` conserva el fallo de este entorno al iniciar `clang-format` desde Node (`EPERM`). No se acredita como aprobado ese comando agregado.
