@@ -283,16 +283,27 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
             break;
           }
           unsigned int banda = 0;
-          const float margen = 2;
+          unsigned int invasion = 0, restos = 0;
+          // El catálogo valida un relieve de6 píxeles de juego y26 en las esquinas.
+          // La moldura se compone encima; el centro conserva todos sus píxeles.
+          const float escala = juego.h / 200.0f;
           for (int y = 0; y < con_marco->h; ++y) {
             const auto *a =
                 static_cast<const Uint8 *>(base_marcos->pixels) + y * base_marcos->pitch;
             const auto *b = static_cast<const Uint8 *>(con_marco->pixels) + y * con_marco->pitch;
             for (int x = 0; x < con_marco->w; ++x) {
               const bool distinto = std::memcmp(a + x * 4, b + x * 4, 4) != 0;
-              const bool interior = x >= juego.x + margen && x < juego.x + juego.w - margen &&
-                                    y >= juego.y + margen && y < juego.y + juego.h - margen;
-              if (distinto && (interior || modo == 2))
+              const bool interior = x >= std::ceil(juego.x) && x < std::floor(juego.x + juego.w) &&
+                                    y >= std::ceil(juego.y) && y < std::floor(juego.y + juego.h);
+              const float dx = std::min(x - juego.x, juego.x + juego.w - 1 - x);
+              const float dy = std::min(y - juego.y, juego.y + juego.h - 1 - y);
+              const bool relieve =
+                  dx < 6 * escala || dy < 6 * escala || (dx < 26 * escala && dy < 26 * escala);
+              if (distinto && interior && !relieve)
+                ++invasion;
+              if (distinto && modo == 2)
+                ++restos;
+              if (invasion || restos)
                 correcto = false;
               if (distinto && (x < juego.x - 2 || x >= juego.x + juego.w + 2 || y < juego.y - 2 ||
                                y >= juego.y + juego.h + 2))
@@ -302,6 +313,10 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
           const bool sin_bandas = tamano.first * 10 == tamano.second * 16;
           if (modo != 2 && !sin_bandas && banda == 0)
             correcto = false;
+          if (!correcto)
+            std::fprintf(stderr,
+                         "Marcos %dx%d, modo%d: banda=%u, interior invadido=%u, restos=%u\n",
+                         tamano.first, tamano.second, modo, banda, invasion, restos);
           SDL_DestroySurface(con_marco);
         }
         SDL_DestroySurface(base_marcos);

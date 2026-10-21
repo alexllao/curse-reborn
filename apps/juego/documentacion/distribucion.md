@@ -2,6 +2,10 @@
 
 ## Cierre de entrega del 21 de octubre
 
+La comprobación de habitaciones del paquete detectó otra incidencia reproducible: el criterio antiguo rechazaba cualquier cambio a más de dos píxeles del borde, incluyendo el relieve autorizado de la nueva moldura. Se corrige la prueba para usar la misma envolvente que `comprobar:marcos`: seis píxeles lógicos en el borde y26 en las esquinas, escalados a la zona física del juego. El resto del interior debe coincidir; al desactivar el marco no puede quedar ningún píxel distinto y las bandas deben recibir imagen cuando existan. El diagnóstico distingue bandas vacías, invasión del interior y restos después de desactivar.
+
+La aplicación anterior reproduce el error con los maestros sin comprimir. Tras recompilar con la corrección, `--comprobar-habitaciones` pasa con cinco diseños, cinco proporciones y ventana vertical,58 capturas y perfiles aislados. Las seis pruebas del builder también pasan. Evidencia ignorada en `trabajo/fallo_builder_marcos/`: `original.log`, `corregido.log` y capturas. No se cambia el dibujo ni se elimina la comprobación. La prueba de compilación se lanzó directamente con las herramientas C++ configuradas porque Node mantiene `spawnSync vswhere.exe EPERM` en esta sesión. Esto no acredita todavía un ZIP nuevo: hay que repetir `pnpm empaquetar:beta --con-datos` con el código actualizado.
+
 La base comprobada y publicada es `1f2de0b`. El recorrido SDL hasta THE END, sus regresos alternativos y la continuidad tras cargar están registrados en `auditoria_pantallas.md`. Las tandas posteriores han cerrado los estados concretos de recaídas11 con actor activo y las marcas reales de puertas de los seis inventarios del palacio. Las notas históricas anteriores no vuelven a abrir esos pendientes.
 
 En esta sesión, `pnpm comprobar:builder` se detiene en el arranque del proceso de pruebas con `spawn EPERM`. Las mismas seis pruebas se han ejecutado dentro del proceso de Node y pasan:
