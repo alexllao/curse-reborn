@@ -13,3 +13,5 @@ Atacar165 despacha4502–4554. Retira el hueso sin exigir el éxito de la retira
 `pnpm comparar:ataud --muestra`:5155 casos/pasos, dieciocho variantes de recogida y doce de excavación incluidas, tres auditorías y seis composiciones. Memoria completa y azar, pago desde la partida persistente y salida113 contrastados. La lectura transitoria F6 cuyo índice excede el banco usa el límite ya documentado por el servicio común: dimensiones cero en la API acotada, sin modificar la imagen de la sala.
 
 `pnpm comprobar:ataud` sigue la misma partida hasta las dos primeras fases de excavación. Compara seis imágenes, restauración y130 cambiosF5/F6 entre65 vistas; los resultados efectivos de la tanda se conservan en AGENTS.md. El destino65 y los vampiros todavía no quedan acreditados por solicitar113.
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.

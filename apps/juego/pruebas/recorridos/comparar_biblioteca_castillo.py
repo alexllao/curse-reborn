@@ -97,6 +97,7 @@ class ComparacionBibliotecaCastillo(ComparacionEstudioCastillo):
         prefijo = self.destino / 'biblioteca_solicitud124'
         prefijo.with_suffix('.ds.bin').write_bytes(d)
         prefijo.with_suffix('.semilla.json').write_text(json.dumps(list(self.semilla_menu)) + '\n')
+        self.conservar_contexto(self.destino, 'biblioteca_solicitud124')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

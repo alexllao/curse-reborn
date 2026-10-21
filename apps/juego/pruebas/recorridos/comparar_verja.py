@@ -62,6 +62,7 @@ class ComparacionVerja(ComparacionBosque):
         (self.destino / 'verja_solicitud118.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)) + '\n'
         )
+        self.conservar_contexto(self.destino, 'verja_solicitud118')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

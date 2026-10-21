@@ -9,3 +9,5 @@ Usar/Empujar174 reproduce4838–48AF: destino180−cámara,171; canales pendient
 `pnpm comprobar:verja` contrasta las cinco imágenes SDL, la restauración en memoria y 138 cambios F5/F6 en las69 vistas. La instantánea verja_solicitud118 permite continuar conCASTLENT68, aún pendiente de integrar. Una sala cargada no acredita el castillo completo.
 
 Véase el [recorrido propio](recorridos/31_la_verja_del_castillo.txt).
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.

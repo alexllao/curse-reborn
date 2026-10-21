@@ -70,6 +70,7 @@ class ComparacionEstudioCastillo(ComparacionVestibuloCastillo):
         prefijo = self.destino / 'estudio_vestibulo'
         prefijo.with_suffix('.ds.bin').write_bytes(d)
         prefijo.with_suffix('.semilla.json').write_text(json.dumps(list(self.semilla_menu)) + '\n')
+        self.conservar_contexto(self.destino, 'estudio_vestibulo')
         salida = ComparacionCalles.ir(self, d, self.semilla_menu, 48, 126)
         if salida != 120:
             raise ErrorAnalisis(f'La segunda visita solicita{salida}, esperada120.')

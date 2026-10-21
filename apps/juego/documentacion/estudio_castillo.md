@@ -9,3 +9,5 @@ Recoger175 sigue563A/6141–6153/633F/61A7–61F1: capacidad e iconos de puntuac
 La ruta parte del acceso real120, recoge el anillo, vuelve por121 y entra otra vez por120. Comprueba que el anillo permanece en el inventario y no reaparece en el estudio. La instantánea estudio_vestibulo conserva el regreso con anillo para continuar hacia la biblioteca, sin crear objetos ni progreso de prueba.
 
 `pnpm comprobar:estudio-castillo` contrasta las seis imágenes SDL y la restauración en memoria durante esos mismos pasos, además de144 cambios F5/F6 en las72 vistas. La biblioteca71 y la batalla final siguen pendientes.
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.

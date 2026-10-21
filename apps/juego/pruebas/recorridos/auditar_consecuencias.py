@@ -1,4 +1,4 @@
-"""Contrasta la continuación de las opciones ofrecidas hasta el guardia del palacio."""
+"""Contrasta la continuación de las opciones ofrecidas hasta el desenlace."""
 
 import argparse
 import ctypes
@@ -189,6 +189,10 @@ def auditar(
             raise ErrorAnalisis(
                 'Faltan instantáneas con semilla y menú de las escenas solicitadas.'
             )
+        if not acciones:
+            raise ErrorAnalisis(
+                'No hay acciones observables; usa --reanudar para comprobar una secuencia sin selecciones.'
+            )
         informe['resultado'] = (
             'requiere revisión'
             if any(r['resultado'].startswith('plazo agotado') for r in informe['ramas'])
@@ -211,15 +215,15 @@ def auditar(
         raise ErrorAnalisis(f'Hay ramas cuyo final requiere revisión; consultar {destino_informe}.')
 
 
-# Admite hasta la reina del hielo con bancos registrados; el probador exige además su fase externa.
+# Admite las escenas con menú y bancos registrados; el probador exige su fase externa.
 def leer_escenas(texto):
     try:
         escenas = tuple(sorted(set(int(valor) for valor in texto.split(','))))
     except ValueError as error:
         raise argparse.ArgumentTypeError('Indica índices separados por comas.') from error
-    if not escenas or any(i not in range(64) or i == 2 for i in escenas):
+    if not escenas or any(i not in range(78) or i in (2, 68, 74, 75, 76) for i in escenas):
         raise argparse.ArgumentTypeError(
-            'Ámbito admitido:0–63, salvo la secuencia automática2;25–63 exigen contexto externo.'
+            'Ámbito admitido:0–73 y77, salvo2/68 automáticas;25+ exigen contexto externo.'
         )
     return escenas
 
@@ -246,7 +250,9 @@ if __name__ == '__main__':
         help='Reanuda una referencia explícita sin abrir ni seleccionar menús.',
     )
     parser.add_argument(
-        '--escenas', type=leer_escenas, help='Índices0–63 separados por comas; por defecto1,3–14.'
+        '--escenas',
+        type=leer_escenas,
+        help='Índices0–73/77 salvo2/68, separados por comas; por defecto1,3–14.',
     )
     parser.add_argument(
         '--estado', help='Referencia relativa a trabajo/ para repetir un caso sin rehacer la tanda.'

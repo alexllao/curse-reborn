@@ -7,3 +7,5 @@ Los dos senderos superiores solicitan117 hacia GATE67. El recorrido izquierdo pa
 `pnpm comparar:bosque --muestra` compara1.797 casos/pasos, tres composiciones y296 selecciones de menú en dos posiciones con el EXE. Compara DS completo y semilla sin normalizar actores. Los objetos76,124,164,167 y171 conservados tienen las respuestas comunes; no se generaliza a inventarios fabricados de otras etapas.
 
 `pnpm comprobar:bosque` verifica tres capturas SDL desde la ruta real, restauración en memoria y 136 cambios F5/F6 en las68 vistas. Resultados locales en trabajo/comparacion_bosque y trabajo/comprobacion_bosque_sdl. El destino67 queda para el siguiente bloque.
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.

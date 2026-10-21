@@ -50,6 +50,7 @@ class ComparacionBosque(ComparacionCementerio):
         (self.destino / 'bosque_solicitud117.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)) + '\n'
         )
+        self.conservar_contexto(self.destino, 'bosque_solicitud117')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

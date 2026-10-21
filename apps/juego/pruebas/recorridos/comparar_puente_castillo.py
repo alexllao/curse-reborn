@@ -35,6 +35,7 @@ class ComparacionPuenteCastillo(ComparacionVerja):
         (self.destino / 'puente_castillo_solicitud119.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)) + '\n'
         )
+        self.conservar_contexto(self.destino, 'puente_castillo_solicitud119')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

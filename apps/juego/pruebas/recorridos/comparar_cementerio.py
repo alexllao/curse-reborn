@@ -321,6 +321,7 @@ class ComparacionCementerio(ComparacionAtaud):
         (self.destino / 'cementerio_solicitud116.semilla.json').write_text(
             json.dumps(list(self.semilla_menu))
         )
+        self.conservar_contexto(self.destino, 'cementerio_solicitud116')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

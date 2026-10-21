@@ -56,6 +56,7 @@ class ComparacionAtaud(ComparacionGuardiaPalacio):
             raise ErrorAnalisis('El tercer pago no produce transporte.')
         if salida != 112:
             raise ErrorAnalisis(f'El tercer pago solicita{salida}, esperada112.')
+        self.conservar_contexto(self.destino, 'ataud_transporte')
         self.cambiar(d, self.semilla_menu, 112)
         self.hito_borde(d, 'ataud_entrada')
         self.esperar(d, 192)
@@ -78,6 +79,7 @@ class ComparacionAtaud(ComparacionGuardiaPalacio):
                     json.dumps(list(self.semilla_menu))
                 )
                 print('Ataúd resuelto; salida113, paso', paso, flush=True)
+                self.conservar_contexto(self.destino, 'ataud_solicitud113')
                 informe = dict(
                     resultado='coinciden',
                     casos_y_pasos=sum(self.resumen.values()),

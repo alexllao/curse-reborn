@@ -492,9 +492,72 @@ Reproducción: `pnpm comparar:consecuencias --escenas <24|58|59|60|61|62|63> --e
 
 Cobertura63/73 escenas con muestras (86,3%), unión0–63 salvo2 automática. SDL75/75 y continuidad73/73 permanecen sin aumento, motor sin cambios y sin nuevas capturas SDL de la aventura. Quedan otras posiciones y plazos de aproximación al guardia, más regresos e inventarios,64/65/77 y66+ excepto68 automática. Las muestras no acreditan todos los estados posibles.
 
+### Regeneración del capítulo final y suspensión original del ajo
+
+Se regeneran los diez recorridos desde el regreso real del guardia hasta el desenlace.42.282 casos/pasos de los generadores,79 DS previas idénticas porSHA256 y77 contextos explícitos. Los dos estados exploratorios `cementerio_bandeja` y `cementerio_diagnostico_camino` permanecen sin contexto y se excluyen. El ataúd conserva banco5800; cementerio y capítulo posterior9000; fase externa0 registrada en ambos. Se añade contexto en las peticiones112/113/116/117/118/119/120/122/124/125 y en `estudio_vestibulo`, justo donde se guardan DS y semilla, sin cargar destinos para reconstruirlo.
+
+| Generador           | Casos/pasos | DS previas sin cambios | Contextos | Imágenes nativas |
+| ------------------- | ----------: | ---------------------: | --------: | ---------------: |
+| ataud               |       5.155 |                      8 |         8 |                6 |
+| cementerio          |      17.568 |                     20 |        18 |               17 |
+| bosque              |       1.797 |                      4 |         4 |                3 |
+| verja               |       2.954 |                      6 |         6 |                5 |
+| puente_castillo     |         180 |                      5 |         5 |                4 |
+| vestibulo_castillo  |       3.909 |                      6 |         6 |                4 |
+| estudio_castillo    |       2.193 |                      7 |         7 |                6 |
+| biblioteca_castillo |       6.524 |                      9 |         9 |                8 |
+| bruja               |       1.611 |                      8 |         8 |                7 |
+| desenlace           |         391 |                      6 |         6 |                6 |
+
+La guía local describe hueso, pala, piedra, ajo después de114, cruz, platillos, aspiradora, verja, las dos escaleras, anillo, libro y las tres defensas finales. Se conserva el contrato4680–472F: Comer170 comprueba fase3 pero no escena. El estado `cementerio_piedra` en65 ofrece la acción y se observa hasta512 sin recuperar menú. El informe amplio conserva72 ramas/9.600 pasos/26CLC/218 selecciones y el aviso original, sin convertirlo en un resultado de reposo.
+
+La prueba selectiva nueva `pnpm comparar:ajo-primera-zona` aísla esa rama real2/3/4, compara4.096 pasos de DS completo, azar y fase y confirma la misma suspensión que el EXE: posición64/130, destino78/177, fase4, menú/control0 y canal de Brad/camino0 en512/1024/2048/4096. Tres selecciones reales,170 consumido, sin asignar objetos ni posiciones. No acredita un ciclo infinito. Resultado en `trabajo/comparacion_ajo_primera_zona/resultado.json`; el informe amplio se conserva con su aviso y la resolución documentada al lado. El recorrido positivo come170 en77 y continúa con las fases4–6.
+
+También se aíslan6/7 de las cuevas: antes solo figuraban dentro del primer informe amplio con dos plazos del corredor ya revisados. Desde contextos5400 y semillas guardadas, `final_desprendimiento`6 da42 observaciones/5.376 pasos/20CLC/148 selecciones y `final_moneda`7 da36/4.608/20/148, todo reposo en128. Total78/9.984/40CLC/296 selecciones. No se suman como escenas nuevas ni se repite la tanda inicial amplia. Informes separados `resultado_<6|7>_<referencia>_clc.json` y logs `consecuencias_cuevas_clc_<referencia>.log`.
+
+### Consecuencias del cementerio al desenlace: cobertura73/73
+
+La CLI admite0–73 y77, excluyendo2/68 automáticas y74–76 reservadas. Los estados25+ exigen contexto externo. Los informes de consecuencias de esta tanda son:
+
+| Escena y referencia       | Observaciones | Pasos DS/azar/fase | CLC | Selecciones |
+| ------------------------- | ------------: | -----------------: | --: | ----------: |
+| 64 ataud_control          |            42 |              5.376 |  14 |         114 |
+| 64 ataud_hueso            |            31 |              3.929 |  16 |         118 |
+| 65 cementerio_piedra      |            72 |              9.600 |  26 |         218 |
+| 65 cementerio_regreso     |            30 |              3.840 |  16 |         118 |
+| 77 cementerio_ajo         |            37 |              4.736 |  20 |         148 |
+| 77 cementerio_puerta      |            36 |              4.608 |  20 |         148 |
+| 66 bosque_sendero         |            36 |              4.608 |  20 |         148 |
+| 67 verja_cerrada          |            61 |              7.808 |  22 |         179 |
+| 67 verja_abierta          |            36 |              4.608 |  20 |         148 |
+| 69 vestibulo_control      |            36 |              4.608 |  20 |         148 |
+| 69 biblioteca_regreso     |            42 |              5.376 |  24 |         182 |
+| 70 estudio_anillo         |            62 |              7.936 |  22 |         180 |
+| 70 estudio_segunda_visita |            42 |              5.376 |  24 |         182 |
+| 71 biblioteca_examinada   |            71 |              9.088 |  26 |         218 |
+| 71 biblioteca_abierta     |            71 |              9.088 |  26 |         218 |
+| 72 bruja_fantasma         |            43 |              5.537 |  24 |         182 |
+| 72 bruja_aspiradora       |            43 |              5.653 |  24 |         182 |
+| 72 bruja_extintor         |            43 |              5.535 |  24 |         182 |
+| 72 bruja_ventilador       |            71 |              9.045 |  26 |         218 |
+| 73 desenlace_entrada      |             1 |                128 |   0 |           0 |
+| 73 desenlace_final        |             1 |                128 |   0 |           0 |
+
+Total907 observaciones y116.611 pasos,414 cierresCLC y3.231 selecciones.904 ramas alcanzan reposo, dos solicitan salidas y una conserva el aviso de plazo agotado del ajo, contrastado aparte durante4.096 pasos con `comparar:ajo-primera-zona`. No se presenta esa suspensión como reposo ni se modifica el comportamiento del EXE. Las salidas son113 desde hueso165 (casillas5/3, paso89) y125 desde anillo175/177 (2/7/5/1, paso85). Reconocer la petición no equivale a cargar el destino; los generadores posteriores contrastan esas cargas por separado.
+
+Las ramas del duelo conservan sus reposos y peticiones según la fase, conservando sus tiempos reales en vez de cortar todo a128. El generador positivo mantiene los límites512/1024, nueve canales finales y todas las condiciones del anillo. Se conserva la excepciónF6 ya documentada en `duelo_bruja.md`, acotada a cuatro bytes de una cabecera transitoria al solicitar125; no se amplía a actores ni estado general.
+
+En73 el menú no ofrece acciones jugables. El primer intento obtuvo cero ramas y no se utiliza como evidencia. La auditoría ahora rechaza expresamente una lista vacía. Se comprueban `desenlace_entrada` y `desenlace_final` con `--reanudar`,128 pasos cada una, sin selecciones fabricadas. El recorrido positivo391 casos/pasos ya comprueba el fin de los nueve canales de actores y el vaciado del inventario. La guardia de cero acciones se verificó contra el menú final y produce el error esperado, conservado en `resultado_73_sin_acciones_rechazado.json`.
+
+Reproducción por referencia: `pnpm comparar:consecuencias --escenas <índice> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`; para73 sustituir `--incluir-clc` por `--reanudar`. Informes separados `resultado_<escena>_<referencia>_clc.json`, o `_reanudar.json` para73; logs `consecuencias_capitulo_final_<referencia>.log`. Los diez generadores, sus versiones y contextos se describen en la sección anterior. No repetir estas referencias salvo cambios relevantes.
+
+Comprobada la unión de escenas con ramas reales en informes coincidentes:0–73 y77 salvo2/68. Cobertura73/73 con muestras (100%), accesiblesSDL75/75 y continuidad tras cargar73/73. No hay cambios de motor ni nuevas capturas SDL de la aventura. El100% se refiere exclusivamente al denominador de escenas con muestras; quedan las situaciones específicas enumeradas en el registro, no un porcentaje global de fidelidad.
+
+Siguiente trabajo: estados intermedios de poleas (bajadas, aceite y silbato ofrecido), más inventarios y regresos deEDGE/REMOTE, otras marcas de puertas y plazos del guardia, orientaciones y consecuencias de caídas del cementerio. La suspensión del ajo queda documentada como comportamiento del original observado hasta4096, no como implementación pendiente ni prueba de ciclo infinito. Las dos copias exploratorias del cementerio siguen excluidas hasta disponer de una regeneración real.
+
 ### Límites que siguen abiertos
 
-- La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
+- La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
 - El recorrido hasta el final y las ramas citadas no agotan todos los regresos con inventarios posteriores ni todas las condiciones de progreso.
 - Las recargas nuevas se realizan en reposo con menú habilitado, sin camino, tecla ni secuencia activa de Brad. No agotan guardados durante animaciones, todas las variantes de inventario, ni importaciones entre procesos o ediciones DOS. Las tres aproximaciones centrales contrastadas no equivalen a agotar todas las direcciones y posiciones posibles de caída.
 

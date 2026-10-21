@@ -81,6 +81,7 @@ class ComparacionVestibuloCastillo(ComparacionPuenteCastillo):
             prefijo.with_suffix('.semilla.json').write_text(
                 json.dumps(list(self.semilla_menu)) + '\n'
             )
+            self.conservar_contexto(self.destino, 'vestibulo_solicitud' + str(salida))
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

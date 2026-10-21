@@ -9,3 +9,5 @@ La puerta abierta desplaza el actor hasta155 global; es la condición original d
 `pnpm comparar:biblioteca-castillo --muestra` retoma el vestíbulo con el anillo obtenido realmente en el estudio. Contrasta6.524 casos/pasos, ocho imágenes y853 selecciones en cuatro estados auditados. Incluye48 variantes de la acción (186/187/188 global, cámara, frontera con signo deY y campos auxiliares previos); están incluidas en las selecciones. DS completo y azar coinciden con el EXE.
 
 Se comprueban entrada122, regreso123, segunda visita y pasadizo. `pnpm comprobar:biblioteca-castillo` reproduce el mismo camino en SDL, compara ocho capturas y verifica restauración en memoria y 146 cambios F5/F6 en las73 vistas. Los recursos comerciales y los resultados quedan fuera de Git.
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.

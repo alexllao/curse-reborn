@@ -151,6 +151,7 @@ class ComparacionBruja(ComparacionBibliotecaCastillo):
                 self.guardar_hito(d, 'anillo_' + str(paso + 1))
         else:
             raise ErrorAnalisis('El anillo no entrega125.')
+        self.conservar_contexto(self.destino, 'bruja_solicitud125')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

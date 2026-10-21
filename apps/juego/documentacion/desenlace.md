@@ -11,3 +11,5 @@ Los tres actores de la lista5206 usan los canales7403/7415/7424 y desplazamiento
 `pnpm comprobar:desenlace` sigue en SDL toda la ruta existente hasta el anillo y el regreso a casa, compara los seis fotogramas y verifica guardar/cargar en memoria y150 cambios F5/F6 en las75 vistas. Las compilaciones Node y CMake coinciden en64.000 píxeles del fotograma final; CMake también contrasta el anillo64 del duelo. El catálogo suma75 vistas, escenas0–73 y77. Esto cierra la integración de escenas, no la revisión integral de una partida de principio a fin con todas sus alternativas.
 
 Los resultados y recursos comerciales permanecen solo en trabajo/ y datos_originales/. La revisión continua de la aventura y el vídeo optimizado de la guía quedan para el siguiente trabajo, tal como se acordó con Àlex.
+
+Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.
