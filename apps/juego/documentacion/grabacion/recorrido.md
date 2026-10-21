@@ -59,10 +59,22 @@ La compilación nativa y las muestras se comprobaron directamente. Formato213C++
 
 El grabador confundía los70Hz del temporizador con los pasos de lógica. El bucle interactivo espera `5000000000 / 70` nanosegundos entre pasos (EAD5); el grabador solo esperaba un tick. Ahora espera cinco ticks por paso, conservando los fundidos/cámaras a70Hz, la captura a30fps y la pausa de selección en0,5s. La permanencia final se ajusta de350 a70 pasos para conservar cinco segundos. No se cambia la velocidad del juego interactivo ni se estira el MP4 o su música.
 
-El informe nativo declara cinco ticks por paso y14Hz lógicos; el script rechaza ejecutables antiguos que no declaren esa cadencia. Una nueva toma completa a velocidad normal sigue pendiente: la anterior no la sustituye.
+El informe nativo declara cinco ticks por paso y14Hz lógicos; el script rechaza ejecutables antiguos que no declaren esa cadencia. La toma completa con la cadencia aprobada se registra en la sección final; la anterior no la sustituye.
 
-Muestra corregida comprobada en `trabajo/grabaciones/20261021-185220`:150,000s,4500 fotogramas, informe5 ticks/14Hz y dos escenas. La salida inicial llega a1 a los93,431s, frente a26,713s de la versión acelerada; los menús y transiciones mantienen sus duraciones propias. Decodificación completa con FFmpeg correcta, código0. `caminata_30s.mp4` extrae los segundos105–135 sin alterar velocidad ni audio, para revisar el movimiento directamente. La muestra sigue declarada incompleta; no se ha lanzado otra toma larga.
+Muestra corregida comprobada en `trabajo/grabaciones/20261021-185220`:150,000s,4500 fotogramas, informe5 ticks/14Hz y dos escenas. La salida inicial llega a1 a los93,431s, frente a26,713s de la versión acelerada; los menús y transiciones mantienen sus duraciones propias. Decodificación completa con FFmpeg correcta, código0. `caminata_30s.mp4` extrae los segundos105–135 sin alterar velocidad ni audio, para revisar el movimiento directamente. La muestra sigue declarada incompleta; en esa validación todavía no se había lanzado otra toma larga.
 
 Àlex aprobó la muestra de caminata corregida. Se prepara una nueva toma completa con esa cadencia y salida silenciada. Antes de ella se verifica el contenedor RF64 con una muestra corta; no cambia las muestras de audio, la velocidad ni la presentación aprobada.
 
-RF64 comprobado en `trabajo/grabaciones/20261021-190326`: muestra10s/300 fotogramas, IEEEfloat32/48000Hz/estéreo, longitudes64bits del chunkds64 coincidentes con el archivo, audio efectivo y MP4 de10s. Compilación nativa conO2/avisos como errores correcta. Nueva toma larga iniciada en `trabajo/grabaciones/20261021-190417`; su finalización se documentará únicamente tras verificar el resultado.
+RF64 comprobado en `trabajo/grabaciones/20261021-190326`: muestra10s/300 fotogramas, IEEEfloat32/48000Hz/estéreo, longitudes64bits del chunkds64 coincidentes con el archivo, audio efectivo y MP4 de10s. Compilación nativa conO2/avisos como errores correcta. Nueva toma larga iniciada en `trabajo/grabaciones/20261021-190417`; el resultado se documenta en la sección siguiente.
+
+## Toma completa con cadencia aprobada
+
+Archivo local:`trabajo/grabaciones/20261021-190417/partida_completa.mp4`. Recorrido y montaje terminan con código0, `completo: true`, `muestra: false`, cinco ticks por paso y14Hz lógicos. Mantiene la velocidad de la muestra de caminata aprobada por Àlex.
+
+- Duración:2h52min37,333s;310.720 fotogramas a30 fps.
+- Vídeo:H.264,1920×1080,scanlines en juego y mano; panorama y moldura sin filtros.
+- Audio:AAC,48000Hz,estéreo,10357,333s frente a10357,333333s de vídeo. Mezcla RF64 previa de10357,270s y3.977.191.760bytes, con longitudesds64 comprobadas contra el archivo. Se mide señal en una muestra intermedia de30s (media−22,2dB,máximo0dB).
+- Tamaño:1.386.485.993 bytes.
+- SHA-256:`322713a01ce109cc1f9da03256e2aa0c6e3d87a66e892cf4296576d285768225`.
+
+Se revisaron visualmente el fotograma intermedio y THE END, manteniendo la presentación acordada. La cronología registra72 índices distintos recorridos. La decodificación completa de vídeo/audio con FFmpeg termina con código0 y registro sin errores. Se contrastaron las184 transiciones con la toma anterior: misma secuencia de índices y llegada real a THE END, con la cadencia corregida. La salida inicial0→1 a93,431s coincide con la muestra aprobada. El archivo es esta ruta guiada completa, no una medición de la ruta humana más corta. No se han versionado imágenes comerciales, ROM, partidas ni resultados.
