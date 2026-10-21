@@ -35,3 +35,11 @@ GRAVEYD.SPR ocupa112.144 bytes. El comparador sitúa el modelo DOS en9000 para s
 `pnpm comprobar:cementerio` compara17 capturas SDL, comprueba restauración en memoria y134 cambios F5/F6 de las67 vistas. Los resultados locales quedan en `apps/juego/trabajo/comparacion_cementerio/` y `apps/juego/trabajo/comprobacion_cementerio_sdl/`.
 
 La petición116 se conserva en una instantánea para seguir con el bosque del castillo. Cargar ese destino y resolver las habitaciones finales sigue pendiente. Véase el [recorrido propio](recorridos/29_el_cementerio.txt).
+
+## Comer el ajo antes de cruzar114
+
+La revisión ampliada21/10 reproduce una suspensión del original: desde `cementerio_piedra`, fase3 en escena65, Comer170 (casillas2/3/4) pasa a fase4, consume el ajo y prepara destino78/177.4680–472F comprueba fase, pero no exige escena77. En65 Brad termina en64/130, sin menú ni control; la planificación queda vacía y no devuelve la secuencia pendiente. Se conservan esas condiciones, sin convertir la acción en rechazo ni corregir el EXE dentro del port fiel.
+
+`pnpm comparar:ajo-primera-zona` compara4.096 pasos contra el EXE, con DS completo, azar y fase. Exige la misma posición, destino, fase4, menú/control0 y canales de Brad/camino0 en512/1024/2048/4096; tres selecciones reales y ningún objeto o posición asignado por la prueba. Registra el resultado en `trabajo/comparacion_ajo_primera_zona/resultado.json`. No afirma un ciclo infinito: describe la suspensión observada durante ese plazo.
+
+El informe amplio `resultado_65_cementerio_piedra_clc.json` se conserva con su aviso de plazo agotado,72 ramas/9.600 pasos/218 selecciones; no se reescribe para aparentar reposo.71 ramas alcanzan reposo, y la restante queda contrastada por la prueba selectiva anterior. La ruta positiva usa Comer170 después de114 en77, como indica la guía; sus fases posteriores y el regreso115 se comprueban por separado.
