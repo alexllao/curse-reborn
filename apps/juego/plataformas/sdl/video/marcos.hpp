@@ -53,5 +53,6 @@ private:
   // Interpola desde el nivel actual para que otra pulsación invierta el recorrido sin saltos.
   float nivel_animacion(Uint64 ahora) const;
   SDL_Texture *textura = nullptr;
+  SDL_Texture *moldura = nullptr;
   const DefinicionMarco *actual = nullptr;
 };

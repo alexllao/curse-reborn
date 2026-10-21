@@ -74,3 +74,15 @@ El [movimiento con colisiones y la corrección de la puerta](movimiento_y_colisi
 `pnpm comprobar:vistas` valida ocho cambios con eventos F5/F6: mazmorra, corredor, caída y lago, con regresos intercalados. El salto desde mazmorra ya pasa por el corredor. F3 permite elegir los [efectos digitales Sound Blaster](efectos_digitales.md), activos por defecto, o PC Speaker. Los efectos PC Speaker y sus comprobaciones se describen en [altavoz del PC](altavoz_pc.md); M permite silenciarlos.
 
 [Referencia completa de teclas y controles](controles.md).
+
+### Moldura transparente de Cielo encantado
+
+F1 activa el cielo existente y una moldura propia independiente en `packages/assets/marcos/cielo_encantado/overlay/moldura.png`. Los cuatro fondos maestros se conservan sin regenerar ni modificar. PNG RGBA de 1586×992 con vano y exterior transparentes, generado con la herramienta integrada imagegen a partir de la prueba aprobada por Àlex. Petición: extraer visualmente la moldura fina dorada con pequeñas esquinas y gemas rojas, sin juego ni cielo, apta para nueve piezas.
+
+`moldura.png.json` registra huella SHA256, resolución, vano, cortes de esquina, escala y solape máximo. El preparador valida y copia ambos archivos, genera las constantes C++ y el builder los descubre desde `catalogo_marcos.hpp`. El paquete conserva su transparencia al optimizarlo.
+
+SDL dibuja nueve piezas después del cielo, con esquinas a escala uniforme y largueros estirados. El viewport y el tamaño del juego no cambian. Cuatro recortes disjuntos limitan la entrada sobre la imagen a dos píxeles originales: el interior permanece intacto. En 16:10 exacto, sin bandas, no aparece ni cielo ni moldura. En proporciones anchas o estrechas se adapta al mismo rectángulo del juego; las partes que quedan fuera de la ventana se recortan. Comparte filtro y fundido F1, con textura almacenada hasta cambiar de filtro o cerrar SDL. La habitación del lanzador mantiene su presentación propia.
+
+Verificación: `pnpm comprobar:marcos` comprueba las proporciones, los seis filtros, la reversibilidad F1 y las fases de fundido, permitiendo únicamente el solape documentado. Las capturas permanecen en `apps/juego/trabajo/comprobacion_marcos`, fuera del repositorio.
+
+Referencia futura de diseño: Àlex propone paneles oscuros con adornos de fantasía, dorado fino y texto claro para un menú ingame coherente. Contendrá opciones de sonido, personalización y modo de depuración. Las capturas compartidas son referencias de estilo, no recursos incorporados ni una petición de implementar ahora ese menú. Elegir una familia visual consistente y adaptar su diseño a las funciones reales del port.

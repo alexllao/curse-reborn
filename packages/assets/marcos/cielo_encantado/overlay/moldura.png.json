@@ -1,0 +1,9 @@
+{
+  "resolucion": [1586, 992],
+  "sourceSha256": "d020aebe93ae3fabcb1d61c075d71638ffcfc7587530257516cc8c32467dd0c4",
+  "origen": "Moldura propia generada con imagegen desde la prueba aprobada por Àlex; fondo e interior transparentes.",
+  "vano": [105, 85, 1375, 820],
+  "esquinas": [230, 230, 210, 210],
+  "escalaPorPixel": 0.075,
+  "solapeMaximo": 2
+}

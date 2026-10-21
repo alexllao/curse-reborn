@@ -1732,10 +1732,10 @@ export async function gestionarSdl(accion, argumentos) {
           const p = (y * ancho + x) * 3;
           if (capturas[0].subarray(p, p + 3).equals(capturas[1].subarray(p, p + 3))) continue;
           if (
-            x >= Math.ceil(x0) &&
-            x < Math.floor(ancho - x0) &&
-            y >= Math.ceil(y0) &&
-            y < Math.floor(alto - y0)
+            x >= Math.ceil(x0 + 2 * escala) &&
+            x < Math.floor(ancho - x0 - 2 * escala) &&
+            y >= Math.ceil(y0 + 2 * escala) &&
+            y < Math.floor(alto - y0 - 2 * escala)
           )
             throw new Error(`El marco invade el juego: ${opcion}, ${x}, ${y}.`);
           modificados++;
@@ -1760,11 +1760,11 @@ export async function gestionarSdl(accion, argumentos) {
         'El zoom y fundido de F1 no conservan las fases intermedias y su recorrido inverso.',
       );
     for (const fase of fases)
-      for (let y = 0; y < 720; y++)
+      for (let y = 8; y < 712; y++)
         if (
           !fase
-            .subarray((y * 1280 + 128) * 3, (y * 1280 + 1152) * 3)
-            .equals(fases[0].subarray((y * 1280 + 128) * 3, (y * 1280 + 1152) * 3))
+            .subarray((y * 1280 + 136) * 3, (y * 1280 + 1144) * 3)
+            .equals(fases[0].subarray((y * 1280 + 136) * 3, (y * 1280 + 1144) * 3))
         )
           throw new Error('La animación del marco cambia el interior del juego.');
     console.log(
@@ -1777,7 +1777,9 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: 50,
           panorama: 'Cielo encantado: 32:9, 24:9, 16:9 y 4:3; 16:10 sin bandas',
-          filtros_marco: 'seis modos compartidos con el juego',
+          filtros_marco: 'seis modos compartidos con el juego y la moldura',
+          overlay: 'PNG transparente en nueve piezas; fondos maestros sin cambios',
+          solape_maximo_pixeles_originales: 2,
           animacion_ms: 250,
           bandas_horizontales: 'panorama horizontal sin giro',
           zoom_inicial: 1.0,

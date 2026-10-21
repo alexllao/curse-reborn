@@ -136,6 +136,38 @@ export function prepararMarcos(raiz, destino) {
   const destinoCielo = join(destino, 'assets/marcos/cielo_encantado');
   mkdirSync(destinoCielo, { recursive: true });
   const panoramas = JSON.parse(readFileSync(join(cielo, 'catalogo.json'), 'utf8'));
+  const overlay = join(cielo, 'overlay/moldura.png');
+  const moldura = JSON.parse(readFileSync(overlay + '.json', 'utf8'));
+  const imagenMoldura = readFileSync(overlay);
+  if (
+    imagenMoldura.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
+    imagenMoldura.readUInt32BE(16) !== moldura.resolucion[0] ||
+    imagenMoldura.readUInt32BE(20) !== moldura.resolucion[1] ||
+    createHash('sha256').update(imagenMoldura).digest('hex') !== moldura.sourceSha256
+  )
+    throw new Error('Moldura transparente inválida.');
+  if (
+    !Array.isArray(moldura.vano) ||
+    moldura.vano.length !== 4 ||
+    !moldura.vano.every((n) => Number.isFinite(n) && n > 0) ||
+    moldura.vano[0] + moldura.vano[2] > moldura.resolucion[0] ||
+    moldura.vano[1] + moldura.vano[3] > moldura.resolucion[1] ||
+    !Array.isArray(moldura.esquinas) ||
+    moldura.esquinas.length !== 4 ||
+    !moldura.esquinas.every((n) => Number.isFinite(n) && n > 0) ||
+    moldura.esquinas[0] + moldura.esquinas[1] >= moldura.resolucion[0] ||
+    moldura.esquinas[2] + moldura.esquinas[3] >= moldura.resolucion[1] ||
+    !Number.isFinite(moldura.escalaPorPixel) ||
+    moldura.escalaPorPixel <= 0 ||
+    moldura.escalaPorPixel > 1 ||
+    !Number.isInteger(moldura.solapeMaximo) ||
+    moldura.solapeMaximo < 0 ||
+    moldura.solapeMaximo > 2
+  )
+    throw new Error('Geometría de moldura inválida.');
+  mkdirSync(join(destinoCielo, 'overlay'), { recursive: true });
+  copyFileSync(overlay, join(destinoCielo, 'overlay/moldura.png'));
+  copyFileSync(overlay + '.json', join(destinoCielo, 'overlay/moldura.png.json'));
   const luminosidad = panoramas.luminosidad ?? 1;
   if (!Number.isFinite(luminosidad) || luminosidad < 0 || luminosidad > 1)
     throw new Error('Luminosidad panorámica inválida.');
@@ -182,7 +214,8 @@ export function prepararMarcos(raiz, destino) {
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
   const cabecera = `// Generado desde packages/assets/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
-  writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera);
+  const cabeceraMoldura = `inline constexpr const char *archivo_moldura = "assets/marcos/cielo_encantado/overlay/moldura.png";\ninline constexpr SDL_FRect vano_moldura = {${moldura.vano.join(',')}};\ninline constexpr float esquinas_moldura[] = {${moldura.esquinas.join(',')}};\ninline constexpr float escala_moldura = ${moldura.escalaPorPixel}f;\ninline constexpr float solape_moldura = ${moldura.solapeMaximo}.0f;\n`;
+  writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera + cabeceraMoldura);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }
 
