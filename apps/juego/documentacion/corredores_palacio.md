@@ -17,3 +17,11 @@ La vista49 habilita el segundo corredor. `pnpm comprobar:pasillo-hielo` compara 
 La vista50 añade el corredor de la ventana. `pnpm comprobar:ventana-palacio` compara las seis imágenes restantes del recorrido, guardar/restaurar y100 cambiosF5/F6 entre50 vistas. Entre las tres comprobacionesSDL se cubren las trece referencias nativas. No se abre la ventana ni se ofrece147 antes de cumplir el contrato original.
 
 `pnpm auditar:rutas` revisa78 tablas y detecta ocho salidas pendientes desde las vistas actuales:112 del loro y las siete del palacio (91,93,95,97,90,99,101). Las seis laterales conducen a50..55;90 continúa a56. Se conservan como pendientes explícitos, sin desviar al jugador a otra habitación.
+
+## Revisión ampliada de consecuencias del21 de octubre
+
+Regenerado `pnpm comparar:corredores-palacio --muestra`:5.791 casos/pasos,1.377 selecciones y trece composiciones coincidentes. Las trece DS anteriores mantienen su SHA256 y guardan contexto5800/fase0 real, sin añadir los útiles que todavía no se han recogido en este tramo del recorrido.
+
+Las alternativas de poleas_ante_inspeccion47, hielo_pasillo2/48, hielo_ante_ventana49 y hielo_ventana_cerrada49 suman147 observaciones,18.816 pasos,51 ramas CLC y431 selecciones coincidentes en DS/azar/fase; todas terminan en reposo con menú en128 pasos. Incluyen el estado posterior al salto rechazado. El recorrido continúa conservando la ventana cerrada y147 no ofrecido; las variantes aisladas con útiles no acreditan por sí mismas su solución real.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Quedan otras marcas, inventarios con útiles posteriores, poleas resueltas, ventana abierta y regresos. Las carencias de integración descritas en las tandas iniciales son históricas; esta revisión ampliada no modifica el motor ni añade capturas SDL.
