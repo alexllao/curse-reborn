@@ -191,6 +191,8 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     utiles_palacio: 'comparar_utiles_palacio.py',
     laterales_palacio: 'comparar_laterales_palacio.py',
     resolucion_palacio: 'comparar_resolucion_palacio.py',
+    regreso_remote: 'comparar_regreso_remote.py',
+    plazos_guardia: 'comparar_plazos_guardia.py',
     orden_poleas: 'comparar_orden_poleas.py',
     laser_palacio: 'comparar_laser_palacio.py',
     reina_hielo: 'comparar_reina_hielo.py',
@@ -537,6 +539,12 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:regreso-remote':
+      compararAcciones('regreso_remote', argumentos);
+      break;
+    case 'comparar:plazos-guardia':
+      compararAcciones('plazos_guardia', argumentos);
       break;
     case 'comparar:orden-poleas':
       compararAcciones('orden_poleas', argumentos);

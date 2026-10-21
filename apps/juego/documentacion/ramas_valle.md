@@ -27,3 +27,7 @@ Este bloque completa esos enlaces del núcleo; no incrementa aún las32 vistas S
 ## CELESTE en SDL
 
 `pnpm comprobar:celeste` prolonga la misma partida por56 y61 y recoge111 al volver aPOST. Compara tres imágenes originales y guardar/restaurar;70 cambios deF5/F6 entre35 vistas. CELESTE incorpora55/61 y los accesos56/71; se admite la alternativa52 haciaPOST. DINO yHOLD aún no están activos enSDL en esta revisión. Las dos decisiones aleatorias y los regresos completos siguen contrastados en el núcleo por enlaces-valle, sin presentarlos todavía como comprobados enSDL.
+
+## Regreso posterior con grabación y correo enviado
+
+`pnpm comparar:regreso-remote` retoma106 y los consumos reales de correo, cierra60/56/61 con1.360 pasos y conserva el inventario. Espera el control antes de enviar cada clic durante las reacciones del personaje; no anula animaciones ni cambia el motor. Tres referencias nuevas con DS/semilla/contexto5800/fase0. Véase el bloque del21 de octubre en [la auditoría](auditoria_pantallas.md).

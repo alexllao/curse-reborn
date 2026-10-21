@@ -23,3 +23,7 @@ El recorrido incluye esconderse, esperar el sueño, aproximarse, colocar la ceri
 `pnpm comprobar:guardia-palacio` reproduce el recorrido en SDL, compara diez imágenes y verifica restauración y128 cambiosF5/F6 entre64 vistas. Los resultados concretos de la tanda se registran también en AGENTS.md. No se afirma que el resto del juego esté terminado.
 
 Revisión ampliada21/10: referencias reales regeneradas con contexto de banco y fase, negativas y cierresCLC, más regreso posterior aBenn24 con extintor. Cifras, reproducción y límites en la sección «Mano, laberinto, guardia y regreso con el extintor» de `auditoria_pantallas.md`. No cambia el motor ni añade vistas SDL.
+
+## Intentos con distintos plazos reales
+
+`pnpm comparar:plazos-guardia` parte de la columna con100, camina60 pasos hacia el pie y espera0/16/32/64 adicionales. Los contadores50/34/18/FFECh producen dos colocaciones y dos rechazos conservando162, con1.376 pasos y16 selecciones coincidentes. No asigna el temporizador ni el inventario; compara también256 pasos posteriores por intento. `guardia_fuego_48/96/192` añaden54 observaciones/6.912 pasos/24CLC/210 selecciones de consecuencias. Detalle y reproducción en [la auditoría](auditoria_pantallas.md).
