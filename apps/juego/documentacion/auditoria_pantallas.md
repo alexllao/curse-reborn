@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 39/73 con menú       | 53,4 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 43/73 con menú       | 58,9 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–39 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–43 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -336,6 +336,28 @@ Total nuevo:299 observaciones,38.086 pasos,140 ramas CLC y1.167 selecciones coin
 Reproducción: `pnpm comparar:consecuencias --escenas <39|16> --estado comparacion_plataforma_valle/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_plataforma_<referencia>.log`. Regeneración y comprobación de huellas en `contextos_plataforma_valle_regeneracion.log`. Resultados y recursos comerciales permanecen ignorados; no repetir estos cinco estados salvo cambios relevantes.
 
 La cobertura pasa a39/73 escenas con muestras (53,4%),0–39 salvo2; no es fidelidad1:1 cerrada. Accesibilidad SDL75/75 y continuidad73/73 mantienen sus límites previos, sin capturas SDL nuevas ni cambios del motor. Siguen pendientes las alternativas desde barrera abierta, canicas y cruce, otras posiciones/caídas, más inventarios tardíos y escenas40+. El recorrido positivo conserva su espera1024 del cruce: estas muestras no sustituyen todos sus estados ni toda la duración audiovisual.
+
+### Las cuatro zonas nevadas40–43 y regreso con cenizas
+
+Se regeneraron `pnpm comparar:ser-azul --muestra` (3.049 casos/pasos,732 selecciones y cinco composiciones) y `pnpm comparar:morsa --muestra` (19.841 casos/pasos,2.796 selecciones y21 composiciones). Morsa mantiene7.877 pasos jugables; frente al informe previo19.706/2.661, la diferencia de135 está en las selecciones contabilizadas, sin cambiar las DS de los hitos ni añadir salas por esta regeneración. Conserva el límite documentado de cuatro cabecerasF6 acotadas, no identidad de RAM ajena al recurso.
+
+Las31 DS locales anteriores mantienen su SHA256. Solo27 son hitos emitidos por estos generadores: cinco del ser azul y22 de morsa, incluidos21 con imagen y la petición81 sin otra composición. Esos27 conservan contexto5800/fase externa0 real. Las cuatro copias antiguas `investigacion_cornisa2–5.ds.bin` siguen sin contexto y no se trasladan a esta tanda. `comparar_morsa.py` guarda ahora expresamente el contexto de rescate_solicitud81 después de comprobar su retorno; no se cuenta esa petición como otra selección ni se carga44 aquí.
+
+Los recorridos parten del vestido real y la solicitud74. Conservan la bola134, desodorante132 y su bandera, saludo, tablón125, pez128, entrega126, caña127, liberaciones y cenizas131 sin inventarios ni posiciones preparados. La guía orienta esos puzles; las condiciones efectivas se contrastan con B1F8–B576,5EAB–5F64 y CBD0–CF25 del EXE, sin añadir sus descripciones como reglas. La CLI de consecuencias admite ahora0–43 salvo2 automática, con contexto obligatorio desde25.
+
+| Escena | Carpeta comparacion_ | Referencia          | Observaciones | Pasos | CLC | Selecciones |
+| ------ | -------------------- | ------------------- | ------------- | ----- | --- | ----------- |
+| 43     | ser_azul             | nieve_bola_recogida | 38            | 4.864 | 20  | 148         |
+| 42     | morsa                | morsa_ante_saludo   | 31            | 3.968 | 16  | 118         |
+| 41     | morsa                | esquimal_entrada    | 30            | 3.840 | 16  | 118         |
+| 40     | morsa                | rescate_ante_tablon | 52            | 6.656 | 18  | 145         |
+| 42     | morsa                | morsa_cenizas       | 36            | 4.608 | 20  | 148         |
+
+Total nuevo:187 observaciones,23.936 pasos,90 ramas CLC y677 selecciones, con DS completo, azar y fase externa coincidentes. Todas llegan a reposo con menú en128 pasos. Se distingue el regreso42 con131 de la llegada inicial; no se cuenta42 dos veces como escena nueva. Los recorridos positivos conservan sus esperas512 del ser azul y1024 de la liberación del hielo;128 no acredita toda la duración audiovisual ni todas las variantes.
+
+Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <40|41|42|43> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_nieve_<referencia>.log`. Regeneraciones en `contextos_ser_azul_regeneracion.log` y `contextos_morsa_regeneracion.log`. Recursos comerciales, instantáneas y resultados siguen ignorados; no repetir estos cinco estados salvo cambios relevantes.
+
+La cobertura asciende a43/73 escenas con muestras (58,9%),0–43 salvo2; no es un porcentaje global de fidelidad1:1. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin capturas SDL nuevas ni cambios del motor. Quedan otras posturas e inventarios de la entrega al esquimal, variantes de hielo y rescate, más regresos y capítulos44+. El contexto de la solicitud81 facilita retomar ese recorrido, pero no acredita las alternativas del lago.
 
 ### Límites que siguen abiertos
 

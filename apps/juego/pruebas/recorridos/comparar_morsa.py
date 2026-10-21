@@ -199,6 +199,7 @@ class ComparacionMorsa(ComparacionRegresoBenn):
         (self.destino / 'rescate_solicitud81.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)), encoding='utf-8'
         )
+        self.conservar_contexto(self.destino, 'rescate_solicitud81')
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
