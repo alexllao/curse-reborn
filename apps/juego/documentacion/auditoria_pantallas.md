@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 55/73 con menú       | 75,3 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 73/73 con menú       | 100 %      | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–55 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–73 y77 salvo2/68, que son automáticas. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -668,3 +668,28 @@ Catálogo74 vistas:0–72 y77. Duelo72 desde124, tres defensas y anillo hasta125
 ## Desenlace integrado: catálogo completo
 
 75 vistas: escenas0–73 y77. Las74–76 son reservasDUNGEON, no habitaciones adicionales de la aventura. Entrada125, vaciado original de inventario y tres actores finales contrastados:391 casos/pasos y seis composiciones. Sigue pendiente revisar una partida continua con todas sus alternativas. Véase [Desenlace](desenlace.md).
+
+### Estados restantes de EDGE y REMOTE protegido (21 de octubre)
+
+Se contrastan siete referencias adicionales de `comparacion_acciones_borde`, con sus semillas y contextos ya regenerados. No se repite el generador completo ni las seis referencias anteriores. Se regenera `comparar:ramas-valle --muestra`:5.968 casos/pasos,858 selecciones, ocho composiciones y ocho contextos5800; las32 DS locales anteriores conservan su SHA256. Las copias exploratorias antiguas sin contexto siguen excluidas. Sus tres estados canónicos de REMOTE conservan el mando protegido: entrada60, reacción y rechazo al intentar recoger108.
+
+| Escena | Referencia             | Observaciones | Pasos | CLC cerrado con clic derecho | Selecciones |
+| ------ | ---------------------- | ------------- | ----- | ---------------------------- | ----------- |
+| 30     | `borde_roca_saltada`   | 24            | 3072  | 12                           | 92          |
+| 30     | `borde_cuerda`         | 36            | 4608  | 20                           | 148         |
+| 30     | `borde_electrico`      | 30            | 5670  | 16                           | 118         |
+| 30     | `borde_caramelo`       | 36            | 4608  | 20                           | 148         |
+| 30     | `borde_roca_grande`    | 51            | 6528  | 18                           | 144         |
+| 30     | `borde_cuerda_lanzada` | 41            | 5328  | 14                           | 113         |
+| 30     | `borde_puerta_abierta` | 41            | 5248  | 13                           | 113         |
+| 34     | `remote_entrada`       | 24            | 3072  | 12                           | 92          |
+| 34     | `remote_reaccion`      | 42            | 5376  | 14                           | 114         |
+| 34     | `remote_rechazo`       | 42            | 5376  | 14                           | 114         |
+
+Total:367 observaciones/48.886 pasos/153 CLC/1.196 selecciones, con DS completo, azar y fase coincidentes. Todo llega a reposo con menú habilitado; las30 ramas de `borde_electrico` requieren189 pasos, y Hablar6/0 (3143) en `borde_cuerda_lanzada` requiere208. Las336 restantes llegan al criterio de reposo en128. No reducir estas esperas a128 ni contarlas como fallos. Los CLC se observan después de cerrar el menú, incluyendo sus selecciones de objetos.
+
+Reproducción selectiva: `pnpm comparar:consecuencias --escenas 30 --estado comparacion_acciones_borde/borde_electrico.ds.bin --incluir-clc`, sustituyendo escena/carpeta/nombre por cada fila (34 usa `comparacion_ramas_valle`). Informes locales `resultado_<escena>_<referencia>_clc.json`, logs `consecuencias_edge_restante_<referencia>.log` y `consecuencias_remote_protegido_<referencia>.log`; regeneración `contextos_ramas_valle_regeneracion.log`. Los resultados no se versionan.
+
+El regreso posterior desde `grabacion_y_correo_enviado`, conservando106 y los consumos105/108/109/111/112, sigue en investigación local. La ruta intentada por250/185,230/170,120/185 y40/199 no solicita60; una segunda pulsación y1.024 pasos adicionales tampoco. Los pasos contrastados siguen coincidiendo: es un recorrido sin cerrar, no una divergencia detectada del port. No se carga34 artificialmente ni se acredita el bucle60/56/61. Código exploratorio y diagnóstico preservados en `trabajo/auditoria_consecuencias/comparar_regreso_remote.py` y `diagnosticar_regreso_remote.py`; no se publican como prueba pasada. Revisar el control y los canales activos antes de seguir buscando coordenadas.
+
+SDL75/75, continuidad73/73 y escenas con muestras73/73 se mantienen. Motor intacto y sin nuevas capturas SDL. Siguiente: cerrar ese regreso con inventario posterior, otras marcas de puertas, plazos del guardia y orientaciones/caídas del cementerio. Los estados anteriores comprobados no deben repetirse salvo cambios relevantes.
