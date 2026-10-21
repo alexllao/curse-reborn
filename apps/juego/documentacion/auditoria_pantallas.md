@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 43/73 con menú       | 58,9 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 45/73 con menú       | 61,6 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–43 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–45 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -358,6 +358,31 @@ Total nuevo:187 observaciones,23.936 pasos,90 ramas CLC y677 selecciones, con DS
 Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <40|41|42|43> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_nieve_<referencia>.log`. Regeneraciones en `contextos_ser_azul_regeneracion.log` y `contextos_morsa_regeneracion.log`. Recursos comerciales, instantáneas y resultados siguen ignorados; no repetir estos cinco estados salvo cambios relevantes.
 
 La cobertura asciende a43/73 escenas con muestras (58,9%),0–43 salvo2; no es un porcentaje global de fidelidad1:1. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin capturas SDL nuevas ni cambios del motor. Quedan otras posturas e inventarios de la entrega al esquimal, variantes de hielo y rescate, más regresos y capítulos44+. El contexto de la solicitud81 facilita retomar ese recorrido, pero no acredita las alternativas del lago.
+
+### Lago44 y entrada del palacio45: salto, transporte, errores y estados intermedios
+
+Se regeneraron `pnpm comparar:lago-helado --muestra` (2.475 casos/pasos,218 selecciones, dos auditorías y seis composiciones) y `pnpm comparar:entrada-palacio --muestra` (5.709/903/siete/ocho). Las16 DS previas mantienen su SHA256 y los16 hitos conservan contexto5800/fase0 registrado. Los generadores guardan ahora expresamente ese contexto también para las peticiones finales lago_solicitud82 y palacio_solicitud83, sin otra imagen ni cargar su destino al guardarlas.
+
+El lago retoma la solicitud81 del rescate con131 real; la rama del salto135 conserva las cenizas y recupera el control. La solución lanza131 y llega a82; el generador del palacio continúa esa llegada, pulsa un139 incorrecto sobre una copia real y después136/137/138/139 en orden. No se preparan objetos ni banderas de puerta abierta. La guía orienta el transporte y los carámbanos, pero el orden técnico usa los IDs del EXE, no una equivalencia visual supuesta: CF26/CF34, B579, B5D4 y B68D/B6A0/B6C4/B6E3. Se mantienen los servicios comunes y los límitesF6 ya documentados.
+
+La CLI admite ahora0–45 salvo2 automática, conservando el requisito de contexto desde25. Nuevas observaciones:
+
+| Escena | Carpeta comparacion_ | Referencia           | Observaciones | Pasos | CLC | Selecciones |
+| ------ | -------------------- | -------------------- | ------------- | ----- | --- | ----------- |
+| 44     | lago_helado          | lago_ante_cenizas    | 42            | 5.397 | 14  | 113         |
+| 44     | lago_helado          | lago_salto135        | 25            | 3.234 | 12  | 92          |
+| 45     | entrada_palacio      | palacio_ante_botones | 40            | 5.120 | 12  | 124         |
+| 45     | entrada_palacio      | palacio_error_139    | 40            | 5.120 | 12  | 124         |
+| 45     | entrada_palacio      | palacio_boton_137    | 40            | 5.120 | 12  | 124         |
+| 45     | entrada_palacio      | palacio_boton_138    | 44            | 5.632 | 13  | 146         |
+
+Total nuevo:231 observaciones,29.623 pasos,75 ramas CLC y723 selecciones coincidentes en DS completo, azar y fase externa.229 terminan en reposo con menú; lanzar131 (casillas0-based2/5/2) solicita82 al paso149 desde la orilla y al162 desde el estado posterior al salto. El observador termina en esa petición; no carga el destino de la alternativa. La entrada45 se contrasta aparte mediante su llegada real82.
+
+Los cuatro puntos del palacio parten con puerta cerrada y bits1/2 de35CA en0,0,4 y6, respectivamente; el bit0 ajeno sigue presente. Las alternativas se observan desde esas posiciones reales, sin forzar estados intermedios. El recorrido positivo completo mantiene sus192 pasos por pulsación y la petición83 verificada; las muestras no sustituyen todos los órdenes posibles de botones o todas las posiciones.
+
+Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <44|45> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_lago_palacio_<referencia>.log`. Regeneraciones en `contextos_lago_helado_regeneracion.log` y `contextos_entrada_palacio_regeneracion.log`. Recursos comerciales, instantáneas y resultados permanecen ignorados; no repetir estos seis estados salvo cambios relevantes.
+
+La cobertura asciende a45/73 escenas con muestras (61,6%),0–45 salvo2; no es fidelidad1:1 cerrada ni un porcentaje global de aventura implementada. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin cambios del motor ni capturas SDL nuevas. Quedan otras fases de las criaturas y del salto, más secuencias de botones, inventarios posteriores, regresos y capítulos46+. La petición83 con contexto permite retomar el interior, pero no acredita sus interacciones.
 
 ### Límites que siguen abiertos
 

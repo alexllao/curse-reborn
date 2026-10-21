@@ -93,6 +93,7 @@ class ComparacionLagoHelado(ComparacionMorsa):
         (self.destino / 'lago_solicitud82.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)), encoding='utf-8'
         )
+        self.conservar_contexto(self.destino, 'lago_solicitud82')
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),

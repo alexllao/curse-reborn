@@ -88,6 +88,7 @@ class ComparacionEntradaPalacio(ComparacionLagoHelado):
         (self.destino / 'palacio_solicitud83.semilla.json').write_text(
             json.dumps(list(self.semilla_menu)), encoding='utf-8'
         )
+        self.conservar_contexto(self.destino, 'palacio_solicitud83')
         informe = {
             'resultado': 'coinciden',
             'casos_y_pasos': sum(self.resumen.values()),
