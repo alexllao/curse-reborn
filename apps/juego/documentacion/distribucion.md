@@ -1,5 +1,19 @@
 # Paquetes beta para Windows
 
+## Cierre de entrega del 21 de octubre
+
+La base comprobada y publicada es `1f2de0b`. El recorrido SDL hasta THE END, sus regresos alternativos y la continuidad tras cargar están registrados en `auditoria_pantallas.md`. Las tandas posteriores han cerrado los estados concretos de recaídas11 con actor activo y las marcas reales de puertas de los seis inventarios del palacio. Las notas históricas anteriores no vuelven a abrir esos pendientes.
+
+En esta sesión, `pnpm comprobar:builder` se detiene en el arranque del proceso de pruebas con `spawn EPERM`. Las mismas seis pruebas se han ejecutado dentro del proceso de Node y pasan:
+
+```text
+node --test --experimental-test-isolation=none apps/juego/pruebas/distribucion/builder.test.mjs
+```
+
+`pnpm empaquetar:beta --con-datos` se ha intentado desde la copia limpia, pero termina en `spawnSync git EPERM`, antes de compilar. No se ha creado ni verificado una beta nueva de esta revisión. Los paquetes del20 de octubre descritos abajo siguen siendo históricos, sin atribuirles los cambios posteriores.
+
+El siguiente paso de entrega es ejecutar ese empaquetado, comprobar sus pruebas ocultas desde la carpeta distribuida y verificar de nuevo el ZIP extraído. Después se podrán registrar ruta, revisión, tamaño y SHA-256 de la nueva beta. No hace falta repetir las tandas de interacciones ya cerradas para reintentar el builder. Los logs de esta sesión son `trabajo/builder_cierre.log` y `trabajo/empaquetado_cierre.log`, excluidos de Git.
+
 Desde la raíz del monorepositorio:
 
 ```text

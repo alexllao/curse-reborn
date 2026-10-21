@@ -4,6 +4,8 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 
 ## Revisión integral del 20–21 de octubre
 
+Estado de cierre de entrega: los pendientes concretos de11 con actor activo y las marcas reales de puertas quedan cubiertos por la tanda publicada `1f2de0b`, al final de este registro. No se vuelven a tratar como trabajo por hacer los pendientes históricos de EDGE/REMOTE, poleas, plazos del guardia o aproximaciones9/10 que las tandas posteriores ya contrastaron. La entrega nueva está pendiente de compilación y verificación del paquete, no de volver a ejecutar esas mismas ramas. El intento del21 de octubre se detiene antes de compilar por `spawnSync git EPERM`; las seis pruebas del builder sí pasan dentro del proceso de Node. Véase `distribucion.md`. No se acredita una beta nueva ni se cambia la versión0.9.0 por este intento.
+
 Àlex solicita continuar los pendientes y recibir un balance cada hora. Los porcentajes se separan para evitar confundir accesibilidad y revisión de comportamiento:
 
 | Indicador                                                       | Cobertura comprobada | Porcentaje | Límite                                                      |
