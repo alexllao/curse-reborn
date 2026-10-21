@@ -114,6 +114,7 @@ class ComparacionLaberintoPalacio(ComparacionManoPalacio):
                 vistos.add(escena)
         else:
             raise ErrorAnalisis('El laberinto no entrega107 en64 puertas.')
+        self.conservar_contexto(self.destino, 'laberinto_solicitud107')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

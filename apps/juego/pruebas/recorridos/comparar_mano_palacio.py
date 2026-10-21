@@ -113,6 +113,7 @@ class ComparacionManoPalacio(ComparacionReinaHielo):
                 break
         else:
             raise ErrorAnalisis('La puerta no solicita105 tras liberar a Brad.')
+        self.conservar_contexto(self.destino, 'mano_solicitud105')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()) + self.variantes['rutina_mano'],

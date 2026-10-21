@@ -21,3 +21,5 @@ El recorrido incluye esconderse, esperar el sueño, aproximarse, colocar la ceri
 `pnpm comparar:guardia-palacio --muestra` contrasta5293 casos/pasos con memoria DS completa, azar y composición original durante el recorrido. Incluye384 variantes de rutina,480 de las cerillas y36 de capacidad/iconos/progreso del extintor, once imágenes y cinco estados auditados. Las pruebas aisladas no sustituyen el recorrido persistente.
 
 `pnpm comprobar:guardia-palacio` reproduce el recorrido en SDL, compara diez imágenes y verifica restauración y128 cambiosF5/F6 entre64 vistas. Los resultados concretos de la tanda se registran también en AGENTS.md. No se afirma que el resto del juego esté terminado.
+
+Revisión ampliada21/10: referencias reales regeneradas con contexto de banco y fase, negativas y cierresCLC, más regreso posterior aBenn24 con extintor. Cifras, reproducción y límites en la sección «Mano, laberinto, guardia y regreso con el extintor» de `auditoria_pantallas.md`. No cambia el motor ni añade vistas SDL.

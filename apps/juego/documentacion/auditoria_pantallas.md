@@ -467,6 +467,31 @@ Reproducción: `pnpm comparar:consecuencias --escenas <56|57> --estado comparaci
 
 Cobertura57/73 escenas con muestras (78,1%), unión0–57 salvo2 automática. SDL75/75 y continuidad73/73 se mantienen; no hay cambios del motor ni capturas SDL nuevas. Quedan más estados de los reflectores, tiempos y posiciones de los ataques, regresos y capítulos58+. Estas observaciones no agotan todos los estados ni son un porcentaje global de fidelidad.
 
+### Mano, laberinto, guardia y regreso con el extintor
+
+Regenerados `comparar:mano-palacio`, `comparar:laberinto-palacio` y `comparar:guardia-palacio`:585/3.381/5.293 casos-pasos, siete/diecisiete/once imágenes y3/8/5 estados auditados por sus generadores.9/18/11 DS locales previas permanecen idénticas porSHA256;8/18/11 contextos de banco5800/fase0. La referencia exploratoria `mano_libera_64.ds.bin` no tiene contexto y queda excluida. Las solicitudes105/107 conservan ahora su contexto real, sin cargar los destinos para registrarlo.
+
+La guía local, sección anterior a «Fun with the undead», describe aceite, cerillas, columna, pie y extintor. Se mantiene el contrato del EXE: BD00–BD70 solo admite aceite con modelo23/cuadro29,27BA–27F1 decide puertas y caja161, BD73–BDD7 conserva el plazo de aproximación y el intento tardíoAD50. No se añaden condiciones ni objetos artificiales.
+
+| Escena y referencia           | Observaciones | Pasos DS/azar/fase | CLC | Selecciones |
+| ----------------------------- | ------------: | -----------------: | --: | ----------: |
+| 58 mano_atrapado              |            25 |              3.200 |  12 |          92 |
+| 58 mano_liberado              |            18 |              2.304 |   8 |          70 |
+| 59 laberinto_59_control       |            18 |              2.304 |   8 |          70 |
+| 60 laberinto_60_control       |            18 |              2.304 |   8 |          70 |
+| 61 laberinto_61_control       |            18 |              2.304 |   8 |          70 |
+| 62 laberinto_62_ante_cerillas |            32 |              4.096 |  10 |          87 |
+| 62 laberinto_62_cerillas      |            30 |              3.840 |  16 |         118 |
+| 63 guardia_dormido            |            32 |              4.096 |  16 |         118 |
+| 63 guardia_cerilla            |            24 |              3.072 |  12 |          92 |
+| 24 guardia_benn_control       |            24 |              3.072 |  12 |          92 |
+
+Total239 observaciones,30.592 pasos,110 cierresCLC y879 selecciones; todas regresan a reposo con menú habilitado en128 pasos, DS completo, azar y fase coincidentes. El regreso24 lleva el inventario posterior obtenido en el recorrido real. No vuelve a contarse como nueva escena. Los generadores positivos mantienen recogida192, aparición/transporte hasta768 y las dos puertas de60 con regreso110; no se sustituyen por una espera corta.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <24|58|59|60|61|62|63> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_mano_laberinto_guardia_<referencia>.log` y `contextos_<mano_palacio|laberinto_palacio|guardia_palacio>_regeneracion.log`. No repetir estas diez referencias salvo cambios relevantes. CLI hasta63 y contexto obligatorio desde25.
+
+Cobertura63/73 escenas con muestras (86,3%), unión0–63 salvo2 automática. SDL75/75 y continuidad73/73 permanecen sin aumento, motor sin cambios y sin nuevas capturas SDL de la aventura. Quedan otras posiciones y plazos de aproximación al guardia, más regresos e inventarios,64/65/77 y66+ excepto68 automática. Las muestras no acreditan todos los estados posibles.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
