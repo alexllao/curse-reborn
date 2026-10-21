@@ -91,6 +91,20 @@ public:
 
   // Abre/cierra el menú original y procesa sus casillas desde entrada SDL en coordenadas lógicas.
   bool entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar);
+  using ObservarEntrada = bool (*)(void *, unsigned short, unsigned short, bool);
+  // El observador solo presenta las entradas de una ruta filmada; no modifica DS ni inventario.
+  void observar_entradas(void *contexto, ObservarEntrada funcion) {
+    contexto_entrada = contexto;
+    observador_entrada = funcion;
+  }
+  // Dirige la captura al dispositivo propio, sin mezclar audio de otras aplicaciones.
+  bool grabar_audio(const char *ruta) {
+    return audio.grabar_salida(ruta);
+  }
+  // Cierra el archivo conservando inaudible el juego hasta terminar la sesion filmada.
+  void terminar_audio_grabado() {
+    audio.terminar_grabacion();
+  }
   // El clic izquierdo propone un destino; el control y las paredes originales deciden el avance.
   bool mover_a(unsigned short x, unsigned short y);
   // Conserva las flechas pulsadas con los cuatro bits originales de dirección.
@@ -191,6 +205,8 @@ public:
   }
 
 private:
+  void *contexto_entrada = nullptr;
+  ObservarEntrada observador_entrada = nullptr;
   // 8B6F: facilita al menú el creador común con los recursos y la semilla de la partida.
   static bool crear_desde_menu(void *contexto, unsigned char *datos, unsigned short descriptor,
                                unsigned short &posicion);

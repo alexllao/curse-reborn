@@ -22,6 +22,7 @@
     "empaquetar:beta": "node apps/juego/herramientas/distribucion/empaquetar_beta.mjs",
     "comprobar:builder": "node --test apps/juego/pruebas/distribucion/builder.test.mjs",
     "comprobar:continuidad": "node apps/juego/herramientas/auditar_continuidad.mjs",
+    "grabar:recorrido": "node apps/juego/herramientas/gestionar_proyecto.mjs grabar:recorrido",
     "preparar": "node apps/juego/herramientas/gestionar_proyecto.mjs preparar",
     "analizar": "node apps/juego/herramientas/gestionar_proyecto.mjs analizar",
     "ensamblador": "node apps/juego/herramientas/gestionar_proyecto.mjs analizar",

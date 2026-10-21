@@ -393,6 +393,13 @@ try {
     case 'comprobar:calles':
       await gestionarSdl('comprobar:poblacion', ['--calles']);
       break;
+    case 'grabar:recorrido':
+      await gestionarSdl('sdl:compilar', []);
+      ejecutar(pythonLocal, [
+        join(raiz, 'apps/juego/herramientas/grabacion/grabar_recorrido.py'),
+        ...argumentos,
+      ]);
+      break;
     case 'sdl:preparar':
     case 'sdl:compilar':
     case 'ventana':

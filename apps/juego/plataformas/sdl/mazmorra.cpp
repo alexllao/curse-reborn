@@ -365,6 +365,9 @@ bool Mazmorra::crear_desde_menu(void *contexto, unsigned char *datos, unsigned s
 
 // DB34 y DE10: conserva la mitad superior/inferior elegida al abrir y divide x entre 32.
 bool Mazmorra::entrada_menu(unsigned short x, unsigned short y, bool seleccionar, bool alternar) {
+  if (observador_entrada && (seleccionar || alternar) &&
+      !observador_entrada(contexto_entrada, x, y, menu_visible))
+    return false;
   if (en_presentacion()) {
     if (seleccionar || alternar)
       registrar_accion("Entrada de menú ignorada durante el cambio de pantalla");
@@ -594,6 +597,8 @@ bool Mazmorra::cargar_partida(const unsigned char *archivo, unsigned int longitu
 
 // 08C8–08DA: el ratón solo propone rutas cuando el guion original ha habilitado el movimiento.
 bool Mazmorra::mover_a(unsigned short x, unsigned short y) {
+  if (observador_entrada && !observador_entrada(contexto_entrada, x, y, false))
+    return false;
   if (en_presentacion() || menu_visible || !datos[0x3594]) {
     registrar_accion("Caminar a (%u, %u): bloqueado por el menú, presentación o guion", x, y);
     return true;

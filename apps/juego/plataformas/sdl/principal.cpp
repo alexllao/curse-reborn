@@ -513,9 +513,12 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
 }
 
 #include "pruebas/comprobar_habitacion.hpp"
+#include "pruebas/recorrido_grabado.hpp"
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
+  if (!RecorridoGrabado::preparar_consola())
+    return fallo("No se ha podido preparar el canal de video");
   configurar_consola();
   // Un doble clic usa los datos portables junto al ejecutable, sin depender del directorio actual.
   std::string datos_portables;
@@ -707,7 +710,8 @@ int main(int argc, char *argv[]) {
         (mazmorra.silenciado() != bool(preferencias.silencio) && !mazmorra.alternar_silencio()))
       return fallo("No se han podido recuperar las preferencias de audio");
   }
-  if (corredor_con_audio && !mazmorra.abrir_audio(carpeta))
+  if ((corredor_con_audio || SDL_getenv("CURSE_REBORN_GRABAR_RUTA")) &&
+      !mazmorra.abrir_audio(carpeta))
     return fallo("No se ha podido abrir el audio para el recorrido del corredor");
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta, true))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
@@ -1237,6 +1241,9 @@ int main(int argc, char *argv[]) {
       caida_comprobada = true;
     }
     if (comprobar_jugabilidad && pantalla >= 3 && !jugabilidad_comprobada) {
+      RecorridoGrabado grabacion(presentacion);
+      if (!grabacion.preparar())
+        return fallo("No se ha podido preparar la grabacion de la partida");
       ComprobarContinuidad continuidad(SDL_getenv("CURSE_REBORN_COMPROBAR_RECARGAS"));
       // Recorre los mismos clics del menú que el jugador, sin cambiar directamente su inventario.
       const auto elegir = [](unsigned short casilla) {
@@ -1244,7 +1251,9 @@ int main(int argc, char *argv[]) {
                                      false);
       };
       // Avanza los pasos de juego de forma determinista para comparar la imagen resultante.
-      const auto avanzar = [comprobar_lago, &continuidad](unsigned int cantidad) {
+      const auto avanzar = [comprobar_lago, &continuidad, &grabacion](unsigned int cantidad) {
+        if (grabacion.activa())
+          return grabacion.avanzar(cantidad, comprobar_lago);
         for (unsigned int i = 0; i < cantidad; ++i) {
           if (!mazmorra.actualizar_audio() || !mazmorra.avanzar())
             return false;
@@ -1668,6 +1677,8 @@ int main(int argc, char *argv[]) {
         paleta_visible[i] = imagen.paleta[i];
       if (!actualizar_textura(presentacion))
         return fallo("No se ha podido presentar el movimiento");
+      if (!grabacion.terminar())
+        return fallo("No se ha completado la grabacion hasta THE END");
       jugabilidad_comprobada = true;
     }
     if (comprobar_menu && pantalla >= 3 && !menu_comprobado) {

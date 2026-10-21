@@ -17,6 +17,11 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
   dispositivo = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato);
   if (!dispositivo)
     return false;
+  grabacion_silenciosa = SDL_getenv("CURSE_REBORN_GRABAR_RUTA") != nullptr;
+  if (grabacion_silenciosa && !SDL_SetAudioPostmixCallback(dispositivo, registrar_mezcla, this)) {
+    cerrar();
+    return false;
+  }
   if (iniciar_pausado && !SDL_PauseAudioDevice(dispositivo)) {
     cerrar();
     return false;
@@ -90,6 +95,9 @@ bool Audio::reiniciar() {
 
 // SDL espera al callback antes de liberar su sintetizador y el dispositivo compartido.
 void Audio::cerrar() {
+  if (dispositivo && grabacion_silenciosa)
+    SDL_PauseAudioDevice(dispositivo);
+  terminar_grabacion();
   if (flujo_musical)
     SDL_DestroyAudioStream(flujo_musical);
   flujo_musical = nullptr;
@@ -176,7 +184,7 @@ bool Audio::cambiar_escena(unsigned short escena) {
 bool Audio::actualizar() {
   if (!flujo)
     return true;
-  if (fallo_musical.load())
+  if (fallo_musical.load() || fallo_grabacion.load())
     return false;
   const auto ahora = SDL_GetTicksNS();
   auto transcurrido = ahora - ultimo;
@@ -774,4 +782,90 @@ bool exportar_musica_wav(const std::string &carpeta, const std::string &destino,
     std::fflush(stdout);
   }
   return true;
+}
+
+// El postmix recibe flotantes despues de ganancias y mezcla; no sustituye ningun sintetizador.
+void SDLCALL Audio::registrar_mezcla(void *contexto, const SDL_AudioSpec *formato, float *muestras,
+                                     int bytes) {
+  auto &a = *static_cast<Audio *>(contexto);
+  if (a.grabacion && (formato->freq != a.formato_grabacion.freq ||
+                      formato->channels != a.formato_grabacion.channels || bytes < 0 ||
+                      SDL_WriteIO(a.grabacion, muestras, static_cast<size_t>(bytes)) !=
+                          static_cast<size_t>(bytes)))
+    a.fallo_grabacion.store(true);
+  // La copia conserva musica y efectos; solo la salida fisica de este juego se pone a cero.
+  if (a.grabacion_silenciosa && bytes > 0)
+    SDL_memset(muestras, 0, static_cast<size_t>(bytes));
+}
+
+// Reserva una cabecera WAV IEEE float; SDL sincroniza la instalacion del callback con el
+// dispositivo.
+bool Audio::grabar_salida(const char *ruta) {
+  if (!dispositivo || grabacion ||
+      !SDL_GetAudioDeviceFormat(dispositivo, &formato_grabacion, nullptr))
+    return false;
+  const bool pausado = SDL_AudioDevicePaused(dispositivo);
+  if (!pausado && !SDL_PauseAudioDevice(dispositivo))
+    return false;
+  // Detiene el callback antes de cambiar su archivo; la pausa evita cualquier salida intermedia.
+  if (!SDL_SetAudioPostmixCallback(dispositivo, nullptr, nullptr))
+    return false;
+  grabacion = SDL_IOFromFile(ruta, "wb");
+  unsigned char cabecera[44]{};
+  if (!grabacion || SDL_WriteIO(grabacion, cabecera, sizeof(cabecera)) != sizeof(cabecera)) {
+    terminar_grabacion();
+    return false;
+  }
+  fallo_grabacion.store(false);
+  if (!SDL_SetAudioPostmixCallback(dispositivo, registrar_mezcla, this)) {
+    terminar_grabacion();
+    return false;
+  }
+  return pausado || SDL_ResumeAudioDevice(dispositivo);
+}
+
+// Espera al callback antes de cerrar y completa longitudes, canales y frecuencia reales del WAV.
+void Audio::terminar_grabacion() {
+  if (!grabacion)
+    return;
+  const bool pausado = SDL_AudioDevicePaused(dispositivo);
+  if (!pausado)
+    SDL_PauseAudioDevice(dispositivo);
+  SDL_SetAudioPostmixCallback(dispositivo, nullptr, nullptr);
+  const auto longitud = SDL_TellIO(grabacion);
+  unsigned char cabecera[44]{};
+  const auto escribir16 = [&](unsigned int p, unsigned int valor) {
+    cabecera[p] = static_cast<unsigned char>(valor);
+    cabecera[p + 1] = static_cast<unsigned char>(valor >> 8);
+  };
+  const auto escribir32 = [&](unsigned int p, unsigned int valor) {
+    escribir16(p, valor & 65535u);
+    escribir16(p + 2, valor >> 16);
+  };
+  const char firma[] = "RIFF    WAVEfmt ";
+  for (unsigned int i = 0; i < 16; ++i)
+    cabecera[i] = firma[i];
+  cabecera[36] = 'd';
+  cabecera[37] = 'a';
+  cabecera[38] = 't';
+  cabecera[39] = 'a';
+  escribir32(4, static_cast<unsigned int>(longitud - 8));
+  escribir32(16, 16);
+  escribir16(20, 3);
+  escribir16(22, static_cast<unsigned int>(formato_grabacion.channels));
+  escribir32(24, static_cast<unsigned int>(formato_grabacion.freq));
+  escribir32(28,
+             static_cast<unsigned int>(formato_grabacion.freq * formato_grabacion.channels * 4));
+  escribir16(32, static_cast<unsigned int>(formato_grabacion.channels * 4));
+  escribir16(34, 32);
+  escribir32(40, static_cast<unsigned int>(longitud - 44));
+  if (longitud < 44 || longitud > 0xffffffffll || SDL_SeekIO(grabacion, 0, SDL_IO_SEEK_SET) < 0 ||
+      SDL_WriteIO(grabacion, cabecera, sizeof(cabecera)) != sizeof(cabecera))
+    std::fprintf(stderr, "No se ha completado la grabacion WAV de la partida\n");
+  SDL_CloseIO(grabacion);
+  grabacion = nullptr;
+  if (grabacion_silenciosa)
+    SDL_SetAudioPostmixCallback(dispositivo, registrar_mezcla, this);
+  if (!pausado)
+    SDL_ResumeAudioDevice(dispositivo);
 }

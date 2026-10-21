@@ -28,6 +28,10 @@ public:
   void desconectar();
   // Produce el tiempo transcurrido, también con menú abierto o durante fundidos.
   bool actualizar();
+  // Registra la mezcla final del dispositivo para una partida filmada, sin cambiar lo audible.
+  bool grabar_salida(const char *ruta);
+  // Retira el callback antes de completar el WAV, conservando el silencio de la toma.
+  void terminar_grabacion();
   // Atiende una orden de 5288 después de llevar el reloj del altavoz hasta el momento actual.
   bool reproducir(unsigned char *segmento, unsigned short entidad, unsigned char identificador);
   // Silencia la salida audible; las secuencias y prioridades originales siguen avanzando.
@@ -65,6 +69,11 @@ public:
   }
 
 private:
+  SDL_IOStream *grabacion = nullptr;
+  SDL_AudioSpec formato_grabacion{};
+  std::atomic<bool> fallo_grabacion{false};
+  bool grabacion_silenciosa = false;
+  static void SDLCALL registrar_mezcla(void *, const SDL_AudioSpec *, float *, int);
   SDL_AudioDeviceID dispositivo = 0;
   SDL_AudioStream *flujo_musical = nullptr;
   MusicaMt32 mt32;
