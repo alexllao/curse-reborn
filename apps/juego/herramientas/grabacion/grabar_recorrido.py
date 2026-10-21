@@ -99,6 +99,10 @@ def grabar(raiz, programa, destino, segundos):
                     f'FFmpeg no termina correctamente; consultar {destino / "ffmpeg.log"}.'
                 )
         informe = json.loads(prefix.with_suffix('.json').read_text(encoding='utf-8'))
+        if informe.get('ticks_por_paso') != 5 or informe.get('frecuencia_logica_hz') != 14:
+            raise RuntimeError(
+                'El ejecutable no acredita la cadencia de cinco ticks por paso; recompilar SDL.'
+            )
         if segundos:
             if informe['completo'] or informe['duracion_ms'] < segundos * 1000 - 100:
                 raise RuntimeError('La muestra se ha interrumpido antes del plazo pedido.')

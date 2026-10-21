@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <set>
 
-// Presenta la ruta real de pruebas a70 ciclos por segundo, con menus legibles y captura aislada.
+// Presenta la ruta real con cinco ticks de70Hz por paso, menus legibles y captura aislada.
 class RecorridoGrabado {
 public:
   // Conserva el canal anonimo heredado para video y dirige los printf a un archivo propio.
@@ -47,6 +47,7 @@ public:
                                 ",\"fotogramas\":" + std::to_string(fotogramas) +
                                 ",\"duracion_ms\":" + std::to_string(duracion) +
                                 ",\"escenas\":" + std::to_string(escenas.size()) +
+                                ",\"ticks_por_paso\":5,\"frecuencia_logica_hz\":14" +
                                 ",\"resolucion\":[1920,1080],\"fps\":30,\"filtro\":\"scanlines\","
                                 "\"marco\":\"Cielo encantado\"}\n";
     SDL_SaveFile((prefijo + ".json").c_str(), informe.data(), informe.size());
@@ -96,9 +97,9 @@ public:
       const bool camara = comprobar_lago && mazmorra.camara_en_presentacion();
       if (!presentacion())
         return false;
-      if (camara && (!mazmorra.avanzar() || !presentacion()))
+      if (camara && (!esperar_paso() || !mazmorra.avanzar() || !presentacion()))
         return false;
-      if (!cuadro())
+      if (!esperar_paso())
         return false;
     }
     return true;
@@ -107,7 +108,7 @@ public:
   bool terminar() {
     if (!activa())
       return true;
-    if (mazmorra.escena_actual() != 73 || !avanzar(350, true))
+    if (mazmorra.escena_actual() != 73 || !avanzar(70, true))
       return false;
     completo = true;
     return true;
@@ -125,6 +126,13 @@ private:
   std::set<unsigned short> escenas;
   unsigned short escena_anterior = 65535;
   std::string cronologia;
+  // EAD5 y el bucle interactivo esperan cinco ticks; los70Hz son del reloj, no de la logica.
+  bool esperar_paso() {
+    for (unsigned int tick = 0; tick < 5; ++tick)
+      if (!cuadro())
+        return false;
+    return true;
+  }
   // Escribe la tuberia existente por bloques y propaga cierres o escrituras incompletas.
   bool enviar(const void *datos, size_t bytes) {
 #ifdef _WIN32
