@@ -87,6 +87,7 @@ class ComparacionResolucionPalacio(ComparacionLateralesPalacio):
                 break
         else:
             raise ErrorAnalisis('El salto no ha solicitado la continuación90.')
+        self.conservar_contexto(self.destino, 'ventana_solicitud90')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()),

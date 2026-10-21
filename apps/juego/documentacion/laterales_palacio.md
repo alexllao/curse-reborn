@@ -31,3 +31,11 @@ Regenerado `pnpm comparar:laterales-palacio --muestra`:29.136 casos/pasos,5.002 
 Las alternativas de arma_entrada52, megafono_ante_objeto53, hielo_ante_objeto54 y carambano_entrada55 suman246 observaciones,31.488 pasos,108 ramas CLC y891 selecciones coincidentes en DS/azar/fase; todas terminan en reposo con menú en128 pasos.52/55 parten antes de bajar el objeto alto; el recorrido positivo conserva512 pasos de escoba y192 de recogida. Esta tanda no sustituye los estados posteriores al descenso ni todos los usos de los objetos ya recogidos.
 
 Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Quedan otros inventarios, regresos y consecuencias alternativas de poleas y ventana. Las carencias de integración de las tandas iniciales son históricas; esta ampliación no modifica el motor ni añade capturas SDL.
+
+## Consecuencias de la resolución con útiles reales
+
+Regenerado `pnpm comparar:resolucion-palacio --muestra`:9.608 casos/pasos,3.200 selecciones y diez composiciones coincidentes. Las11 DS previas mantienen su SHA256 y guardan contexto5800/fase0 real; se conserva ahora expresamente ventana_solicitud90 tras verificar el retorno, sin otra imagen ni cargar56.
+
+Las alternativas de poleas_con_arma47, poleas_cristal47, ventana_silbato49 y ventana_abierta49 suman361 observaciones,46.103 pasos,148 ramas CLC y1.384 selecciones coincidentes en DS/azar/fase.360 terminan en reposo con menú; saltar desde ventana_abierta solicita90 al paso23 (casillas0-based6/0). Los útiles proceden del recorrido real de los seis laterales, sin inventario o banderas preparados. La prueba termina en la petición, sin presentar su destino como comprobado en esta tanda.
+
+La [auditoría vigente](auditoria_pantallas.md) contiene comandos, informes separados y límites. El indicador sigue55/73 escenas con muestras: se profundiza en47/49 con inventarios posteriores. No hay cambios del motor ni nuevas capturas SDL. Quedan otros puntos intermedios, órdenes, regresos y capítulos56+; no se declara fidelidad1:1 cerrada.

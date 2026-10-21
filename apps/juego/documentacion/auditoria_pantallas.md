@@ -430,6 +430,25 @@ Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consec
 
 La cobertura asciende a55/73 escenas con muestras (75,3%),0–55 salvo2; no es fidelidad1:1 cerrada ni porcentaje global de aventura implementada. SDL75/75 y continuidad73/73 mantienen su alcance anterior, sin cambios del motor ni capturas SDL nuevas. Faltan otras marcas de puertas, estados tras bajar y recoger151/154, inventarios posteriores, regresos con todos los útiles, resolución de poleas/ventana en la revisión ampliada y capítulos56+. Los recorridos positivos existentes de resolución no sustituyen sus alternativas pendientes.
 
+### Poleas y ventana con todos los útiles: consecuencias de resolución
+
+Se regeneró `pnpm comparar:resolucion-palacio --muestra`:9.608 casos/pasos,3.200 selecciones, nueve auditorías y diez composiciones coincidentes. Las11 DS anteriores mantienen su SHA256 y los11 hitos conservan contexto5800/fase0 registrado. El generador guarda ahora expresamente el contexto de ventana_solicitud90 tras verificar la petición, sin otra imagen ni cargar56.
+
+El recorrido parte de laterales_utiles, con141/149/150/151/152/153/154 realmente obtenidos. Inserta151 en142, recoge144/145, comprueba que6285 ofrezca147 y retire141, recoge147, combina147/152, ataca con148 y salta por146. No añade inventario ni abre la ventana asignando banderas. La guía respalda esa secuencia; B968/B9F4/BA1F/BA76 y6285 mantienen las condiciones del EXE y los servicios comunes.
+
+| Escena | Referencia de comparacion_resolucion_palacio | Observaciones | Pasos  | CLC | Selecciones |
+| ------ | -------------------------------------------- | ------------- | ------ | --- | ----------- |
+| 47     | poleas_con_arma                              | 101           | 12.928 | 38  | 359         |
+| 47     | poleas_cristal                               | 101           | 12.928 | 37  | 359         |
+| 49     | ventana_silbato                              | 68            | 8.704  | 40  | 358         |
+| 49     | ventana_abierta                              | 91            | 11.543 | 33  | 308         |
+
+Total nuevo:361 observaciones,46.103 pasos,148 ramas CLC y1.384 selecciones coincidentes en DS completo, azar y fase externa.360 terminan en reposo con menú; el salto desde ventana_abierta (casillas0-based6/0) solicita90 al paso23. El observador termina en la petición, sin cargar56 ni contabilizarla como una escena comprobada nueva. La petición ya emitida por el generador no se audita de nuevo como si fuera otra selección.
+
+Reproducción tras regenerar el recorrido: `pnpm comparar:consecuencias --escenas <47|49> --estado comparacion_resolucion_palacio/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_resolucion_<referencia>.log`. Regeneración y comparación de huellas en `contextos_resolucion_palacio_regeneracion.log`. Resultados, instantáneas y recursos comerciales siguen ignorados; no repetir estos cuatro estados salvo cambios relevantes.
+
+La cobertura permanece55/73 escenas con muestras (75,3%), SDL75/75 y continuidad73/73: esta tanda profundiza en47/49 con inventarios posteriores, no añade salas. No hay cambios del motor ni capturas SDL nuevas. Quedan los puntos intermedios no representados (poleas bajadas, aceite y silbato todavía ofrecido), más órdenes y regresos, estados anteriores pendientes y56+. Las esperas positivas512 de poleas/apertura y192 de recogida/combinación siguen contrastadas por el generador;128 no equivale a todas las duraciones audiovisuales ni a fidelidad1:1 cerrada.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.
