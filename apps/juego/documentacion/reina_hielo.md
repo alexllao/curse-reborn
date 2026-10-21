@@ -9,3 +9,5 @@ Saltar sobre160 ejecuta BCDF–BCFD: cancela el camino y programa ACC2/ACD8/ACE7
 `pnpm comparar:reina-hielo --muestra` contrasta1237 casos/pasos, incluidos540 variantes directas de D114 y36 selecciones de salto. Compara DS completo, azar, ordenación gráfica, once composiciones y las opciones ofrecidas en tres estados. La partida parte de la reja resuelta anteriormente; no se añaden objetos ni se cambian posiciones para superar el encuentro. Incluye salto temprano, golpe, recuperación y dos saltos correctos hasta la petición104.
 
 `pnpm comprobar:reina-hielo` comprueba el mismo recorrido SDL, once imágenes, guardado/restauración y116 cambiosF5/F6 entre58 vistas. Los servicios de movimiento, secuencias, modelos, entidades y sonido son los compartidos. La comparación no acredita la jugabilidad del destino104 ni todos los tiempos posibles del enfrentamiento.
+
+Revisión ampliada21/10: generador regenerado con contextos de banco y fase, incluidas las peticiones de salida. Comparación de consecuencias, respuestas negativas y cierresCLC documentada en `auditoria_pantallas.md`, sección «Láser y reina». No cambia el motor ni sus recursos.

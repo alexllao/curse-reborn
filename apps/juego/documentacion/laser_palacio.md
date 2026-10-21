@@ -11,3 +11,5 @@ El contraste conserva todo DS, incluidos los actores inactivos. Estos también i
 `pnpm comparar:laser-palacio --muestra` contrasta7877 casos/pasos, incluidos268 casos de la rutina completa. Añade216 variantes de colocación y reja,96 de retirada y auditorías de las opciones en siete estados del recorrido real. Nueve composiciones coinciden con el original. No se añaden objetos ni se fuerzan banderas para resolver la partida.
 
 `pnpm comprobar:laser-palacio` verifica nueve capturas SDL, guardado/restauración y114 cambiosF5/F6 entre57 vistas. Incluye una colocación errónea, su recuperación, las cuatro piezas correctas y la apertura de la reja. Movimiento, secuencias, entidades y sonido siguen usando servicios comunes. Estos resultados no acreditan el capítulo posterior ni todas las posiciones posibles.
+
+Revisión ampliada21/10: generador regenerado con contextos de banco y fase, incluidas las peticiones de salida. Comparación de consecuencias, respuestas negativas y cierresCLC documentada en `auditoria_pantallas.md`, sección «Láser y reina». No cambia el motor ni sus recursos.

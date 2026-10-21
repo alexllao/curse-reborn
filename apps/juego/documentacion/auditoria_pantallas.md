@@ -449,6 +449,24 @@ Reproducción tras regenerar el recorrido: `pnpm comparar:consecuencias --escena
 
 La cobertura permanece55/73 escenas con muestras (75,3%), SDL75/75 y continuidad73/73: esta tanda profundiza en47/49 con inventarios posteriores, no añade salas. No hay cambios del motor ni capturas SDL nuevas. Quedan los puntos intermedios no representados (poleas bajadas, aceite y silbato todavía ofrecido), más órdenes y regresos, estados anteriores pendientes y56+. Las esperas positivas512 de poleas/apertura y192 de recogida/combinación siguen contrastadas por el generador;128 no equivale a todas las duraciones audiovisuales ni a fidelidad1:1 cerrada.
 
+### Láser y reina: pieza incorrecta y recuperación del impacto
+
+Regenerados `comparar:laser-palacio` y `comparar:reina-hielo` desde las peticiones reales90/103. Conservan7.877 y1.237 casos/pasos, nueve y once imágenes;10 y13 DS locales previas sin cambios por SHA256. Quedan10 y12 contextos explícitos de banco5800/fase0, incluidos los de solicitudes103/104. La copia histórica exploratoria `reina_impacto.ds.bin` no tiene contexto y queda excluida. La CLI admite ahora0–57 salvo2, con contexto obligatorio desde25.
+
+| Escena y referencia    | Observaciones | Pasos DS/azar/fase | CLC | Selecciones |
+| ---------------------- | ------------: | -----------------: | --: | ----------: |
+| 56 laser_control       |            54 |              6.912 |  32 |         262 |
+| 56 laser_pieza_erronea |            89 |             11.392 |  32 |         350 |
+| 56 laser_cristal       |            55 |              7.040 |  19 |         172 |
+| 57 reina_control       |            25 |              3.200 |  12 |          93 |
+| 57 reina_recuperada    |            25 |              3.200 |  12 |          93 |
+
+Total248 observaciones,31.744 pasos,107 cierresCLC y970 selecciones; todas vuelven a reposo con menú habilitado en128 pasos, comparando DS completo, azar y fase. Las ramas parten de inventarios y secuencias reales, incluyendo pieza errónea colocada, cristal y recuperación tras impacto. El generador positivo mantiene el salto y los proyectiles, la reja y la salida al trono con su duración propia.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <56|57> --estado comparacion_<laser_palacio|reina_hielo>/<referencia>.ds.bin --incluir-clc`. Informes locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_laser_reina_<referencia>.log` y `contextos_<laser_palacio|reina_hielo>_regeneracion.log`. Recursos, estados y resultados permanecen ignorados. No repetir estas cinco referencias salvo cambios relevantes.
+
+Cobertura57/73 escenas con muestras (78,1%), unión0–57 salvo2 automática. SDL75/75 y continuidad73/73 se mantienen; no hay cambios del motor ni capturas SDL nuevas. Quedan más estados de los reflectores, tiempos y posiciones de los ataques, regresos y capítulos58+. Estas observaciones no agotan todos los estados ni son un porcentaje global de fidelidad.
+
 ### Límites que siguen abiertos
 
 - La auditoría global recorre opciones realmente ofrecidas en esas posiciones y estados y contrasta su despacho inmediato, DS y azar. La observación de consecuencias solo cubre las referencias citadas, incluidas las ramas CLC de la población; quedan otros capítulos, más estados CLC y las situaciones no representadas en las instantáneas.128 pasos coincidentes tampoco acreditan una animación indefinida completa.

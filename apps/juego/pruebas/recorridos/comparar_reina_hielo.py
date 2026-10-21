@@ -132,6 +132,7 @@ class ComparacionReinaHielo(ComparacionLaserPalacio):
                 self.hito_borde(d, 'reina_expulsion')
         else:
             raise ErrorAnalisis('El trono no expulsa al personaje hacia104.')
+        self.conservar_contexto(self.destino, 'reina_solicitud104')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()) + self.variantes['rutina_reina'],

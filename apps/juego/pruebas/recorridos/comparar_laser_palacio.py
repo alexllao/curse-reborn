@@ -174,6 +174,7 @@ class ComparacionLaserPalacio(ComparacionResolucionPalacio):
                 self.hito_borde(d, 'laser_reja_' + str(paso + 1))
         else:
             raise ErrorAnalisis('El gato no entrega la salida103 de la reja.')
+        self.conservar_contexto(self.destino, 'laser_solicitud103')
         informe = dict(
             resultado='coinciden',
             casos_y_pasos=sum(self.resumen.values()) + self.variantes['rutina_rayo'],
