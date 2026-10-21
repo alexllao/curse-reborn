@@ -4,6 +4,7 @@
   "origen": "Moldura propia generada con imagegen desde la prueba aprobada por Àlex; fondo e interior transparentes.",
   "vano": [105, 85, 1375, 820],
   "esquinas": [230, 230, 210, 210],
-  "escalaPorPixel": 0.075,
-  "solapeMaximo": 2
+  "escalaPorPixel": 0.2,
+  "solapeMaximo": 2,
+  "adornoCentral": [440, 545]
 }

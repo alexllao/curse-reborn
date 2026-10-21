@@ -226,7 +226,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                              banda.h / escala};
       ok = SDL_RenderTexture(dibujante, textura, &origen, &banda) && ok;
     }
-    // Nueve piezas conservan las esquinas; el vano sigue el juego sin reducirlo.
+    // Los adornos conservan su escala; solo se estiran los tramos lisos.
     // El recorte excluye el interior salvo los dos píxeles de solape autorizados.
     if (moldura && (juego.x > 0.5f || juego.y > 0.5f)) {
       float mw = 0, mh = 0;
@@ -235,6 +235,24 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       const SDL_FRect destino{juego.x - vano_moldura.x * s, juego.y - vano_moldura.y * s,
                               juego.w + (mw - vano_moldura.w) * s,
                               juego.h + (mh - vano_moldura.h) * s};
+      // Cinco filas mantienen el rombo central a escala uniforme, igual que las esquinas.
+      const float centro = destino.y + destino.h / 2.0f;
+      const float medio = (adorno_central_moldura[1] - adorno_central_moldura[0]) * s / 2.0f;
+      const float sx[] = {0, esquinas_moldura[0], mw - esquinas_moldura[1], mw};
+      const float sy[] = {0,
+                          esquinas_moldura[2],
+                          adorno_central_moldura[0],
+                          adorno_central_moldura[1],
+                          mh - esquinas_moldura[3],
+                          mh};
+      const float dx[] = {destino.x, destino.x + esquinas_moldura[0] * s,
+                          destino.x + destino.w - esquinas_moldura[1] * s, destino.x + destino.w};
+      const float dy[] = {destino.y,
+                          destino.y + esquinas_moldura[2] * s,
+                          centro - medio,
+                          centro + medio,
+                          destino.y + destino.h - esquinas_moldura[3] * s,
+                          destino.y + destino.h};
       const float solape = juego.h / 200.0f * solape_moldura;
       const int izq = static_cast<int>(std::floor(juego.x + solape));
       const int der = static_cast<int>(std::ceil(juego.x + juego.w - solape));
@@ -252,10 +270,17 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
         if (recorte.w <= 0 || recorte.h <= 0)
           continue;
         ok = SDL_SetRenderClipRect(dibujante, &recorte) && ok;
-        ok = SDL_RenderTexture9Grid(dibujante, moldura, nullptr, esquinas_moldura[0],
-                                    esquinas_moldura[1], esquinas_moldura[2], esquinas_moldura[3],
-                                    s, &destino) &&
-             ok;
+        for (int fila = 0; fila < 5; ++fila)
+          for (int columna = 0; columna < 3; ++columna) {
+            // El vano central es transparente y queda fuera del dibujo.
+            if (columna == 1 && fila > 0 && fila < 4)
+              continue;
+            const SDL_FRect origen{sx[columna], sy[fila], sx[columna + 1] - sx[columna],
+                                   sy[fila + 1] - sy[fila]};
+            const SDL_FRect pieza{dx[columna], dy[fila], dx[columna + 1] - dx[columna],
+                                  dy[fila + 1] - dy[fila]};
+            ok = SDL_RenderTexture(dibujante, moldura, &origen, &pieza) && ok;
+          }
       }
       ok = SDL_SetRenderClipRect(dibujante, recortado ? &recorte_anterior : nullptr) && ok;
       ok = SDL_SetTextureAlphaMod(moldura, 255) && ok;
