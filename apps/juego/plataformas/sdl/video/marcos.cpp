@@ -227,7 +227,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       ok = SDL_RenderTexture(dibujante, textura, &origen, &banda) && ok;
     }
     // Los adornos conservan su escala; solo se estiran los tramos lisos.
-    // El recorte excluye el interior salvo los dos píxeles de solape autorizados.
+    // El relieve transparente se dibuja completo por encima del juego.
     if (moldura && (juego.x > 0.5f || juego.y > 0.5f)) {
       float mw = 0, mh = 0;
       ok = SDL_GetTextureSize(moldura, &mw, &mh) && ok;
@@ -253,36 +253,18 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                           centro + medio,
                           destino.y + destino.h - esquinas_moldura[3] * s,
                           destino.y + destino.h};
-      const float solape = juego.h / 200.0f * solape_moldura;
-      const int izq = static_cast<int>(std::floor(juego.x + solape));
-      const int der = static_cast<int>(std::ceil(juego.x + juego.w - solape));
-      const int sup = static_cast<int>(std::floor(juego.y + solape));
-      const int inf = static_cast<int>(std::ceil(juego.y + juego.h - solape));
-      const SDL_Rect recortes[] = {{0, 0, izq, alto},
-                                   {der, 0, ancho - der, alto},
-                                   {izq, 0, der - izq, sup},
-                                   {izq, inf, der - izq, alto - inf}};
-      SDL_Rect recorte_anterior;
-      const bool recortado = SDL_RenderClipEnabled(dibujante);
-      ok = SDL_GetRenderClipRect(dibujante, &recorte_anterior) && ok;
+      // El PNG se compone completo sobre el juego: no cortar el relieve interior.
       ok = SDL_SetTextureAlphaMod(moldura, static_cast<Uint8>(nivel * 255.0f)) && ok;
-      for (const auto &recorte : recortes) {
-        if (recorte.w <= 0 || recorte.h <= 0)
-          continue;
-        ok = SDL_SetRenderClipRect(dibujante, &recorte) && ok;
-        for (int fila = 0; fila < 5; ++fila)
-          for (int columna = 0; columna < 3; ++columna) {
-            // El vano central es transparente y queda fuera del dibujo.
-            if (columna == 1 && fila > 0 && fila < 4)
-              continue;
-            const SDL_FRect origen{sx[columna], sy[fila], sx[columna + 1] - sx[columna],
-                                   sy[fila + 1] - sy[fila]};
-            const SDL_FRect pieza{dx[columna], dy[fila], dx[columna + 1] - dx[columna],
-                                  dy[fila + 1] - dy[fila]};
-            ok = SDL_RenderTexture(dibujante, moldura, &origen, &pieza) && ok;
-          }
-      }
-      ok = SDL_SetRenderClipRect(dibujante, recortado ? &recorte_anterior : nullptr) && ok;
+      for (int fila = 0; fila < 5; ++fila)
+        for (int columna = 0; columna < 3; ++columna) {
+          if (columna == 1 && fila > 0 && fila < 4)
+            continue;
+          const SDL_FRect origen{sx[columna], sy[fila], sx[columna + 1] - sx[columna],
+                                 sy[fila + 1] - sy[fila]};
+          const SDL_FRect pieza{dx[columna], dy[fila], dx[columna + 1] - dx[columna],
+                                dy[fila + 1] - dy[fila]};
+          ok = SDL_RenderTexture(dibujante, moldura, &origen, &pieza) && ok;
+        }
       ok = SDL_SetTextureAlphaMod(moldura, 255) && ok;
     }
     const bool alfa = SDL_SetTextureAlphaMod(textura, 255);

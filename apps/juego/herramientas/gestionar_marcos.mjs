@@ -166,9 +166,8 @@ export function prepararMarcos(raiz, destino) {
     !Number.isFinite(moldura.escalaPorPixel) ||
     moldura.escalaPorPixel <= 0 ||
     moldura.escalaPorPixel > 1 ||
-    !Number.isInteger(moldura.solapeMaximo) ||
-    moldura.solapeMaximo < 0 ||
-    moldura.solapeMaximo > 2
+    moldura.solapeOrnamental?.borde !== 6 ||
+    moldura.solapeOrnamental?.esquinas !== 26
   )
     throw new Error('Geometría de moldura inválida.');
   mkdirSync(join(destinoCielo, 'overlay'), { recursive: true });
@@ -220,7 +219,7 @@ export function prepararMarcos(raiz, destino) {
   // La entrada vacía evita matrices de tamaño cero en C++ cuando todavía no hay asignaciones.
   asignaciones.push('{"",""}');
   const cabecera = `// Generado desde packages/assets/marcos; no editar.\n#pragma once\ninline constexpr DefinicionMarco catalogo_marcos[] = {${marcos.join(',\n')}};\ninline constexpr AsignacionMarco asignaciones_marcos[] = {${asignaciones.join(',\n')}};\ninline constexpr const char *marco_predeterminado = ${JSON.stringify(catalogo.predeterminado)};\n`;
-  const cabeceraMoldura = `inline constexpr const char *archivo_moldura = "assets/marcos/cielo_encantado/overlay/moldura.png";\ninline constexpr SDL_FRect vano_moldura = {${moldura.vano.join(',')}};\ninline constexpr float esquinas_moldura[] = {${moldura.esquinas.join(',')}};\ninline constexpr float adorno_central_moldura[] = {${moldura.adornoCentral.join(',')}};\ninline constexpr float escala_moldura = ${moldura.escalaPorPixel}f;\ninline constexpr float solape_moldura = ${moldura.solapeMaximo}.0f;\n`;
+  const cabeceraMoldura = `inline constexpr const char *archivo_moldura = "assets/marcos/cielo_encantado/overlay/moldura.png";\ninline constexpr SDL_FRect vano_moldura = {${moldura.vano.join(',')}};\ninline constexpr float esquinas_moldura[] = {${moldura.esquinas.join(',')}};\ninline constexpr float adorno_central_moldura[] = {${moldura.adornoCentral.join(',')}};\ninline constexpr float escala_moldura = ${moldura.escalaPorPixel}f;\n`;
   writeFileSync(join(destino, 'catalogo_marcos.hpp'), cabecera + cabeceraMoldura);
   copyFileSync(join(origen, 'catalogo.json'), join(carpeta, 'catalogo.json'));
 }

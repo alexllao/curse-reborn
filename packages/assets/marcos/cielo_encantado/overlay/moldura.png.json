@@ -5,6 +5,9 @@
   "vano": [105, 85, 1375, 820],
   "esquinas": [230, 230, 210, 210],
   "escalaPorPixel": 0.2,
-  "solapeMaximo": 2,
-  "adornoCentral": [440, 545]
+  "adornoCentral": [440, 545],
+  "solapeOrnamental": {
+    "borde": 6,
+    "esquinas": 26
+  }
 }
