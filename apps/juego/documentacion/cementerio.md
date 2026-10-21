@@ -49,3 +49,7 @@ El informe amplio `resultado_65_cementerio_piedra_clc.json` se conserva con su a
 `pnpm comparar:tropiezos-cementerio` contrasta768 contratos aislados de54F0–5638:9/10/11 por los256 valores de imagen. La fixture modifica caja/imagen/canales y verifica cuatro grupos de orientación, intervalos8 frente a2 y preparación especial de11; no son768 rutas jugables.
 
 Desde `cementerio_regreso`, izquierda provoca realmente113 al paso61. El regreso a65 recupera control en49, conserva inventario/fase6, observa128 pasos y continúa por114 al segundo cementerio.974 pasos reales;1.742 contando contratos. El comparador compartido reconoce ahora el salto4D35/4D39→50D2 para una entrada al mismo fondo. Más aproximaciones9/10 y otros estados de11 quedan pendientes. Detalle y reproducción en [la auditoría](auditoria_pantallas.md).
+
+## Ocho aproximaciones reales
+
+`pnpm comparar:aproximaciones-cementerio` contrasta9/10 desde cuatro direcciones solicitadas por tipo, con los cuatro grupos de animación realmente alcanzados.6.426 pasos; ocho recuperaciones113, inventario y fase6 conservados,128 pasos posteriores por caso. Al girar cerca del obstáculo, la imagen anterior puede seguir determinando la reacción, igual que en el EXE. Usa geometría y movimientos originales. `--casos 10_abajo` permite repetir una rama. Los estados de11 con otros actores siguen pendientes; detalle en [la auditoría](auditoria_pantallas.md).

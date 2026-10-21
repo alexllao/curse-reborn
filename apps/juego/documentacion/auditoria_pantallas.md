@@ -729,3 +729,30 @@ Verificación: Prettier, ESLint y Ruff pasan; formato C++ comprobado directament
 REA reconoce el mismo CURSE.EXE, SHA256f2c0046e07b25f408516edae5d6a66c06107971fb95c55ed770fa52a6b4ecd8d, pero sus proveedores disponibles no admiten DOS MZ en este hostWindows. La interpretación de54F0/4D35 se contrasta con el desensamblado local y con la ejecución original en el comparador, sin atribuir desensamblado ni observación de caídas aREA.
 
 SDL75/75, continuidad73/73 y escenas con muestras73/73 se mantienen. No hay nuevas capturas SDL. Quedan otras aproximaciones reales a los tropiezos9/10, variantes de11 con actores activos y las demás marcas de puertas pendientes. No repetir los768 contratos ni esta recuperación salvo cambios relevantes.
+
+### Aproximaciones reales a los tropiezos9/10 (21 de octubre)
+
+`pnpm comparar:aproximaciones-cementerio` retoma `comparacion_tropiezos_cementerio/cementerio_caida_recuperada`, en65 con fase6, control y contexto9000/fase0. Restaura su semilla y recursos antes de cada rama y usa la geometría original de BOXDET. Las ocho aproximaciones usan clics y flechas; no asignan posición, imagen, inventario, contador ni fase. La prueba espera3594/3595 antes de los clics y rechaza un tropiezo durante el posicionamiento previo, para que cada entrada dirigida quede identificada.
+
+| Tipo | Dirección solicitada | Imagen al tropiezo | Grupo observado | Pasos completos |
+| ---- | -------------------- | ------------------ | --------------- | --------------- |
+| 9    | Derecha4             | 8                  | 0               | 384             |
+| 9    | Izquierda8           | 134                | 3               | 793             |
+| 9    | Arriba2              | 21                 | 2               | 571             |
+| 9    | Abajo1               | 14                 | 1               | 573             |
+| 10   | Derecha4             | 8                  | 0               | 979             |
+| 10   | Izquierda8           | 129                | 3               | 981             |
+| 10   | Arriba2              | 19                 | 2               | 980             |
+| 10   | Abajo1               | 11                 | 1               | 1165            |
+
+Total6.426 pasos jugables coincidentes, con DS completo, azar y fase externa. Cada tipo alcanza realmente sus cuatro grupos de animación;9 conserva intervalos8/8/8 y10 conserva2/2/2. Al girar justo antes de tocar la caja,54F0 lee la imagen que sigue activa en ese instante: el grupo no se deduce de la flecha recién pulsada. Por eso las entradas verticales de esta tabla conservan la imagen de la orientación anterior. Las cuatro familias ya estaban contrastadas por contratos aislados; esta tanda aporta aproximaciones jugables.
+
+Las ocho ramas solicitan113, regresan a65, recuperan control, observan128 pasos más y conservan las doce palabras de inventario y fase6. Se guardan ocho referencias `cementerio_tropiezo_<9|10>_<derecha|izquierda|arriba|abajo>` con DS/semilla/contexto en `trabajo/comparacion_aproximaciones_cementerio`. No se repite el recorrido114 ya contrastado desde una recuperación equivalente, ni las30 muestras de acciones posteriores de la tanda anterior.
+
+El selector `--casos` permite repetir solo los casos afectados, por ejemplo `pnpm comparar:aproximaciones-cementerio --casos 10_abajo`. El informe declara cuántos casos se han ejecutado; una selección parcial no se presenta como ocho. Log completo `aproximaciones_cementerio_verificado.log`, informe local `comparacion_aproximaciones_cementerio/resultado.json`. Los ensayos previos de colocación quedan como investigación ignorada, sin sumarlos al resultado.
+
+El selector se comprueba aparte con `--casos 9_derecha`: un caso/384 pasos coincidentes, guardado en `resultado_parcial.json` para conservar el informe completo de ocho. Esa repetición verifica la selección de casos y no se suma al progreso. Prettier, ESLint, Ruff (100 Python), formato C++ directo (212 archivos),95 importaciones y monorepo correctos. El comando `pnpm calidad` se ejecuta y conserva la limitación del entorno al lanzar clang-format desde Node (EPERM); las mismas comprobaciones se ejecutan directamente, sin registrar el agregado como aprobado.
+
+La copia local de development se alineó con el objeto publicadoc7f51dc, cuyo SHA se reconstruyó y comprobó antes de importarlo. Su árbol es idéntico al453c436 anterior; se conserva ese objeto bajo `refs/codex/respaldo-publicacion-453c436`. No hay cambios de archivos por la alineación ni push forzado. Las nuevas tandas parten de la historia publicada.
+
+SDL75/75, continuidad73/73 y escenas con muestras73/73 sin incremento. Motor intacto y sin nuevas capturas SDL. Quedan11 con otros estados de actores, otras posiciones y fases no incluidas en estas ocho aproximaciones y las marcas de puertas pendientes. No repetir estos ocho casos salvo cambios relevantes.
