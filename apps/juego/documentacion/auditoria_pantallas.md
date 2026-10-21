@@ -10,9 +10,9 @@ Una vista F5/F6 no equivale a una habitación terminada. La auditoría distingue
 | --------------------------------------------------------------- | -------------------- | ---------- | ----------------------------------------------------------- |
 | Escenas accesibles en SDL                                       | 75/75                | 100 %      | No acredita todas sus variantes.                            |
 | Escenas con continuación tras cargar                            | 73/73 con menú       | 100 %      | Reposo, rutas y estados citados;2/68 automáticas excluidas. |
-| Escenas con muestras de consecuencias en esta revisión ampliada | 35/73 con menú       | 47,9 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
+| Escenas con muestras de consecuencias en esta revisión ampliada | 38/73 con menú       | 52,1 %     | Muestras, no todos los estados ni fidelidad1:1 completa.    |
 
-El último indicador cuenta las escenas0–35 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
+El último indicador cuenta las escenas0–38 salvo2, que es automática. Es una medida de la revisión adicional, no del porcentaje de aventura implementada. Los comparadores anteriores de cada puzle siguen siendo evidencias complementarias y no se suman como escenas nuevas de esta tanda.
 
 Se ha ejecutado el recorrido SDL desde la liberación de Brad hasta THE END, sobre la misma partida y usando las entradas del jugador. Las restauraciones de comprobación usan una segunda instancia; no sustituyen el estado del recorrido principal. El resultado final coincide píxel a píxel con la composición contrastada del EXE. La prueba acelera las esperas de presentación: no sirve para medir cuánto tarda un jugador.
 
@@ -293,6 +293,27 @@ La selección Dar105 a98 ejecuta A8AE–A8DC y observa256 pasos posteriores. Man
 Total nuevo de consecuencias:164 observaciones,20.992 pasos,60 ramas CLC y522 selecciones; todas llegan a reposo con menú, con DS/azar/fase coincidentes. Reproducción: `pnpm comparar:consecuencias --escenas 32 --estado comparacion_cinta_vacia/<referencia>.ds.bin --incluir-clc`. Informes locales separados `resultado_32_<referencia>_clc.json`; logs `consecuencias_cinta_vacia_<referencia>.log`. Los resultados generados y recursos originales no se versionan.
 
 Queda cubierta la rama real105 sin correo señalada en la tanda anterior, dentro de estos estados concretos. No se agotan los demás estados del destinatario, más hitos del valle ni los capítulos36+. La cobertura permanece35/73 (47,9%) con muestras de consecuencias,75/75 accesibles en SDL y73/73 con continuidad tras cargar. No es un porcentaje global de fidelidad1:1; no hay cambios del motor ni capturas SDL nuevas.
+
+### HOLD36, GHETTO37 y CLOUD38: alternativas en estados reales del puzle
+
+La CLI de `comparar:consecuencias` admite ahora0–38, salvo2 automática. Para25+ sigue exigiendo contexto registrado, no deducido del inventario. Se regeneraron `comparar:puente-barco` (11.453 casos/pasos,1.260 selecciones, cinco composiciones), `comparar:cueva-valle` (4.489/691/cuatro) y `comparar:nube` (2.620/400/cuatro), con `--muestra`. Las13 DS anteriores conservan su SHA256; los13 hitos guardan contexto5800 real, sin trasladarlo a copias exploratorias antiguas.
+
+El barco continúa desde62 con tablones117/118 recogidos, colocación y cruce reales. La cueva procede del regreso de la nube por57/64, conserva121 y obtiene120 por Ayuda, derrumbe y recogida. CLOUD procede de la petición66 del pase, conserva el balanceo mediante direcciones y recoge121 antes del regreso67. No se preparan objetos, banderas ni posiciones para fabricar estos seis estados. La guía local respalda los tablones, Ayuda y balanceo; los contratos del EXE conservan AC8F–AFBB,337D–34D6 y C8F9–CADE/5E68–5E97, junto a los servicios comunes de azar, secuencias, sonido y dibujo.
+
+| Escena | Carpeta comparacion_ | Referencia            | Observaciones | Pasos  | CLC | Selecciones |
+| ------ | -------------------- | --------------------- | ------------- | ------ | --- | ----------- |
+| 36     | puente_barco         | barco_primer_tablon   | 94            | 12.032 | 34  | 309         |
+| 36     | puente_barco         | barco_puente_completo | 85            | 10.880 | 31  | 304         |
+| 37     | cueva_valle          | cueva_entrada         | 43            | 5.504  | 24  | 182         |
+| 37     | cueva_valle          | cueva_detergente      | 49            | 6.272  | 28  | 220         |
+| 38     | nube                 | nube_entrada          | 36            | 4.608  | 20  | 148         |
+| 38     | nube                 | nube_bolsa_recogida   | 42            | 5.376  | 24  | 182         |
+
+Total nuevo:349 observaciones,44.672 pasos,161 ramas CLC y1.345 selecciones, con DS completo, azar y fase externa coincidentes. Todas llegan a reposo con menú en128 pasos. La entrada deGHETTO incluye Hablar→Ayuda, casillas0-based4/1; el generador conserva además su espera positiva512 para observar el derrumbe y la recogida posterior. La observación mínima128 no sustituye toda la duración audiovisual de las secuencias ni todos los posibles impulsos de la nube.
+
+Reproducción tras regenerar el generador correspondiente: `pnpm comparar:consecuencias --escenas <36|37|38> --estado comparacion_<carpeta>/<referencia>.ds.bin --incluir-clc`. Informes separados locales `resultado_<escena>_<referencia>_clc.json`; logs `consecuencias_valle_tardio_<referencia>.log`. Regeneraciones en `contextos_<carpeta>_regeneracion.log`. No repetir estos seis estados salvo cambios relevantes; los resultados, referencias y recursos comerciales permanecen ignorados.
+
+La unión revisada asciende a38/73 escenas con muestras (52,1%),0–38 salvo2. Accesibilidad SDL75/75 y continuidad tras cargar73/73 mantienen su alcance anterior. No hay diferencias detectadas en esta tanda, cambios del motor ni capturas SDL nuevas. Siguen pendientes otras fases y posiciones deHOLD, la botella expuesta antes de recoger, otros impulsos deCLOUD, más regresos tardíos y capítulos39+. No se declara cerrada la fidelidad1:1 ni la revisión de todas las interacciones.
 
 ### Límites que siguen abiertos
 

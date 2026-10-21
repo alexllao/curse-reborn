@@ -19,3 +19,11 @@ Resultado: **2.620 casos/pasos,400 selecciones, dos estados de menú auditados y
 ## Continuidad SDL
 
 `pnpm comprobar:nube-valle` utiliza las referencias comunes del valle y vuelve a contrastar grabacion-completa, entrega-grabacion y nube. La partidaSDL reproduce mando108, cinta105, grabación106, carta franqueada112, pase99 y entrada66 antes de alcanzarCLOUD. Se comparan sus cuatro composiciones originales, se comprueba guardar/restaurar y74 cambiosF5/F6 entre37 vistas. La salida67 conserva121 al aterrizar. Las imágenes intermedias de grabación/correo se contrastan en el núcleo; esta pruebaSDL verifica sus acciones y consumos hasta llegar aCLOUD, sin presentar cada intermedio como una nueva capturaSDL.
+
+## Revisión ampliada de alternativas del21 de octubre
+
+Regenerado `pnpm comparar:nube --muestra`:2.620 casos/pasos,400 selecciones y cuatro composiciones coincidentes. Las cuatro DS anteriores mantienen su SHA256 y sus hitos conservan ahora contexto5800 real.
+
+Las consecuencias de nube_entrada y nube_bolsa_recogida suman78 observaciones,9.984 pasos,44 ramas CLC y330 selecciones coincidentes en DS/azar/fase; todas llegan a reposo con menú en128 pasos. No se prepara la bolsa ni se altera el impulso para crear las referencias. El generador sigue contrastando el balanceo, recogida y regreso67; esta tanda de opciones no agota todas las velocidades, direcciones ni posiciones enCLOUD.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Los pendientes de catálogo indicados en las tandas iniciales son históricos. No hay cambios del motor ni capturas SDL nuevas en esta revisión.

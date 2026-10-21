@@ -31,3 +31,11 @@ Resultado: **11.453 casos/pasos y cinco composiciones coincidentes**.
 ## Integración SDL
 
 `pnpm comprobar:barco-valle` recorre la continuidad completa desde el comienzo, incluido el calcetín, la combinación con monedas y el guardia. Compara cinco imágenes originales del puente y el regreso63; guardar/restaurar funciona llevando el primer tablón conmodeloFE y después de colocar ambos.78 cambiosF5/F6 entre39 vistas correctos. Los comparadores nativos de guardia y puente se repiten con8202 y11453 casos/pasos. Las cinco imágenes previas del guardia permanecen como referencias nativas; enSDL se verifican sus acciones/consumos para alcanzarHOLD sin preparar inventarios.
+
+## Revisión ampliada de alternativas del21 de octubre
+
+Regenerado `pnpm comparar:puente-barco --muestra`:11.453 casos/pasos,1.260 selecciones y cinco composiciones coincidentes. Las cinco DS anteriores mantienen su SHA256 y sus hitos conservan ahora contexto5800 real.
+
+Las consecuencias de barco_primer_tablon y barco_puente_completo suman179 observaciones,22.912 pasos,65 ramas CLC y613 selecciones coincidentes en DS/azar/fase; todas llegan a reposo con menú en128 pasos. Se parte de los tablones y del puente realmente obtenidos por el recorrido, sin modificar inventario ni posiciones. Estos estados no agotan las colocaciones, todos los regresos o los inventarios futuros.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Los pendientes de catálogo indicados en las tandas iniciales son históricos. No hay cambios del motor ni capturas SDL nuevas en esta revisión.

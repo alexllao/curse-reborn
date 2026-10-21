@@ -25,3 +25,11 @@ Prueba: `pnpm comparar:cueva-valle --muestra`. Si falta la instantánea de la nu
 ## Integración SDL
 
 `pnpm comprobar:cueva-valle` recorre desde el comienzo la continuidad del valle y entra64 después de volver deCLOUD. Compara cuatro imágenes originales: entrada, derrumbe, detergente y regreso65. Guardar/restaurar en los cuatro estados y76 cambios deF5/F6 entre38 vistas correctos. Se conserva121 durante la recogida120; no se preparan posiciones, inventario ni actores. Se repite el comparador nativo4489 casos/pasos, utilizando las referencias comunes del valle previamente contrastadas.
+
+## Revisión ampliada de alternativas del21 de octubre
+
+Regenerado `pnpm comparar:cueva-valle --muestra`:4.489 casos/pasos,691 selecciones y cuatro composiciones coincidentes. Las cuatro DS anteriores mantienen su SHA256 y sus hitos conservan ahora contexto5800 real.
+
+Las consecuencias de cueva_entrada y cueva_detergente suman92 observaciones,11.776 pasos,52 ramas CLC y402 selecciones coincidentes en DS/azar/fase; todas llegan a reposo con menú en128 pasos. La entrada incluye Hablar→Ayuda (casillas0-based4/1); el generador mantiene además la espera512 del derrumbe y el recorrido hasta obtener120. No se agotan la fase de botella expuesta antes de recoger ni otros regresos con inventarios posteriores.
+
+Comandos, informes separados y cobertura actual en [auditoría vigente](auditoria_pantallas.md). Los pendientes de catálogo indicados en las tandas iniciales son históricos. No hay cambios del motor ni capturas SDL nuevas en esta revisión.
