@@ -165,6 +165,7 @@
     "comprobar:lupa-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:lupa-palacio",
     "comparar:laterales-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:laterales-palacio",
     "comprobar:arma-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comprobar:arma-palacio",
+    "comparar:orden-poleas": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:orden-poleas",
     "comparar:resolucion-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:resolucion-palacio",
     "comparar:guardia-palacio": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:guardia-palacio",
     "comparar:ataud": "node apps/juego/herramientas/gestionar_proyecto.mjs comparar:ataud",

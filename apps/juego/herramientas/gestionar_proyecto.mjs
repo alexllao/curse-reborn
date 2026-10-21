@@ -191,6 +191,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     utiles_palacio: 'comparar_utiles_palacio.py',
     laterales_palacio: 'comparar_laterales_palacio.py',
     resolucion_palacio: 'comparar_resolucion_palacio.py',
+    orden_poleas: 'comparar_orden_poleas.py',
     laser_palacio: 'comparar_laser_palacio.py',
     reina_hielo: 'comparar_reina_hielo.py',
     mano_palacio: 'comparar_mano_palacio.py',
@@ -536,6 +537,9 @@ try {
       break;
     case 'comparar:poblacion':
       compararAcciones('poblacion', argumentos);
+      break;
+    case 'comparar:orden-poleas':
+      compararAcciones('orden_poleas', argumentos);
       break;
     case 'comparar:resolucion-palacio':
       compararAcciones('resolucion_palacio', argumentos);

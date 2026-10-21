@@ -553,7 +553,30 @@ Reproducción por referencia: `pnpm comparar:consecuencias --escenas <índice> -
 
 Comprobada la unión de escenas con ramas reales en informes coincidentes:0–73 y77 salvo2/68. Cobertura73/73 con muestras (100%), accesiblesSDL75/75 y continuidad tras cargar73/73. No hay cambios de motor ni nuevas capturas SDL de la aventura. El100% se refiere exclusivamente al denominador de escenas con muestras; quedan las situaciones específicas enumeradas en el registro, no un porcentaje global de fidelidad.
 
-Siguiente trabajo: estados intermedios de poleas (bajadas, aceite y silbato ofrecido), más inventarios y regresos deEDGE/REMOTE, otras marcas de puertas y plazos del guardia, orientaciones y consecuencias de caídas del cementerio. La suspensión del ajo queda documentada como comportamiento del original observado hasta4096, no como implementación pendiente ni prueba de ciclo infinito. Las dos copias exploratorias del cementerio siguen excluidas hasta disponer de una regeneración real.
+Siguiente trabajo de aquella tanda: intermedios de poleas (contrastados en la ampliación posterior), más inventarios y regresos deEDGE/REMOTE, otras marcas de puertas y plazos del guardia, orientaciones y consecuencias de caídas del cementerio. La suspensión del ajo queda documentada como comportamiento del original observado hasta4096, no como implementación pendiente ni prueba de ciclo infinito. Las dos copias exploratorias del cementerio siguen excluidas hasta disponer de una regeneración real.
+
+### Intermedios de las poleas y el silbato, con orden inverso de recogida
+
+Se revisan los puntos intermedios que seguían pendientes de la resolución del palacio. Las cinco referencias de `comparacion_resolucion_palacio` ya tenían DS, semilla real y contexto5800/fase0 de la regeneración contrastada; se verifican esos archivos y no se repite el recorrido completo ni se infiere contexto de un inventario. Las cuatro referencias ya auditadas (`poleas_con_arma`, `poleas_cristal`, `ventana_silbato`, `ventana_abierta`) no se repiten.
+
+| Escena y referencia                           | Observaciones | Pasos DS/azar/fase | CLC | Selecciones |
+| --------------------------------------------- | ------------: | -----------------: | --: | ----------: |
+| 47 poleas_bajadas                             |            91 |             11.648 |  34 |         308 |
+| 47 poleas_ante_utiles                         |           101 |             12.928 |  36 |         408 |
+| 47 poleas_aceite                              |           107 |             13.696 |  39 |         413 |
+| 49 ventana_ante_silbato                       |           102 |             13.056 |  38 |         360 |
+| 49 ventana_megafono                           |            61 |              7.808 |  36 |         308 |
+| 47 poleas_cristal_primero (orden alternativo) |           107 |             13.696 |  39 |         413 |
+
+Total569 observaciones,72.832 pasos,222 cierresCLC y2.210 selecciones; todas recuperan reposo con menú habilitado en128, con DS completo, azar y fase coincidentes. No se han detectado diferencias ni se ha cambiado el motor. Cada rama parte de los objetos y la posición reales del punto de control.
+
+Nuevo `pnpm comparar:orden-poleas`, desde `poleas_ante_utiles`: recoge145 antes de144.5FA4/608F y6285–62C8 conservan la oferta de147 al reunir153/154/152/149/150/144/145, retirando141. El cristal por sí solo mantiene la escoba y no cambia la oferta; al recoger después el aceite se retira la escoba y4BAE pasa a1. El recorrido continúa por86/88, recoge147, combina147/152, abre con148 y salta hasta solicitar90 al paso23.1.744 pasos jugables/15 selecciones adicionales coinciden; no se carga56 ni se asignan objetos, posiciones o marcas. El orden144/145 habitual ya estaba contrastado, por lo que no se repite.
+
+El nuevo comparador conserva cinco referencias con DS, semilla y contexto en `comparacion_orden_poleas`; `poleas_cristal_primero` se usa para la sexta fila de consecuencias. Las otras cuatro (`poleas_aceite_despues`, `ventana_silbato_inverso`, `ventana_abierta_inversa`, `ventana_inversa_solicitud90`) corresponden al recorrido positivo, sin afirmar que todas sus alternativas hayan sido exploradas de nuevo.
+
+Reproducción: `pnpm comparar:consecuencias --escenas <47|49> --estado comparacion_resolucion_palacio/<referencia>.ds.bin --incluir-clc`; para cristal primero usar `comparacion_orden_poleas/poleas_cristal_primero.ds.bin`. Informes locales separados `resultado_<escena>_<referencia>_clc.json`, logs `consecuencias_intermedios_palacio_<referencia>.log` y `consecuencias_orden_poleas_poleas_cristal_primero.log`. Recursos y resultados permanecen ignorados. No repetir estas seis referencias salvo cambios relevantes.
+
+Queda cerrado el pendiente concreto de poleas bajadas, aceite y silbato todavía ofrecido, incluido el orden inverso real. Los indicadores permanecen SDL75/75, continuidad73/73 y escenas con muestras73/73: no se suman salas por revisar más estados de47/49. No hay nuevas capturas SDL. Siguiente: otros inventarios y regresosEDGE/REMOTE, marcas de puertas, plazos del guardia y orientaciones/caídas del cementerio.
 
 ### Límites que siguen abiertos
 

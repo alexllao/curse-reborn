@@ -39,3 +39,13 @@ Regenerado `pnpm comparar:resolucion-palacio --muestra`:9.608 casos/pasos,3.200 
 Las alternativas de poleas_con_arma47, poleas_cristal47, ventana_silbato49 y ventana_abierta49 suman361 observaciones,46.103 pasos,148 ramas CLC y1.384 selecciones coincidentes en DS/azar/fase.360 terminan en reposo con menú; saltar desde ventana_abierta solicita90 al paso23 (casillas0-based6/0). Los útiles proceden del recorrido real de los seis laterales, sin inventario o banderas preparados. La prueba termina en la petición, sin presentar su destino como comprobado en esta tanda.
 
 La [auditoría vigente](auditoria_pantallas.md) contiene comandos, informes separados y límites. El indicador sigue55/73 escenas con muestras: se profundiza en47/49 con inventarios posteriores. No hay cambios del motor ni nuevas capturas SDL. Quedan otros puntos intermedios, órdenes, regresos y capítulos56+; no se declara fidelidad1:1 cerrada.
+
+## Orden inverso de las recogidas en las poleas
+
+`pnpm comparar:orden-poleas` parte de `comparacion_resolucion_palacio/poleas_ante_utiles`, con DS, semilla y contexto5800/fase0 del recorrido real. Recoge primero145 y después144, en lugar del orden144/145 de la guía y del generador habitual. No se asignan objetos, posiciones ni marcas de puertas.
+
+5FA4/608F y6285–62C8 conservan la oferta al reunir153/154/152/149/150/144/145. Tras el cristal siguen faltando el aceite y la oferta;141 permanece en el inventario. Tras recoger144 se retira141 y4BAE pasa a1. La prueba atraviesa86/88, recoge147, combina147/152, abre la ventana con148 y solicita90 al saltar:1.744 pasos jugables y15 selecciones, DS completo, azar y fase coincidentes con el EXE. El salto entrega90 al paso23; la prueba no carga56.
+
+Conserva referencias reanudables en `trabajo/comparacion_orden_poleas/`: `poleas_cristal_primero`, `poleas_aceite_despues`, `ventana_silbato_inverso`, `ventana_abierta_inversa` y `ventana_inversa_solicitud90`, cada una con semilla y contexto explícitos. No crea capturas SDL ni modifica el motor. Requiere las referencias previas de `pnpm comparar:resolucion-palacio --muestra` y sus antecedentes.
+
+La revisión de los seis estados intermedios/alternativos suma569 observaciones/72.832 pasos/222CLC/2.210 selecciones, todo reposo en128 y DS/azar/fase coincidentes. Cierra el pendiente de poleas bajadas, aceite y silbato ofrecido; la [auditoría vigente](auditoria_pantallas.md) registra la reproducción y sus límites. SDL75/75, continuidad73/73 y cobertura de escenas73/73 permanecen iguales.
