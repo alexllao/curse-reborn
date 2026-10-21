@@ -798,7 +798,7 @@ void SDLCALL Audio::registrar_mezcla(void *contexto, const SDL_AudioSpec *format
     SDL_memset(muestras, 0, static_cast<size_t>(bytes));
 }
 
-// Reserva una cabecera WAV IEEE float; SDL sincroniza la instalacion del callback con el
+// Reserva una cabecera RF64 IEEE float sin limite de4GiB; SDL sincroniza el callback con el
 // dispositivo.
 bool Audio::grabar_salida(const char *ruta) {
   if (!dispositivo || grabacion ||
@@ -811,7 +811,7 @@ bool Audio::grabar_salida(const char *ruta) {
   if (!SDL_SetAudioPostmixCallback(dispositivo, nullptr, nullptr))
     return false;
   grabacion = SDL_IOFromFile(ruta, "wb");
-  unsigned char cabecera[44]{};
+  unsigned char cabecera[80]{};
   if (!grabacion || SDL_WriteIO(grabacion, cabecera, sizeof(cabecera)) != sizeof(cabecera)) {
     terminar_grabacion();
     return false;
@@ -824,7 +824,7 @@ bool Audio::grabar_salida(const char *ruta) {
   return pausado || SDL_ResumeAudioDevice(dispositivo);
 }
 
-// Espera al callback antes de cerrar y completa longitudes, canales y frecuencia reales del WAV.
+// Espera al callback y completa RF64/ds64 con longitudes de64bits para las tomas largas.
 void Audio::terminar_grabacion() {
   if (!grabacion)
     return;
@@ -833,7 +833,7 @@ void Audio::terminar_grabacion() {
     SDL_PauseAudioDevice(dispositivo);
   SDL_SetAudioPostmixCallback(dispositivo, nullptr, nullptr);
   const auto longitud = SDL_TellIO(grabacion);
-  unsigned char cabecera[44]{};
+  unsigned char cabecera[80]{};
   const auto escribir16 = [&](unsigned int p, unsigned int valor) {
     cabecera[p] = static_cast<unsigned char>(valor);
     cabecera[p + 1] = static_cast<unsigned char>(valor >> 8);
@@ -842,24 +842,37 @@ void Audio::terminar_grabacion() {
     escribir16(p, valor & 65535u);
     escribir16(p + 2, valor >> 16);
   };
-  const char firma[] = "RIFF    WAVEfmt ";
+  const auto escribir64 = [&](unsigned int p, unsigned long long valor) {
+    escribir32(p, static_cast<unsigned int>(valor));
+    escribir32(p + 4, static_cast<unsigned int>(valor >> 32));
+  };
+  const char firma[] = "RF64    WAVEds64";
   for (unsigned int i = 0; i < 16; ++i)
     cabecera[i] = firma[i];
-  cabecera[36] = 'd';
-  cabecera[37] = 'a';
-  cabecera[38] = 't';
-  cabecera[39] = 'a';
-  escribir32(4, static_cast<unsigned int>(longitud - 8));
-  escribir32(16, 16);
-  escribir16(20, 3);
-  escribir16(22, static_cast<unsigned int>(formato_grabacion.channels));
-  escribir32(24, static_cast<unsigned int>(formato_grabacion.freq));
-  escribir32(28,
+  const char formato[] = "fmt ";
+  const char datos[] = "data";
+  for (unsigned int i = 0; i < 4; ++i) {
+    cabecera[48 + i] = formato[i];
+    cabecera[72 + i] = datos[i];
+  }
+  escribir32(4, 0xffffffffu);
+  escribir32(16, 28);
+  escribir64(20, static_cast<unsigned long long>(longitud - 8));
+  escribir64(28, static_cast<unsigned long long>(longitud - 80));
+  escribir64(36, formato_grabacion.channels > 0
+                     ? static_cast<unsigned long long>(longitud - 80) /
+                           (static_cast<unsigned int>(formato_grabacion.channels) * 4)
+                     : 0);
+  escribir32(52, 16);
+  escribir16(56, 3);
+  escribir16(58, static_cast<unsigned int>(formato_grabacion.channels));
+  escribir32(60, static_cast<unsigned int>(formato_grabacion.freq));
+  escribir32(64,
              static_cast<unsigned int>(formato_grabacion.freq * formato_grabacion.channels * 4));
-  escribir16(32, static_cast<unsigned int>(formato_grabacion.channels * 4));
-  escribir16(34, 32);
-  escribir32(40, static_cast<unsigned int>(longitud - 44));
-  if (longitud < 44 || longitud > 0xffffffffll || SDL_SeekIO(grabacion, 0, SDL_IO_SEEK_SET) < 0 ||
+  escribir16(68, static_cast<unsigned int>(formato_grabacion.channels * 4));
+  escribir16(70, 32);
+  escribir32(76, 0xffffffffu);
+  if (longitud < 80 || SDL_SeekIO(grabacion, 0, SDL_IO_SEEK_SET) < 0 ||
       SDL_WriteIO(grabacion, cabecera, sizeof(cabecera)) != sizeof(cabecera))
     std::fprintf(stderr, "No se ha completado la grabacion WAV de la partida\n");
   SDL_CloseIO(grabacion);

@@ -27,7 +27,7 @@ El recorrido no asigna inventario, puntuación ni banderas y no sustituye escena
 
 SDL entrega la mezcla final de los flujos del juego al callback postmix. Se guarda esa mezcla en WAV antes de poner a cero el búfer que este dispositivo lógico envía a la salida. Así el vídeo conserva música y efectos mientras la aplicación grabada permanece inaudible. No se cambia el volumen del sistema, de otras aplicaciones ni las preferencias de M del usuario.
 
-La captura se silencia desde que se abre el dispositivo, antes de la presentación. Al terminar el WAV se mantiene ese silencio hasta cerrar la sesión. El controlador de audio normal sigue fijando la cadencia; el controlador dummy no se utiliza para la toma final porque en la primera investigación produjo menos muestras que el tiempo real transcurrido.
+La mezcla intermedia usa RF64 de64bits (extensión `.wav`), para que una toma larga no quede limitada por los4GiB del RIFF clásico. Conserva los flotantes originales del postmix. La captura se silencia desde que se abre el dispositivo, antes de la presentación. Al terminar el WAV se mantiene ese silencio hasta cerrar la sesión. El controlador de audio normal sigue fijando la cadencia; el controlador dummy no se utiliza para la toma final porque en la primera investigación produjo menos muestras que el tiempo real transcurrido.
 
 ## Archivos y finalización
 
@@ -62,3 +62,7 @@ El grabador confundía los70Hz del temporizador con los pasos de lógica. El buc
 El informe nativo declara cinco ticks por paso y14Hz lógicos; el script rechaza ejecutables antiguos que no declaren esa cadencia. Una nueva toma completa a velocidad normal sigue pendiente: la anterior no la sustituye.
 
 Muestra corregida comprobada en `trabajo/grabaciones/20261021-185220`:150,000s,4500 fotogramas, informe5 ticks/14Hz y dos escenas. La salida inicial llega a1 a los93,431s, frente a26,713s de la versión acelerada; los menús y transiciones mantienen sus duraciones propias. Decodificación completa con FFmpeg correcta, código0. `caminata_30s.mp4` extrae los segundos105–135 sin alterar velocidad ni audio, para revisar el movimiento directamente. La muestra sigue declarada incompleta; no se ha lanzado otra toma larga.
+
+Àlex aprobó la muestra de caminata corregida. Se prepara una nueva toma completa con esa cadencia y salida silenciada. Antes de ella se verifica el contenedor RF64 con una muestra corta; no cambia las muestras de audio, la velocidad ni la presentación aprobada.
+
+RF64 comprobado en `trabajo/grabaciones/20261021-190326`: muestra10s/300 fotogramas, IEEEfloat32/48000Hz/estéreo, longitudes64bits del chunkds64 coincidentes con el archivo, audio efectivo y MP4 de10s. Compilación nativa conO2/avisos como errores correcta. Nueva toma larga iniciada en `trabajo/grabaciones/20261021-190417`; su finalización se documentará únicamente tras verificar el resultado.
