@@ -1832,8 +1832,7 @@ int main(int argc, char *argv[]) {
                                            : "escena_" + std::to_string(mazmorra.escena_actual());
     if (presentacion.habitacion.ampliada() &&
         !presentacion.marcos.dibujar(presentacion.dibujante, contexto_marco.c_str(),
-                                     comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS(),
-                                     &presentacion.filtros))
+                                     comprobar_marcos ? reloj_marcos_prueba : SDL_GetTicksNS()))
       return fallo("No se ha podido dibujar el marco de pantalla");
     if (!presentacion.habitacion.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar la habitación");

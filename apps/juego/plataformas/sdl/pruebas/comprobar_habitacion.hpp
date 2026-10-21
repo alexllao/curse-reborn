@@ -57,8 +57,7 @@ bool comprobar_habitacion(const std::string &carpeta, const std::string &prefijo
       return false;
     const auto destino = p.habitacion.destino_juego(reloj);
     if ((destino.h > 0 && !SDL_RenderTexture(p.dibujante, p.textura, nullptr, &destino)) ||
-        (p.habitacion.ampliada(reloj) &&
-         !p.marcos.dibujar(p.dibujante, "core", reloj, &p.filtros)) ||
+        (p.habitacion.ampliada(reloj) && !p.marcos.dibujar(p.dibujante, "core", reloj)) ||
         !p.habitacion.dibujar(p.dibujante, reloj))
       return false;
     SDL_FRect imagen, pantalla, juego;

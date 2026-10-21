@@ -1,5 +1,4 @@
 #include "marcos.hpp"
-#include "filtros.hpp"
 #include "catalogo_marcos.hpp"
 #include "../registro.hpp"
 #include <algorithm>
@@ -114,9 +113,8 @@ bool MarcosPantalla::area_juego(SDL_Renderer *dibujante, SDL_FRect &juego) {
   return SDL_GetRenderLogicalPresentationRect(dibujante, &juego);
 }
 
-// Dibuja las bandas y el solape autorizado con el mismo filtro que la imagen del juego.
-bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora,
-                             const FiltrosPantalla *filtros) {
+// Conserva el detalle del fondo y la moldura; los filtros pertenecen solo al juego y su cursor.
+bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora) {
   const float nivel = nivel_animacion(ahora);
   if (nivel <= 0.0f && !visible)
     return true;
@@ -139,21 +137,13 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
   }
   if (!seleccion)
     return true;
-  const int filtro = filtros ? static_cast<int>(filtros->indice_actual()) : 0;
-  if (actual != seleccion || !textura || filtro_actual != filtro) {
+  if (actual != seleccion || !textura) {
     cerrar();
     const char *base = SDL_GetBasePath();
     const std::string ruta = std::string(base ? base : "") + seleccion->archivo;
     SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
     if (imagen) {
-      SDL_Surface *filtrada = filtros ? filtros->filtrar_marco(imagen) : nullptr;
-      textura = SDL_CreateTextureFromSurface(dibujante, filtrada ? filtrada : imagen);
-      if (filtrada)
-        SDL_DestroySurface(filtrada);
-      if (filtros && !filtrada) {
-        SDL_DestroyTexture(textura);
-        textura = nullptr;
-      }
+      textura = SDL_CreateTextureFromSurface(dibujante, imagen);
       SDL_DestroySurface(imagen);
     }
     if (!textura) {
@@ -164,9 +154,8 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
                        SDL_GetError());
       return true;
     }
-    if (!SDL_SetTextureScaleMode(textura, seleccion->panoramico || filtro == 1 || filtro == 3
-                                              ? SDL_SCALEMODE_LINEAR
-                                              : SDL_SCALEMODE_NEAREST) ||
+    if (!SDL_SetTextureScaleMode(textura, seleccion->panoramico ? SDL_SCALEMODE_LINEAR
+                                                                : SDL_SCALEMODE_NEAREST) ||
         !SDL_SetTextureBlendMode(textura, SDL_BLENDMODE_BLEND) ||
         !SDL_SetTextureColorMod(textura, seleccion->luminosidad, seleccion->luminosidad,
                                 seleccion->luminosidad))
@@ -176,17 +165,13 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
       SDL_Surface *original = SDL_LoadPNG(ruta_moldura.c_str());
       if (!original)
         return false;
-      SDL_Surface *filtrada = filtros ? filtros->filtrar_marco(original) : original;
-      moldura = filtrada ? SDL_CreateTextureFromSurface(dibujante, filtrada) : nullptr;
-      if (filtrada && filtrada != original)
-        SDL_DestroySurface(filtrada);
+      moldura = SDL_CreateTextureFromSurface(dibujante, original);
       SDL_DestroySurface(original);
       if (!moldura || !SDL_SetTextureScaleMode(moldura, SDL_SCALEMODE_LINEAR) ||
           !SDL_SetTextureBlendMode(moldura, SDL_BLENDMODE_BLEND))
         return false;
     }
     actual = seleccion;
-    filtro_actual = filtro;
     registrar_accion("Marco de pantalla: %s", actual->nombre);
   }
   int ancho = 0, alto = 0, logico_ancho = 0, logico_alto = 0;

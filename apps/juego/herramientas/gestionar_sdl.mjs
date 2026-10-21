@@ -1698,6 +1698,7 @@ export async function gestionarSdl(accion, argumentos) {
   if (accion === 'comprobar:marcos') {
     const carpeta = join(raiz, 'apps', 'juego', 'trabajo', 'comprobacion_marcos');
     mkdirSync(carpeta, { recursive: true });
+    let marcoSinFiltro = null;
     for (const [opcion, ancho, alto] of [
       ['marcos-cielo-32', 1920, 540],
       ['marcos-cielo-24', 1440, 540],
@@ -1726,6 +1727,23 @@ export async function gestionarSdl(accion, argumentos) {
       const escala = Math.min(ancho / 320, alto / 200);
       const x0 = (ancho - 320 * escala) / 2,
         y0 = (alto - 200 * escala) / 2;
+      if (opcion === 'marcos') marcoSinFiltro = capturas[1];
+      if (opcion === 'marcos-filtro' || opcion.startsWith('marcos-modo-')) {
+        if (!marcoSinFiltro) throw new Error('Falta la referencia del marco sin filtro.');
+        for (let y = 0; y < alto; y++)
+          for (let x = 0; x < ancho; x++) {
+            if (
+              x >= Math.ceil(x0) &&
+              x < Math.floor(ancho - x0) &&
+              y >= Math.ceil(y0) &&
+              y < Math.floor(alto - y0)
+            )
+              continue;
+            const p = (y * ancho + x) * 3;
+            if (!capturas[1].subarray(p, p + 3).equals(marcoSinFiltro.subarray(p, p + 3)))
+              throw new Error(`El filtro del juego altera el fondo o la moldura: ${opcion}.`);
+          }
+      }
       let modificados = 0;
       for (let y = 0; y < alto; y++)
         for (let x = 0; x < ancho; x++) {
@@ -1785,7 +1803,8 @@ export async function gestionarSdl(accion, argumentos) {
           resultado: 'coinciden',
           capturas: 50,
           panorama: 'Cielo encantado: 32:9, 24:9, 16:9 y 4:3; 16:10 sin bandas',
-          filtros_marco: 'seis modos compartidos con el juego y la moldura',
+          filtros_marco:
+            'fondo y moldura sin filtros, bandas idénticas en los seis modos del juego',
           overlay: 'PNG transparente con adornos a escala fija; fondos maestros sin cambios',
           relieve_pixeles_originales: { borde: 6, esquinas: 26 },
           animacion_ms: 250,

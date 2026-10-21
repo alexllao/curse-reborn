@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL3/SDL.h>
-class FiltrosPantalla;
 
 struct PanelMarco {
   float x, y, ancho, alto, margen;
@@ -40,13 +39,11 @@ public:
   // Devuelve el área física del juego, también dentro de la carcasa del monitor.
   static bool area_juego(SDL_Renderer *dibujante, SDL_FRect &juego);
   // Rellena el espacio sobrante y restaura las coordenadas lógicas usadas por ratón y juego.
-  bool dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora = SDL_GetTicksNS(),
-               const FiltrosPantalla *filtros = nullptr);
+  bool dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint64 ahora = SDL_GetTicksNS());
   // Permite cerrar la capa antes de SDL_Quit; admite llamadas repetidas.
   void cerrar();
 
 private:
-  int filtro_actual = -1;
   bool visible = false;
   float origen_animacion = 0.0f;
   Uint64 inicio_animacion = 0;
