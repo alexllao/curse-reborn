@@ -9,3 +9,5 @@ La escalera izquierda solicita120 hacia STUDY70. La derecha solicita122 hacia LI
 `pnpm comprobar:vestibulo-castillo` verifica llegada, control y aproximaciones a las dos escaleras en SDL, con restauración en memoria y 142 cambios F5/F6 en las71 vistas. Las salidas120/122 se habilitarán cuando sus destinos estén contrastados.
 
 Revisión ampliada21/10: referencias del recorrido real regeneradas con contexto; consecuencias, respuestas negativas, cierresCLC y regresos documentados en la sección «Consecuencias del cementerio al desenlace» de `auditoria_pantallas.md`. El desenlace sin acciones se comprueba mediante reanudación explícita, no con una lista vacía. No cambia el motor ni los recursos.
+
+`pnpm comparar:recaidas-vestibulo` amplia11 con seis secuencias reales antes/despues del anillo175 y demoras0/32/96: actor3, canal anterior1A2F activo o ya terminado, reinicio1A2F/50, recuperacion, inventario conservado y continuacion120.4.852 pasos/33clics coincidentes; doce caidas incluyendo las seis preparaciones. Detalles, referencias y limites en auditoria_pantallas.md.

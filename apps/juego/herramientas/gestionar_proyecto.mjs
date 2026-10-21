@@ -201,6 +201,7 @@ function compararAcciones(tipo = 'acciones', opcionesComparacion = []) {
     guardia_palacio: 'comparar_guardia_palacio.py',
     ataud: 'comparar_ataud.py',
     aproximaciones_cementerio: 'comparar_aproximaciones_cementerio.py',
+    recaidas_vestibulo: 'comparar_recaidas_vestibulo.py',
     tropiezos_cementerio: 'comparar_tropiezos_cementerio.py',
     cementerio: 'comparar_cementerio.py',
     ajo_primera_zona: 'comparar_ajo_primera_zona.py',
@@ -565,6 +566,9 @@ try {
       break;
     case 'comparar:aproximaciones-cementerio':
       compararAcciones('aproximaciones_cementerio', argumentos);
+      break;
+    case 'comparar:recaidas-vestibulo':
+      compararAcciones('recaidas_vestibulo', argumentos);
       break;
     case 'comparar:tropiezos-cementerio':
       compararAcciones('tropiezos_cementerio', argumentos);

@@ -756,3 +756,26 @@ El selector se comprueba aparte con `--casos 9_derecha`: un caso/384 pasos coinc
 La copia local de development se alineó con el objeto publicadoc7f51dc, cuyo SHA se reconstruyó y comprobó antes de importarlo. Su árbol es idéntico al453c436 anterior; se conserva ese objeto bajo `refs/codex/respaldo-publicacion-453c436`. No hay cambios de archivos por la alineación ni push forzado. Las nuevas tandas parten de la historia publicada.
 
 SDL75/75, continuidad73/73 y escenas con muestras73/73 sin incremento. Motor intacto y sin nuevas capturas SDL. Quedan11 con otros estados de actores, otras posiciones y fases no incluidas en estas ocho aproximaciones y las marcas de puertas pendientes. No repetir estos ocho casos salvo cambios relevantes.
+
+### Recaidas11 y marcas reales de puertas (21 de octubre)
+
+`pnpm comparar:recaidas-vestibulo` contrasta seis secuencias de dos caidas11 desde `vestibulo_control` y `estudio_vestibulo`, antes y despues de obtener realmente el anillo175. Conserva DS, semilla y contexto9000/fase0. No asigna geometria, posicion ni canales. En el regreso del estudio baja por90/160,140/190 y160/143 antes de aproximarse al centro; el clic directo desde42/94 no alcanza la zona de caida y no se acredita como caso pasado.
+
+Tras la primera recuperacion espera0/32/96 pasos. Antes de la segunda caida, el actor2C4C permanece activo3; el canal2C5C es1A2F con contadores42/10 en las dos primeras demoras y0 con contador50 en la ultima. 560B-5638 reinicia1A2F/50: ambas recuperaciones coinciden con el EXE, conservan inventario y permiten solicitar120 hacia el estudio. Se observan128 pasos adicionales antes de continuar. Total4.852 pasos jugables,33 clics, seis recaidas y doce caidas contando sus preparaciones. La primera caida prepara el estado y no se cuenta como otro pendiente cerrado. Resultado local `comparacion_recaidas_vestibulo/resultado.json`, log `recaidas_vestibulo.log`. Queda cubierto el pendiente concreto de11 con actor activo y canal anterior en marcha/terminado en estos dos inventarios.
+
+Consecuencias de seis estados reales de la mesa46, con las marcas producidas por sus tiradas y los inventarios acumulados de los laterales:
+
+| Referencia       | Observaciones | Pasos | CLC | Selecciones | Marcas50/51/52/53/54/55 |
+| ---------------- | ------------: | ----: | --: | ----------: | ----------------------- |
+| gato_tirada      |            24 | 3.072 |  12 |          92 | 1/0/0/0/0/0             |
+| lupa_tirada      |            30 | 3.840 |  16 |         118 | 0/1/1/0/0/1             |
+| arma_tirada      |            36 | 4.608 |  20 |         148 | 0/1/1/0/0/1             |
+| megafono_tirada  |            42 | 5.376 |  24 |         182 | 1/0/0/1/1/0             |
+| hielo_tirada     |            48 | 6.144 |  28 |         220 | 1/0/0/1/1/0             |
+| carambano_tirada |            54 | 6.912 |  32 |         262 | 0/0/0/0/0/1             |
+
+Total234 observaciones/29.952 pasos/132CLC/1.022 selecciones, todo reposo con menu en128 y DS/azar/fase coincidentes. Las referencias de gato/lupa proceden de `comparacion_utiles_palacio`; las otras cuatro de `comparacion_laterales_palacio`. Lupa/arma y megafono/hielo comparten marcas pero tienen inventarios distintos: no se presentan como seis combinaciones diferentes. Se ejecuta `pnpm comparar:consecuencias --escenas 46 --estado <carpeta>/<nombre>_tirada.ds.bin --incluir-clc`. Informes `auditoria_consecuencias/resultado_46_<nombre>_tirada_clc.json`, logs `consecuencias_marcas_<nombre>_tirada.log`. No repetir estos seis estados salvo cambios.
+
+Se cierran estos dos pendientes concretos sin modificar el motor ni sumar escenas: SDL75/75, continuidad73/73 y escenas con muestras73/73. No hay nuevas capturas SDL. Otras posiciones o combinaciones no enumeradas no se acreditan por estos resultados. Para el cierre de la version normal, revisar los pendientes concretos restantes y la entrega beta; no convertir la exploracion de estados arbitrarios en un porcentaje global.
+
+Verificacion: formato directo212C++, Ruff101Python, ESLint y monorepo correctos. `pnpm calidad` ejecutado: Prettier pasa, pero Node->clang-format conservaEPERM; no se registra el agregado como aprobado. Se conservan recursos y resultados fuera de Git.
