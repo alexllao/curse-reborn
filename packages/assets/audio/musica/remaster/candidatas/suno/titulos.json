@@ -1,0 +1,22 @@
+{
+  "rs1": {
+    "archivo": "rs1.wav",
+    "titulo": "Épopée des Rois"
+  },
+  "rs2": {
+    "archivo": "rs2.wav",
+    "titulo": ""
+  },
+  "rs3": {
+    "archivo": "rs3.wav",
+    "titulo": "Enchanted Water"
+  },
+  "rs4": {
+    "archivo": "rs4.wav",
+    "titulo": "La Quête mystérieuse"
+  },
+  "rs5": {
+    "archivo": "rs5.wav",
+    "titulo": "Légende d’Étoile"
+  }
+}
