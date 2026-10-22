@@ -12,9 +12,12 @@ unsigned int Habitacion::cantidad_temas() {
 }
 
 // Restaura el diseño inicial y el estado apagado conservando el catálogo de esta compilación.
-void Habitacion::iniciar() {
+void Habitacion::iniciar(const std::string &inicial) {
   habilitada = true;
   tema = habitacion_inicial;
+  for (unsigned int i = 0; i < cantidad_temas(); ++i)
+    if (inicial == temas_habitaciones[i].id)
+      tema = i;
   estado = Estado::apagado;
   sonido_pendiente = 0;
   encendido_programado = 0;

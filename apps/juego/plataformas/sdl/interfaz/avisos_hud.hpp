@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <string>
+#include "texto_hud.hpp"
 
 // Texto temporal de presentación: no modifica el reloj, el estado DOS ni el audio.
 class AvisosHud {
@@ -51,7 +52,7 @@ public:
       return false;
     const bool dibujado = SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND) &&
                           SDL_SetRenderDrawColor(r, 255, 255, 255, alfa) &&
-                          SDL_RenderDebugText(r, 12 / escala, 12 / escala, texto.c_str());
+                          dibujar_texto_hud(r, 12 / escala, 12 / escala, texto);
     const bool encuadre =
         SDL_SetRenderLogicalPresentation(r, logico_ancho, logico_alto, presentacion) &&
         SDL_SetRenderViewport(r, viewport_fijado ? &viewport : nullptr) &&

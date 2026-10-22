@@ -8,6 +8,7 @@ import { huella, listarArchivos, rutaDentro, verificarPaquete } from './archivos
 import { optimizarPng } from './optimizar_assets.mjs';
 import { analizarOpciones } from './opciones.mjs';
 import { seleccionarHabitaciones } from '../gestionar_habitaciones.mjs';
+import { prepararMusica } from '../audio/preparar_musica.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 
@@ -88,12 +89,14 @@ async function empaquetar(argumentos) {
     return;
   }
   const { conDatos, perfil, habitacion } = analizarOpciones(argumentos);
-  const catalogoHabitaciones = seleccionarHabitaciones(
-    JSON.parse(
-      readFileSync(join(raiz, 'packages/assets/lanzador/habitaciones/habitaciones.json'), 'utf8'),
-    ),
-    habitacion,
+  const maestroHabitaciones = JSON.parse(
+    readFileSync(join(raiz, 'packages/assets/lanzador/habitaciones/habitaciones.json'), 'utf8'),
   );
+  const inicial = JSON.parse(
+    readFileSync(join(raiz, 'apps/juego/configuracion/inicial.json'), 'utf8'),
+  );
+  if (inicial.habitacion) maestroHabitaciones.inicial = inicial.habitacion;
+  const catalogoHabitaciones = seleccionarHabitaciones(maestroHabitaciones, habitacion);
   const version = JSON.parse(readFileSync(join(raiz, 'apps/juego/package.json'), 'utf8')).version;
   if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(version))
     throw new Error('Versión del paquete inválida.');
@@ -137,6 +140,13 @@ async function empaquetar(argumentos) {
   ])
     escribir(ruta, readFileSync(join(compilacion, ruta)));
   copiarRuntimeWindows(escribir);
+  const canciones = prepararMusica(raiz, carpeta, true);
+  const huellasMaestros = JSON.parse(
+    readFileSync(join(raiz, 'packages/assets/huellas.json'), 'utf8'),
+  );
+  const configEntrega = JSON.parse(readFileSync(join(carpeta, 'configuracion.json'), 'utf8'));
+  configEntrega.habitacion = catalogoHabitaciones.inicial;
+  escribir('configuracion.json', JSON.stringify(configEntrega, null, 2) + '\n');
   for (const ruta of recursosNecesarios(compilacion)) {
     const original = readFileSync(rutaDentro(compilacion, ruta));
     if (!ruta.endsWith('.png')) {
@@ -146,11 +156,15 @@ async function empaquetar(argumentos) {
     const fotografia =
       ruta.startsWith('assets/lanzador/habitaciones/') ||
       ruta.startsWith('assets/lanzador/presentacion/');
+    if (huellasMaestros.imagenes[ruta.slice('assets/'.length)] !== huella(original))
+      throw new Error('El maestro gráfico cambió: revisa su SHA-256: ' + ruta);
     const resultado = await optimizarPng(original, perfil, fotografia);
     escribir(ruta, resultado.datos);
     imagenes.push({
       ruta,
       antes: original.length,
+      sha256_maestro: huella(original),
+      sha256: huella(resultado.datos),
       despues: resultado.datos.length,
       metodo: resultado.metodo,
       ancho: resultado.ancho,
@@ -206,11 +220,13 @@ async function empaquetar(argumentos) {
     const env = {
       ...process.env,
       SDL_RENDER_DRIVER: 'software',
+      SDL_AUDIODRIVER: 'dummy',
       CURSE_REBORN_PARTIDAS: join(pruebas, 'CURSE.SAV'),
       CURSE_REBORN_TIEMPO: join(pruebas, 'tiempo.json'),
     };
     for (const [opcion, salida] of [
       ['--comprobar-habitaciones', 'habitaciones'],
+      ['--comprobar-remaster', 'musica.json'],
       ['--comprobar-final-poblacion-borde_valle_bruja_desenlace_final', 'final.bmp'],
     ]) {
       console.log('Verificando la copia empaquetada: ' + opcion);
@@ -257,6 +273,7 @@ async function empaquetar(argumentos) {
         comprobaciones,
         optimizacion: ['O2', 'NDEBUG', 'secciones', 'OPT:REF', 'OPT:ICF'],
         imagenes: { antes, despues, archivos: imagenes },
+        canciones,
         archivos,
       },
       null,

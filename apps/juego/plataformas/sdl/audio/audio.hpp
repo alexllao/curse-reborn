@@ -5,6 +5,7 @@
 #include "../../../motor/sonido/digital.hpp"
 #include "musica_adlib.hpp"
 #include "musica_mt32.hpp"
+#include "musica_remaster.hpp"
 #include <atomic>
 #include <string>
 #include <vector>
@@ -48,6 +49,13 @@ public:
   }
   // F4 recorre las opciones musicales; los efectos se eligen por separado con F3.
   bool alternar_dispositivo();
+  void configurar_musica() {
+    usar_configuracion = true;
+  }
+  void preferir_musica(unsigned int seleccion) {
+    perfil_preferido = seleccion;
+  }
+  std::string descripcion_musica() const;
   // F3 cambia los efectos entre Sound Blaster digital y PC Speaker sin modificar la música.
   bool alternar_efectos();
 
@@ -77,6 +85,9 @@ private:
   SDL_AudioDeviceID dispositivo = 0;
   SDL_AudioStream *flujo_musical = nullptr;
   MusicaMt32 mt32;
+  MusicaRemaster remaster;
+  bool usar_configuracion = false;
+  unsigned int perfil_preferido = 5;
   std::atomic<bool> fallo_musical{false};
   std::atomic<unsigned long long> muestras_producidas{0}, muestras_con_senal{0};
   unsigned int perfil = 1;

@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <utility>
+#include <string>
 
 struct VarianteHabitacion {
   const char *archivo;
@@ -24,7 +25,7 @@ public:
     cerrar();
   }
   // Todo arranque normal empieza en la habitación con el ordenador apagado.
-  void iniciar();
+  void iniciar(const std::string &inicial = "");
   // Programa solo el primer encendido; los botones posteriores conservan control manual.
   void programar_encendido(Uint64 ahora) {
     encendido_programado = ahora;

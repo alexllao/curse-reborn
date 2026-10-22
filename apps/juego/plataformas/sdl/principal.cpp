@@ -26,6 +26,8 @@
 #include "pruebas/comprobar_avisos_hud.hpp"
 #include "tiempo_juego.hpp"
 #include "interfaz/preferencias.hpp"
+#include "interfaz/configuracion.hpp"
+#include "pruebas/audio/comprobar_musica_remaster.hpp"
 #include "pruebas/comprobar_preferencias.hpp"
 #include "pruebas/comprobar_tiempo.hpp"
 #include "vistas.hpp"
@@ -553,6 +555,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-remaster" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_musica_remaster(argv[1], argv[3])
+               ? 0
+               : fallo("No coincide la música remasterizada");
+  }
   if (opcion == "--comprobar-preferencias" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_preferencias(argv[3]) ? 0
@@ -701,10 +709,23 @@ int main(int argc, char *argv[]) {
   if (!SDL_Init(SDL_INIT_VIDEO))
     return fallo("No se ha podido iniciar el vídeo");
   PreferenciasUsuario preferencias;
+  const auto inicial = configuracion_inicial();
+  if (!comprobar && !inicial.is_null()) {
+    const int volumen = inicial["volumen"].int_value();
+    const int filtro = inicial["filtro"].int_value();
+    if (volumen >= 0 && volumen <= 400 && volumen % 10 == 0)
+      preferencias.volumen = volumen;
+    if (filtro >= 0 && filtro <= 5)
+      preferencias.filtro = filtro;
+    preferencias.silencio = inicial["silencio"].bool_value();
+    preferencias.marco = inicial["marco"].bool_value();
+    mazmorra.configurar_musica();
+  }
   const bool preferencias_habilitadas =
       !comprobar && (!comprobar_arranque || SDL_getenv("CURSE_REBORN_PREFERENCIAS") != nullptr);
   if (preferencias_habilitadas) {
     preferencias.cargar();
+    mazmorra.preferir_musica(preferencias.musica);
     if (!mazmorra.ajustar_volumen(static_cast<int>(preferencias.volumen) -
                                   static_cast<int>(mazmorra.nivel_volumen())) ||
         (mazmorra.silenciado() != bool(preferencias.silencio) && !mazmorra.alternar_silencio()))
@@ -779,7 +800,7 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido recuperar el filtro elegido");
     if (preferencias.marco)
       presentacion.marcos.alternar();
-    presentacion.habitacion.iniciar();
+    presentacion.habitacion.iniciar(inicial["habitacion"].string_value());
     presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque);
     if (!mazmorra.pausar_audio_reinicio())
       return fallo("No se ha podido preparar el PC apagado");
@@ -836,7 +857,8 @@ int main(int argc, char *argv[]) {
   const auto guardar_preferencias = [&]() {
     if (preferencias_habilitadas)
       preferencias.guardar(mazmorra.nivel_volumen(), mazmorra.silenciado(),
-                           presentacion.marcos.activado(), presentacion.filtros.indice_elegido());
+                           presentacion.marcos.activado(), presentacion.filtros.indice_elegido(),
+                           mazmorra.perfil_musical());
   };
   guardar_preferencias();
   if (preferencias_habilitadas)
@@ -1012,6 +1034,8 @@ int main(int argc, char *argv[]) {
         if (evento.key.key == SDLK_F4) {
           if (!mazmorra.alternar_dispositivo_audio())
             return fallo("No se ha podido cambiar la opción de audio");
+          avisos.mostrar(mazmorra.descripcion_musica());
+          guardar_preferencias();
           continue;
         }
         if (evento.key.key == SDLK_M) {

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "habitacion": "02-buhardilla",
+  "volumen": 100,
+  "silencio": false,
+  "marco": false,
+  "filtro": 2,
+  "musica": {
+    "modo": "remaster",
+    "catalogo": "assets/remaster/audios/titulos.json"
+  }
+}

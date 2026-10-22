@@ -61,6 +61,11 @@ inline bool comprobar_avisos_hud(const std::string &prefijo) {
                SDL_SavePNG(s, (prefijo + ".volumen.png").c_str()) && fotograma(4820, final) &&
                base == final;
   }
+  if (correcto) {
+    aviso.mostrar("Remaster · Épopée des Rois / La Quête mystérieuse / Légende d’Étoile", 5000);
+    correcto = fotograma(5120, plena) && base != plena &&
+               SDL_SavePNG(s, (prefijo + ".canciones.png").c_str());
+  }
   SDL_DestroyRenderer(r);
   SDL_DestroySurface(s);
   return correcto;

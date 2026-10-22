@@ -22,10 +22,12 @@ export function seleccionarHabitaciones(catalogo, seleccion = 'todas') {
 export function prepararHabitaciones(raiz, destino, seleccion = 'todas') {
   const origen = rutaAssets(raiz, 'lanzador/habitaciones');
   const carpeta = join(destino, 'assets/lanzador/habitaciones');
-  const catalogo = seleccionarHabitaciones(
-    JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8')),
-    seleccion,
+  const maestro = JSON.parse(readFileSync(join(origen, 'habitaciones.json'), 'utf8'));
+  const configuracionInicial = JSON.parse(
+    readFileSync(join(raiz, 'apps/juego/configuracion/inicial.json'), 'utf8'),
   );
+  if (configuracionInicial.habitacion) maestro.inicial = configuracionInicial.habitacion;
+  const catalogo = seleccionarHabitaciones(maestro, seleccion);
   const variantes = [],
     habitaciones = [],
     ids = new Set();

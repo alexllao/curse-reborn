@@ -5,6 +5,7 @@ import { prepararHabitaciones } from './gestionar_habitaciones.mjs';
 import { prepararSonidosPC } from './gestionar_sonidos_pc.mjs';
 import { prepararPresentacion } from './gestionar_presentacion.mjs';
 import { prepararMarcos } from './gestionar_marcos.mjs';
+import { prepararMusica } from './audio/preparar_musica.mjs';
 /** Compilación y comprobación de Curse Reborn con SDL, sin ejecutar código DOS. */
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -164,6 +165,7 @@ async function compilar(distribucion = false, habitacion = 'inicial') {
   prepararHabitaciones(raiz, aplicacion, distribucion ? habitacion : 'todas');
   prepararSonidosPC(raiz, aplicacion);
   prepararPresentacion(raiz, aplicacion);
+  prepararMusica(raiz, aplicacion);
   const variables = entornoCompilador();
   const mt32 = await prepararMt32(raiz, ejecutar, variables);
   const icono = rutaAssets(raiz, 'lanzador', 'icono', 'curse-reborn.ico');
@@ -211,6 +213,8 @@ async function compilar(distribucion = false, habitacion = 'inicial') {
       rutaJuego(raiz, 'plataformas', 'sdl', 'mazmorra.cpp'),
       rutaJuego(raiz, 'plataformas', 'sdl', 'introduccion.cpp'),
       rutaJuego(raiz, 'plataformas', 'sdl', 'audio', 'audio.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'audio', 'musica_remaster.cpp'),
+      rutaJuego(raiz, 'plataformas', 'sdl', 'interfaz', 'json.cpp'),
       rutaJuego(raiz, 'plataformas', 'sdl', 'audio', 'musica_adlib.cpp'),
       rutaJuego(raiz, 'plataformas', 'sdl', 'audio', 'musica_mt32.cpp'),
       rutaJuego(raiz, 'plataformas', 'sdl', 'audio', 'opl.cpp'),

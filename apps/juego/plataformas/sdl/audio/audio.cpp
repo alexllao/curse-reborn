@@ -1,4 +1,5 @@
 #include "audio.hpp"
+#include "../interfaz/configuracion.hpp"
 #include "../../../motor/estado/inicializar.hpp"
 #include <cstdio>
 #include <vector>
@@ -55,6 +56,31 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
     cerrar();
     return false;
   }
+  if (usar_configuracion) {
+    const auto config = configuracion_inicial();
+    const auto modo = config["musica"]["modo"].string_value();
+    if (remaster.iniciar(config["musica"]["catalogo"].string_value())) {
+      if (!conservar_seleccion && modo == "remaster")
+        perfil = 4;
+    } else {
+      SDL_Log("Remaster no disponible; se conserva la música original");
+      if (perfil == 4)
+        perfil = mt32.disponible() ? 3 : 1;
+    }
+    if (!conservar_seleccion) {
+      if (modo == "sin-musica")
+        perfil = 0;
+      else if (modo == "adlib")
+        perfil = 1;
+      else if (modo == "opl3")
+        perfil = 2;
+      else if (modo == "mt32")
+        perfil = mt32.disponible() ? 3 : 1;
+      if (perfil_preferido < 5 && (perfil_preferido != 3 || mt32.disponible()) &&
+          (perfil_preferido != 4 || remaster.disponible()))
+        perfil = perfil_preferido;
+    }
+  }
   flujo_musical = SDL_CreateAudioStream(&formato, &formato);
   if (!flujo_musical || !SDL_SetAudioStreamGetCallback(flujo_musical, alimentar_musica, this) ||
       !SDL_BindAudioStream(dispositivo, flujo_musical)) {
@@ -71,7 +97,8 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
     cerrar();
     return false;
   }
-  constexpr const char *nombres[] = {"sin música", "AdLib OPL2", "Sound Blaster 16 OPL3", "MT-32"};
+  constexpr const char *nombres[] = {"sin música", "AdLib OPL2", "Sound Blaster 16 OPL3", "MT-32",
+                                     "Remaster"};
   std::printf("Audio: %s + %s (efectos). F4 cambia música; F3 cambia efectos; M silencia.\n",
               nombres[perfil], efectos_digitales ? "Sound Blaster digital" : "PC Speaker");
   std::fflush(stdout);
@@ -118,15 +145,18 @@ void Audio::cerrar() {
 void Audio::alimentar_musica(void *contexto, SDL_AudioStream *salida, int adicional, int) {
   auto &audio = *static_cast<Audio *>(contexto);
   int pendientes = (adicional + 3) / 4;
-  short fm[512], fm_opl2[512], roland[1024], mezcla[1024];
+  short fm[512], fm_opl2[512], roland[1024], grabada[1024], mezcla[1024];
   while (pendientes > 0) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 512 ? 512 : pendientes);
     bool correcto = audio.musica.generar(fm, cantidad, fm_opl2);
     if (audio.mt32.disponible())
       correcto = correcto && audio.mt32.generar(roland, cantidad);
+    if (audio.perfil == 4)
+      audio.remaster.generar(grabada, cantidad);
     unsigned int con_senal = 0;
     for (unsigned int i = 0; i < cantidad * 2; ++i) {
       mezcla[i] = !correcto || audio.silencio || audio.perfil == 0 ? 0
+                  : audio.perfil == 4                              ? grabada[i]
                   : audio.perfil == 3                              ? roland[i]
                   : audio.perfil == 1                              ? fm_opl2[i / 2]
                                                                    : fm[i / 2];
@@ -174,6 +204,9 @@ bool Audio::cambiar_escena(unsigned short escena) {
   if (!cargar_efectos(escena) || !SDL_LockAudioStream(flujo_musical))
     return false;
   const bool correcto = !mt32.disponible() || mt32.cambiar_escena(escena);
+  const auto seleccion = motor::seleccionar_musica_rs(referencias, escena);
+  if (seleccion.valida)
+    remaster.cambiar_banco(seleccion.banco);
   if (datos)
     datos[0x0ad3] = perfil == 3 ? 4 : perfil != 0 ? 2 : 0;
   SDL_UnlockAudioStream(flujo_musical);
@@ -277,11 +310,14 @@ bool Audio::alternar_dispositivo() {
   }
   if (!SDL_LockAudioStream(flujo_musical))
     return false;
-  perfil = (perfil + 1) % (mt32.disponible() ? 4u : 3u);
+  do {
+    perfil = (perfil + 1) % 5u;
+  } while ((perfil == 3 && !mt32.disponible()) || (perfil == 4 && !remaster.disponible()));
   if (datos)
     datos[0x0ad3] = perfil == 3 ? 4 : perfil != 0 ? 2 : 0;
   std::printf("Audio cambiado a %s; efectos: %s%s.\n",
-              perfil == 3   ? "MT-32 (música por escena)"
+              perfil == 4   ? "Remaster (audio grabado por escena)"
+              : perfil == 3 ? "MT-32 (música por escena)"
               : perfil == 2 ? "Sound Blaster 16 OPL3 (tema continuo original)"
               : perfil == 1 ? "AdLib OPL2 (tema continuo original)"
                             : "sin música",
@@ -290,6 +326,16 @@ bool Audio::alternar_dispositivo() {
   std::fflush(stdout);
   SDL_UnlockAudioStream(flujo_musical);
   return true;
+}
+
+std::string Audio::descripcion_musica() const {
+  const auto titulo = remaster.titulo();
+  const std::string modo = perfil == 4   ? "Remaster"
+                           : perfil == 3 ? "MT-32"
+                           : perfil == 2 ? "Sound Blaster 16 OPL3"
+                           : perfil == 1 ? "AdLib OPL2"
+                                         : "Sin música";
+  return modo + ((perfil == 3 || perfil == 4) && !titulo.empty() ? " · " + titulo : "");
 }
 
 // La tecla F3 solo afecta al dispositivo de efectos y conserva el perfil musical y su reloj.

@@ -43,6 +43,17 @@ inline bool comprobar_preferencias(const std::string &ruta) {
     ++casos;
   }
   SDL_RemovePath(ruta_prueba.c_str());
+  inicial.cargar(ruta_prueba);
+  for (unsigned int perfil = 0; perfil < 5; ++perfil) {
+    if (!inicial.guardar(100, false, false, 2, perfil))
+      return false;
+    PreferenciasUsuario siguiente;
+    siguiente.cargar(ruta_prueba);
+    if (siguiente.musica != perfil)
+      return false;
+    ++casos;
+  }
+  SDL_RemovePath(ruta_prueba.c_str());
   registrar_accion(
       "Preferencias: %u casos; valores iniciales, recuperación y archivos ajenos intactos", casos);
   return true;

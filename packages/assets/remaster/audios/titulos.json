@@ -1,0 +1,27 @@
+{
+  "rs1": {
+    "archivo": "rs1.wav",
+    "titulo": "Épopée des Rois",
+    "sha256": "889b3c7d4a82f90f7c28136142024b53dee7323b5ca0f99b3a67e57da522fdd0"
+  },
+  "rs2": {
+    "archivo": "rs2.wav",
+    "titulo": "Mysterious Adventure",
+    "sha256": "f10bda78e32d901b7501216e1b80f97cb567e76cacb16f5bbd410570fa94b938"
+  },
+  "rs3": {
+    "archivo": "rs3.wav",
+    "titulo": "Enchanted Water",
+    "sha256": "f7ae77d7c7c57a7fa6bb23deab7d379d1cfa7f22cffe640918a5c44491df33fc"
+  },
+  "rs4": {
+    "archivo": "rs4.wav",
+    "titulo": "La Quête mystérieuse",
+    "sha256": "d133a17bbeffd4cd3819bceb1c9ba8b12b4ab4996ff65435f7a480532bad0072"
+  },
+  "rs5": {
+    "archivo": "rs5.wav",
+    "titulo": "Légende d’Étoile",
+    "sha256": "71a1a58eec1c103b4d0fd8e9484fc8ab225795ed2a4836f8b29d772096427d47"
+  }
+}

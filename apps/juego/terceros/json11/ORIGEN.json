@@ -1,0 +1,8 @@
+{
+  "origen": "https://github.com/dropbox/json11",
+  "licencia": "MIT",
+  "sha256": {
+    "json11.hpp": "d3483048e71d6889b6e5b849bc1dd8dff18955ba667bb1254ee32d857603b4e8",
+    "json11.cpp": "f41e1b242768308a3fc62395d68e6b3c673c91e1d8ade31d8603964e8e17b443"
+  }
+}

@@ -182,6 +182,18 @@ public:
   bool alternar_dispositivo_audio() {
     return audio.alternar_dispositivo();
   }
+  void configurar_musica() {
+    audio.configurar_musica();
+  }
+  void preferir_musica(unsigned int seleccion) {
+    audio.preferir_musica(seleccion);
+  }
+  unsigned int perfil_musical() const {
+    return audio.perfil_musical();
+  }
+  std::string descripcion_musica() const {
+    return audio.descripcion_musica();
+  }
   // Permite contrastar los efectos digitales y el altavoz sin reiniciar ni cambiar la música.
   bool alternar_efectos_audio() {
     return audio.alternar_efectos();

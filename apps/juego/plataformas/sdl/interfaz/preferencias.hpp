@@ -11,6 +11,7 @@
 class PreferenciasUsuario {
 public:
   unsigned int volumen = 100, silencio = 0, marco = 0, filtro = 2;
+  unsigned int musica = 5;
   void cargar(const std::string &archivo = "") {
     ruta = archivo;
     persistente = false;
@@ -48,6 +49,7 @@ public:
           compacto += datos[i];
     SDL_free(datos);
     unsigned int v = 0, s = 0, m = 0, f = 0;
+    unsigned int perfil = 5;
     std::string_view resto(compacto);
     const auto literal = [&](std::string_view esperado) {
       if (resto.substr(0, esperado.size()) != esperado)
@@ -64,8 +66,10 @@ public:
     };
     if (!literal("{\"version\":1,\"volumen\":") || !numero(v) || !literal(",\"silencio\":") ||
         !numero(s) || !literal(",\"marco\":") || !numero(m) || !literal(",\"filtro\":") ||
-        !numero(f) || !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 ||
-        f > 5) {
+        !numero(f) ||
+        (!resto.empty() && resto.front() == ',' &&
+         (!literal(",\"musica\":") || !numero(perfil) || perfil > 4)) ||
+        !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 || f > 5) {
       registrar_accion("Preferencias: formato no reconocido; se conserva el archivo sin modificar");
       return;
     }
@@ -73,16 +77,18 @@ public:
     silencio = s;
     marco = m;
     filtro = f;
+    musica = perfil;
     persistente = true;
     registrar_accion("Preferencias recuperadas: volumen %u%%, silencio %u, marco %u, filtro %u",
                      volumen, silencio, marco, filtro);
   }
-  bool guardar(unsigned int v, bool s, bool m, unsigned int f) {
-    if (!persistente || v > 400 || v % 10 || f > 5)
+  bool guardar(unsigned int v, bool s, bool m, unsigned int f, unsigned int perfil = 5) {
+    if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5)
       return false;
     const std::string contenido =
         "{\"version\":1,\"volumen\":" + std::to_string(v) + ",\"silencio\":" + std::to_string(s) +
-        ",\"marco\":" + std::to_string(m) + ",\"filtro\":" + std::to_string(f) + "}\n";
+        ",\"marco\":" + std::to_string(m) + ",\"filtro\":" + std::to_string(f) +
+        (perfil < 5 ? ",\"musica\":" + std::to_string(perfil) : "") + "}\n";
     const auto temporal = ruta + ".temporal";
     const bool ok = SDL_SaveFile(temporal.c_str(), contenido.data(), contenido.size()) &&
                     SDL_RenamePath(temporal.c_str(), ruta.c_str());
