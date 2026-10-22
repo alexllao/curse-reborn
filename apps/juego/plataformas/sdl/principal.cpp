@@ -39,6 +39,9 @@
 #include "pruebas/comprobar_asaltante.hpp"
 #include "pruebas/comprobar_poblacion.hpp"
 #include "interfaz/partidas.hpp"
+#include "interfaz/menu/menu_port.hpp"
+#include "pruebas/interfaz/comprobar_menu_port.hpp"
+#include "pruebas/interfaz/recorrido_menu_port.hpp"
 #include "pruebas/comprobar_partidas.hpp"
 #include "pruebas/comprobar_continuidad.hpp"
 #include "video/marcos.hpp"
@@ -86,11 +89,13 @@ struct Presentacion {
   Habitacion habitacion;
   BannerLanzador banner;
   SonidosPC sonidos_pc;
+  MenuPort menu_port;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
   bool actualizacion_diferida = false;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
+    menu_port.liberar();
     sonidos_pc.cerrar();
     mazmorra.cerrar_audio();
     filtros.cerrar();
@@ -556,6 +561,10 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-menu-port" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_menu_port(argv[3]) ? 0 : fallo("No coincide el menú del port");
+  }
   if (opcion == "--comprobar-estereo" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_estereo_posicional(argv[1], argv[3])
@@ -642,6 +651,8 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido comprobar la salida de audio");
     return 0;
   }
+  const bool comprobar_menu_integrado =
+      opcion == "--comprobar-menu-port-integracion" || opcion == "--comprobar-menu-port-carga";
   const bool comprobar_arranque = opcion == "--comprobar-arranque";
   const bool comprobar_introduccion =
       opcion == "--comprobar-caldero" || opcion == "--comprobar-balcon" ||
@@ -704,7 +715,7 @@ int main(int argc, char *argv[]) {
       argc == 4 && (std::string(argv[2]) == "--comprobar" || comprobar_escena || comprobar_core ||
                     comprobar_transicion || comprobar_introduccion || comprobar_filtros ||
                     comprobar_fps || comprobar_marcos);
-  if (argc == 4 && !comprobar && !comprobar_arranque) {
+  if (argc == 4 && !comprobar && !comprobar_arranque && !comprobar_menu_integrado) {
     std::fprintf(stderr, "Opción desconocida de comprobación.\n");
     return 1;
   }
@@ -727,11 +738,16 @@ int main(int argc, char *argv[]) {
     preferencias.silencio = inicial["silencio"].bool_value();
     if (inicial["estereo_posicional"].is_bool())
       preferencias.estereo_posicional = inicial["estereo_posicional"].bool_value();
+    if (inicial["efectos_digitales"].is_bool())
+      preferencias.efectos_digitales = inicial["efectos_digitales"].bool_value();
+    if (inicial["pantalla_completa"].is_bool())
+      preferencias.pantalla_completa = inicial["pantalla_completa"].bool_value();
     preferencias.marco = inicial["marco"].bool_value();
     mazmorra.configurar_musica();
   }
   const bool preferencias_habilitadas =
-      !comprobar && (!comprobar_arranque || SDL_getenv("CURSE_REBORN_PREFERENCIAS") != nullptr);
+      !comprobar && !comprobar_menu_integrado &&
+      (!comprobar_arranque || SDL_getenv("CURSE_REBORN_PREFERENCIAS") != nullptr);
   if (preferencias_habilitadas) {
     preferencias.cargar();
     mazmorra.preferir_musica(preferencias.musica);
@@ -747,7 +763,8 @@ int main(int argc, char *argv[]) {
   if (!comprobar && opcion != "--sin-sonido" && !mazmorra.abrir_audio(carpeta, true))
     std::fprintf(stderr, "Audio no disponible; se continúa sin sonido: %s\n", SDL_GetError());
   const SDL_WindowFlags opciones =
-      SDL_WINDOW_RESIZABLE | ((comprobar || comprobar_arranque) ? SDL_WINDOW_HIDDEN : 0);
+      SDL_WINDOW_RESIZABLE |
+      ((comprobar || comprobar_arranque || comprobar_menu_integrado) ? SDL_WINDOW_HIDDEN : 0);
   if (!SDL_CreateWindowAndRenderer(
           "Curse Reborn — Pantalla de título",
           opcion == "--comprobar-marcos-cielo-32"   ? 1920
@@ -778,6 +795,9 @@ int main(int argc, char *argv[]) {
       std::fprintf(stderr, "No se ha podido asignar el icono: %s\n", SDL_GetError());
     SDL_DestroySurface(icono);
   }
+  if (!comprobar && preferencias.pantalla_completa &&
+      !SDL_SetWindowFullscreen(presentacion.ventana, true))
+    return fallo("No se ha podido recuperar la pantalla completa");
   if (!SDL_SetWindowMinimumSize(presentacion.ventana, 320, 200) ||
       !SDL_SetRenderLogicalPresentation(presentacion.dibujante, 320, 200,
                                         SDL_LOGICAL_PRESENTATION_LETTERBOX)) {
@@ -810,15 +830,29 @@ int main(int argc, char *argv[]) {
         return fallo("No se ha podido recuperar el filtro elegido");
     if (preferencias.marco)
       presentacion.marcos.alternar();
-    presentacion.habitacion.iniciar(inicial["habitacion"].string_value());
-    presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque);
+    presentacion.habitacion.iniciar(preferencias.habitacion.empty()
+                                        ? inicial["habitacion"].string_value()
+                                        : preferencias.habitacion);
+    if (mazmorra.efectos_sound_blaster() != bool(preferencias.efectos_digitales) &&
+        !mazmorra.alternar_efectos_audio())
+      return fallo("No se ha podido recuperar la opción de efectos");
+    presentacion.sonidos_pc.configurar(opcion != "--sin-sonido" && !comprobar_arranque &&
+                                       !comprobar_menu_integrado);
     if (!mazmorra.pausar_audio_reinicio())
       return fallo("No se ha podido preparar el PC apagado");
     SDL_SetWindowTitle(presentacion.ventana, "Curse Reborn — Habitación");
   }
-  if (!comprobar && !comprobar_arranque)
+  if (!comprobar && !comprobar_arranque && !comprobar_menu_integrado)
     presentacion.banner.iniciar(SDL_GetTicksNS());
-  bool programar_pc = !comprobar && !comprobar_arranque;
+  // El menú decide cuándo encender el equipo; las pruebas originales mantienen su entrada.
+  bool sesion_iniciada = false, cargar_al_arrancar = false;
+  if (!comprobar && !comprobar_arranque) {
+    presentacion.menu_port.abrir();
+    presentacion.habitacion.mostrar_menu(true);
+    if (!mazmorra.pausar_audio_menu(true))
+      return fallo("No se ha podido pausar el menú inicial");
+  }
+  Uint64 inicio_pausa_menu = SDL_GetTicksNS();
   bool salir = false, capturada = false, fundiendo = false;
   bool animacion_preparada = false, introduccion_comprobada = false, menu_comprobado = false,
        jugabilidad_comprobada = false, caida_comprobada = false;
@@ -833,7 +867,7 @@ int main(int argc, char *argv[]) {
   Uint64 ultimo_paso_escena = inicio_pantalla;
   Uint64 siguiente_presentacion = inicio_pantalla;
   bool limitar_presentacion = true;
-  bool pantalla_completa = false;
+  bool pantalla_completa = !comprobar && preferencias.pantalla_completa;
   if (comprobar_filtros) {
     SDL_Event alternar{};
     alternar.type = SDL_EVENT_KEY_DOWN;
@@ -855,7 +889,7 @@ int main(int argc, char *argv[]) {
   unsigned int paso_vistas = 0, paso_aspecto = 0;
   PartidasSDL partidas;
   TiempoJuego tiempo_juego;
-  if (!comprobar)
+  if (!comprobar && !comprobar_menu_integrado)
     tiempo_juego.iniciar();
   unsigned short escena_titulada = 0xffff;
   // Libera las flechas antes de pausar para que el personaje no siga caminando al cerrar el panel.
@@ -868,7 +902,9 @@ int main(int argc, char *argv[]) {
     if (preferencias_habilitadas)
       preferencias.guardar(mazmorra.nivel_volumen(), mazmorra.silenciado(),
                            presentacion.marcos.activado(), presentacion.filtros.indice_elegido(),
-                           mazmorra.perfil_musical(), unsigned(mazmorra.estereo_posicional()));
+                           mazmorra.perfil_musical(), unsigned(mazmorra.estereo_posicional()),
+                           unsigned(mazmorra.efectos_sound_blaster()), unsigned(pantalla_completa),
+                           presentacion.habitacion.tema_actual());
   };
   guardar_preferencias();
   if (preferencias_habilitadas)
@@ -876,6 +912,47 @@ int main(int argc, char *argv[]) {
                      mazmorra.nivel_volumen(), unsigned(mazmorra.silenciado()),
                      unsigned(presentacion.marcos.activado()),
                      presentacion.filtros.indice_elegido());
+  const auto estado_menu = [&]() {
+    EstadoMenuPort e;
+    e.sesion = sesion_iniciada;
+    e.volumen = mazmorra.nivel_volumen();
+    e.silencio = mazmorra.silenciado();
+    e.estereo = mazmorra.estereo_posicional();
+    e.musica = mazmorra.perfil_musical();
+    e.efectos = mazmorra.efectos_sound_blaster() ? "Sound Blaster" : "PC Speaker";
+    e.marco = presentacion.marcos.activado();
+    e.filtro = presentacion.filtros.indice_elegido();
+    e.completa = pantalla_completa;
+    e.habitacion = presentacion.habitacion.nombre_tema();
+    e.depuracion = depuracion;
+    e.entidades = cajas_objetos;
+    e.interacciones = cajas_interaccion;
+    e.limites = cajas_limites;
+    return e;
+  };
+  const auto abrir_menu_port = [&]() {
+    for (const auto bit : {1, 2, 4, 8})
+      mazmorra.tecla_direccion(bit, false);
+    inicio_pausa_menu = SDL_GetTicksNS();
+    presentacion.menu_port.abrir();
+    presentacion.habitacion.mostrar_menu(true);
+    registrar_accion("Menú del port abierto; partida en pausa");
+    return mazmorra.pausar_audio_menu(true);
+  };
+  const auto cerrar_menu_port = [&]() {
+    const auto ahora_menu = SDL_GetTicksNS();
+    const auto pausa = ahora_menu - inicio_pausa_menu;
+    inicio_pantalla += pausa;
+    if (fundiendo)
+      inicio_fundido += pausa;
+    ultimo_paso_escena = siguiente_presentacion = ahora_menu;
+    mazmorra.compensar_pausa(inicio_pausa_menu, ahora_menu);
+    presentacion.menu_port.cerrar();
+    presentacion.habitacion.mostrar_menu(false);
+    registrar_accion("Menú del port cerrado");
+    return presentacion.habitacion.reiniciando() || mazmorra.pausar_audio_menu(false);
+  };
+  RecorridoMenuPort prueba_menu_integrado;
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
     // Durante el banner solo se atienden cierre y pantalla completa; el PC sigue apagado.
@@ -913,11 +990,121 @@ int main(int argc, char *argv[]) {
       if (evento.type == SDL_EVENT_WINDOW_FOCUS_LOST || evento.type == SDL_EVENT_WINDOW_MINIMIZED)
         for (const auto bit : {1, 2, 4, 8})
           mazmorra.tecla_direccion(static_cast<unsigned short>(bit), false);
+      if (!comprobar && !comprobar_arranque) {
+        if (evento.type == SDL_EVENT_QUIT) {
+          salir = true;
+          continue;
+        }
+        if (evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat &&
+            evento.key.key == SDLK_ESCAPE && (evento.key.mod & SDL_KMOD_SHIFT) &&
+            !partidas.abierta() && !presentacion.habitacion.reiniciando()) {
+          if (!(presentacion.menu_port.abierto() ? cerrar_menu_port() : abrir_menu_port()))
+            return fallo("No se ha podido alternar el menú del port");
+          continue;
+        }
+        int ww = 0, wh = 0;
+        if (!SDL_GetWindowSize(presentacion.ventana, &ww, &wh))
+          return fallo("No se puede medir el menú");
+        if (!presentacion.menu_port.abierto() && !partidas.abierta() &&
+            !presentacion.habitacion.reiniciando() && evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+            evento.button.button == SDL_BUTTON_LEFT && evento.button.x >= ww - 150.0f * wh / 900 &&
+            evento.button.x < ww - 18.0f * wh / 900 && evento.button.y >= 18.0f * wh / 900 &&
+            evento.button.y < 62.0f * wh / 900) {
+          if (!abrir_menu_port())
+            return fallo("No se ha podido abrir el menú del port");
+          continue;
+        }
+        if (presentacion.menu_port.abierto()) {
+          if (evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat &&
+              (evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
+              (evento.key.mod & SDL_KMOD_ALT)) {
+            pantalla_completa = !pantalla_completa;
+            if (!SDL_SetWindowFullscreen(presentacion.ventana, pantalla_completa))
+              return fallo("No se puede ampliar el menú");
+            guardar_preferencias();
+            continue;
+          }
+          const auto peticion = presentacion.menu_port.evento(evento, ww, wh, estado_menu());
+          using A = AccionMenuPort;
+          bool correcto = true;
+          switch (peticion.accion) {
+          case A::jugar:
+          case A::cargar:
+            if (!sesion_iniciada) {
+              cargar_al_arrancar = peticion.accion == A::cargar;
+              presentacion.habitacion.programar_encendido(SDL_GetTicksNS());
+              sesion_iniciada = true;
+            } else if (peticion.accion == A::cargar) {
+              if (pantalla < 3) {
+                pantalla = 3;
+                correcto = cambiar_pantalla(carpeta, pantalla, presentacion);
+                fundiendo = false;
+              }
+              abrir_partidas(1);
+            }
+            correcto = cerrar_menu_port() && correcto;
+            break;
+          case A::salir:
+            salir = true;
+            break;
+          case A::volumen:
+            correcto = mazmorra.ajustar_volumen(peticion.sentido * 10);
+            break;
+          case A::silencio:
+            correcto = mazmorra.alternar_silencio();
+            break;
+          case A::musica:
+            correcto = mazmorra.alternar_dispositivo_audio(peticion.sentido);
+            break;
+          case A::efectos:
+            correcto = mazmorra.alternar_efectos_audio();
+            break;
+          case A::estereo:
+            mazmorra.configurar_estereo(!mazmorra.estereo_posicional());
+            break;
+          case A::filtro:
+            for (int i = 0; i < (peticion.sentido < 0 ? 5 : 1) && correcto; ++i)
+              correcto = presentacion.filtros.alternar(presentacion.dibujante, presentacion.textura,
+                                                       pixeles);
+            break;
+          case A::marco:
+            presentacion.marcos.alternar();
+            break;
+          case A::completa:
+            pantalla_completa = !pantalla_completa;
+            correcto = SDL_SetWindowFullscreen(presentacion.ventana, pantalla_completa);
+            break;
+          case A::habitacion:
+            presentacion.habitacion.cambiar_tema(peticion.sentido);
+            break;
+          case A::depuracion:
+            depuracion = !depuracion;
+            break;
+          case A::entidades:
+            cajas_objetos = !cajas_objetos;
+            break;
+          case A::interacciones:
+            cajas_interaccion = !cajas_interaccion;
+            break;
+          case A::limites:
+            cajas_limites = !cajas_limites;
+            break;
+          default:
+            break;
+          }
+          if (!correcto)
+            return fallo("No se ha podido aplicar una opción del menú");
+          if (peticion.accion != A::ninguna)
+            guardar_preferencias();
+          continue;
+        }
+      }
       if (!comprobar &&
           presentacion.habitacion.evento(presentacion.ventana, presentacion.dibujante, evento)) {
         presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
         if (!presentacion.sonidos_pc.reproducir(presentacion.habitacion.tomar_sonido()))
           std::fprintf(stderr, "Sonidos del PC no disponibles: %s\n", SDL_GetError());
+        guardar_preferencias();
         if (presentacion.habitacion.reiniciando() && !mazmorra.pausar_audio_reinicio())
           return fallo("No se ha podido pausar el audio del PC");
         if (!presentacion.marcos.preparar_encuadre(presentacion.dibujante) ||
@@ -941,6 +1128,7 @@ int main(int argc, char *argv[]) {
                                     SDL_GetWindowFullscreenMode(presentacion.ventana) != nullptr))
             return fallo("No coincide el cambio de pantalla completa sin bordes");
           pantalla_completa = siguiente;
+          guardar_preferencias();
           registrar_accion("Pantalla: %s", pantalla_completa ? "completa sin bordes" : "ventana");
           continue;
         }
@@ -1047,6 +1235,7 @@ int main(int argc, char *argv[]) {
         if (evento.key.key == SDLK_F3) {
           if (!mazmorra.alternar_efectos_audio())
             return fallo("No se ha podido cambiar el dispositivo de efectos");
+          guardar_preferencias();
           continue;
         }
         if (evento.key.key == SDLK_F4) {
@@ -1181,7 +1370,13 @@ int main(int argc, char *argv[]) {
       presentacion.sonidos_pc.parar();
       if (!reiniciar_presentacion(carpeta, presentacion, partidas))
         return fallo("No se ha podido reiniciar la presentación desde Core");
-      pantalla = 0;
+      pantalla = cargar_al_arrancar ? 3 : 0;
+      if (cargar_al_arrancar) {
+        if (!cambiar_pantalla(carpeta, 3, presentacion))
+          return fallo("No se ha podido preparar la carga");
+        abrir_partidas(1);
+        cargar_al_arrancar = false;
+      }
       fundiendo = false;
       paso_fundido = 0;
       entrada_introduccion = false;
@@ -1767,16 +1962,17 @@ int main(int argc, char *argv[]) {
     if (!comprobar)
       tiempo_juego.actualizar(
           TiempoJuego::debe_contar(pantalla >= 3, SDL_GetWindowFlags(presentacion.ventana),
-                                   partidas.abierta(), presentacion.habitacion.reiniciando()),
+                                   partidas.abierta() || presentacion.menu_port.abierto(),
+                                   presentacion.habitacion.reiniciando()),
           ahora);
     // 0516 carga 2100 esperas de retrazo. La plataforma usa una referencia nominal de 70 Hz.
-    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla == 0 && !fundiendo &&
-        (ahora - inicio_pantalla) * 70u / 1000000000u >= 2100u) {
+    if (!comprobar && !presentacion.menu_port.abierto() && !presentacion.habitacion.reiniciando() &&
+        pantalla == 0 && !fundiendo && (ahora - inicio_pantalla) * 70u / 1000000000u >= 2100u) {
       fundiendo = true;
       paso_fundido = 0;
       inicio_fundido = ahora;
     }
-    if (fundiendo && !presentacion.habitacion.reiniciando()) {
+    if (fundiendo && !presentacion.menu_port.abierto() && !presentacion.habitacion.reiniciando()) {
       const auto paso = (ahora - inicio_fundido) * 70u / 1000000000u;
       if (paso > 32u) {
         ++pantalla;
@@ -1792,7 +1988,8 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido avanzar el fundido original");
       }
     }
-    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla == 2) {
+    if (!comprobar && !presentacion.menu_port.abierto() && !presentacion.habitacion.reiniciando() &&
+        pantalla == 2) {
       if (!introduccion.avanzar((ahora - inicio_pantalla) * 70u / 1000000000u, entrada_introduccion,
                                 imagen))
         return fallo("No se ha podido avanzar la introducción original");
@@ -1807,8 +2004,8 @@ int main(int argc, char *argv[]) {
       } else if (!actualizar_textura(presentacion))
         return fallo("No se ha podido dibujar la introducción");
     }
-    if (!comprobar && !presentacion.habitacion.reiniciando() && pantalla >= 3 &&
-        mazmorra.en_presentacion()) {
+    if (!comprobar && !presentacion.menu_port.abierto() && !presentacion.habitacion.reiniciando() &&
+        pantalla >= 3 && mazmorra.en_presentacion()) {
       if (!mazmorra.avanzar_presentacion(ahora * 70u / 1000000000u) || !mazmorra.dibujar(imagen))
         return fallo("No se ha podido avanzar el cambio de habitación o la cámara");
       for (unsigned int i = 0; i < 768; ++i)
@@ -1819,10 +2016,10 @@ int main(int argc, char *argv[]) {
     }
     // EAD5 espera cinco ticks del temporizador. Mantiene la referencia nominal de 70 Hz de esta
     // plataforma.
-    if (partidas.abierta())
+    if (partidas.abierta() || presentacion.menu_port.abierto())
       ultimo_paso_escena = ahora;
-    if (!comprobar && !presentacion.habitacion.reiniciando() && !partidas.abierta() &&
-        pantalla >= 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
+    if (!comprobar && !presentacion.menu_port.abierto() && !presentacion.habitacion.reiniciando() &&
+        !partidas.abierta() && pantalla >= 3 && ahora - ultimo_paso_escena >= 5000000000ull / 70u) {
       if (!mazmorra.avanzar() ||
           !mazmorra.dibujar(imagen, static_cast<unsigned int>(SDL_GetTicks() / 57u))) {
         std::fprintf(stderr, "No se ha podido avanzar la escena con sus datos originales.\n");
@@ -1859,7 +2056,8 @@ int main(int argc, char *argv[]) {
     const bool cursor_filtrado = presentacion.filtros.aplicado();
     if (!comprobar &&
         (!presentacion.cursor.actualizar(presentacion.ventana, presentacion.dibujante, mazmorra,
-                                         pantalla >= 3 && !presentacion.habitacion.reiniciando(),
+                                         pantalla >= 3 && !presentacion.menu_port.abierto() &&
+                                             !presentacion.habitacion.reiniciando(),
                                          partidas.incorpora_cursor(), cursor_filtrado) ||
          !actualizar_textura(presentacion, pantalla >= 3) ||
          (cursor_filtrado && (!partidas.componer_rgba(mazmorra, pixeles) ||
@@ -1898,6 +2096,11 @@ int main(int argc, char *argv[]) {
     if (!presentacion.habitacion.reiniciando() && (comprobar || !cursor_filtrado) &&
         !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
+    if (!presentacion.menu_port.dibujar(presentacion.dibujante, estado_menu(),
+                                        !comprobar && !comprobar_arranque &&
+                                            !presentacion.habitacion.reiniciando() &&
+                                            !partidas.abierta()))
+      return fallo("No se ha podido dibujar el menú del port");
     if (!avisos.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el aviso temporal");
     if ((comprobar || comprobar_arranque) && !capturada &&
@@ -1955,15 +2158,19 @@ int main(int argc, char *argv[]) {
           return fallo("No se ha podido comprobar el cierre con Escape");
       }
     }
+    if (comprobar_menu_integrado) {
+      const int resultado = prueba_menu_integrado.avanzar(
+          presentacion.menu_port, presentacion.habitacion, mazmorra, pantalla, argv[3],
+          opcion == "--comprobar-menu-port-carga", partidas.abierta());
+      if (resultado < 0)
+        return fallo("No coincide el recorrido integrado del menú del port");
+      if (resultado > 0)
+        salir = true;
+    }
     if (!SDL_RenderPresent(presentacion.dibujante))
       return fallo("No se ha podido presentar el título");
-    if (programar_pc) {
-      // Cuenta dos segundos desde el primer fotograma visible, incluida la carga del PNG.
-      presentacion.habitacion.programar_encendido(SDL_GetTicksNS() +
-                                                  banner_encendido_ms * 1000000ull);
-      programar_pc = false;
+    if (!comprobar)
       presentacion.banner.cerrar();
-    }
     if (!salir && !comprobar && limitar_presentacion) {
       siguiente_presentacion += intervalo_presentacion_ns;
       const Uint64 fin = SDL_GetTicksNS();

@@ -68,6 +68,7 @@ function recursosNecesarios(compilacion) {
   const rutas = new Set([
     'assets/lanzador/habitaciones/habitaciones.json',
     'assets/lanzador/presentacion/presentacion.json',
+    'assets/lanzador/presentacion/curs-of-enchantia-reborn-logo.png',
     'assets/marcos/catalogo.json',
     'assets/marcos/cielo_encantado/catalogo.json',
     'assets/original/decorados/catalogo.json',

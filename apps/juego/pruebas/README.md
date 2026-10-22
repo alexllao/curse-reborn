@@ -35,3 +35,7 @@ La prueba selectiva `pnpm comparar:ajo-primera-zona` vive en `recorridos/compara
 `pnpm comparar:recaidas-vestibulo` contrasta seis secuencias de dos caidas11 con actor activo y demoras0/32/96. Requiere DS/semilla/contexto de `comparacion_vestibulo_castillo/vestibulo_control` y `comparacion_estudio_castillo/estudio_vestibulo`. Comprueba inventario, reinicio del canal, recuperacion y continuacion120. Resultado ignorado en `trabajo/comparacion_recaidas_vestibulo/resultado.json`; fuente en `recorridos/comparar_recaidas_vestibulo.py`.
 
 `pnpm grabar:recorrido --muestra 35` produce una muestra1080p con scanlines y Cielo encantado; sin `--muestra` recorre la partida hasta el final con tiempos normales y menus visibles. El sonido se conserva en el archivo y la salida de esa sesion se silencia. Herramienta en `herramientas/grabacion`, resultados ignorados en `trabajo/grabaciones`; detalles en [Grabacion del recorrido](../documentacion/grabacion/recorrido.md).
+
+## Menú del port
+
+Pruebas nativas sin ventanas visibles ni sonido audible: `--comprobar-menu-port <carpeta>`, `--comprobar-menu-port-integracion <prefijo>` y `--comprobar-menu-port-carga <prefijo>`, tras la carpeta DATA como primer argumento. Usar `SDL_AUDIODRIVER=dummy`; para la variante de carga fijar `CURSE_REBORN_PARTIDAS` a una ruta dentro de trabajo. Las pruebas no guardan preferencias ni tiempo en el perfil del usuario. Casos, límites y comandos completos en [menu_port.md](../documentacion/menu_port.md).

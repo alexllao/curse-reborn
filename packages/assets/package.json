@@ -1,6 +1,6 @@
 {
   "name": "@curse-reborn/assets",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "Recursos propios compartidos de Curse Reborn; excluye datos comerciales y ROM."
 }

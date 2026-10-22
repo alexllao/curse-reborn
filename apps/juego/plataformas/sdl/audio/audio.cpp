@@ -111,6 +111,16 @@ bool Audio::pausar_reinicio() {
   return !dispositivo || SDL_PauseAudioDevice(dispositivo);
 }
 
+// Pausa reversible: conserva buffers, voces, fases y el silencio elegido con M.
+bool Audio::pausar_menu(bool pausa) {
+  if (dispositivo &&
+      !(pausa ? SDL_PauseAudioDevice(dispositivo) : SDL_ResumeAudioDevice(dispositivo)))
+    return false;
+  menu_pausado = pausa;
+  ultimo = SDL_GetTicksNS();
+  return true;
+}
+
 // Reabre los sintetizadores para reiniciar sus secuencias y conserva las preferencias de sesión.
 bool Audio::reiniciar() {
   if (!flujo)
@@ -138,6 +148,7 @@ void Audio::cerrar() {
   if (dispositivo)
     SDL_CloseAudioDevice(dispositivo);
   dispositivo = 0;
+  menu_pausado = false;
   mt32.cerrar();
 }
 
@@ -216,7 +227,7 @@ bool Audio::cambiar_escena(unsigned short escena) {
 
 // Solo los efectos acceden a DS desde el hilo principal; las imágenes no detienen el flujo musical.
 bool Audio::actualizar() {
-  if (!flujo)
+  if (!flujo || menu_pausado)
     return true;
   if (fallo_musical.load() || fallo_grabacion.load())
     return false;
@@ -325,7 +336,7 @@ void Audio::registrar_volumen() const {
 }
 
 // F4 solo ofrece dispositivos preparados; cada cambio se informa por consola.
-bool Audio::alternar_dispositivo() {
+bool Audio::alternar_dispositivo(int sentido) {
   if (!flujo_musical) {
     std::printf("Audio desactivado o sin dispositivo.\n");
     return true;
@@ -333,7 +344,7 @@ bool Audio::alternar_dispositivo() {
   if (!SDL_LockAudioStream(flujo_musical))
     return false;
   do {
-    perfil = (perfil + 1) % 5u;
+    perfil = (perfil + (sentido < 0 ? 4u : 1u)) % 5u;
   } while ((perfil == 3 && !mt32.disponible()) || (perfil == 4 && !remaster.disponible()));
   if (datos)
     datos[0x0ad3] = perfil == 3 ? 4 : perfil != 0 ? 2 : 0;

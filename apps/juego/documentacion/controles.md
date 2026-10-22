@@ -4,6 +4,12 @@ Idioma de los textos escritos: `pnpm ventana es` para castellano y `pnpm ventana
 
 Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añade aquí. Las asignaciones actuales podrán reorganizarse durante el desarrollo.
 
+## Menú del port
+
+Tras la presentación se abre el [menú del port](menu_port.md) sobre la habitación con el ordenador apagado. **Jugar** lo enciende; **Cargar partida** prepara las ranuras tras BIOS/DOS. No se enciende automáticamente. **Mayús + Esc** o el botón **Menú** lo abren durante la sesión y pausan juego, audio y tiempo efectivo. **Esc sin Mayús y clic derecho conservan el menú nativo.**
+
+Flechas o Tab recorren opciones, Intro/espacio aceptan y Esc vuelve. Izquierda/derecha ajustan valores. Con ratón se selecciona al pasar y se acepta con clic; en ajustes la mitad izquierda retrocede y la derecha avanza. Sonido, pantalla y habitación conservan la elección al reiniciar.
+
 ## Sonido
 
 | Tecla  | Función                                                                                                         |
@@ -29,7 +35,7 @@ El **100 %** es el nivel normal. Entre **110 % y 400 %** se aplica amplificació
 
 **F1** activa o quita Cielo encantado, con fundido de250 ms y aviso blanco «Marco cambiado a: Cielo encantado» o «Sin marco». Es el único marco activo; el anterior queda archivado en `packages/assets/marcos/extras/`. Solo ocupa las bandas sobrantes y se ve al ampliar el juego; no cambia la habitación. En16:10 no hay bandas.
 
-El port arranca siempre en una **habitación interactiva**, inicialmente **Buhardilla**, con el PC apagado. Pulsa el botón de la torre para encenderlo. BIOS y DOS duran siete segundos completos y no se saltan con Intro. Después carga Core, título e introducción dentro del monitor. El sonido y la lógica permanecen detenidos mientras está apagado o arrancando.
+El port arranca en una **habitación interactiva**, inicialmente **Buhardilla**, con el PC apagado y el menú del port abierto. Elige **Jugar** o **Cargar partida** para encenderlo; después los botones físicos conservan su funcionamiento. BIOS y DOS duran siete segundos completos y no se saltan con Intro. Después carga Core, título e introducción dentro del monitor. El sonido y la lógica permanecen detenidos mientras está apagado o arrancando.
 
 Se puede jugar dentro del monitor pequeño: sus clics llegan al juego y no cambian el zoom. Una vez cargado, pulsa **el botón físico del monitor** para acercar el juego al máximo disponible, conservando su proporción y la sesión. **Ctrl + R** vuelve a la habitación sin reiniciar. **Escape** conserva exclusivamente su función en el juego y sus menús. **Ctrl + H** recorre las cinco habitaciones y muestra su nombre en consola. Cada una elige la imagen más próxima a la proporción de la ventana. La ventana vertical muestra la habitación completa sin deformarla.
 

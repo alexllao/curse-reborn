@@ -12,7 +12,8 @@ class PreferenciasUsuario {
 public:
   unsigned int volumen = 100, silencio = 0, marco = 0, filtro = 2;
   unsigned int musica = 5;
-  unsigned int estereo_posicional = 1;
+  unsigned int estereo_posicional = 1, efectos_digitales = 1, pantalla_completa = 0;
+  std::string habitacion;
   void cargar(const std::string &archivo = "") {
     ruta = archivo;
     persistente = false;
@@ -51,6 +52,8 @@ public:
     SDL_free(datos);
     unsigned int v = 0, s = 0, m = 0, f = 0;
     unsigned int perfil = 5, estereo = estereo_posicional;
+    unsigned int efectos = efectos_digitales, completa = pantalla_completa;
+    std::string cuarto = habitacion;
     std::string_view resto(compacto);
     const auto literal = [&](std::string_view esperado) {
       if (resto.substr(0, esperado.size()) != esperado)
@@ -73,6 +76,24 @@ public:
     constexpr std::string_view clave_estereo = ",\"estereo_posicional\":";
     if (correcto && resto.substr(0, clave_estereo.size()) == clave_estereo)
       correcto = literal(clave_estereo) && numero(estereo) && estereo <= 1;
+    const auto opcional = [&](std::string_view clave, unsigned int &valor) {
+      if (correcto && resto.substr(0, clave.size()) == clave)
+        correcto = literal(clave) && numero(valor) && valor <= 1;
+    };
+    opcional(",\"efectos_digitales\":", efectos);
+    opcional(",\"pantalla_completa\":", completa);
+    constexpr std::string_view clave_cuarto = ",\"habitacion\":\"";
+    if (correcto && resto.substr(0, clave_cuarto.size()) == clave_cuarto) {
+      correcto = literal(clave_cuarto);
+      const auto fin = resto.find('"');
+      correcto = correcto && fin != std::string_view::npos && fin <= 64;
+      if (correcto) {
+        cuarto = std::string(resto.substr(0, fin));
+        correcto =
+            cuarto.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789-_") == std::string::npos;
+        resto.remove_prefix(fin + 1);
+      }
+    }
     if (!correcto || !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 ||
         f > 5) {
       registrar_accion("Preferencias: formato no reconocido; se conserva el archivo sin modificar");
@@ -84,19 +105,28 @@ public:
     filtro = f;
     musica = perfil;
     estereo_posicional = estereo;
+    efectos_digitales = efectos;
+    pantalla_completa = completa;
+    habitacion = cuarto;
     persistente = true;
     registrar_accion("Preferencias recuperadas: volumen %u%%, silencio %u, marco %u, filtro %u",
                      volumen, silencio, marco, filtro);
   }
   bool guardar(unsigned int v, bool s, bool m, unsigned int f, unsigned int perfil = 5,
-               unsigned int estereo = 2) {
-    if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5 || estereo > 2)
+               unsigned int estereo = 2, unsigned int efectos = 2, unsigned int completa = 2,
+               const std::string &cuarto = "") {
+    if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5 || estereo > 2 || efectos > 2 ||
+        completa > 2 || cuarto.size() > 64 ||
+        cuarto.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789-_") != std::string::npos)
       return false;
     const std::string contenido =
         "{\"version\":1,\"volumen\":" + std::to_string(v) + ",\"silencio\":" + std::to_string(s) +
         ",\"marco\":" + std::to_string(m) + ",\"filtro\":" + std::to_string(f) +
         (perfil < 5 ? ",\"musica\":" + std::to_string(perfil) : "") +
-        (estereo < 2 ? ",\"estereo_posicional\":" + std::to_string(estereo) : "") + "}\n";
+        (estereo < 2 ? ",\"estereo_posicional\":" + std::to_string(estereo) : "") +
+        (efectos < 2 ? ",\"efectos_digitales\":" + std::to_string(efectos) : "") +
+        (completa < 2 ? ",\"pantalla_completa\":" + std::to_string(completa) : "") +
+        (!cuarto.empty() ? ",\"habitacion\":\"" + cuarto + "\"" : "") + "}\n";
     const auto temporal = ruta + ".temporal";
     const bool ok = SDL_SaveFile(temporal.c_str(), contenido.data(), contenido.size()) &&
                     SDL_RenamePath(temporal.c_str(), ruta.c_str());

@@ -14,6 +14,10 @@ export function prepararPresentacion(raiz, destino) {
     if (!Number.isInteger(c[campo]) || c[campo] < 1 || c[campo] > 30000)
       throw new Error('Duración de presentación inválida: ' + campo);
   mkdirSync(carpeta, { recursive: true });
+  copyFileSync(
+    join(origen, 'curs-of-enchantia-reborn-logo.png'),
+    join(carpeta, 'curs-of-enchantia-reborn-logo.png'),
+  );
   const variantes = c.variantes.map((v) => {
     if (!/^[a-z0-9_-]+\.png$/.test(v.archivo)) throw new Error('Nombre de banner inválido.');
     const png = readFileSync(join(origen, v.archivo));

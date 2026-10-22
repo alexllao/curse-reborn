@@ -4,6 +4,8 @@
   "volumen": 100,
   "silencio": false,
   "estereo_posicional": true,
+  "efectos_digitales": true,
+  "pantalla_completa": false,
   "marco": false,
   "filtro": 2,
   "musica": {

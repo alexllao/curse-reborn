@@ -130,7 +130,7 @@ add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E co
  "${RAIZ_ASSETS}/lanzador/habitaciones"
  "$<TARGET_FILE_DIR:curse-reborn>/assets/lanzador/habitaciones")
 
-# El preparador ya copia solo los banners registrados; no incluir el logo fuente.
+# El preparador copia los banners registrados y el logo usado por el menú del port.
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL CMAKE_BINARY_DIR OR CMAKE_CONFIGURATION_TYPES)
   add_custom_command(TARGET curse-reborn POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_BINARY_DIR}/assets/lanzador/presentacion"

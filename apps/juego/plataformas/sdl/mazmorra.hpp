@@ -155,6 +155,20 @@ public:
     return audio.abrir(carpeta, false, iniciar_pausado);
   }
   // Pausa el sonido mientras el PC de la habitación está apagado o arrancando.
+  unsigned long long muestras_musicales() const {
+    return audio.muestras_musicales();
+  }
+  bool pausar_audio_menu(bool pausa) {
+    return audio.pausar_menu(pausa);
+  }
+  bool efectos_sound_blaster() const {
+    return audio.efectos_sound_blaster();
+  }
+  // Tras una pausa externa conserva el punto del fundido o desplazamiento de cámara.
+  void compensar_pausa(unsigned long long inicio, unsigned long long fin) {
+    if (animacion && fin >= inicio)
+      inicio_animacion += fin * 70u / 1000000000u - inicio * 70u / 1000000000u;
+  }
   bool pausar_audio_reinicio() {
     return audio.pausar_reinicio();
   }
@@ -179,8 +193,8 @@ public:
     return audio.cambiar_escena(0xffff);
   }
   // Alterna las opciones de audio disponibles e informa por consola.
-  bool alternar_dispositivo_audio() {
-    return audio.alternar_dispositivo();
+  bool alternar_dispositivo_audio(int sentido = 1) {
+    return audio.alternar_dispositivo(sentido);
   }
   void configurar_musica() {
     audio.configurar_musica();

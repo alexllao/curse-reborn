@@ -20,6 +20,13 @@ class Habitacion {
 public:
   // Devuelve solo los diseños presentes en el catálogo compilado de esta entrega.
   static unsigned int cantidad_temas();
+  std::string tema_actual() const;
+  std::string nombre_tema() const;
+  void cambiar_tema(int sentido);
+  // El menú muestra el escritorio sin perder el zoom al volver al juego.
+  void mostrar_menu(bool valor) {
+    menu_visible = valor;
+  }
   // Libera sus imágenes antes de destruir el dibujante.
   ~Habitacion() {
     cerrar();
@@ -67,7 +74,7 @@ public:
 private:
   enum class Estado { apagado, arrancando, encendido, apagando };
   Estado estado = Estado::encendido;
-  bool habilitada = false;
+  bool habilitada = false, menu_visible = false;
   unsigned int sonido_pendiente = 0;
   bool imagen_al_apagar = false;
   unsigned int tema = 0;

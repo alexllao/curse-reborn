@@ -11,6 +11,19 @@ unsigned int Habitacion::cantidad_temas() {
   return static_cast<unsigned int>(std::size(temas_habitaciones));
 }
 
+std::string Habitacion::tema_actual() const {
+  return temas_habitaciones[tema].id;
+}
+std::string Habitacion::nombre_tema() const {
+  return temas_habitaciones[tema].nombre;
+}
+void Habitacion::cambiar_tema(int sentido) {
+  const auto cantidad = cantidad_temas();
+  tema = (tema + cantidad + (sentido < 0 ? -1 : 1)) % cantidad;
+  cerrar();
+  registrar_accion("Habitación: %s", temas_habitaciones[tema].nombre);
+}
+
 // Restaura el diseño inicial y el estado apagado conservando el catálogo de esta compilación.
 void Habitacion::iniciar(const std::string &inicial) {
   habilitada = true;
@@ -45,6 +58,8 @@ const VarianteHabitacion &Habitacion::variante(int ancho, int alto) const {
 
 // Mantiene la continuidad cuando se invierte una transición antes de terminarla.
 float Habitacion::nivel_zoom(Uint64 ahora) const {
+  if (menu_visible)
+    return 0;
   if (!inicio_zoom)
     return zoom_destino;
   const float t =

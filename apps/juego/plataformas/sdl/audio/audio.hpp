@@ -20,6 +20,10 @@ public:
              bool iniciar_pausado = false);
   // Detiene la salida durante el apagado visual sin alterar volumen, silencio ni perfiles.
   bool pausar_reinicio();
+  bool pausar_menu(bool pausa);
+  bool efectos_sound_blaster() const {
+    return efectos_digitales;
+  }
   // Arranca la música desde el principio conservando las opciones elegidas por el usuario.
   bool reiniciar();
   // Cierra el flujo antes de SDL_Quit, incluso cuando falla la carga de una escena.
@@ -49,7 +53,7 @@ public:
     return volumen;
   }
   // F4 recorre las opciones musicales; los efectos se eligen por separado con F3.
-  bool alternar_dispositivo();
+  bool alternar_dispositivo(int sentido = 1);
   void configurar_musica() {
     usar_configuracion = true;
   }
@@ -113,6 +117,7 @@ private:
   bool cargar_banco_efectos(const char *nombre, std::vector<unsigned char> &destino);
   MusicaAdlib musica{};
   Uint64 ultimo = 0, resto = 0;
+  bool menu_pausado = false;
   bool silencio = false;
   unsigned int volumen = 100;
   // Informa del volumen efectivo y conserva el ajuste elegido mientras M silencia.
