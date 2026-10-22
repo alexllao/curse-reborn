@@ -6,6 +6,7 @@
 #include "musica_adlib.hpp"
 #include "musica_mt32.hpp"
 #include "musica_remaster.hpp"
+#include "estereo_posicional.hpp"
 #include <atomic>
 #include <string>
 #include <vector>
@@ -13,7 +14,7 @@
 // Salida compartida entre escenas; toda la lógica del juego permanece en el hilo principal.
 class Audio {
 public:
-  // Abre una salida estéreo con efectos mono; SDL convierte al formato y frecuencia del dispositivo
+  // Abre una salida estéreo con efectos posicionados; SDL convierte al formato del dispositivo
   // real.
   bool abrir(const std::string &carpeta, bool conservar_seleccion = false,
              bool iniciar_pausado = false);
@@ -58,6 +59,10 @@ public:
   std::string descripcion_musica() const;
   // F3 cambia los efectos entre Sound Blaster digital y PC Speaker sin modificar la música.
   bool alternar_efectos();
+  void configurar_estereo(bool activar);
+  bool estereo_posicional() const {
+    return espacial.activo();
+  }
 
   // Selecciona el banco de la escena bajo el bloqueo del flujo musical, sin vaciar sus muestras.
   bool cambiar_escena(unsigned short escena);
@@ -97,6 +102,7 @@ private:
   unsigned char *datos = nullptr;
   motor::AltavozPcm altavoz{};
   motor::DigitalPcm digital{};
+  EstereoPosicional espacial;
   bool efectos_digitales = true;
   unsigned char referencias[65536]{};
   std::string carpeta_datos;

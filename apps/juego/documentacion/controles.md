@@ -10,9 +10,12 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 | ------ | --------------------------------------------------------------------------------------------------------------- |
 | **+**  | Subir el volumen general un 10 %, hasta el 400 %. También sirve **=**.                                          |
 | **−**  | Bajar el volumen general un 10 %.                                                                               |
+| **P**  | Activar o desactivar el estéreo posicional de los efectos. La elección se guarda; activado por defecto.         |
 | **M**  | Silenciar o reactivar música y efectos, conservando el volumen elegido.                                         |
 | **F3** | Cambiar los efectos entre Sound Blaster digital y PC Speaker, conservando la música.                            |
 | **F4** | Cambiar la música entre ninguna, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32. La consola indica la opción activa. |
+
+El [estéreo posicional](audio/estereo_posicional.md) sigue la posición horizontal de quien emite el efecto. **P** muestra un aviso y la consola registra el emisor y el balance de cada efecto iniciado. La música conserva su estéreo.
 
 **M** muestra «Sonido silenciado» o «Sonido activado» con el mismo texto blanco y fundido de los otros avisos. Silencia música y efectos y recupera el porcentaje anterior al reactivarlo; también funciona durante BIOS o con el PC apagado. Las secuencias conservan su reloj mientras están silenciadas.
 

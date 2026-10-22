@@ -14,7 +14,7 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
   if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
     return false;
   const SDL_AudioSpec formato{SDL_AUDIO_S16, 2, 48000};
-  const SDL_AudioSpec formato_efectos{SDL_AUDIO_S16, 1, 48000};
+  const SDL_AudioSpec formato_efectos{SDL_AUDIO_S16, 2, 48000};
   dispositivo = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &formato);
   if (!dispositivo)
     return false;
@@ -190,6 +190,7 @@ bool Audio::conectar(unsigned char *segmento) {
 // Desconecta solo los efectos: la música mantiene su búfer y su reloj durante la carga de imágenes.
 void Audio::desconectar() {
   digital.detener();
+  espacial.reiniciar();
   if (datos) {
     altavoz.detener(datos);
     datos[0x0ad4] = datos[0x0ad3] = 0;
@@ -233,9 +234,9 @@ bool Audio::actualizar() {
   const auto reloj = transcurrido * 48000u + resto;
   auto pendientes = reloj / 1000000000u;
   resto = reloj % 1000000000u;
-  if (SDL_GetAudioStreamQueued(flujo) > 9600 && !SDL_ClearAudioStream(flujo))
+  if (SDL_GetAudioStreamQueued(flujo) > 19200 && !SDL_ClearAudioStream(flujo))
     return false;
-  short muestras[1024];
+  short muestras[1024], estereo[2048];
   while (pendientes) {
     const auto cantidad = static_cast<unsigned int>(pendientes > 1024 ? 1024 : pendientes);
     if (datos) {
@@ -247,9 +248,10 @@ bool Audio::actualizar() {
     if (!datos || silencio)
       for (unsigned int i = 0; i < cantidad; ++i)
         muestras[i] = 0;
+    espacial.procesar(datos, muestras, estereo, cantidad);
     pendientes -= cantidad;
     if (pendientes < 2400 &&
-        !SDL_PutAudioStreamData(flujo, muestras, static_cast<int>(cantidad * 2)))
+        !SDL_PutAudioStreamData(flujo, estereo, static_cast<int>(cantidad * 4)))
       return false;
   }
   return true;
@@ -262,8 +264,28 @@ bool Audio::reproducir(unsigned char *segmento, unsigned short entidad,
     return true;
   if (datos != segmento || !actualizar())
     return false;
-  return efectos_digitales ? digital.reproducir(datos, entidad, identificador)
-                           : altavoz.reproducir(datos, entidad, identificador);
+  bool iniciada = false;
+  const bool correcto = efectos_digitales
+                            ? digital.reproducir(datos, entidad, identificador, &iniciada)
+                            : altavoz.reproducir(datos, entidad, identificador, &iniciada);
+  if (iniciada) {
+    espacial.iniciar(datos, entidad);
+    const auto b = balance_sonido(datos, entidad, espacial.activo());
+    std::printf("[partida] SFX %u: emisor=%04X%s; x=%.1f; estéreo=%s; L=%.0f%% R=%.0f%%.\n",
+                unsigned(identificador), unsigned(entidad), entidad == 0x2c2b ? " (Brad)" : "", b.x,
+                espacial.activo() ? (b.ubicado ? "posicional" : "centrado sin ubicación")
+                                  : "desactivado",
+                b.izquierda * 100, b.derecha * 100);
+    std::fflush(stdout);
+  }
+  return correcto;
+}
+
+void Audio::configurar_estereo(bool activar) {
+  espacial.configurar(activar);
+  std::printf("[partida] Estéreo posicional: %s (P para cambiar).\n",
+              activar ? "activado" : "desactivado");
+  std::fflush(stdout);
 }
 
 // El cambio de ganancia evita vaciar muestras y mantiene la continuidad del dispositivo.
@@ -382,6 +404,7 @@ bool Audio::cargar_banco_efectos(const char *nombre, std::vector<unsigned char> 
 bool Audio::cargar_efectos(unsigned short escena) {
   char nombre[13]{};
   digital.detener();
+  espacial.reiniciar();
   if (banco_general.empty() && (!motor::nombre_banco_sonido(referencias, 0xffff, nombre) ||
                                 !cargar_banco_efectos(nombre, banco_general)))
     return false;

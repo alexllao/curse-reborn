@@ -22,7 +22,8 @@ public:
   void conectar(const unsigned char *general, unsigned int longitud_general,
                 const unsigned char *escena, unsigned int longitud_escena);
   // 5288: selecciona una muestra visible y permite interrumpirla únicamente con mayor prioridad.
-  bool reproducir(unsigned char *datos, unsigned short entidad, unsigned char identificador);
+  bool reproducir(unsigned char *datos, unsigned short entidad, unsigned char identificador,
+                  bool *iniciada = nullptr);
   // Adapta la orden 7FB3; el byte canal de la orden es la constante temporal del DSP, no un canal
   // MIDI.
   bool iniciar(const OrdenSonido &orden);

@@ -1,5 +1,9 @@
 # Instrucciones de trabajo
 
+## Estéreo posicional de efectos (22/10/2026)
+
+Àlex autoriza estéreo posicional opcional, activado por defecto. P alterna y guarda la preferencia; configuración inicial `estereo_posicional`. Audio::reproducir conserva el emisor real únicamente cuando comienza el efecto, sin trasladarlo por solicitudes rechazadas. DigitalPcm/AltavozPcm exponen ese resultado mediante parámetro opcional, sin alterar órdenes ni PCM. Posiciones de entidades ya relativas a pantalla: no restar cámara otra vez. Balance al final de la generación mono, sin ganancia añadida, rampa corta, música intacta. Consola registra estado, emisor, posición y L/R por inicio, no por fotograma. Prueba oculta --comprobar-estereo, 120 casos de preferencias y servicio SDL dummy pasan; regresión selectiva digital 31 efectos/465.270 muestras/140 programaciones coincide. Documentado en documentacion/audio/estereo_posicional.md y controles.md. Pruebas y WAV comerciales permanecen ignorados en trabajo. Calidad agregada sigue detenida por Node->clang-format EPERM; controles directos correctos.
+
 ## Preferencia permanente de organización
 
 Àlex pide no repetir en cada balance que las muestras no cierran la fidelidad1:1: ya conoce esa distinción. Mantener los límites en el registro técnico y comunicar avances, cifras e incidencias sin esa coletilla reiterativa.

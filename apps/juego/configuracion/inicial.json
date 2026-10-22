@@ -3,6 +3,7 @@
   "habitacion": "02-buhardilla",
   "volumen": 100,
   "silencio": false,
+  "estereo_posicional": true,
   "marco": false,
   "filtro": 2,
   "musica": {

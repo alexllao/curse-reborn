@@ -198,6 +198,12 @@ public:
   bool alternar_efectos_audio() {
     return audio.alternar_efectos();
   }
+  void configurar_estereo(bool activar) {
+    audio.configurar_estereo(activar);
+  }
+  bool estereo_posicional() const {
+    return audio.estereo_posicional();
+  }
   // Expone el silencio efectivo sin duplicar una preferencia de audio en la interfaz.
   bool silenciado() const {
     return audio.silenciado();

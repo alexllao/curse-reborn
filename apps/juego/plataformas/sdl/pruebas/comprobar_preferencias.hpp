@@ -7,7 +7,8 @@ inline bool comprobar_preferencias(const std::string &ruta) {
   SDL_RemovePath(ruta_prueba.c_str());
   PreferenciasUsuario inicial;
   inicial.cargar(ruta_prueba);
-  if (inicial.volumen != 100 || inicial.silencio || inicial.marco || inicial.filtro != 2)
+  if (inicial.volumen != 100 || inicial.silencio || inicial.marco || inicial.filtro != 2 ||
+      inicial.estereo_posicional != 1)
     return false;
   unsigned int casos = 0;
   for (const auto volumen : {0u, 100u, 300u, 400u})
@@ -53,6 +54,32 @@ inline bool comprobar_preferencias(const std::string &ruta) {
       return false;
     ++casos;
   }
+  for (unsigned int perfil = 0; perfil <= 5; ++perfil)
+    for (unsigned int estereo = 0; estereo < 2; ++estereo) {
+      if (!inicial.guardar(100, false, false, 2, perfil, estereo))
+        return false;
+      PreferenciasUsuario siguiente;
+      siguiente.cargar(ruta_prueba);
+      if (siguiente.musica != perfil || siguiente.estereo_posicional != estereo)
+        return false;
+      ++casos;
+    }
+  if (!inicial.guardar(100, false, false, 2, 4))
+    return false;
+  PreferenciasUsuario legado;
+  legado.cargar(ruta_prueba);
+  if (legado.musica != 4 || legado.estereo_posicional != 1)
+    return false;
+  ++casos;
+  const std::string invalida = "{\"version\":1,\"volumen\":100,\"silencio\":0,\"marco\":0,"
+                               "\"filtro\":2,\"estereo_posicional\":2}";
+  if (!SDL_SaveFile(ruta_prueba.c_str(), invalida.data(), invalida.size()))
+    return false;
+  PreferenciasUsuario rechazada;
+  rechazada.cargar(ruta_prueba);
+  if (rechazada.guardar(100, false, false, 2, 4, 1))
+    return false;
+  ++casos;
   SDL_RemovePath(ruta_prueba.c_str());
   registrar_accion(
       "Preferencias: %u casos; valores iniciales, recuperación y archivos ajenos intactos", casos);

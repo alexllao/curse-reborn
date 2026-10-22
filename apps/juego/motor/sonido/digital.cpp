@@ -61,9 +61,14 @@ bool DigitalPcm::leer(void *contexto, unsigned short recurso, unsigned short pos
 }
 // Las órdenes omitidas no detienen una voz en curso ni crean colas ajenas al original.
 bool DigitalPcm::reproducir(unsigned char *datos, unsigned short entidad,
-                            unsigned char identificador) {
+                            unsigned char identificador, bool *iniciada) {
+  if (iniciada)
+    *iniciada = false;
   const auto orden = seleccionar_sonido(datos, estado, {this, leer}, entidad, identificador);
-  return orden.valida && (orden.rutina == 0 || iniciar(orden));
+  const bool correcto = orden.valida && (orden.rutina == 0 || iniciar(orden));
+  if (iniciada)
+    *iniciada = correcto && orden.rutina != 0;
+  return correcto;
 }
 // 7FB3: D0 interrumpe la muestra previa; 40 fija el reloj y 14 inicia PCM de ocho bits sin signo.
 bool DigitalPcm::iniciar(const OrdenSonido &orden) {

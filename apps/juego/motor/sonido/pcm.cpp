@@ -13,10 +13,17 @@ void AltavozPcm::reiniciar() {
 
 // No se añade ningún efecto: una orden sin secuencia permanece silenciosa.
 bool AltavozPcm::reproducir(unsigned char *datos, unsigned short entidad,
-                            unsigned char identificador) {
-  return datos &&
-         atender_orden_altavoz(datos, seleccionar_sonido(datos, seleccion, {nullptr, nullptr},
-                                                         entidad, identificador));
+                            unsigned char identificador, bool *iniciada) {
+  if (iniciada)
+    *iniciada = false;
+  if (!datos)
+    return false;
+  const auto orden =
+      seleccionar_sonido(datos, seleccion, {nullptr, nullptr}, entidad, identificador);
+  const bool correcto = atender_orden_altavoz(datos, orden);
+  if (iniciada)
+    *iniciada = correcto && orden.rutina != 0;
+  return correcto;
 }
 
 // El original solo programa modo tres, con byte bajo seguido de byte alto.

@@ -12,6 +12,7 @@ class PreferenciasUsuario {
 public:
   unsigned int volumen = 100, silencio = 0, marco = 0, filtro = 2;
   unsigned int musica = 5;
+  unsigned int estereo_posicional = 1;
   void cargar(const std::string &archivo = "") {
     ruta = archivo;
     persistente = false;
@@ -49,7 +50,7 @@ public:
           compacto += datos[i];
     SDL_free(datos);
     unsigned int v = 0, s = 0, m = 0, f = 0;
-    unsigned int perfil = 5;
+    unsigned int perfil = 5, estereo = estereo_posicional;
     std::string_view resto(compacto);
     const auto literal = [&](std::string_view esperado) {
       if (resto.substr(0, esperado.size()) != esperado)
@@ -64,12 +65,16 @@ public:
       resto.remove_prefix(static_cast<size_t>(r.ptr - resto.data()));
       return true;
     };
-    if (!literal("{\"version\":1,\"volumen\":") || !numero(v) || !literal(",\"silencio\":") ||
-        !numero(s) || !literal(",\"marco\":") || !numero(m) || !literal(",\"filtro\":") ||
-        !numero(f) ||
-        (!resto.empty() && resto.front() == ',' &&
-         (!literal(",\"musica\":") || !numero(perfil) || perfil > 4)) ||
-        !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 || f > 5) {
+    bool correcto = literal("{\"version\":1,\"volumen\":") && numero(v) &&
+                    literal(",\"silencio\":") && numero(s) && literal(",\"marco\":") && numero(m) &&
+                    literal(",\"filtro\":") && numero(f);
+    if (correcto && resto.substr(0, 10) == ",\"musica\":")
+      correcto = literal(",\"musica\":") && numero(perfil) && perfil <= 4;
+    constexpr std::string_view clave_estereo = ",\"estereo_posicional\":";
+    if (correcto && resto.substr(0, clave_estereo.size()) == clave_estereo)
+      correcto = literal(clave_estereo) && numero(estereo) && estereo <= 1;
+    if (!correcto || !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 ||
+        f > 5) {
       registrar_accion("Preferencias: formato no reconocido; se conserva el archivo sin modificar");
       return;
     }
@@ -78,17 +83,20 @@ public:
     marco = m;
     filtro = f;
     musica = perfil;
+    estereo_posicional = estereo;
     persistente = true;
     registrar_accion("Preferencias recuperadas: volumen %u%%, silencio %u, marco %u, filtro %u",
                      volumen, silencio, marco, filtro);
   }
-  bool guardar(unsigned int v, bool s, bool m, unsigned int f, unsigned int perfil = 5) {
-    if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5)
+  bool guardar(unsigned int v, bool s, bool m, unsigned int f, unsigned int perfil = 5,
+               unsigned int estereo = 2) {
+    if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5 || estereo > 2)
       return false;
     const std::string contenido =
         "{\"version\":1,\"volumen\":" + std::to_string(v) + ",\"silencio\":" + std::to_string(s) +
         ",\"marco\":" + std::to_string(m) + ",\"filtro\":" + std::to_string(f) +
-        (perfil < 5 ? ",\"musica\":" + std::to_string(perfil) : "") + "}\n";
+        (perfil < 5 ? ",\"musica\":" + std::to_string(perfil) : "") +
+        (estereo < 2 ? ",\"estereo_posicional\":" + std::to_string(estereo) : "") + "}\n";
     const auto temporal = ruta + ".temporal";
     const bool ok = SDL_SaveFile(temporal.c_str(), contenido.data(), contenido.size()) &&
                     SDL_RenamePath(temporal.c_str(), ruta.c_str());

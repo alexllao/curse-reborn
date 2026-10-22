@@ -28,6 +28,7 @@
 #include "interfaz/preferencias.hpp"
 #include "interfaz/configuracion.hpp"
 #include "pruebas/audio/comprobar_musica_remaster.hpp"
+#include "pruebas/audio/comprobar_estereo.hpp"
 #include "pruebas/comprobar_preferencias.hpp"
 #include "pruebas/comprobar_tiempo.hpp"
 #include "vistas.hpp"
@@ -555,6 +556,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-estereo" && argc == 4) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_estereo_posicional(argv[1], argv[3])
+               ? 0
+               : fallo("No coincide el estéreo posicional");
+  }
   if (opcion == "--comprobar-remaster" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_musica_remaster(argv[1], argv[3])
@@ -718,6 +725,8 @@ int main(int argc, char *argv[]) {
     if (filtro >= 0 && filtro <= 5)
       preferencias.filtro = filtro;
     preferencias.silencio = inicial["silencio"].bool_value();
+    if (inicial["estereo_posicional"].is_bool())
+      preferencias.estereo_posicional = inicial["estereo_posicional"].bool_value();
     preferencias.marco = inicial["marco"].bool_value();
     mazmorra.configurar_musica();
   }
@@ -731,6 +740,7 @@ int main(int argc, char *argv[]) {
         (mazmorra.silenciado() != bool(preferencias.silencio) && !mazmorra.alternar_silencio()))
       return fallo("No se han podido recuperar las preferencias de audio");
   }
+  mazmorra.configurar_estereo(preferencias.estereo_posicional != 0);
   if ((corredor_con_audio || SDL_getenv("CURSE_REBORN_GRABAR_RUTA")) &&
       !mazmorra.abrir_audio(carpeta))
     return fallo("No se ha podido abrir el audio para el recorrido del corredor");
@@ -858,7 +868,7 @@ int main(int argc, char *argv[]) {
     if (preferencias_habilitadas)
       preferencias.guardar(mazmorra.nivel_volumen(), mazmorra.silenciado(),
                            presentacion.marcos.activado(), presentacion.filtros.indice_elegido(),
-                           mazmorra.perfil_musical());
+                           mazmorra.perfil_musical(), unsigned(mazmorra.estereo_posicional()));
   };
   guardar_preferencias();
   if (preferencias_habilitadas)
@@ -934,6 +944,14 @@ int main(int argc, char *argv[]) {
           registrar_accion("Pantalla: %s", pantalla_completa ? "completa sin bordes" : "ventana");
           continue;
         }
+      }
+      if (!salir && !partidas.abierta() && evento.type == SDL_EVENT_KEY_DOWN &&
+          !evento.key.repeat && evento.key.key == SDLK_P) {
+        mazmorra.configurar_estereo(!mazmorra.estereo_posicional());
+        avisos.mostrar(mazmorra.estereo_posicional() ? "Estéreo posicional activado"
+                                                     : "Estéreo posicional desactivado");
+        guardar_preferencias();
+        continue;
       }
       if (!salir && presentacion.habitacion.reiniciando() && evento.type == SDL_EVENT_KEY_DOWN &&
           !evento.key.repeat && evento.key.key == SDLK_M) {

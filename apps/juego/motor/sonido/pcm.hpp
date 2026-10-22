@@ -11,7 +11,8 @@ public:
   // Reinicia fase, prioridad y reloj sin modificar el segmento del juego.
   void reiniciar();
   // 5288 y 7A46: conserva selección, prioridades y secuencias originales.
-  bool reproducir(unsigned char *datos, unsigned short entidad, unsigned char identificador);
+  bool reproducir(unsigned char *datos, unsigned short entidad, unsigned char identificador,
+                  bool *iniciada = nullptr);
   // Genera PCM mono de 16 bits e invoca 7AC6 cada 4250h ciclos, como IRQ0 en 0240.
   bool generar(unsigned char *datos, short *salida, unsigned int cantidad);
   // Adapta las escrituras B6/42/61 del reproductor original al contador de onda cuadrada.
