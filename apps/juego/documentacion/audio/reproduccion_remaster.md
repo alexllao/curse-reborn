@@ -4,7 +4,7 @@
 
 Las canciones aportadas por Àlex se versionan en `packages/assets/remaster/audios/`. `titulos.json` declara el archivo y título de cada RS y su SHA-256. Se eliminó la ubicación singular `remaster/audio`; no se excluyen estas canciones propias. La configuración apunta al catálogo mediante una ruta relativa al ejecutable, independiente del directorio desde el que se lance.
 
-El inicio sin preferencia musical previa usa Remaster. F4 recorre sin música, AdLib OPL2, Sound Blaster 16 OPL3, MT-32 si hay ROM y Remaster si sus cinco archivos son válidos. El HUD muestra modo y título para las músicas por banco. F8 conserva depuración. Las tildes de los títulos se completan sobre la fuente ASCII del HUD. F3, M y volumen siguen actuando por separado.
+El inicio sin preferencia musical previa usa Remaster. F4 recorre sin música, AdLib OPL2, Sound Blaster 16 OPL3, MT-32 si hay ROM y Remaster si sus cinco archivos son válidos. El HUD muestra el título únicamente en Remaster; las músicas originales muestran solo su modo, sin atribuirles los títulos de los nuevos arreglos. F8 conserva depuración. Las tildes de los títulos se completan sobre la fuente ASCII del HUD. F3, M y volumen siguen actuando por separado.
 
 Los bancos se eligen mediante `motor::seleccionar_musica_rs` y las tablas del EXE. La presentación usa RS5; las salas del mismo banco conservan la posición. Cambiar de banco reinicia la canción correspondiente. No se altera DS, lógica ni temporización para adaptar las composiciones. La precarga y conversión PCM quedan fuera del callback SDL; el reproductor no requiere ROM ni utiliza MIDI para producir la música remasterizada.
 

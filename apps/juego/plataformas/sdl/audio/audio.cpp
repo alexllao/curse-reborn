@@ -335,7 +335,7 @@ std::string Audio::descripcion_musica() const {
                            : perfil == 2 ? "Sound Blaster 16 OPL3"
                            : perfil == 1 ? "AdLib OPL2"
                                          : "Sin música";
-  return modo + ((perfil == 3 || perfil == 4) && !titulo.empty() ? " · " + titulo : "");
+  return modo + (perfil == 4 && !titulo.empty() ? " · " + titulo : "");
 }
 
 // La tecla F3 solo afecta al dispositivo de efectos y conserva el perfil musical y su reloj.
