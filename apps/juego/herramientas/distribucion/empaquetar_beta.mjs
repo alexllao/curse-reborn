@@ -1,4 +1,11 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -293,8 +300,14 @@ async function empaquetar(argumentos) {
     { ...process.env, CURSE_PAQUETE: carpeta, CURSE_ZIP: zip },
   );
   writeFileSync(zip + '.sha256', huella(readFileSync(zip)) + '  ' + nombre + '.zip\n');
+  const bytesCarpeta =
+    archivos.reduce((total, archivo) => total + archivo.bytes, 0) +
+    statSync(join(carpeta, 'paquete.json')).size;
+  const bytesZip = statSync(zip).size;
+  const mostrarTamano = (bytes) =>
+    `${(bytes / 1048576).toFixed(2)} MiB (${bytes.toLocaleString('es-ES')} bytes)`;
   console.log(
-    `Paquete verificado: ${carpeta}\nZIP: ${zip}\nImágenes: ${(antes / 1048576).toFixed(1)} → ${(despues / 1048576).toFixed(1)} MiB (${(100 * (1 - despues / antes)).toFixed(1)} % menos).`,
+    `Paquete verificado: ${carpeta}\nZIP: ${zip}\nImágenes: ${(antes / 1048576).toFixed(1)} → ${(despues / 1048576).toFixed(1)} MiB (${(100 * (1 - despues / antes)).toFixed(1)} % menos).\nTamaño del paquete (carpeta): ${mostrarTamano(bytesCarpeta)}\nTamaño del ZIP: ${mostrarTamano(bytesZip)}`,
   );
 }
 
