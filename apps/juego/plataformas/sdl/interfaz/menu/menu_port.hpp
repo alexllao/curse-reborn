@@ -514,7 +514,9 @@ private:
         if (!fuente.texto(r, lineas[i], c, 495 + float(i) * 34, 20, crema, true))
           return false;
     }
-    if (!fuente.texto(r, CURSE_REBORN_VERSION, c, 790, 16, oro, true))
+    if (!fuente.texto(r, "Core Design · 1992", c, 786, 15, oro, true) ||
+        !fuente.texto(r, t("Port para Windows: Àlex Llaó · 2026", "Windows port: Àlex Llaó · 2026"),
+                      c, 807, 14, oro, true))
       return false;
     return fuente.texto(r,
                         pagina == Pagina::estereo_pruebas

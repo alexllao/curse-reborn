@@ -2,6 +2,8 @@
 
 Menú propio superpuesto a la habitación, fuera del monitor. Reutiliza el logo existente de Reborn y dibuja paneles azul noche, botones y molduras doradas mediante SDL. No sustituye los iconos, inventario, fichas ni partidas del menú original.
 
+El pie del panel muestra «Core Design · 1992» y «Port para Windows: Àlex Llaó · 2026», en dos líneas. La atribución del port se traduce al inglés con el idioma del menú. La versión y la fecha de compilación siguen disponibles en Créditos.
+
 ## Arranque y partida
 
 Tras el banner aparece la habitación con el ordenador apagado y el menú abierto. Se elimina el encendido automático a los dos segundos. **Jugar** enciende el PC y conserva BIOS/DOS y la presentación original. **Cargar partida** enciende igualmente el equipo y, tras el arranque, abre las ocho ranuras originales directamente. Cancelar esa carga deja una sesión nueva en la mazmorra. Durante una sesión, Jugar cambia a **Continuar** y Cargar abre las ranuras sobre la sesión existente.
