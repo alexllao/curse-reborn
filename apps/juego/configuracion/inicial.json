@@ -2,6 +2,8 @@
   "version": 1,
   "habitacion": "02-buhardilla",
   "volumen": 100,
+  "volumen_musica": 100,
+  "volumen_efectos": 100,
   "silencio": false,
   "estereo_posicional": true,
   "efectos_digitales": true,

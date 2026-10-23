@@ -73,7 +73,8 @@ public:
       fase = 5;
       break;
     case 5:
-      if (partida.nivel_volumen() != 110)
+      if (partida.nivel_volumen_musica() != 110 || partida.nivel_volumen_efectos() != 100 ||
+          partida.nivel_volumen() != 100)
         return -1;
       pulsar(SDLK_LEFT);
       pulsar(SDLK_ESCAPE);
@@ -83,7 +84,8 @@ public:
       fase = 6;
       break;
     case 6:
-      if (menu.abierto() || partida.nivel_volumen() != 100)
+      if (menu.abierto() || partida.nivel_volumen_musica() != 100 ||
+          partida.nivel_volumen_efectos() != 100 || partida.nivel_volumen() != 100)
         return -1;
       if (ahora - marca < 200)
         break;

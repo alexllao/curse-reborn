@@ -11,7 +11,7 @@
 class PreferenciasUsuario {
 public:
   unsigned int volumen = 100, silencio = 0, marco = 0, filtro = 2;
-  unsigned int musica = 5;
+  unsigned int musica = 5, volumen_musica = 100, volumen_efectos = 100;
   unsigned int estereo_posicional = 1, efectos_digitales = 1, pantalla_completa = 0;
   std::string habitacion;
   void cargar(const std::string &archivo = "") {
@@ -54,6 +54,7 @@ public:
     unsigned int perfil = 5, estereo = estereo_posicional;
     unsigned int efectos = efectos_digitales, completa = pantalla_completa;
     std::string cuarto = habitacion;
+    unsigned int vm = volumen_musica, ve = volumen_efectos;
     std::string_view resto(compacto);
     const auto literal = [&](std::string_view esperado) {
       if (resto.substr(0, esperado.size()) != esperado)
@@ -94,6 +95,12 @@ public:
         resto.remove_prefix(fin + 1);
       }
     }
+    const auto volumen_opcional = [&](std::string_view clave, unsigned int &valor) {
+      if (correcto && resto.substr(0, clave.size()) == clave)
+        correcto = literal(clave) && numero(valor) && valor <= 400 && valor % 10 == 0;
+    };
+    volumen_opcional(",\"volumen_musica\":", vm);
+    volumen_opcional(",\"volumen_efectos\":", ve);
     if (!correcto || !literal("}") || !resto.empty() || v > 400 || v % 10 || s > 1 || m > 1 ||
         f > 5) {
       registrar_accion("Preferencias: formato no reconocido; se conserva el archivo sin modificar");
@@ -108,13 +115,17 @@ public:
     efectos_digitales = efectos;
     pantalla_completa = completa;
     habitacion = cuarto;
+    volumen_musica = vm;
+    volumen_efectos = ve;
     persistente = true;
     registrar_accion("Preferencias recuperadas: volumen %u%%, silencio %u, marco %u, filtro %u",
                      volumen, silencio, marco, filtro);
   }
   bool guardar(unsigned int v, bool s, bool m, unsigned int f, unsigned int perfil = 5,
                unsigned int estereo = 2, unsigned int efectos = 2, unsigned int completa = 2,
-               const std::string &cuarto = "") {
+               const std::string &cuarto = "", unsigned int vm = 500, unsigned int ve = 500) {
+    if ((vm != 500 && (vm > 400 || vm % 10)) || (ve != 500 && (ve > 400 || ve % 10)))
+      return false;
     if (!persistente || v > 400 || v % 10 || f > 5 || perfil > 5 || estereo > 2 || efectos > 2 ||
         completa > 2 || cuarto.size() > 64 ||
         cuarto.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789-_") != std::string::npos)
@@ -126,7 +137,9 @@ public:
         (estereo < 2 ? ",\"estereo_posicional\":" + std::to_string(estereo) : "") +
         (efectos < 2 ? ",\"efectos_digitales\":" + std::to_string(efectos) : "") +
         (completa < 2 ? ",\"pantalla_completa\":" + std::to_string(completa) : "") +
-        (!cuarto.empty() ? ",\"habitacion\":\"" + cuarto + "\"" : "") + "}\n";
+        (!cuarto.empty() ? ",\"habitacion\":\"" + cuarto + "\"" : "") +
+        (vm <= 400 ? ",\"volumen_musica\":" + std::to_string(vm) : "") +
+        (ve <= 400 ? ",\"volumen_efectos\":" + std::to_string(ve) : "") + "}\n";
     const auto temporal = ruta + ".temporal";
     const bool ok = SDL_SaveFile(temporal.c_str(), contenido.data(), contenido.size()) &&
                     SDL_RenamePath(temporal.c_str(), ruta.c_str());

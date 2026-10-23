@@ -12,6 +12,8 @@ enum class AccionMenuPort {
   cargar,
   salir,
   volumen,
+  volumen_musica,
+  volumen_efectos,
   silencio,
   musica,
   efectos,
@@ -28,7 +30,7 @@ enum class AccionMenuPort {
 struct EstadoMenuPort {
   bool sesion = false, silencio = false, estereo = true, marco = false, completa = false;
   bool depuracion = false, entidades = true, interacciones = true, limites = true;
-  unsigned int volumen = 100, musica = 4, filtro = 2;
+  unsigned int volumen = 100, volumen_musica = 100, volumen_efectos = 100, musica = 4, filtro = 2;
   std::string efectos = "Sound Blaster", habitacion;
 };
 struct PeticionMenuPort {
@@ -104,8 +106,8 @@ public:
     return {};
   }
 
-  bool dibujar(SDL_Renderer *r, const EstadoMenuPort &estado, bool acceso = false) {
-    if (!visible && !acceso)
+  bool dibujar(SDL_Renderer *r, const EstadoMenuPort &estado) {
+    if (!visible)
       return true;
     SDL_Rect vp;
     const bool con_vp = SDL_RenderViewportSet(r);
@@ -137,13 +139,7 @@ public:
         !SDL_SetRenderDrawColor(r, 0, 0, 0, 0) || !SDL_RenderClear(r))
       return false;
     const float ancho = float(cw);
-    bool ok =
-        visible
-            ? contenido(r, estado, ancho)
-            : (SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND) &&
-               bloque(r, {ancho - 150, 18, 132, 44}, {10, 18, 37, 230}) &&
-               borde(r, {ancho - 150, 18, 132, 44}, {177, 128, 53, 255}) &&
-               fuente.texto(r, t("Menú", "Menu"), ancho - 84, 25, 23, {246, 232, 194, 255}, true));
+    bool ok = contenido(r, estado, ancho);
     ok = SDL_SetRenderTarget(r, anterior) && ok;
     ok = SDL_SetRenderLogicalPresentation(r, 0, 0, SDL_LOGICAL_PRESENTATION_DISABLED) && ok;
     ok = SDL_SetRenderViewport(r, nullptr) && ok;
@@ -162,6 +158,7 @@ private:
     principal,
     opciones,
     sonido,
+    reproduccion,
     pantalla,
     habitacion,
     avanzado,
@@ -215,12 +212,20 @@ private:
               {t("Habitación", "Room"), "", A::ninguna, Pagina::habitacion},
               {t("Avanzado", "Advanced"), "", A::ninguna, Pagina::avanzado},
               atras};
-    case Pagina::sonido: {
+    case Pagina::sonido:
+      return {ajuste(t("Volumen de música", "Music volume"),
+                     std::to_string(s.volumen_musica) + " %", A::volumen_musica),
+              ajuste(t("Volumen de efectos", "Effects volume"),
+                     std::to_string(s.volumen_efectos) + " %", A::volumen_efectos),
+              ajuste(t("Volumen general", "Master volume"), std::to_string(s.volumen) + " %",
+                     A::volumen),
+              ajuste(t("Silencio", "Mute"), si(s.silencio), A::silencio),
+              {t("Música y efectos", "Music and effects"), "", A::ninguna, Pagina::reproduccion},
+              atras};
+    case Pagina::reproduccion: {
       const char *musicas[] = {es() ? "Sin música" : "No music", "AdLib OPL2", "Sound Blaster OPL3",
                                "Roland MT-32", "Remaster"};
-      return {ajuste(t("Volumen", "Volume"), std::to_string(s.volumen) + " %", A::volumen),
-              ajuste(t("Silencio", "Mute"), si(s.silencio), A::silencio),
-              ajuste(t("Música", "Music"), musicas[std::min(s.musica, 4u)], A::musica),
+      return {ajuste(t("Música", "Music"), musicas[std::min(s.musica, 4u)], A::musica),
               ajuste(t("Efectos", "Sound effects"), s.efectos, A::efectos),
               ajuste(t("Estéreo posicional", "Positional stereo"), si(s.estereo), A::estereo),
               atras};
@@ -250,6 +255,8 @@ private:
     }
   }
   Pagina padre() const {
+    if (pagina == Pagina::reproduccion)
+      return Pagina::sonido;
     return pagina == Pagina::sonido || pagina == Pagina::pantalla || pagina == Pagina::habitacion ||
                    pagina == Pagina::avanzado
                ? Pagina::opciones

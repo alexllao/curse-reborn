@@ -92,7 +92,9 @@ bool Audio::abrir(const std::string &carpeta, bool conservar_seleccion, bool ini
   fallo_musical.store(false);
   muestras_producidas.store(0);
   muestras_con_senal.store(0);
-  if (!SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : volumen / 100.0f) ||
+  if (!SDL_SetAudioStreamGain(flujo, volumen_efectos / 100.0f) ||
+      !SDL_SetAudioStreamGain(flujo_musical, volumen_musica / 100.0f) ||
+      !SDL_SetAudioDeviceGain(dispositivo, silencio ? 0.0f : volumen / 100.0f) ||
       (!iniciar_pausado && !SDL_ResumeAudioDevice(dispositivo))) {
     cerrar();
     return false;
@@ -324,6 +326,25 @@ bool Audio::ajustar_volumen(int cambio) {
   volumen = static_cast<unsigned int>(siguiente);
   registrar_volumen();
   return true;
+}
+
+// Ganancia por flujo, después de generar las muestras: no modifica PCM, fase ni prioridad.
+bool Audio::ajustar_canal(SDL_AudioStream *canal, unsigned int &nivel, int cambio,
+                          const char *nombre) {
+  const int siguiente = std::clamp(int(nivel) + cambio, 0, 400);
+  if (canal && !SDL_SetAudioStreamGain(canal, siguiente / 100.0f))
+    return false;
+  nivel = static_cast<unsigned int>(siguiente);
+  std::printf("[partida] Volumen de %s: %u%% (general: %u%%)%s.\n", nombre, nivel, volumen,
+              silencio ? " [silenciado]" : "");
+  std::fflush(stdout);
+  return true;
+}
+bool Audio::ajustar_volumen_musica(int cambio) {
+  return ajustar_canal(flujo_musical, volumen_musica, cambio, "música");
+}
+bool Audio::ajustar_volumen_efectos(int cambio) {
+  return ajustar_canal(flujo, volumen_efectos, cambio, "efectos");
 }
 
 // El silencio muestra cero efectivo y permite recordar el porcentaje que se recuperará con M.
@@ -961,4 +982,47 @@ void Audio::terminar_grabacion() {
     SDL_SetAudioPostmixCallback(dispositivo, registrar_mezcla, this);
   if (!pausado)
     SDL_ResumeAudioDevice(dispositivo);
+}
+
+// La API de SDL aplica las dos ganancias sin consumir ni vaciar muestras de los flujos.
+bool comprobar_volumenes_audio(const std::string &carpeta) {
+  Audio audio;
+  if (!audio.abrir(carpeta, false, true) || !audio.ajustar_volumen(30))
+    return false;
+  const short muestra[8] = {100, -100, 200, -200, 300, -300, 400, -400};
+  if (!SDL_PutAudioStreamData(audio.flujo, muestra, sizeof(muestra)))
+    return false;
+  const auto cola = SDL_GetAudioStreamQueued(audio.flujo);
+  const auto reloj = audio.muestras_musicales();
+  unsigned int casos = 0;
+  for (const int musica : {0, 60, 100, 200, 400})
+    for (const int efectos : {0, 60, 100, 200, 400}) {
+      const float ganancia_fx = SDL_GetAudioStreamGain(audio.flujo);
+      if (!audio.ajustar_volumen_musica(musica - int(audio.nivel_volumen_musica())) ||
+          SDL_GetAudioStreamGain(audio.flujo) != ganancia_fx ||
+          !audio.ajustar_volumen_efectos(efectos - int(audio.nivel_volumen_efectos())) ||
+          SDL_GetAudioStreamGain(audio.flujo_musical) != musica / 100.0f ||
+          SDL_GetAudioStreamGain(audio.flujo) != efectos / 100.0f ||
+          SDL_GetAudioDeviceGain(audio.dispositivo) != 1.3f ||
+          SDL_GetAudioStreamQueued(audio.flujo) != cola || audio.muestras_musicales() != reloj ||
+          !audio.alternar_silencio() || SDL_GetAudioDeviceGain(audio.dispositivo) != 0 ||
+          !audio.alternar_silencio() ||
+          SDL_GetAudioStreamGain(audio.flujo_musical) != musica / 100.0f ||
+          SDL_GetAudioStreamGain(audio.flujo) != efectos / 100.0f)
+        return false;
+      ++casos;
+    }
+  if (!audio.ajustar_volumen_musica(-999) || audio.nivel_volumen_musica() != 0 ||
+      !audio.ajustar_volumen_efectos(999) || audio.nivel_volumen_efectos() != 400 ||
+      !audio.ajustar_volumen_musica(60) || !audio.ajustar_volumen_efectos(-260) ||
+      !audio.alternar_dispositivo(-1) || !audio.alternar_efectos() || !audio.reiniciar() ||
+      !audio.pausar_menu(true) || SDL_GetAudioStreamGain(audio.flujo_musical) != .6f ||
+      SDL_GetAudioStreamGain(audio.flujo) != 1.4f || audio.nivel_volumen() != 130 ||
+      !audio.pausar_menu(false))
+    return false;
+  audio.cerrar();
+  std::printf("Volúmenes separados: %u balances, independencia, colas y reloj intactos, silencio, "
+              "perfiles, límites, pausa y reinicio correctos.\n",
+              casos);
+  return true;
 }

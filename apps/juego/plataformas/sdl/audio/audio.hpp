@@ -48,6 +48,14 @@ public:
   }
   // Ajusta el volumen general entre cero y cuatrocientos sin alterar los relojes musicales.
   bool ajustar_volumen(int cambio);
+  bool ajustar_volumen_musica(int cambio);
+  bool ajustar_volumen_efectos(int cambio);
+  unsigned int nivel_volumen_musica() const {
+    return volumen_musica;
+  }
+  unsigned int nivel_volumen_efectos() const {
+    return volumen_efectos;
+  }
   // Permite consultar el ajuste guardado, incluso durante el silencio temporal de M.
   unsigned int nivel_volumen() const {
     return volumen;
@@ -119,7 +127,9 @@ private:
   Uint64 ultimo = 0, resto = 0;
   bool menu_pausado = false;
   bool silencio = false;
-  unsigned int volumen = 100;
+  unsigned int volumen = 100, volumen_musica = 100, volumen_efectos = 100;
+  bool ajustar_canal(SDL_AudioStream *canal, unsigned int &nivel, int cambio, const char *nombre);
+  friend bool comprobar_volumenes_audio(const std::string &carpeta);
   // Informa del volumen efectivo y conserva el ajuste elegido mientras M silencia.
   void registrar_volumen() const;
 };
@@ -135,3 +145,6 @@ bool comprobar_salida_audio(const char *ruta);
 bool comprobar_musica_adlib(const std::string &carpeta, const char *ruta, unsigned short tema = 1);
 // Valida los cinco bancos con las ROM locales y guarda una muestra de la música de mazmorra.
 bool comprobar_musica_mt32(const std::string &carpeta, const char *ruta);
+
+// Comprueba las ganancias separadas y su conservación durante M, pausas y reinicios.
+bool comprobar_volumenes_audio(const std::string &carpeta);

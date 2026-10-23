@@ -6,9 +6,9 @@ Referencia de los controles disponibles en Curse Reborn. Cada atajo nuevo se añ
 
 ## Menú del port
 
-Tras la presentación se abre el [menú del port](menu_port.md) sobre la habitación con el ordenador apagado. **Jugar** lo enciende; **Cargar partida** prepara las ranuras tras BIOS/DOS. No se enciende automáticamente. **Mayús + Esc** o el botón **Menú** lo abren durante la sesión y pausan juego, audio y tiempo efectivo. **Esc sin Mayús y clic derecho conservan el menú nativo.**
+Tras la presentación se abre el [menú del port](menu_port.md) sobre la habitación con el ordenador apagado. **Jugar** lo enciende; **Cargar partida** prepara las ranuras tras BIOS/DOS. No se enciende automáticamente. **Mayús + Esc** lo abre durante la sesión y pausan juego, audio y tiempo efectivo. **Esc sin Mayús y clic derecho conservan el menú nativo.**
 
-Flechas o Tab recorren opciones, Intro/espacio aceptan y Esc vuelve. Izquierda/derecha ajustan valores. Con ratón se selecciona al pasar y se acepta con clic; en ajustes la mitad izquierda retrocede y la derecha avanza. Sonido, pantalla y habitación conservan la elección al reiniciar.
+Flechas o Tab recorren opciones, Intro/espacio aceptan y Esc vuelve. Izquierda/derecha ajustan valores. Con ratón se selecciona al pasar y se acepta con clic; en ajustes la mitad izquierda retrocede y la derecha avanza. Sonido, pantalla y habitación conservan la elección al reiniciar. No aparece ningún botón del port sobre la partida.
 
 ## Sonido
 
@@ -22,6 +22,8 @@ Flechas o Tab recorren opciones, Intro/espacio aceptan y Esc vuelve. Izquierda/d
 | **F4** | Cambiar la música entre ninguna, AdLib OPL2, Sound Blaster 16 OPL3 y MT-32. La consola indica la opción activa. |
 
 El [estéreo posicional](audio/estereo_posicional.md) sigue la posición horizontal de quien emite el efecto. **P** muestra un aviso y la consola registra el emisor y el balance de cada efecto iniciado. La música conserva su estéreo.
+
+En **Opciones → Sonido** se ajustan por separado **Volumen de música** y **Volumen de efectos**, entre 0 y 400 %. Se guardan al reiniciar, con 100 % inicial en ambos. El volumen general de **+ / −** multiplica los dos canales y **M** los silencia sin perder sus ajustes. Los sonidos del PC siguen el volumen de efectos. El submenú **Música y efectos** reúne dispositivos y estéreo.
 
 **M** muestra «Sonido silenciado» o «Sonido activado» con el mismo texto blanco y fundido de los otros avisos. Silencia música y efectos y recupera el porcentaje anterior al reactivarlo; también funciona durante BIOS o con el PC apagado. Las secuencias conservan su reloj mientras están silenciadas.
 

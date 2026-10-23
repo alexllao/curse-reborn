@@ -228,6 +228,18 @@ public:
   }
 
   // Consulta el porcentaje aplicado por la salida común para el aviso temporal.
+  bool ajustar_volumen_musica(int cambio) {
+    return audio.ajustar_volumen_musica(cambio);
+  }
+  bool ajustar_volumen_efectos(int cambio) {
+    return audio.ajustar_volumen_efectos(cambio);
+  }
+  unsigned int nivel_volumen_musica() const {
+    return audio.nivel_volumen_musica();
+  }
+  unsigned int nivel_volumen_efectos() const {
+    return audio.nivel_volumen_efectos();
+  }
   unsigned int nivel_volumen() const {
     return audio.nivel_volumen();
   }

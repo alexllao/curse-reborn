@@ -561,6 +561,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-volumenes" && argc == 3) {
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_volumenes_audio(argv[1])
+               ? 0
+               : fallo("No coinciden los volúmenes separados");
+  }
   if (opcion == "--comprobar-menu-port" && argc == 4) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_menu_port(argv[3]) ? 0 : fallo("No coincide el menú del port");
@@ -735,6 +741,16 @@ int main(int argc, char *argv[]) {
       preferencias.volumen = volumen;
     if (filtro >= 0 && filtro <= 5)
       preferencias.filtro = filtro;
+    for (const auto campo : {"volumen_musica", "volumen_efectos"}) {
+      const auto valor = inicial[campo];
+      if (valor.is_number() && valor.int_value() >= 0 && valor.int_value() <= 400 &&
+          valor.int_value() % 10 == 0) {
+        if (std::string(campo) == "volumen_musica")
+          preferencias.volumen_musica = valor.int_value();
+        else
+          preferencias.volumen_efectos = valor.int_value();
+      }
+    }
     preferencias.silencio = inicial["silencio"].bool_value();
     if (inicial["estereo_posicional"].is_bool())
       preferencias.estereo_posicional = inicial["estereo_posicional"].bool_value();
@@ -756,6 +772,9 @@ int main(int argc, char *argv[]) {
         (mazmorra.silenciado() != bool(preferencias.silencio) && !mazmorra.alternar_silencio()))
       return fallo("No se han podido recuperar las preferencias de audio");
   }
+  if (!comprobar && (!mazmorra.ajustar_volumen_musica(int(preferencias.volumen_musica) - 100) ||
+                     !mazmorra.ajustar_volumen_efectos(int(preferencias.volumen_efectos) - 100)))
+    return fallo("No se han podido recuperar los volúmenes separados");
   mazmorra.configurar_estereo(preferencias.estereo_posicional != 0);
   if ((corredor_con_audio || SDL_getenv("CURSE_REBORN_GRABAR_RUTA")) &&
       !mazmorra.abrir_audio(carpeta))
@@ -904,7 +923,8 @@ int main(int argc, char *argv[]) {
                            presentacion.marcos.activado(), presentacion.filtros.indice_elegido(),
                            mazmorra.perfil_musical(), unsigned(mazmorra.estereo_posicional()),
                            unsigned(mazmorra.efectos_sound_blaster()), unsigned(pantalla_completa),
-                           presentacion.habitacion.tema_actual());
+                           presentacion.habitacion.tema_actual(), mazmorra.nivel_volumen_musica(),
+                           mazmorra.nivel_volumen_efectos());
   };
   guardar_preferencias();
   if (preferencias_habilitadas)
@@ -916,6 +936,8 @@ int main(int argc, char *argv[]) {
     EstadoMenuPort e;
     e.sesion = sesion_iniciada;
     e.volumen = mazmorra.nivel_volumen();
+    e.volumen_musica = mazmorra.nivel_volumen_musica();
+    e.volumen_efectos = mazmorra.nivel_volumen_efectos();
     e.silencio = mazmorra.silenciado();
     e.estereo = mazmorra.estereo_posicional();
     e.musica = mazmorra.perfil_musical();
@@ -1005,15 +1027,6 @@ int main(int argc, char *argv[]) {
         int ww = 0, wh = 0;
         if (!SDL_GetWindowSize(presentacion.ventana, &ww, &wh))
           return fallo("No se puede medir el menú");
-        if (!presentacion.menu_port.abierto() && !partidas.abierta() &&
-            !presentacion.habitacion.reiniciando() && evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
-            evento.button.button == SDL_BUTTON_LEFT && evento.button.x >= ww - 150.0f * wh / 900 &&
-            evento.button.x < ww - 18.0f * wh / 900 && evento.button.y >= 18.0f * wh / 900 &&
-            evento.button.y < 62.0f * wh / 900) {
-          if (!abrir_menu_port())
-            return fallo("No se ha podido abrir el menú del port");
-          continue;
-        }
         if (presentacion.menu_port.abierto()) {
           if (evento.type == SDL_EVENT_KEY_DOWN && !evento.key.repeat &&
               (evento.key.key == SDLK_RETURN || evento.key.key == SDLK_KP_ENTER) &&
@@ -1049,6 +1062,12 @@ int main(int argc, char *argv[]) {
             break;
           case A::volumen:
             correcto = mazmorra.ajustar_volumen(peticion.sentido * 10);
+            break;
+          case A::volumen_musica:
+            correcto = mazmorra.ajustar_volumen_musica(peticion.sentido * 10);
+            break;
+          case A::volumen_efectos:
+            correcto = mazmorra.ajustar_volumen_efectos(peticion.sentido * 10);
             break;
           case A::silencio:
             correcto = mazmorra.alternar_silencio();
@@ -1101,7 +1120,9 @@ int main(int argc, char *argv[]) {
       }
       if (!comprobar &&
           presentacion.habitacion.evento(presentacion.ventana, presentacion.dibujante, evento)) {
-        presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
+        presentacion.sonidos_pc.ajustar(mazmorra.silenciado(),
+                                        mazmorra.nivel_volumen() *
+                                            mazmorra.nivel_volumen_efectos() / 100);
         if (!presentacion.sonidos_pc.reproducir(presentacion.habitacion.tomar_sonido()))
           std::fprintf(stderr, "Sonidos del PC no disponibles: %s\n", SDL_GetError());
         guardar_preferencias();
@@ -1386,7 +1407,8 @@ int main(int argc, char *argv[]) {
       inicio_fundido = 0;
       inicio_pantalla = ultimo_paso_escena = siguiente_presentacion = SDL_GetTicksNS();
     }
-    presentacion.sonidos_pc.ajustar(mazmorra.silenciado(), mazmorra.nivel_volumen());
+    presentacion.sonidos_pc.ajustar(
+        mazmorra.silenciado(), mazmorra.nivel_volumen() * mazmorra.nivel_volumen_efectos() / 100);
     if (!presentacion.sonidos_pc.reproducir(presentacion.habitacion.tomar_sonido()))
       std::fprintf(stderr, "Sonidos del PC no disponibles: %s\n", SDL_GetError());
     const auto solicitud = mazmorra.tomar_solicitud_partidas();
@@ -2096,10 +2118,7 @@ int main(int argc, char *argv[]) {
     if (!presentacion.habitacion.reiniciando() && (comprobar || !cursor_filtrado) &&
         !partidas.dibujar(presentacion.dibujante, mazmorra))
       return fallo("No se ha podido dibujar el panel de partidas");
-    if (!presentacion.menu_port.dibujar(presentacion.dibujante, estado_menu(),
-                                        !comprobar && !comprobar_arranque &&
-                                            !presentacion.habitacion.reiniciando() &&
-                                            !partidas.abierta()))
+    if (!presentacion.menu_port.dibujar(presentacion.dibujante, estado_menu()))
       return fallo("No se ha podido dibujar el menú del port");
     if (!avisos.dibujar(presentacion.dibujante))
       return fallo("No se ha podido dibujar el aviso temporal");

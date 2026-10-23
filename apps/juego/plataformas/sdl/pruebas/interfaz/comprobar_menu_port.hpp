@@ -28,10 +28,15 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
   tecla(SDLK_DOWN);
   tecla(SDLK_RETURN); // Opciones.
   tecla(SDLK_RETURN); // Sonido.
-  ok = ok && tecla(SDLK_LEFT).accion == A::volumen && tecla(SDLK_LEFT).sentido == -1;
+  ok = ok && tecla(SDLK_LEFT).accion == A::volumen_musica && tecla(SDLK_LEFT).sentido == -1;
+  tecla(SDLK_DOWN);
+  ok = ok && tecla(SDLK_RETURN).accion == A::volumen_efectos;
+  tecla(SDLK_DOWN);
+  ok = ok && tecla(SDLK_RIGHT).accion == A::volumen;
   tecla(SDLK_DOWN);
   ok = ok && tecla(SDLK_RETURN).accion == A::silencio;
   tecla(SDLK_DOWN);
+  tecla(SDLK_RETURN); // Perfiles, efectos y estéreo en su propio apartado.
   ok = ok && tecla(SDLK_RIGHT).accion == A::musica;
   tecla(SDLK_DOWN);
   ok = ok && tecla(SDLK_RETURN).accion == A::efectos;
@@ -60,16 +65,23 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
   prefs.cargar(perfil);
   for (unsigned int efectos = 0; efectos < 2; ++efectos)
     for (unsigned int completa = 0; completa < 2; ++completa) {
-      ok = ok && prefs.guardar(130, true, true, 3, 4, 0, efectos, completa, "02-buhardilla");
+      ok = ok &&
+           prefs.guardar(130, true, true, 3, 4, 0, efectos, completa, "02-buhardilla", 60, 140);
       PreferenciasUsuario copia;
       copia.cargar(perfil);
       ok = ok && copia.efectos_digitales == efectos && copia.pantalla_completa == completa &&
            copia.habitacion == "02-buhardilla" && copia.volumen == 130 &&
-           copia.estereo_posicional == 0;
+           copia.estereo_posicional == 0 && copia.volumen_musica == 60 &&
+           copia.volumen_efectos == 140;
     }
   SDL_RemovePath(perfil.c_str());
   prefs.cargar(perfil);
   ok = ok && !prefs.guardar(100, false, false, 2, 4, 1, 1, 0, "../fuera");
+  ok = ok && prefs.guardar(100, false, false, 2);
+  PreferenciasUsuario antigua;
+  antigua.cargar(perfil);
+  ok = ok && antigua.volumen_musica == 100 && antigua.volumen_efectos == 100;
+  SDL_RemovePath(perfil.c_str());
   estado.sesion = false;
   const std::array<std::array<int, 2>, 6> medidas{
       {{1280, 360}, {1280, 480}, {960, 540}, {960, 600}, {800, 600}, {540, 960}}};
@@ -109,7 +121,7 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
         ++capturas;
       // También se dibujan las seis páginas internas con sus valores y textos completos.
       if (ok && lengua && m[0] == 960 && m[1] == 600) {
-        for (int pagina = 0; pagina < 6 && ok; ++pagina) {
+        for (int pagina = 0; pagina < 7 && ok; ++pagina) {
           menu.abrir();
           const auto pulsar = [&](SDL_Keycode key) {
             SDL_Event e{};
@@ -117,11 +129,16 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
             e.key.key = key;
             return menu.evento(e, m[0], m[1], estado);
           };
-          const int indice = pagina < 4 ? 2 : pagina == 4 ? 3 : 4;
+          const int indice = pagina < 4 || pagina == 6 ? 2 : pagina == 4 ? 3 : 4;
           for (int j = 0; j < indice; ++j)
             pulsar(SDLK_DOWN);
           pulsar(SDLK_RETURN);
-          if (pagina < 4) {
+          if (pagina == 6) {
+            pulsar(SDLK_RETURN);
+            for (int j = 0; j < 4; ++j)
+              pulsar(SDLK_DOWN);
+            pulsar(SDLK_RETURN);
+          } else if (pagina < 4) {
             for (int j = 0; j < pagina; ++j)
               pulsar(SDLK_DOWN);
             pulsar(SDLK_RETURN);
