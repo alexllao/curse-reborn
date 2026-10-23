@@ -2,9 +2,11 @@
 #include <SDL3/SDL.h>
 #include <string>
 #include <vector>
+#ifndef CURSE_REBORN_SIN_MT32
 #define MT32EMU_API_TYPE 1
 #define MT32EMU_RUNTIME_VERSION_CHECK 0
 #include <mt32emu/mt32emu.h>
+#endif
 #include "../../../motor/sonido/musica_rs.hpp"
 
 // Reproductor común de los cinco recursos RS, con síntesis MT-32 de las ROM locales.
@@ -22,7 +24,11 @@ public:
   bool generar(short *salida, unsigned int cantidad);
   // Consulta disponibilidad tras validar ambas ROM y abrir el sintetizador.
   bool disponible() const {
+#ifdef CURSE_REBORN_SIN_MT32
+    return false;
+#else
     return contexto != nullptr;
+#endif
   }
   // Expone el banco seleccionado para la comprobación de transiciones y reutilización.
   unsigned char banco() const {
@@ -30,6 +36,7 @@ public:
   }
 
 private:
+#ifndef CURSE_REBORN_SIN_MT32
   SDL_SharedObject *biblioteca = nullptr;
   mt32emu_context contexto = nullptr;
   decltype(&mt32emu_create_context) crear = nullptr;
@@ -49,4 +56,7 @@ private:
   motor::EventoMusicaRS evento{};
   // Consume mensajes con demora cero y conserva el siguiente evento temporizado.
   bool preparar_evento();
+#else
+  unsigned char banco_actual = 255;
+#endif
 };

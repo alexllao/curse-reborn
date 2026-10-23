@@ -40,6 +40,8 @@
 #include "pruebas/comprobar_poblacion.hpp"
 #include "interfaz/partidas.hpp"
 #include "interfaz/menu/menu_port.hpp"
+#include "interfaz/entrada_tactil.hpp"
+#include "pruebas/interfaz/comprobar_tactil.hpp"
 #include "audio/laboratorio.hpp"
 #include "pruebas/audio/comprobar_laboratorio.hpp"
 #include "pruebas/interfaz/comprobar_menu_port.hpp"
@@ -529,6 +531,10 @@ SDL_Surface *capturar_monitor(SDL_Renderer *dibujante) {
 
 // Presenta los bloques reconstruidos y permite recorrerlos con los atajos de desarrollo.
 int main(int argc, char *argv[]) {
+#ifdef SDL_PLATFORM_IOS
+  // Evita un clic sintético duplicado antes de saber si el gesto usa uno o dos dedos.
+  SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
+#endif
   if (!RecorridoGrabado::preparar_consola())
     return fallo("No se ha podido preparar el canal de video");
   configurar_consola();
@@ -565,6 +571,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-entrada-tactil" && argc == 3)
+    return comprobar_entrada_tactil() ? 0 : fallo("No coincide la entrada táctil");
   if (opcion == "--comprobar-laboratorio-audio" && argc == 4) {
     SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy");
     Presentacion limpieza;
@@ -995,6 +1003,9 @@ int main(int argc, char *argv[]) {
     return presentacion.habitacion.reiniciando() || mazmorra.pausar_audio_menu(false);
   };
   RecorridoMenuPort prueba_menu_integrado;
+#ifdef SDL_PLATFORM_IOS
+  EntradaTactil entrada_tactil;
+#endif
   Uint64 reloj_marcos_prueba = 1000000000ull;
   while (!salir) {
     // Durante el banner solo se atienden cierre y pantalla completa; el PC sigue apagado.
@@ -1035,6 +1046,13 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido actualizar el audio del juego");
     SDL_Event evento;
     while (SDL_PollEvent(&evento)) {
+#ifdef SDL_PLATFORM_IOS
+      int tactil_ancho = 0, tactil_alto = 0;
+      if (!SDL_GetWindowSize(presentacion.ventana, &tactil_ancho, &tactil_alto))
+        return fallo("No se puede medir la entrada táctil");
+      if (!entrada_tactil.traducir(evento, tactil_ancho, tactil_alto))
+        continue;
+#endif
       // SDL puede omitir KEY_UP al cambiar de aplicación; no dejar una dirección retenida.
       if (evento.type == SDL_EVENT_WINDOW_FOCUS_LOST || evento.type == SDL_EVENT_WINDOW_MINIMIZED)
         for (const auto bit : {1, 2, 4, 8})

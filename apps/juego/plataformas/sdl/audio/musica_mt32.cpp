@@ -2,6 +2,20 @@
 #include "../../../motor/estado/inicializar.hpp"
 #include "../registro.hpp"
 
+#ifdef CURSE_REBORN_SIN_MT32
+// El primer destino iOS ofrece remaster, FM y efectos; no intenta cargar una DLL de Munt.
+bool MusicaMt32::iniciar(const std::string &, const unsigned char *, unsigned int, unsigned short) {
+  return false;
+}
+void MusicaMt32::cerrar() {}
+bool MusicaMt32::cambiar_escena(unsigned short) {
+  return false;
+}
+bool MusicaMt32::generar(short *, unsigned int) {
+  return false;
+}
+#else
+
 namespace {
 // Resuelve el API C tipado para permitir sustituir la biblioteca compartida sin volver a enlazar.
 template <typename Funcion>
@@ -160,3 +174,4 @@ bool MusicaMt32::generar(short *salida, unsigned int cantidad) {
   }
   return true;
 }
+#endif

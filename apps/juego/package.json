@@ -12,6 +12,7 @@
     "dev": "node herramientas/gestionar_proyecto.mjs ventana",
     "compilar": "node herramientas/gestionar_proyecto.mjs sdl:compilar",
     "empaquetar": "node herramientas/distribucion/empaquetar_beta.mjs",
+    "ios": "node herramientas/ios/preparar.mjs",
     "comprobar": "node herramientas/gestionar_proyecto.mjs comprobar:habitaciones"
   },
   "dependencies": {

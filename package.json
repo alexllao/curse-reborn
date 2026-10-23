@@ -20,6 +20,8 @@
     "lint:corregir": "eslint . --fix && node apps/juego/herramientas/gestionar_calidad.mjs revisar",
     "calidad": "pnpm formato:comprobar && pnpm lint",
     "empaquetar:beta": "node apps/juego/herramientas/distribucion/empaquetar_beta.mjs",
+    "ios": "node apps/juego/herramientas/ios/preparar.mjs",
+    "comprobar:ios": "node --test apps/juego/pruebas/ios/preparacion.test.mjs",
     "comprobar:builder": "node --test apps/juego/pruebas/distribucion/builder.test.mjs",
     "comprobar:continuidad": "node apps/juego/herramientas/auditar_continuidad.mjs",
     "grabar:recorrido": "node apps/juego/herramientas/gestionar_proyecto.mjs grabar:recorrido",

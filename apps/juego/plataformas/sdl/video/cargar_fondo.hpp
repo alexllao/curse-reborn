@@ -82,6 +82,10 @@ inline SDL_Surface *cargar_jpeg(const std::string &ruta) {
 } // namespace fondos_windows
 #endif
 
+#ifdef SDL_PLATFORM_IOS
+SDL_Surface *cargar_jpeg_ios(const std::string &ruta);
+#endif
+
 // El catálogo conserva las rutas maestras. Solo la copia empaquetada sustituye PNG por JPG.
 inline SDL_Surface *cargar_fondo(const std::string &ruta) {
   SDL_PathInfo info;
@@ -92,6 +96,8 @@ inline SDL_Surface *cargar_fondo(const std::string &ruta) {
   const std::string jpeg = ruta.substr(0, ruta.size() - 4) + ".jpg";
 #ifdef _WIN32
   return fondos_windows::cargar_jpeg(jpeg);
+#elif defined(SDL_PLATFORM_IOS)
+  return cargar_jpeg_ios(jpeg);
 #else
   SDL_SetError("Esta plataforma no dispone todavía de cargador JPEG: %s", jpeg.c_str());
   return nullptr;
