@@ -78,6 +78,11 @@ public:
 
   // Selecciona el banco de la escena bajo el bloqueo del flujo musical, sin vaciar sus muestras.
   bool cambiar_escena(unsigned short escena);
+  unsigned int perfiles_disponibles() const {
+    return flujo_musical ? ((1u << 1) | (1u << 2) | (mt32.disponible() ? 1u << 3 : 0u) |
+                            (remaster.disponible() ? 1u << 4 : 0u))
+                         : 0u;
+  }
   // Identifica la selección musical conservada al reiniciar el monitor.
   unsigned int perfil_musical() const {
     return perfil;
@@ -129,6 +134,8 @@ private:
   bool silencio = false;
   unsigned int volumen = 100, volumen_musica = 100, volumen_efectos = 100;
   bool ajustar_canal(SDL_AudioStream *canal, unsigned int &nivel, int cambio, const char *nombre);
+  friend class LaboratorioAudio;
+  friend bool comprobar_laboratorio_audio(const std::string &, const std::string &);
   friend bool comprobar_volumenes_audio(const std::string &carpeta);
   // Informa del volumen efectivo y conserva el ajuste elegido mientras M silencia.
   void registrar_volumen() const;

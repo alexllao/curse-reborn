@@ -39,3 +39,7 @@ La prueba selectiva `pnpm comparar:ajo-primera-zona` vive en `recorridos/compara
 ## Menú del port
 
 Pruebas nativas sin ventanas visibles ni sonido audible: `--comprobar-menu-port <carpeta>`, `--comprobar-menu-port-integracion <prefijo>` y `--comprobar-menu-port-carga <prefijo>`, tras la carpeta DATA como primer argumento. Usar `SDL_AUDIODRIVER=dummy`; para la variante de carga fijar `CURSE_REBORN_PARTIDAS` a una ruta dentro de trabajo. Las pruebas no guardan preferencias ni tiempo en el perfil del usuario. Casos, límites y comandos completos en [menu_port.md](../documentacion/menu_port.md).
+
+## Laboratorio de audio
+
+`--comprobar-laboratorio-audio <carpeta de informe>` después de DATA contrasta todos los temas/versiones disponibles y ambas voces en cinco posiciones, sin salida física. Además de la renderización en pausa usa el dispositivo dummy para verificar el fin de cola. `--comprobar-menu-port` incluye las tres páginas nuevas y 22 capturas. El recorrido integrado del menú reproduce desde el laboratorio con el juego pausado, comprueba DS/contador musical intactos y reanuda la sesión. Véase [laboratorio_audio.md](../documentacion/laboratorio_audio.md).

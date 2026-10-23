@@ -25,6 +25,8 @@ El [estéreo posicional](audio/estereo_posicional.md) sigue la posición horizon
 
 En **Opciones → Sonido** se ajustan por separado **Volumen de música** y **Volumen de efectos**, entre 0 y 400 %. Se guardan al reiniciar, con 100 % inicial en ambos. El volumen general de **+ / −** multiplica los dos canales y **M** los silencia sin perder sus ajustes. Los sonidos del PC siguen el volumen de efectos. El submenú **Música y efectos** reúne dispositivos y estéreo.
 
+En **Música y efectos → Pruebas de sonido**, el [reproductor de pruebas](laboratorio_audio.md) permite elegir canción y versión. La prueba de estéreo usa cinco puntos horizontales: clic o teclas **1–5**, también flechas e Intro. **M** alterna el silencio durante las pruebas. Esc vuelve y detiene la escucha; la música de la partida conserva su posición.
+
 **M** muestra «Sonido silenciado» o «Sonido activado» con el mismo texto blanco y fundido de los otros avisos. Silencia música y efectos y recupera el porcentaje anterior al reactivarlo; también funciona durante BIOS o con el PC apagado. Las secuencias conservan su reloj mientras están silenciadas.
 
 El volumen va del 0 al 400 % y se muestra en consola al arrancar y al modificarlo. **+ y − del teclado numérico también funcionan.** MT-32 aparece cuando se pueden cargar sus ROM locales. AdLib mantiene su tema continuo; MT-32 usa los bancos musicales de cada zona. Los efectos digitales Sound Blaster están activos al arrancar; F3 permite comparar con PC Speaker sin reiniciar la escena. Ambas opciones comparten el volumen y el silencio.

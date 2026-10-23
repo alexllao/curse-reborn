@@ -80,8 +80,8 @@ bool MusicaRemaster::iniciar(const std::string &catalogo) {
   return true;
 }
 
-void MusicaRemaster::cambiar_banco(unsigned int siguiente) {
-  if (siguiente < pistas.size() && siguiente != banco) {
+void MusicaRemaster::cambiar_banco(unsigned int siguiente, bool reiniciar) {
+  if (siguiente < pistas.size() && (reiniciar || siguiente != banco)) {
     banco = siguiente;
     cursor = 0;
   }

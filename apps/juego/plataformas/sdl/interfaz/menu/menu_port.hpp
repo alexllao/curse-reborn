@@ -25,13 +25,23 @@ enum class AccionMenuPort {
   depuracion,
   entidades,
   interacciones,
-  limites
+  limites,
+  prueba_version,
+  prueba_pista,
+  prueba_musica,
+  prueba_parar,
+  prueba_voz,
+  prueba_estereo,
+  prueba_posicion
 };
 struct EstadoMenuPort {
   bool sesion = false, silencio = false, estereo = true, marco = false, completa = false;
   bool depuracion = false, entidades = true, interacciones = true, limites = true;
   unsigned int volumen = 100, volumen_musica = 100, volumen_efectos = 100, musica = 4, filtro = 2;
   std::string efectos = "Sound Blaster", habitacion;
+  std::string prueba_version = "Remaster", prueba_pista = "CURSE.RS1";
+  unsigned int prueba_voz = 0, prueba_posicion = 2;
+  bool prueba_estereo = true, prueba_sonando = false, prueba_disponible = true;
 };
 struct PeticionMenuPort {
   AccionMenuPort accion = AccionMenuPort::ninguna;
@@ -41,6 +51,16 @@ struct PeticionMenuPort {
 // Interfaz física del port: nunca escribe DS ni interpreta iconos del menú DOS.
 class MenuPort {
 public:
+  bool laboratorio_abierto() const {
+    return visible && (pagina == Pagina::laboratorio || pagina == Pagina::musica_pruebas ||
+                       pagina == Pagina::estereo_pruebas);
+  }
+  unsigned int pagina_audio() const {
+    return !visible                            ? 0u
+           : pagina == Pagina::musica_pruebas  ? 1u
+           : pagina == Pagina::estereo_pruebas ? 2u
+                                               : 0u;
+  }
   bool abierto() const {
     return visible;
   }
@@ -76,7 +96,7 @@ public:
                       std::max(alto_ventana, 1);
       const float centro = float(ancho_ventana) / std::max(alto_ventana, 1) * 450;
       for (size_t i = 0; i < botones.size(); ++i) {
-        const auto r = rectangulo(centro, i);
+        const auto r = rectangulo_fila(centro, i);
         if (x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h) {
           seleccion = int(i);
           if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == SDL_BUTTON_LEFT)
@@ -86,6 +106,13 @@ public:
     }
     if (e.type != SDL_EVENT_KEY_DOWN)
       return {};
+    if (laboratorio_abierto() && e.key.key == SDLK_M && !e.key.repeat)
+      return {AccionMenuPort::silencio, 1};
+    if (pagina == Pagina::estereo_pruebas && !e.key.repeat && e.key.key >= SDLK_1 &&
+        e.key.key <= SDLK_5) {
+      seleccion = 2 + int(e.key.key - SDLK_1);
+      return {AccionMenuPort::prueba_posicion, int(e.key.key - SDLK_1)};
+    }
     if (e.key.key == SDLK_ESCAPE && !e.key.repeat) {
       if (pagina != Pagina::principal) {
         pagina = padre();
@@ -93,6 +120,26 @@ public:
       } else if (estado.sesion)
         return {AccionMenuPort::jugar, 1};
       return {};
+    }
+    if (pagina == Pagina::estereo_pruebas) {
+      if (seleccion >= 2 && seleccion <= 6) {
+        if (e.key.key == SDLK_LEFT || e.key.key == SDLK_RIGHT) {
+          seleccion = 2 + (seleccion - 2 + (e.key.key == SDLK_LEFT ? 4 : 1)) % 5;
+          return {};
+        }
+        if (e.key.key == SDLK_UP) {
+          seleccion = 1;
+          return {};
+        }
+        if (e.key.key == SDLK_DOWN) {
+          seleccion = 7;
+          return {};
+        }
+      } else if ((seleccion == 1 && e.key.key == SDLK_DOWN) ||
+                 (seleccion == 7 && e.key.key == SDLK_UP)) {
+        seleccion = 4;
+        return {};
+      }
     }
     if (e.key.key == SDLK_UP || (e.key.key == SDLK_TAB && (e.key.mod & SDL_KMOD_SHIFT)))
       seleccion = (seleccion + int(botones.size()) - 1) % int(botones.size());
@@ -159,6 +206,9 @@ private:
     opciones,
     sonido,
     reproduccion,
+    laboratorio,
+    musica_pruebas,
+    estereo_pruebas,
     pantalla,
     habitacion,
     avanzado,
@@ -171,6 +221,7 @@ private:
     AccionMenuPort accion = AccionMenuPort::ninguna;
     Pagina destino = Pagina::principal;
     bool ajustable = false;
+    int argumento = -1;
   };
   bool visible = false;
   Pagina pagina = Pagina::principal;
@@ -191,6 +242,15 @@ private:
   static SDL_FRect rectangulo(float c, size_t i) {
     const auto ancho = std::min(412.0f, std::max(100.0f, c * 2 - 64));
     return {c - ancho / 2, 332 + float(i) * 70, ancho, 57};
+  }
+  SDL_FRect rectangulo_fila(float c, size_t i) const {
+    if (pagina == Pagina::estereo_pruebas) {
+      if (i >= 2 && i <= 6)
+        return {c - 190 + float(i - 2) * 80, 535, 60, 57};
+      if (i >= 7)
+        return {c - 206, 650 + float(i - 7) * 70, 412, 57};
+    }
+    return rectangulo(c, i);
   }
   std::vector<Fila> filas(const EstadoMenuPort &s) const {
     using A = AccionMenuPort;
@@ -228,8 +288,32 @@ private:
       return {ajuste(t("Música", "Music"), musicas[std::min(s.musica, 4u)], A::musica),
               ajuste(t("Efectos", "Sound effects"), s.efectos, A::efectos),
               ajuste(t("Estéreo posicional", "Positional stereo"), si(s.estereo), A::estereo),
+              {t("Pruebas de sonido", "Sound test"), "", A::ninguna, Pagina::laboratorio},
               atras};
     }
+    case Pagina::laboratorio:
+      return {{t("Reproductor musical", "Music player"), "", A::ninguna, Pagina::musica_pruebas},
+              {t("Prueba de estéreo", "Stereo test"), "", A::ninguna, Pagina::estereo_pruebas},
+              atras};
+    case Pagina::musica_pruebas:
+      return {ajuste(t("Versión", "Version"), s.prueba_version, A::prueba_version),
+              ajuste(t("Pista", "Track"), s.prueba_pista, A::prueba_pista),
+              {t("Reproducir desde el inicio", "Play from start"), "", A::prueba_musica},
+              {t("Parar", "Stop"), "", A::prueba_parar},
+              atras};
+    case Pagina::estereo_pruebas:
+      return {ajuste(t("Voz original", "Original voice"),
+                     t("Voz ", "Voice ") + std::to_string(s.prueba_voz + 1) + " (Help / Hi)",
+                     A::prueba_voz),
+              ajuste(t("Estéreo posicional", "Positional stereo"), si(s.prueba_estereo),
+                     A::prueba_estereo),
+              {"0%", "", A::prueba_posicion, Pagina::principal, false, 0},
+              {"25%", "", A::prueba_posicion, Pagina::principal, false, 1},
+              {"50%", "", A::prueba_posicion, Pagina::principal, false, 2},
+              {"75%", "", A::prueba_posicion, Pagina::principal, false, 3},
+              {"100%", "", A::prueba_posicion, Pagina::principal, false, 4},
+              {t("Parar", "Stop"), "", A::prueba_parar},
+              atras};
     case Pagina::pantalla: {
       const char *filtros[] = {"Original",  es() ? "Suavizado" : "Smooth",
                                "Scanlines", es() ? "CRT suave" : "Soft CRT",
@@ -255,6 +339,10 @@ private:
     }
   }
   Pagina padre() const {
+    if (pagina == Pagina::laboratorio)
+      return Pagina::reproduccion;
+    if (pagina == Pagina::musica_pruebas || pagina == Pagina::estereo_pruebas)
+      return Pagina::laboratorio;
     if (pagina == Pagina::reproduccion)
       return Pagina::sonido;
     return pagina == Pagina::sonido || pagina == Pagina::pantalla || pagina == Pagina::habitacion ||
@@ -264,7 +352,7 @@ private:
   }
   PeticionMenuPort aceptar(const Fila &f, int sentido) {
     if (f.accion != AccionMenuPort::ninguna)
-      return {f.accion, f.ajustable ? sentido : 1};
+      return {f.accion, f.argumento >= 0 ? f.argumento : f.ajustable ? sentido : 1};
     pagina = f.destino;
     seleccion = 0;
     return {};
@@ -340,7 +428,7 @@ private:
     const auto botones = filas(s);
     seleccion = std::clamp(seleccion, 0, int(botones.size()) - 1);
     for (size_t i = 0; i < botones.size(); ++i) {
-      auto rect = rectangulo(c, i);
+      auto rect = rectangulo_fila(c, i);
       if (ancho < 450) {
         rect.x = c - (ancho - 64) / 2;
         rect.w = ancho - 64;
@@ -358,12 +446,45 @@ private:
                  foco ? SDL_Color{244, 190, 75, 255} : SDL_Color{35, 53, 74, 255}))
         return false;
       const auto &f = botones[i];
-      if (!fuente.texto(r, f.texto, c, rect.y + (f.valor.empty() ? 13 : 2),
+      const float centro_fila = rect.x + rect.w / 2;
+      if (!fuente.texto(r, f.texto, centro_fila, rect.y + (f.valor.empty() ? 13 : 2),
                         f.valor.empty() ? 25 : 17, crema, true))
         return false;
-      if (!f.valor.empty() && (!fuente.texto(r, f.valor, c, rect.y + 24, 22, oro, true) ||
+      if (!f.valor.empty() && (!fuente.texto(r, f.valor, centro_fila, rect.y + 24, 22, oro, true) ||
                                !fuente.texto(r, "<", rect.x + 13, rect.y + 17, 24, oro) ||
                                !fuente.texto(r, ">", rect.x + rect.w - 30, rect.y + 17, 24, oro)))
+        return false;
+    }
+    if (pagina == Pagina::musica_pruebas) {
+      const auto estado = !s.prueba_disponible ? t("Audio no disponible", "Audio unavailable")
+                          : s.silencio         ? t("Silenciado con M", "Muted with M")
+                          : s.prueba_sonando   ? t("Reproduciendo", "Playing")
+                                               : t("Detenido", "Stopped");
+      if (!fuente.texto(r,
+                        "General " + std::to_string(s.volumen) + "% · " + t("Música ", "Music ") +
+                            std::to_string(s.volumen_musica) + "%",
+                        c, 680, 17, oro, true) ||
+          !fuente.texto(r, estado, c, 716, 21, crema, true) ||
+          !fuente.texto(
+              r, t("FM: 2 temas · MT-32 / Remaster: 5", "FM: 2 themes · MT-32 / Remaster: 5"), c,
+              750, 17, oro, true))
+        return false;
+    }
+    if (pagina == Pagina::estereo_pruebas) {
+      const int pan = s.prueba_estereo ? int(s.prueba_posicion) - 2 : 0;
+      const int izquierda = int(std::round(100 - std::max(pan, 0) * 32.5f));
+      const int derecha = int(std::round(100 + std::min(pan, 0) * 32.5f));
+      if (!fuente.texto(r, t("Izquierda", "Left"), c - 180, 491, 19, oro) ||
+          !fuente.texto(r, t("Derecha", "Right"), c + 100, 491, 19, oro) ||
+          !fuente.texto(r,
+                        "L " + std::to_string(izquierda) + "% · R " + std::to_string(derecha) + "%",
+                        c, 603, 20, crema, true))
+        return false;
+      if (!fuente.texto(r,
+                        s.silencio ? t("Silenciado con M", "Muted with M")
+                                   : "General " + std::to_string(s.volumen) + "% · FX " +
+                                         std::to_string(s.volumen_efectos) + "%",
+                        c, 630, 16, oro, true))
         return false;
     }
     if (pagina == Pagina::creditos || pagina == Pagina::controles || pagina == Pagina::salir) {
@@ -395,7 +516,10 @@ private:
     }
     if (!fuente.texto(r, CURSE_REBORN_VERSION, c, 790, 16, oro, true))
       return false;
-    return fuente.texto(r, t("Flechas · Intro · Ratón", "Arrows · Enter · Mouse"), c, 852, 17,
-                        {198, 194, 180, 255}, true);
+    return fuente.texto(r,
+                        pagina == Pagina::estereo_pruebas
+                            ? t("1–5 · Flechas · Intro · Ratón", "1–5 · Arrows · Enter · Mouse")
+                            : t("Flechas · Intro · Ratón", "Arrows · Enter · Mouse"),
+                        c, 852, 17, {198, 194, 180, 255}, true);
   }
 };

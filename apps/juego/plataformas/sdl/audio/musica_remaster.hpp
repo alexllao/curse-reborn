@@ -10,7 +10,7 @@ public:
   bool disponible() const {
     return preparada;
   }
-  void cambiar_banco(unsigned int siguiente);
+  void cambiar_banco(unsigned int siguiente, bool reiniciar = false);
   void generar(short *salida, unsigned int fotogramas);
   std::string titulo() const {
     return preparada ? pistas[banco].titulo : "";

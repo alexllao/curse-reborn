@@ -42,6 +42,32 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
   ok = ok && tecla(SDLK_RETURN).accion == A::efectos;
   tecla(SDLK_DOWN);
   ok = ok && tecla(SDLK_RETURN).accion == A::estereo;
+  tecla(SDLK_DOWN);
+  tecla(SDLK_RETURN); // Laboratorio.
+  tecla(SDLK_RETURN); // Música.
+  ok = ok && tecla(SDLK_LEFT).accion == A::prueba_version;
+  tecla(SDLK_DOWN);
+  ok = ok && tecla(SDLK_RIGHT).accion == A::prueba_pista;
+  tecla(SDLK_DOWN);
+  ok = ok && tecla(SDLK_RETURN).accion == A::prueba_musica;
+  tecla(SDLK_DOWN);
+  ok = ok && tecla(SDLK_RETURN).accion == A::prueba_parar;
+  tecla(SDLK_ESCAPE);
+  tecla(SDLK_DOWN);
+  tecla(SDLK_RETURN); // Estéreo.
+  ok = ok && tecla(SDLK_1).accion == A::prueba_posicion && tecla(SDLK_5).sentido == 4;
+  tecla(SDLK_LEFT);
+  ok = ok && tecla(SDLK_RETURN).sentido == 3;
+  SDL_Event punto{};
+  punto.type = SDL_EVENT_MOUSE_BUTTON_DOWN;
+  punto.button.button = SDL_BUTTON_LEFT;
+  punto.button.y = 563.0f * 600 / 900;
+  for (int i = 0; i < 5; ++i) {
+    punto.button.x = 480 + (-160 + i * 80) * 600.0f / 900;
+    const auto peticion = navegacion.evento(punto, 960, 600, estado);
+    ok = ok && peticion.accion == A::prueba_posicion && peticion.sentido == i;
+  }
+  ok = ok && tecla(SDLK_M).accion == A::silencio;
   navegacion.abrir();
   tecla(SDLK_TAB, SDL_KMOD_SHIFT);
   tecla(SDLK_RETURN); // Confirmación de salida, no salir por una flecha accidental.
@@ -121,7 +147,7 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
         ++capturas;
       // También se dibujan las seis páginas internas con sus valores y textos completos.
       if (ok && lengua && m[0] == 960 && m[1] == 600) {
-        for (int pagina = 0; pagina < 7 && ok; ++pagina) {
+        for (int pagina = 0; pagina < 10 && ok; ++pagina) {
           menu.abrir();
           const auto pulsar = [&](SDL_Keycode key) {
             SDL_Event e{};
@@ -129,11 +155,24 @@ inline bool comprobar_menu_port(const std::string &carpeta) {
             e.key.key = key;
             return menu.evento(e, m[0], m[1], estado);
           };
-          const int indice = pagina < 4 || pagina == 6 ? 2 : pagina == 4 ? 3 : 4;
+          const int indice = pagina < 4 || pagina >= 6 ? 2 : pagina == 4 ? 3 : 4;
           for (int j = 0; j < indice; ++j)
             pulsar(SDLK_DOWN);
           pulsar(SDLK_RETURN);
-          if (pagina == 6) {
+          if (pagina >= 7) {
+            pulsar(SDLK_RETURN);
+            for (int j = 0; j < 4; ++j)
+              pulsar(SDLK_DOWN);
+            pulsar(SDLK_RETURN);
+            for (int j = 0; j < 3; ++j)
+              pulsar(SDLK_DOWN);
+            pulsar(SDLK_RETURN);
+            if (pagina >= 8) {
+              if (pagina == 9)
+                pulsar(SDLK_DOWN);
+              pulsar(SDLK_RETURN);
+            }
+          } else if (pagina == 6) {
             pulsar(SDLK_RETURN);
             for (int j = 0; j < 4; ++j)
               pulsar(SDLK_DOWN);

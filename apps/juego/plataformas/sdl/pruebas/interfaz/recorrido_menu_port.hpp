@@ -2,17 +2,18 @@
 #include "../../interfaz/menu/menu_port.hpp"
 #include "../../lanzador/habitacion.hpp"
 #include "../../mazmorra.hpp"
+#include "../../audio/laboratorio.hpp"
 #include <vector>
 
 // Recorre el bucle real con eventos SDL, en una ventana oculta y un perfil deshabilitado.
 class RecorridoMenuPort {
 public:
   int avanzar(MenuPort &menu, Habitacion &habitacion, Mazmorra &partida, int pantalla,
-              const std::string &prefijo, bool cargar, bool panel_abierto) {
+              const std::string &prefijo, bool cargar, bool panel_abierto, LaboratorioAudio &lab) {
     const auto ahora = SDL_GetTicks();
     if (!inicio)
       inicio = ahora;
-    if (ahora - inicio > 30000)
+    if (ahora - inicio > 45000)
       return -1;
     ++fotogramas;
     switch (fase) {
@@ -77,14 +78,41 @@ public:
           partida.nivel_volumen() != 100)
         return -1;
       pulsar(SDLK_LEFT);
-      pulsar(SDLK_ESCAPE);
-      pulsar(SDLK_ESCAPE);
+      for (int i = 0; i < 4; ++i)
+        pulsar(SDLK_DOWN);
+      pulsar(SDLK_RETURN); // Música y efectos.
+      for (int i = 0; i < 3; ++i)
+        pulsar(SDLK_DOWN);
+      pulsar(SDLK_RETURN); // Pruebas.
+      pulsar(SDLK_RETURN); // Reproductor.
+      pulsar(SDLK_DOWN);
+      pulsar(SDLK_DOWN);
+      pulsar(SDLK_RETURN);
+      fase = 9;
+      break;
+    case 9:
+      if (!lab.reproduciendo() || !menu.abierto() || menu.pagina_audio() != 1 ||
+          estado != leer(partida, prefijo + ".laboratorio.ds") ||
+          muestras != partida.muestras_musicales())
+        return -1;
+      pulsar(SDLK_ESCAPE); // Laboratorio.
+      pulsar(SDLK_DOWN);
+      pulsar(SDLK_RETURN); // Estéreo.
+      for (SDL_Keycode key = SDLK_1; key <= SDLK_5; ++key)
+        pulsar(key);
+      fase = 10;
+      break;
+    case 10:
+      if (!lab.reproduciendo() || lab.posicion() != 4 || menu.pagina_audio() != 2 ||
+          estado != leer(partida, prefijo + ".laboratorio_fx.ds") ||
+          muestras != partida.muestras_musicales())
+        return -1;
       pulsar(SDLK_ESCAPE, SDL_KMOD_SHIFT);
       marca = ahora;
       fase = 6;
       break;
     case 6:
-      if (menu.abierto() || partida.nivel_volumen_musica() != 100 ||
+      if (lab.reproduciendo() || menu.abierto() || partida.nivel_volumen_musica() != 100 ||
           partida.nivel_volumen_efectos() != 100 || partida.nivel_volumen() != 100)
         return -1;
       if (ahora - marca < 200)
@@ -105,7 +133,7 @@ public:
       if (menu.abierto() || partida.menu_abierto())
         return -1;
       registrar_accion("Menú del port integrado: espera inicial, encendido, pausa DS/audio, "
-                       "volumen, reanudación y menú DOS comprobados");
+                       "volumen, laboratorio aislado, reanudación y menú DOS comprobados");
       return 1;
     }
     return 0;

@@ -40,6 +40,8 @@
 #include "pruebas/comprobar_poblacion.hpp"
 #include "interfaz/partidas.hpp"
 #include "interfaz/menu/menu_port.hpp"
+#include "audio/laboratorio.hpp"
+#include "pruebas/audio/comprobar_laboratorio.hpp"
 #include "pruebas/interfaz/comprobar_menu_port.hpp"
 #include "pruebas/interfaz/recorrido_menu_port.hpp"
 #include "pruebas/comprobar_partidas.hpp"
@@ -90,11 +92,13 @@ struct Presentacion {
   BannerLanzador banner;
   SonidosPC sonidos_pc;
   MenuPort menu_port;
+  LaboratorioAudio laboratorio;
   DecoradosAmpliados decorados;
   CursorOriginal cursor;
   bool actualizacion_diferida = false;
   // Libera los objetos de la plataforma al cerrar o al fallar la inicialización.
   ~Presentacion() {
+    laboratorio.cerrar();
     menu_port.liberar();
     sonidos_pc.cerrar();
     mazmorra.cerrar_audio();
@@ -561,6 +565,13 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   const std::string opcion = argc >= 3 ? argv[2] : "";
+  if (opcion == "--comprobar-laboratorio-audio" && argc == 4) {
+    SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy");
+    Presentacion limpieza;
+    return SDL_Init(0) && comprobar_laboratorio_audio(argv[1], argv[3])
+               ? 0
+               : fallo("No coincide el laboratorio de audio");
+  }
   if (opcion == "--comprobar-volumenes" && argc == 3) {
     Presentacion limpieza;
     return SDL_Init(0) && comprobar_volumenes_audio(argv[1])
@@ -950,6 +961,14 @@ int main(int argc, char *argv[]) {
     e.entidades = cajas_objetos;
     e.interacciones = cajas_interaccion;
     e.limites = cajas_limites;
+    presentacion.laboratorio.asegurar_version(mazmorra.perfiles_audio_disponibles());
+    e.prueba_version = presentacion.laboratorio.nombre_version();
+    e.prueba_pista = presentacion.laboratorio.nombre_pista();
+    e.prueba_voz = presentacion.laboratorio.voz();
+    e.prueba_posicion = presentacion.laboratorio.posicion();
+    e.prueba_estereo = presentacion.laboratorio.estereo();
+    e.prueba_sonando = presentacion.laboratorio.reproduciendo();
+    e.prueba_disponible = mazmorra.perfiles_audio_disponibles() != 0;
     return e;
   };
   const auto abrir_menu_port = [&]() {
@@ -962,6 +981,7 @@ int main(int argc, char *argv[]) {
     return mazmorra.pausar_audio_menu(true);
   };
   const auto cerrar_menu_port = [&]() {
+    presentacion.laboratorio.cerrar();
     const auto ahora_menu = SDL_GetTicksNS();
     const auto pausa = ahora_menu - inicio_pausa_menu;
     inicio_pantalla += pausa;
@@ -1004,6 +1024,13 @@ int main(int argc, char *argv[]) {
       return fallo("No se ha podido preparar el encuadre del juego");
     if (!presentacion.habitacion.preparar_encuadre(presentacion.dibujante))
       return fallo("No se ha podido encuadrar la habitación");
+    if (!presentacion.laboratorio.ajustar(mazmorra.nivel_volumen(), mazmorra.nivel_volumen_musica(),
+                                          mazmorra.nivel_volumen_efectos(),
+                                          mazmorra.silenciado()) ||
+        !presentacion.laboratorio.actualizar()) {
+      presentacion.laboratorio.cerrar();
+      avisos.mostrar("Prueba de audio detenida");
+    }
     if (!mazmorra.actualizar_audio())
       return fallo("No se ha podido actualizar el audio del juego");
     SDL_Event evento;
@@ -1037,7 +1064,12 @@ int main(int argc, char *argv[]) {
             guardar_preferencias();
             continue;
           }
+          const auto pagina_audio_anterior = presentacion.menu_port.pagina_audio();
           const auto peticion = presentacion.menu_port.evento(evento, ww, wh, estado_menu());
+          if (pagina_audio_anterior != presentacion.menu_port.pagina_audio())
+            presentacion.laboratorio.detener();
+          if (!presentacion.menu_port.laboratorio_abierto())
+            presentacion.laboratorio.cerrar();
           using A = AccionMenuPort;
           bool correcto = true;
           switch (peticion.accion) {
@@ -1108,12 +1140,43 @@ int main(int argc, char *argv[]) {
           case A::limites:
             cajas_limites = !cajas_limites;
             break;
+          case A::prueba_version:
+            presentacion.laboratorio.seleccionar_version(peticion.sentido,
+                                                         mazmorra.perfiles_audio_disponibles());
+            break;
+          case A::prueba_pista:
+            presentacion.laboratorio.seleccionar_pista(peticion.sentido);
+            break;
+          case A::prueba_musica:
+            correcto = presentacion.laboratorio.reproducir_musica(
+                carpeta, mazmorra.perfiles_audio_disponibles());
+            break;
+          case A::prueba_parar:
+            presentacion.laboratorio.detener();
+            break;
+          case A::prueba_voz:
+            presentacion.laboratorio.seleccionar_voz();
+            break;
+          case A::prueba_estereo:
+            presentacion.laboratorio.alternar_estereo();
+            break;
+          case A::prueba_posicion:
+            correcto = presentacion.laboratorio.reproducir_voz(
+                carpeta, static_cast<unsigned int>(peticion.sentido),
+                mazmorra.perfiles_audio_disponibles());
+            break;
           default:
             break;
           }
+          if (!correcto && peticion.accion >= A::prueba_version) {
+            presentacion.laboratorio.cerrar();
+            avisos.mostrar("Prueba de audio no disponible");
+            registrar_accion("Prueba de audio no disponible: %s", SDL_GetError());
+            correcto = true;
+          }
           if (!correcto)
             return fallo("No se ha podido aplicar una opción del menú");
-          if (peticion.accion != A::ninguna)
+          if (peticion.accion != A::ninguna && peticion.accion < A::prueba_version)
             guardar_preferencias();
           continue;
         }
@@ -2180,7 +2243,7 @@ int main(int argc, char *argv[]) {
     if (comprobar_menu_integrado) {
       const int resultado = prueba_menu_integrado.avanzar(
           presentacion.menu_port, presentacion.habitacion, mazmorra, pantalla, argv[3],
-          opcion == "--comprobar-menu-port-carga", partidas.abierta());
+          opcion == "--comprobar-menu-port-carga", partidas.abierta(), presentacion.laboratorio);
       if (resultado < 0)
         return fallo("No coincide el recorrido integrado del menú del port");
       if (resultado > 0)

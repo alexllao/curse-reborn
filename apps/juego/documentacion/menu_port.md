@@ -35,6 +35,10 @@ No se entregan al juego los clics o teclas usados en el menú. Salir tiene una p
 
 **Controles** y **Créditos:** se presentan en el idioma elegido al arrancar (`pnpm ventana es` o `pnpm ventana en`). Los créditos muestran la versión efectiva del paquete y la fecha real de compilación.
 
+## Pruebas de sonido
+
+Desde **Sonido → Música y efectos → Pruebas de sonido** se pueden escuchar las pistas en las versiones disponibles y comparar dos voces originales en cinco posiciones horizontales. El [laboratorio de audio](laboratorio_audio.md) utiliza un reproductor aislado: la partida y su música permanecen pausadas y se recuperan al salir. Las selecciones de prueba no cambian las preferencias musicales del juego.
+
 ## Preferencias y recursos
 
 Se conservan volumen, silencio, música, estéreo, filtro y marco; se añaden efectos digitales, pantalla completa e identificador de habitación. El perfil personal prevalece sobre `configuracion/inicial.json`. Los perfiles antiguos se admiten y los formatos desconocidos permanecen intactos. Partidas y recursos comerciales no se modifican.

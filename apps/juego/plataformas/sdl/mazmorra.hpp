@@ -202,6 +202,9 @@ public:
   void preferir_musica(unsigned int seleccion) {
     audio.preferir_musica(seleccion);
   }
+  unsigned int perfiles_audio_disponibles() const {
+    return audio.perfiles_disponibles();
+  }
   unsigned int perfil_musical() const {
     return audio.perfil_musical();
   }
