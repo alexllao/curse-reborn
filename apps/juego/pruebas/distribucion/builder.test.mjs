@@ -10,7 +10,10 @@ import {
   listarArchivos,
   verificarPaquete,
 } from '../../herramientas/distribucion/archivos.mjs';
-import { optimizarPng } from '../../herramientas/distribucion/optimizar_assets.mjs';
+import {
+  optimizarPng,
+  optimizarImagen,
+} from '../../herramientas/distribucion/optimizar_assets.mjs';
 import { analizarOpciones } from '../../herramientas/distribucion/opciones.mjs';
 import { seleccionarHabitaciones } from '../../herramientas/gestionar_habitaciones.mjs';
 
@@ -45,6 +48,9 @@ test('Habitaciones: inicial, alternativa y todas conservan el catálogo fuente',
 
 // Valida combinaciones y valores ausentes antes de lanzar una compilación costosa.
 test('Parámetros del builder: selección explícita y errores', () => {
+  assert.equal(analizarOpciones([]).perfil, 'alta');
+  for (const perfil of ['alta', 'equilibrada', 'compacta', 'sin-perdida'])
+    assert.equal(analizarOpciones(['--imagenes', perfil]).perfil, perfil);
   assert.deepEqual(analizarOpciones(['--con-datos', '--habitacion', 'todas', '--sin-perdida']), {
     conDatos: true,
     perfil: 'sin-perdida',
@@ -57,8 +63,76 @@ test('Parámetros del builder: selección explícita y errores', () => {
     ['--habitacion', '../fuera'],
     ['--habitacion', 'todas', '--habitacion', 'inicial'],
     ['--otro'],
+    ['--imagenes'],
+    ['--imagenes', 'otra'],
+    ['--imagenes', 'alta', '--imagenes', 'compacta'],
+    ['--imagenes', 'alta', '--sin-perdida'],
+    ['--sin-perdida', '--imagenes', 'alta'],
   ])
     assert.throws(() => analizarOpciones(a));
+});
+
+// Fondos: JPEG mantiene resolución, canales completos y fuente intacta en los tres niveles.
+test('JPEG de fondos: niveles, dimensiones y reducción real', async () => {
+  const pixeles = Buffer.alloc(256 * 192 * 3);
+  for (let y = 0; y < 192; ++y)
+    for (let x = 0; x < 256; ++x) {
+      const i = (y * 256 + x) * 3;
+      pixeles[i] = x;
+      pixeles[i + 1] = y;
+      pixeles[i + 2] = (x + y) % 256;
+    }
+  const original = await sharp(pixeles, { raw: { width: 256, height: 192, channels: 3 } })
+    .ensureAlpha()
+    .png({ compressionLevel: 0 })
+    .toBuffer();
+  const copia = Buffer.from(original);
+  const tamanos = [];
+  for (const perfil of ['alta', 'equilibrada', 'compacta']) {
+    const r = await optimizarImagen(original, perfil, true);
+    const m = await sharp(r.datos).metadata();
+    assert.equal(r.extension, '.jpg');
+    assert.equal(m.format, 'jpeg');
+    assert.equal(m.width, 256);
+    assert.equal(m.height, 192);
+    assert.equal(m.hasAlpha, false);
+    assert.equal(m.chromaSubsampling, '4:4:4');
+    assert.ok(r.datos.length < original.length);
+    tamanos.push(r.datos.length);
+  }
+  assert.ok(tamanos[0] > tamanos[1] && tamanos[1] > tamanos[2]);
+  assert.ok(original.equals(copia));
+  await assert.rejects(optimizarImagen(original, 'otra'));
+});
+
+// No se aplana el alfa ni se altera el pixel art; el perfil sin pérdida siempre conserva píxeles.
+test('JPEG excluye transparencias y gráficos ajenos a fondos', async () => {
+  for (const alpha of [0.4, 1]) {
+    const original = await sharp({
+      create: { width: 80, height: 60, channels: 4, background: { r: 200, g: 45, b: 70, alpha } },
+    })
+      .png({ compressionLevel: 0 })
+      .toBuffer();
+    for (const [perfil, fotografia] of [
+      ['alta', false],
+      ['sin-perdida', true],
+      ...(alpha < 1
+        ? [
+            ['alta', true],
+            ['equilibrada', true],
+            ['compacta', true],
+          ]
+        : []),
+    ]) {
+      const r = await optimizarImagen(original, perfil, fotografia);
+      assert.equal(r.extension, '.png');
+      assert.ok(
+        (await sharp(r.datos).ensureAlpha().raw().toBuffer()).equals(
+          await sharp(original).ensureAlpha().raw().toBuffer(),
+        ),
+      );
+    }
+  }
 });
 
 // Retira solo la carpeta de prueba recién creada, verificando que siga dentro del temporal.

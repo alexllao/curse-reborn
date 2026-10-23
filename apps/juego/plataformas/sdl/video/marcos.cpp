@@ -1,4 +1,5 @@
 #include "marcos.hpp"
+#include "cargar_fondo.hpp"
 #include "catalogo_marcos.hpp"
 #include "../registro.hpp"
 #include <algorithm>
@@ -141,7 +142,7 @@ bool MarcosPantalla::dibujar(SDL_Renderer *dibujante, const char *pantalla, Uint
     cerrar();
     const char *base = SDL_GetBasePath();
     const std::string ruta = std::string(base ? base : "") + seleccion->archivo;
-    SDL_Surface *imagen = SDL_LoadPNG(ruta.c_str());
+    SDL_Surface *imagen = cargar_fondo(ruta);
     if (imagen) {
       textura = SDL_CreateTextureFromSurface(dibujante, imagen);
       SDL_DestroySurface(imagen);

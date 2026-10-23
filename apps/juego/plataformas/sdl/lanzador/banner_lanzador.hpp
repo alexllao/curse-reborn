@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include "../video/cargar_fondo.hpp"
 
 struct VarianteBanner {
   const char *archivo;
@@ -60,7 +61,7 @@ public:
     const auto &v = variante(w, h);
     if (cargada != &v) {
       cerrar();
-      SDL_Surface *s = SDL_LoadPNG((std::string(SDL_GetBasePath()) + v.archivo).c_str());
+      SDL_Surface *s = cargar_fondo(std::string(SDL_GetBasePath()) + v.archivo);
       if (!s)
         return false;
       textura = SDL_CreateTextureFromSurface(r, s);

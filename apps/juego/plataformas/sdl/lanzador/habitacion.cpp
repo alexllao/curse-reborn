@@ -1,6 +1,7 @@
 #include "habitacion.hpp"
 #include "catalogo_habitaciones.hpp"
 #include "../registro.hpp"
+#include "../video/cargar_fondo.hpp"
 #include <algorithm>
 #include <cmath>
 #include <iterator>
@@ -347,7 +348,7 @@ bool Habitacion::dibujar(SDL_Renderer *r, Uint64 ahora) {
     cerrar();
     const char *base = SDL_GetBasePath();
     const std::string ruta = std::string(base ? base : "") + v.archivo;
-    SDL_Surface *s = SDL_LoadPNG(ruta.c_str());
+    SDL_Surface *s = cargar_fondo(ruta);
     if (!s)
       return false;
     SDL_Surface *recortada = recortar_cristal(s, v);

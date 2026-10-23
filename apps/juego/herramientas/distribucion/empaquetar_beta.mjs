@@ -12,7 +12,7 @@ import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { gestionarSdl } from '../gestionar_sdl.mjs';
 import { huella, listarArchivos, rutaDentro, verificarPaquete } from './archivos.mjs';
-import { optimizarPng } from './optimizar_assets.mjs';
+import { optimizarImagen } from './optimizar_assets.mjs';
 import { analizarOpciones } from './opciones.mjs';
 import { seleccionarHabitaciones } from '../gestionar_habitaciones.mjs';
 import { prepararMusica } from '../audio/preparar_musica.mjs';
@@ -97,6 +97,7 @@ async function empaquetar(argumentos) {
     return;
   }
   const { conDatos, perfil, habitacion } = analizarOpciones(argumentos);
+  console.log('Compresión de fondos: ' + perfil + ' (resolución original).');
   const maestroHabitaciones = JSON.parse(
     readFileSync(join(raiz, 'packages/assets/lanzador/habitaciones/habitaciones.json'), 'utf8'),
   );
@@ -163,13 +164,16 @@ async function empaquetar(argumentos) {
     }
     const fotografia =
       ruta.startsWith('assets/lanzador/habitaciones/') ||
-      ruta.startsWith('assets/lanzador/presentacion/');
+      (ruta.startsWith('assets/lanzador/presentacion/') && !ruta.endsWith('-logo.png')) ||
+      (ruta.startsWith('assets/marcos/cielo_encantado/') && !ruta.includes('/overlay/'));
     if (huellasMaestros.imagenes[ruta.slice('assets/'.length)] !== huella(original))
       throw new Error('El maestro gráfico cambió: revisa su SHA-256: ' + ruta);
-    const resultado = await optimizarPng(original, perfil, fotografia);
-    escribir(ruta, resultado.datos);
+    const resultado = await optimizarImagen(original, perfil, fotografia);
+    const destinoImagen = ruta.slice(0, -4) + resultado.extension;
+    escribir(destinoImagen, resultado.datos);
     imagenes.push({
-      ruta,
+      ruta: destinoImagen,
+      ruta_maestro: ruta,
       antes: original.length,
       sha256_maestro: huella(original),
       sha256: huella(resultado.datos),
@@ -179,12 +183,12 @@ async function empaquetar(argumentos) {
       alto: resultado.alto,
     });
     console.log(
-      `Imagen ${imagenes.length}: ${ruta} (${original.length} → ${resultado.datos.length} bytes)`,
+      `Imagen ${imagenes.length}: ${destinoImagen} · ${resultado.metodo} (${original.length} → ${resultado.datos.length} bytes)`,
     );
   }
   // Los metadatos de marco describen la copia entregada; los maestros conservan su huella original.
   for (const i of imagenes.filter((i) => /assets\/marcos\//.test(i.ruta))) {
-    const ruta = i.ruta + '.json';
+    const ruta = i.ruta_maestro + '.json';
     if (!existsSync(join(carpeta, ruta))) continue;
     const c = JSON.parse(readFileSync(join(carpeta, ruta), 'utf8'));
     if (c.sourceSha256) c.sourceSha256 = huella(readFileSync(join(carpeta, i.ruta)));

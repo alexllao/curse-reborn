@@ -96,11 +96,22 @@ Los archivos persistentes se llaman `CURSE.SAV` y `tiempo_juego.json`. Se sitúa
 
 ## Optimización de imágenes
 
-El perfil predeterminado, `equilibrado`, comprime los PNG y permite una paleta de hasta 256 colores en las fotografías opacas de habitaciones y presentación. Esta reducción puede alterar ligeramente el color. Los marcos, el icono y las imágenes transparentes reciben compresión sin pérdida, contrastando los píxeles decodificados. Solo se sustituye una imagen si el resultado ocupa menos.
+El perfil predeterminado, `alta`, convierte a JPEG de calidad92 los fondos opacos de habitaciones, presentación y Cielo encantado. Se conserva la resolución y se usa crominancia4:4:4 para proteger los detalles de color. `equilibrada` usa calidad85 y `compacta`,75. JPEG implica pérdida: conviene revisar el resultado a pantalla completa. Solo se sustituye una imagen si ocupa menos. Los maestros de `packages/assets` nunca se modifican.
 
-`--sin-perdida` exige los mismos píxeles en todas las imágenes. No cambia las dimensiones en ninguno de los perfiles: las coordenadas del cristal, botones y pilotos permanecen alineadas con el catálogo. No se cambia a JPEG/WebP ni se reduce la resolución de una textura sin adaptar la geometría; el cargador SDL utiliza PNG y la máscara depende de sus dimensiones originales.
+Logos, iconos, molduras, pixel art y cualquier fondo con píxeles transparentes conservan PNG sin pérdida, con igualdad de píxeles comprobada. Un canal alfa completamente opaco sí permite JPEG. `--sin-perdida` (equivalente a `--imagenes sin-perdida`) conserva los píxeles de todas las imágenes. Las dimensiones, máscara del cristal, botones y pilotos se mantienen en todos los perfiles.
 
-`paquete.json` registra versión, revisión Git, cambios locales, perfil, comprobaciones ejecutadas y ahorro de cada imagen, además del tamaño y SHA-256 de cada archivo. La huella de los metadatos de marco se actualiza únicamente en la copia distribuida.
+```text
+pnpm empaquetar:beta --con-datos
+pnpm empaquetar:beta --con-datos --imagenes equilibrada
+pnpm empaquetar:beta --con-datos --imagenes compacta
+pnpm empaquetar:beta --con-datos --sin-perdida
+```
+
+La entrega contiene `.jpg` reales y omite su PNG maestro. Los catálogos conservan las rutas lógicas `.png`: el cargador intenta primero ese PNG y, si no existe, su alternativa `.jpg`. La decodificación JPEG usa WIC del sistema en Windows, sin otra DLL distribuida; la generación de paquetes sigue limitada a Windows x64. Las plataformas futuras necesitarán su adaptador JPEG; los maestros PNG de desarrollo siguen siendo utilizables. Si existe un PNG corrupto se informa del fallo, sin ocultarlo con una alternativa.
+
+`paquete.json` registra versión, revisión Git, cambios locales, perfil, comprobaciones ejecutadas y ahorro de cada imagen, además del tamaño y SHA-256 de cada archivo. Cada imagen identifica `ruta` entregada, `ruta_maestro`, método y las dos huellas. La huella de los metadatos de marco se actualiza únicamente en la copia distribuida, aunque su nombre lógico siga terminando en `.png.json`.
+
+Validación del23/10/2026: compilación nativa O2/avisos como errores y ocho pruebas del builder correctas. Copia aislada con34 JPEG reales de calidad92 (25 variantes de habitación, cinco presentaciones y cuatro fondos Cielo encantado), sin sus PNG en esas rutas: `--comprobar-habitaciones` pasa58 capturas y `--comprobar-menu-port`,22 capturas en seis proporciones. Se conservan PNG del logo, icono y moldura. Evidencia local ignorada en `trabajo/fondos_jpeg`; el ahorro medido antes con diez fondos de la habitación inicial y presentación es52.588.222→13.258.214bytes al92,9.708.598al85 y7.265.239al75. No son tamaños de ZIP. ESLint, Prettier, formato C++ y monorepo pasan directamente. `pnpm calidad` sigue abortando al comprobar dependencias/registro sin TTY, y el intento directo de empaquetado termina en `spawnSync git EPERM` antes de compilar. No se ha generado un ZIP nuevo en esta sesión.
 
 Si `cambios_locales` es `true`, la revisión Git identifica la base del árbol utilizado, no un commit que contenga necesariamente todos los cambios compilados. Para futuras entregas reproducibles desde el historial, generar después de publicar los cambios y comprobar que este campo sea `false`. La fecha se almacena en UTC, con sufijo `Z`.
 
@@ -111,7 +122,7 @@ pnpm comprobar:builder
 pnpm empaquetar:beta --verificar "C:\ruta\a\la\carpeta\extraida"
 ```
 
-Las seis pruebas del builder cubren selección de diseños y parámetros, transparencia, píxeles sin pérdida, conservación de dimensiones, rechazo de rutas externas/enlaces y detección de alteraciones, archivos sobrantes y partidas. La verificación del manifiesto se realiza antes de crear el ZIP; puede repetirse después de extraerlo y antes de añadir datos opcionales.
+Las ocho pruebas del builder cubren selección de diseños y perfiles, JPEG en tres niveles, transparencia real y alfa opaco, píxeles sin pérdida, conservación de dimensiones, rechazo de rutas externas/enlaces y detección de alteraciones, archivos sobrantes y partidas. La verificación del manifiesto se realiza antes de crear el ZIP; puede repetirse después de extraerlo y antes de añadir datos opcionales.
 
 Con `--con-datos` se ejecutan además desde la copia empaquetada, con ventanas ocultas, las pruebas de habitaciones/monitor y el recorrido hasta THE END. Sus capturas y perfiles temporales permanecen en `apps/juego/trabajo/`, fuera del paquete. Estas pruebas no acreditan todos los equipos Windows ni cierran la revisión pendiente de alternativas y continuidad de partidas.
 
